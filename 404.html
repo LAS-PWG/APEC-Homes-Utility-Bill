@@ -1,0 +1,3448 @@
+<!-- APECHOMES Utility Tracking System -->
+<!-- Self-contained Single Index HTML / Complete Standalone Build -->
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utility Bills Submission - APECHOMES</title>
+  <meta name="description" content="Utility bills submission and management portal for APECHOMES homeowners and staff." />
+
+  <!-- Tailwind CSS via CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            royal: {
+              50: "#f0f4ff",
+              100: "#e0e9ff",
+              200: "#c3d5ff",
+              300: "#96b6ff",
+              400: "#648dff",
+              500: "#3b82f6",
+              600: "#2563eb",
+              700: "#333333",
+              800: "#262626",
+              900: "#1a1a1a",
+              950: "#121212",
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Google Fonts & Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: "Plus Jakarta Sans", sans-serif;
+    }
+    .brand-logo-img {
+      height: 30px;
+      width: auto;
+      object-fit: contain;
+      display: block;
+      transition: all 0.2s ease;
+    }
+    .glass-card {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+  </style>
+</head>
+<body class="bg-[#f8fafc] text-neutral-800 dark:bg-[#121212] dark:text-[#f3f4f6] min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+  <!-- TOP HEADER -->
+  <header class="w-full border-b border-neutral-200 dark:border-[#262626] bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      
+      <!-- Upper Left Logo -->
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('overview')">
+        <div class="flex items-center space-x-2 px-2.5 py-1 rounded-xl bg-white/95 dark:bg-[#1a1a1a] border border-neutral-200/80 dark:border-[#2e2e2e] shadow-sm">
+          <img 
+            id="brandLogoImg"
+            src="/apechomes-logo.png" 
+            alt="APECHOMES Logo" 
+            class="brand-logo-img"
+            onerror="this.style.display='none'; const fb = document.getElementById('brandLogoFallback'); if(fb){ fb.classList.remove('hidden'); fb.classList.add('flex'); }"
+          />
+          <div id="brandLogoFallback" class="hidden items-center space-x-1.5">
+            <svg class="w-6 h-6 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <span class="font-black text-sm tracking-tight text-neutral-900 dark:text-white">APEC<span class="text-blue-600 dark:text-blue-400">HOMES</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Action Controls -->
+      <div class="flex items-center space-x-2.5 sm:space-x-3">
+        
+        <!-- Live GSheet Database Indicator (ADMIN & SUBADMIN ONLY) -->
+        <div id="adminGsheetControls" class="hidden items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" title="Connected to Google Sheet UserData">
+          <i data-lucide="database" class="w-3 h-3 text-emerald-500"></i>
+          <span id="sheetStatusText">UserData DB Live</span>
+        </div>
+
+        <!-- Download Hosting-Ready ZIP Button -->
+        <a 
+          href="/api/download-hosting-bundle" 
+          download 
+          class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer" 
+          title="Download Complete Hosting-Ready Bundle (ZIP)"
+        >
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Download ZIP</span>
+        </a>
+
+        <!-- View As Dropdown (Admin & Sub-Admin ONLY) -->
+        <div id="roleTesterWrapper" class="hidden items-center space-x-1.5 bg-neutral-100 dark:bg-[#1a1a1a] p-1 rounded-xl border border-neutral-200 dark:border-[#262626]">
+          <label class="text-[10px] font-bold text-neutral-500 dark:text-neutral-400 px-1 hidden lg:inline">View As:</label>
+          <select id="roleTesterSelect" onchange="handleRoleSwitch(this.value)" class="text-xs bg-white dark:bg-[#121212] text-neutral-800 dark:text-white border border-neutral-300 dark:border-[#2e2e2e] rounded-lg px-2 py-1 font-semibold focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+            <option value="Administrator">Administrator</option>
+            <option value="Sub-Administrator">Sub-Administrator</option>
+            <option value="Level 3">Level 3 (Authorized)</option>
+            <option value="Level 2">Level 2 (Authorized)</option>
+            <option value="Level 1">Level 1 (Restricted)</option>
+          </select>
+        </div>
+
+        <!-- Light / Dark Mode Toggle -->
+        <button 
+          id="themeToggleBtn" 
+          onclick="toggleTheme()" 
+          class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-200/80 dark:bg-[#1e1e1e] text-neutral-700 dark:text-neutral-200 hover:bg-neutral-300 dark:hover:bg-[#282828] transition-all border border-neutral-300/60 dark:border-[#2e2e2e] focus:outline-none cursor-pointer"
+          title="Toggle Light / Dark Mode"
+        >
+          <i id="themeIcon" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+          <span id="themeText" class="hidden md:inline">Light Mode</span>
+        </button>
+
+        <!-- Authenticated Profile Chip -->
+        <div id="userHeaderProfile" class="hidden flex items-center space-x-2.5 border-l border-slate-200 dark:border-royal-800 pl-3 animate-fade-in">
+          <div class="flex items-center space-x-2">
+            <div id="headerAvatar" class="w-8 h-8 rounded-full bg-royal-500 text-white flex items-center justify-center font-bold text-xs shadow-md uppercase">
+              U1
+            </div>
+            <div class="hidden md:flex flex-col text-left">
+              <span id="headerUsername" class="text-xs font-semibold text-slate-700 dark:text-slate-200 leading-tight">user1</span>
+              <span id="headerRole" class="text-[10px] text-royal-600 dark:text-royal-300 font-medium">Level 1</span>
+            </div>
+          </div>
+          <button 
+            onclick="handleLogout()" 
+            class="p-1.5 rounded-lg text-slate-500 hover:text-red-500 dark:text-slate-400 dark:hover:text-red-400 hover:bg-slate-100 dark:hover:bg-royal-900/50 transition-colors cursor-pointer"
+            title="Log Out"
+          >
+            <i data-lucide="log-out" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <main class="flex-grow flex items-center justify-center p-4 relative overflow-hidden">
+    
+    <!-- Ambient Glow Effects -->
+    <div class="absolute -top-40 -left-40 w-96 h-96 bg-royal-500/10 dark:bg-royal-500/15 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
+    <div class="absolute -bottom-40 -right-40 w-96 h-96 bg-royal-600/10 dark:bg-royal-600/20 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
+
+    <!-- 1. LOGIN PAGE VIEW -->
+    <div id="loginView" class="w-full max-w-md animate-fade-in relative z-10 py-6">
+      <div class="bg-white/90 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/80 glass-card rounded-2xl shadow-2xl p-8 transition-all duration-300">
+        
+        <div class="text-center mb-7">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
+            Utility Bills Submission
+          </h1>
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-royal-200/70 mt-2">
+            Sign in with your credentials to submit and track utility bills
+          </p>
+        </div>
+
+        <div id="errorAlert" class="hidden mb-6 p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs flex items-center space-x-2.5 animate-pulse">
+          <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+          <span id="errorMessage">Invalid username or password!</span>
+        </div>
+
+        <!-- FIRST-TIME DEFAULT PASSWORD SETUP FORM -->
+        <div id="passwordChangeView" class="hidden animate-fade-in">
+          <div class="text-center mb-6">
+            <div class="w-12 h-12 rounded-2xl bg-amber-500/10 text-amber-500 flex items-center justify-center mx-auto mb-3">
+              <i data-lucide="key" class="w-6 h-6"></i>
+            </div>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Create Permanent Password</h3>
+            <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">
+              Hello <strong id="pwChangeFullName" class="text-royal-600 dark:text-royal-400">User</strong>! You are logging in with a default password. Please create your permanent password.
+            </p>
+          </div>
+
+          <div id="pwChangeErrorAlert" class="hidden mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs flex items-center space-x-2">
+            <i data-lucide="alert-circle" class="w-4 h-4 flex-shrink-0"></i>
+            <span id="pwChangeErrorText">Passwords do not match</span>
+          </div>
+
+          <form onsubmit="handlePasswordChangeSubmit(event)" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-2">
+                New Password
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="newPasswordInput"
+                  required
+                  placeholder="Min 4 characters" 
+                  class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-royal-500"
+                />
+                <button 
+                  type="button" 
+                  onclick="toggleNewPasswordVisibility('newPasswordInput', 'newPwEyeIcon')" 
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
+                >
+                  <i id="newPwEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div>
+              <label class="block text-xs font-semibold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-2">
+                Confirm New Password
+              </label>
+              <div class="relative">
+                <input 
+                  type="password" 
+                  id="confirmPasswordInput"
+                  required
+                  placeholder="Re-enter password" 
+                  class="w-full pl-3.5 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-royal-500"
+                />
+                <button 
+                  type="button" 
+                  onclick="toggleNewPasswordVisibility('confirmPasswordInput', 'confPwEyeIcon')" 
+                  class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer"
+                >
+                  <i id="confPwEyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex items-center space-x-2 pt-2">
+              <button 
+                type="button" 
+                onclick="cancelPasswordChange()" 
+                class="w-1/3 py-2.5 px-3 rounded-xl bg-slate-200 hover:bg-slate-300 dark:bg-royal-800 dark:hover:bg-royal-700 text-slate-700 dark:text-royal-200 text-xs font-semibold transition-colors cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button 
+                type="submit" 
+                class="w-2/3 py-2.5 px-3 bg-royal-500 hover:bg-royal-600 text-white font-semibold rounded-xl text-xs shadow-md transition-all cursor-pointer"
+              >
+                Save &amp; Enter Portal
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- STANDARD LOGIN FORM -->
+        <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-5">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-2">
+              Username
+            </label>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-royal-400">
+                <i data-lucide="user" class="w-4 h-4"></i>
+              </div>
+              <input 
+                type="text" 
+                id="usernameInput"
+                required
+                value=""
+                placeholder="Enter username" 
+                class="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-royal-300/40 text-sm focus:outline-none focus:ring-2 focus:ring-royal-500 dark:focus:ring-royal-400 transition-all"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <label class="block text-xs font-semibold text-slate-700 dark:text-royal-200 uppercase tracking-wider">
+                Password
+              </label>
+            </div>
+            <div class="relative">
+              <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400 dark:text-royal-400">
+                <i data-lucide="lock" class="w-4 h-4"></i>
+              </div>
+              <input 
+                type="password" 
+                id="passwordInput"
+                required
+                value=""
+                placeholder="••••••••" 
+                class="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-royal-300/40 text-sm focus:outline-none focus:ring-2 focus:ring-royal-500 dark:focus:ring-royal-400 transition-all"
+              />
+              <button 
+                type="button" 
+                onclick="togglePasswordVisibility()" 
+                class="absolute inset-y-0 right-0 pr-3 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors cursor-pointer"
+                title="Toggle password visibility"
+              >
+                <i id="eyeIcon" data-lucide="eye" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between pt-1">
+            <label class="flex items-center space-x-2 cursor-pointer">
+              <input type="checkbox" checked class="w-4 h-4 rounded text-royal-600 focus:ring-royal-500 dark:bg-royal-950 border-slate-300 dark:border-royal-800 cursor-pointer">
+              <span class="text-xs text-slate-600 dark:text-royal-200/80">Remember session</span>
+            </label>
+          </div>
+
+          <button 
+            type="submit" 
+            id="loginSubmitBtn"
+            class="w-full py-3 px-4 bg-royal-500 hover:bg-royal-600 active:bg-royal-700 text-white font-semibold rounded-xl shadow-lg shadow-royal-500/25 transition-all duration-200 flex items-center justify-center space-x-2 group focus:outline-none focus:ring-2 focus:ring-royal-500 focus:ring-offset-2 dark:focus:ring-offset-royal-950 cursor-pointer"
+          >
+            <span id="loginBtnText">Sign In</span>
+            <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- 2. DASHBOARD VIEW -->
+    <div id="dashboardView" class="hidden w-full max-w-6xl animate-fade-in relative z-10 py-6">
+      <div class="bg-white/95 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/60 glass-card rounded-2xl shadow-xl p-6 sm:p-10 transition-all duration-300">
+        
+        <!-- Welcome Banner Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/80 dark:border-royal-800/60 gap-4">
+          <div>
+            <div class="flex flex-wrap items-center gap-2 mb-2">
+              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
+                Authenticated Session
+              </span>
+              <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-royal-500/10 text-royal-600 dark:text-royal-300 border border-royal-500/20">
+                <span>Access:</span>
+                <strong id="displayAccessLevel" class="font-semibold">Level 1</strong>
+              </span>
+              <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20 font-mono">
+                <span>User ID:</span>
+                <strong id="displayUserIdTag">APEC-USR-0001</strong>
+              </span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white">
+              Welcome back, <span id="displayFullName" class="text-royal-500 dark:text-royal-400">User</span>!
+            </h2>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button 
+              onclick="handleLogout()" 
+              class="inline-flex items-center space-x-2 px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-royal-800/60 hover:bg-red-500 hover:text-white dark:hover:bg-red-600 transition-all border border-slate-200 dark:border-royal-700/50 cursor-pointer"
+            >
+              <i data-lucide="log-out" class="w-4 h-4"></i>
+              <span>Log Out</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- TAB NAVIGATION BAR -->
+        <div class="mt-6 flex flex-wrap gap-2 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 text-xs font-medium">
+          <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
+            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+            <span>Overview &amp; Announcements</span>
+          </button>
+          <button id="tabBtn-enroll-bill" onclick="switchTab('enroll-bill')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-blue-500"></i>
+            <span>Enroll New Utility Bill</span>
+          </button>
+          <button id="tabBtn-enroll-status" onclick="switchTab('enroll-status')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-500"></i>
+            <span>View Enrollment Status</span>
+          </button>
+          <button id="tabBtn-request-payment" onclick="switchTab('request-payment')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="credit-card" class="w-3.5 h-3.5 text-amber-500"></i>
+            <span>Request Bill Payment</span>
+          </button>
+          <button id="tabBtn-payment-status" onclick="switchTab('payment-status')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-500"></i>
+            <span>View Request Bill Payment Status</span>
+          </button>
+          <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="hidden inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-500"></i>
+            <span>User Management</span>
+            <span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">Admin</span>
+          </button>
+          <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="hidden inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
+            <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-500"></i>
+            <span>Account Number Management</span>
+            <span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Admin</span>
+          </button>
+        </div>
+
+        <!-- TAB CONTENT CONTAINER -->
+        <div class="py-6">
+          
+          <!-- TAB 1: OVERVIEW & ANNOUNCEMENTS -->
+          <div id="tabContent-overview" class="space-y-8 animate-fade-in">
+            
+            <!-- Admin UserData Database Manager Card -->
+            <div id="adminGsheetCard" class="hidden rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50/60 via-white to-royal-50/40 dark:from-royal-950/90 dark:via-royal-900/40 dark:to-emerald-950/20 p-6 sm:p-7 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-emerald-500/20 dark:border-emerald-500/10 gap-3">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md">
+                    <i data-lucide="database" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">UserData Database</h3>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Live Google Sheets user authorization ledger</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-2">
+                  <button type="button" onclick="syncDatabaseFromGSheet(true)" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 cursor-pointer">
+                    <i id="syncDbIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                    <span>Sync UserData</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Announcements Card from Google Docs -->
+            <div class="rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-6 sm:p-7 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-royal-200/60 dark:border-royal-800/60 gap-3">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-9 h-9 rounded-xl bg-royal-500 text-white flex items-center justify-center shadow-md">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="flex items-center space-x-2">
+                      <h3 class="text-base font-bold text-slate-900 dark:text-white">Announcements</h3>
+                      <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-royal-500/10 text-royal-600 dark:text-royal-300 border border-royal-500/20">
+                        <i data-lucide="file-text" class="w-3 h-3 text-royal-500"></i>
+                        <span>Google Docs Source</span>
+                      </span>
+                      <span id="announcementViewerTag" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-royal-900 text-slate-500 dark:text-royal-300">
+                        Viewer Only
+                      </span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Official updates synced from Google Docs</p>
+                  </div>
+                </div>
+
+                <div class="flex items-center space-x-2 self-start sm:self-auto">
+                  <span id="announcementSyncTime" class="text-[11px] text-slate-400 dark:text-royal-400/60">Synced: Just now</span>
+                  <button type="button" onclick="syncAnnouncementFromDoc()" class="p-1.5 rounded-lg text-royal-600 dark:text-royal-300 hover:bg-royal-100 dark:hover:bg-royal-800/60 transition-colors cursor-pointer" title="Refresh Announcement">
+                    <i id="syncAnnounceIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  </button>
+                  <button id="docConfigBtn" type="button" onclick="toggleDocSettings()" class="hidden inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-royal-500/10 hover:bg-royal-500/20 text-royal-600 dark:text-royal-300 border border-royal-500/20 transition-all cursor-pointer" title="Configure Google Doc Link or Text">
+                    <i data-lucide="settings" class="w-3 h-3 text-royal-500"></i>
+                    <span class="hidden sm:inline">Doc Sync (Admin)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Announcement Body Content -->
+              <div class="mt-5 space-y-4">
+                <div>
+                  <div id="announceTitle" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
+                    Welcome to APECHOMES Utility Portal
+                  </div>
+                  <div class="mt-1 flex items-center space-x-2 text-xs font-medium text-slate-600 dark:text-royal-200">
+                    <i data-lucide="clock" class="w-3.5 h-3.5 text-royal-500"></i>
+                    <span id="announceTime">Updated Today</span>
+                  </div>
+                </div>
+
+                <div id="announceParagraphs" class="max-h-60 sm:max-h-72 overflow-y-auto pr-2 space-y-2.5 pt-1 text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal bg-white/50 dark:bg-royal-950/40 p-4 rounded-xl border border-slate-200/60 dark:border-royal-800/40">
+                  <p class="whitespace-pre-wrap">Welcome to the APECHOMES Utility Bills Submission &amp; Payment Portal.
+Submit and track your monthly utility payments directly through your account.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Portal Workflow Cards Grid -->
+            <div>
+              <div class="mb-4">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Utility Services &amp; Workflows</h4>
+                <p class="text-xs text-slate-500 dark:text-royal-300/60">Select a module below to open its dedicated workspace</p>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <!-- 1. Enroll New Utility Bill -->
+                <div onclick="switchTab('enroll-bill')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
+                  <div>
+                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <i data-lucide="file-plus-2" class="w-5 h-5"></i>
+                    </div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">Enroll New Utility Bill</h5>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Endorse a new utility account with SOA and approved request letter.</p>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
+                    <span>New Endorsement</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </div>
+                </div>
+
+                <!-- 2. View Enrollment Status -->
+                <div onclick="switchTab('enroll-status')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
+                  <div>
+                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <i data-lucide="file-check-2" class="w-5 h-5"></i>
+                    </div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">View Enrollment Status</h5>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Track clearance status of new utility endorsements.</p>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
+                    <span>Check Endorsements</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </div>
+                </div>
+
+                <!-- 3. Request Bill Payment -->
+                <div onclick="switchTab('request-payment')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
+                  <div>
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <i data-lucide="credit-card" class="w-5 h-5"></i>
+                    </div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">Request Bill Payment</h5>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Submit utility bill payment slip for settlement.</p>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
+                    <span>Submit Payment</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </div>
+                </div>
+
+                <!-- 4. View Request Status -->
+                <div onclick="switchTab('payment-status')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
+                  <div>
+                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                      <i data-lucide="activity" class="w-5 h-5"></i>
+                    </div>
+                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">View Payment Status</h5>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Real-time status updates synced from Google Sheet.</p>
+                  </div>
+                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
+                    <span>Live Tracker</span>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- TAB 2: ENROLL NEW UTILITY BILL (NEW BILL ENDORSEMENT) -->
+          <div id="tabContent-enroll-bill" class="hidden animate-fade-in py-2">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">Enroll New Utility Bill</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Register and endorse a new utility account in Google Sheet (New Bill Endorsement)</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                Endorsement Form
+              </span>
+            </div>
+
+            <!-- Enrollment Submission Form -->
+            <div class="max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
+              <div id="enrollSuccessAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs">
+                <div class="flex items-center space-x-2 font-bold text-sm mb-1">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                  <span>Endorsement Submitted Successfully!</span>
+                </div>
+                <p id="enrollSuccessText">Your utility bill endorsement request has been recorded in Google Sheet "New Bill Endorsement".</p>
+                <div class="mt-3">
+                  <button type="button" onclick="switchTab('enroll-status')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer">
+                    View in Enrollment Tracker &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <form id="enrollBillForm" onsubmit="handleEnrollBillSubmit(event)" class="space-y-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- User ID (Readonly) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      User ID (Logged In)
+                    </label>
+                    <input 
+                      type="text" 
+                      id="enrollUserId" 
+                      readonly 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-royal-900/60 border border-slate-300 dark:border-royal-800 text-slate-600 dark:text-royal-300 font-mono text-xs cursor-not-allowed"
+                    />
+                  </div>
+
+                  <!-- Requestor Name (Readonly) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Requestor Name
+                    </label>
+                    <input 
+                      type="text" 
+                      id="enrollRequestorName" 
+                      readonly 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-royal-900/60 border border-slate-300 dark:border-royal-800 text-slate-600 dark:text-royal-300 text-xs cursor-not-allowed"
+                    />
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Email (Required) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Email Address <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                      </div>
+                      <input 
+                        type="email" 
+                        id="enrollEmail" 
+                        required 
+                        placeholder="e.g. employee@apechomes.com"
+                        class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none"
+                      />
+                    </div>
+                  </div>
+
+                  <!-- Viber Number (Required) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Viber Contact Number <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                      </div>
+                      <input 
+                        type="text" 
+                        id="enrollViber" 
+                        required 
+                        placeholder="e.g. 09171234567"
+                        class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Account Number (as reflected in the SOA/Billing Statement) -->
+                <div>
+                  <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                    Account No (as reflected in the SOA/Billing Statement) <span class="text-red-500">*</span>
+                  </label>
+                  <input 
+                    type="text" 
+                    id="enrollAccountNo" 
+                    required 
+                    placeholder="Enter exact account number shown on the utility statement (e.g. 457117000101)"
+                    class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono font-semibold"
+                  />
+                  <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-1">Please enter the exact account number as printed on the official billing statement.</p>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Site / Subdivision -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Site / Subdivision Project <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="enrollSite" 
+                      required 
+                      placeholder="e.g. AHC2, Montefaro Heights, Carissa Homes"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none"
+                    />
+                  </div>
+
+                  <!-- Utility Provider / Biller -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Utility Provider / Biller <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      type="text" 
+                      id="enrollBiller" 
+                      required 
+                      placeholder="e.g. Meralco, Maynilad, PrimeWater, Tarlac II"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none"
+                    />
+                  </div>
+                </div>
+
+                <!-- File Upload 1: Approved Request Letter (Limit to 1 file) -->
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-royal-800/80 bg-slate-50/50 dark:bg-royal-950/30">
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider flex items-center space-x-1.5">
+                      <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-500"></i>
+                      <span>Upload Approved Request Letter (Limit: 1 file) <span class="text-red-500">*</span></span>
+                    </label>
+                    <a 
+                      href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      <span>Drive Folder</span>
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </div>
+                  <input 
+                    type="file" 
+                    id="enrollRequestLetterFile" 
+                    required 
+                    accept=".pdf,.png,.jpg,.jpeg,.doc,.docx"
+                    onchange="handleEnrollLetterSelected(this)"
+                    class="block w-full text-xs text-slate-500 dark:text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-500/10 file:text-blue-600 dark:file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer"
+                  />
+                  <div id="enrollLetterNamePreview" class="hidden mt-2 text-[11px] text-slate-600 dark:text-neutral-300 font-medium"></div>
+                </div>
+
+                <!-- File Upload 2: SOA / Billing Statement (Limit to 1 file) -->
+                <div class="p-4 rounded-xl border border-slate-200 dark:border-royal-800/80 bg-slate-50/50 dark:bg-royal-950/30">
+                  <div class="flex items-center justify-between mb-2">
+                    <label class="text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider flex items-center space-x-1.5">
+                      <i data-lucide="paperclip" class="w-3.5 h-3.5 text-emerald-500"></i>
+                      <span>Upload SOA / Billing Statement (Limit: 1 file) <span class="text-red-500">*</span></span>
+                    </label>
+                    <a 
+                      href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline"
+                    >
+                      <span>Drive Folder</span>
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </div>
+                  <input 
+                    type="file" 
+                    id="enrollSoaFile" 
+                    required 
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    onchange="handleEnrollSoaSelected(this)"
+                    class="block w-full text-xs text-slate-500 dark:text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-emerald-500/10 file:text-emerald-600 dark:file:text-emerald-400 hover:file:bg-emerald-500/20 cursor-pointer"
+                  />
+                  <div id="enrollSoaNamePreview" class="hidden mt-2 text-[11px] text-slate-600 dark:text-neutral-300 font-medium"></div>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end space-x-3">
+                  <button 
+                    type="button" 
+                    onclick="switchTab('overview')"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-neutral-300 hover:bg-slate-100 dark:hover:bg-royal-900 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    id="enrollSubmitBtn"
+                    class="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-md shadow-royal-500/25 transition-all cursor-pointer"
+                  >
+                    <i id="enrollSubmitIcon" data-lucide="send" class="w-4 h-4"></i>
+                    <span id="enrollSubmitText">Submit Utility Bill Endorsement</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 3: VIEW ENROLLMENT STATUS -->
+          <div id="tabContent-enroll-status" class="hidden animate-fade-in py-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6 gap-3">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">View Enrollment Status</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Live ledger of new utility endorsements (synced with New Bill Endorsement sheet)</p>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button 
+                  type="button" 
+                  onclick="switchTab('enroll-bill')" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer"
+                >
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>New Endorsement</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Enrollment Filter & Search Bar -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1">
+                <!-- Search Input -->
+                <div class="w-full sm:w-64 relative">
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                  <input 
+                    type="text" 
+                    id="enrollSearchInput" 
+                    oninput="renderEnrollmentStatusTable()" 
+                    placeholder="Search by ID, account, site, email, status..." 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <!-- Status Filter Dropdown -->
+                <div class="flex items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Status:</label>
+                  <select 
+                    id="enrollStatusFilter" 
+                    onchange="renderEnrollmentStatusTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Approved">Approved</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+
+                <!-- Admin Scope Filter -->
+                <div id="adminEnrollScopeWrapper" class="hidden items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
+                  <select 
+                    id="adminEnrollScopeSelect" 
+                    onchange="renderEnrollmentStatusTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="all">All Endorsements</option>
+                    <option value="my">My Endorsements</option>
+                  </select>
+                </div>
+
+                <span id="enrollmentsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">
+                  0 Endorsements
+                </span>
+              </div>
+
+              <div class="flex items-center space-x-2 self-end md:self-auto">
+                <span id="enrollStatusLastSyncTime" class="text-[11px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">GSheet: Live</span>
+                <button 
+                  type="button" 
+                  onclick="syncLiveEnrollmentsFromGSheet(true)" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-300 dark:border-[#2e2e2e] shadow-sm cursor-pointer"
+                  title="Fetch live endorsements from Google Sheet"
+                >
+                  <i id="refreshEnrollIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
+                  <span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Enrollment Status Table -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4 whitespace-nowrap">Enrollment ID</th>
+                      <th class="py-3 px-4 whitespace-nowrap">User ID</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Contact (Email &amp; Viber)</th>
+                      <th class="py-3 px-4">Account Number (SOA)</th>
+                      <th class="py-3 px-4">Site &amp; Biller</th>
+                      <th class="py-3 px-4">Approved Letter</th>
+                      <th class="py-3 px-4">SOA / Statement</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Date Submitted</th>
+                    </tr>
+                  </thead>
+                  <tbody id="enrollmentTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50">
+                    <tr>
+                      <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+                        Loading utility bill endorsements...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 4: REQUEST BILL PAYMENT -->
+          <div id="tabContent-request-payment" class="hidden animate-fade-in py-2">
+            <div class="flex items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">Request Bill Payment</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Submit utility bills for clearance with auto-formatted attachment</p>
+                </div>
+              </div>
+              <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                Payment Request Slip
+              </span>
+            </div>
+
+            <!-- Payment Request Submission Form -->
+            <div class="max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
+              <div id="billPaymentSuccessAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs">
+                <div class="flex items-center space-x-2 font-bold text-sm mb-1">
+                  <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
+                  <span>Payment Request Submitted Successfully!</span>
+                </div>
+                <p id="billPaymentSuccessText">Your utility bill payment request has been registered and synced with Google Sheet.</p>
+                <div class="mt-3">
+                  <button type="button" onclick="switchTab('payment-status')" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-semibold cursor-pointer">
+                    Track in Payment Status &rarr;
+                  </button>
+                </div>
+              </div>
+
+              <form id="billPaymentForm" onsubmit="handleBillPaymentSubmit(event)" class="space-y-5">
+                <input type="hidden" id="billReqHiddenUserId" value="" />
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <!-- Requestor Name (Readonly) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Requestor Name
+                    </label>
+                    <input 
+                      type="text" 
+                      id="billReqName" 
+                      readonly 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-royal-900/60 border border-slate-300 dark:border-royal-800 text-slate-600 dark:text-royal-300 text-xs cursor-not-allowed"
+                    />
+                  </div>
+
+                  <!-- Viber Contact Number -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Viber Contact Number <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+                        <i data-lucide="phone" class="w-4 h-4"></i>
+                      </div>
+                      <input 
+                        type="text" 
+                        id="billReqViber" 
+                        required 
+                        placeholder="e.g. 09171234567"
+                        class="w-full pl-9 pr-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono"
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <!-- Bill Month Selection -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Bill Month <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                      id="billReqMonth" 
+                      required 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none cursor-pointer"
+                    >
+                      <option value="January">January</option>
+                      <option value="February">February</option>
+                      <option value="March">March</option>
+                      <option value="April">April</option>
+                      <option value="May">May</option>
+                      <option value="June">June</option>
+                      <option value="July">July</option>
+                      <option value="August">August</option>
+                      <option value="September">September</option>
+                      <option value="October" selected>October</option>
+                      <option value="November">November</option>
+                      <option value="December">December</option>
+                    </select>
+                  </div>
+
+                  <!-- Bill Type Selection (STRICTLY POWER AND WATER ONLY) -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Bill Type <span class="text-red-500">*</span>
+                    </label>
+                    <select 
+                      id="billReqType" 
+                      required 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none cursor-pointer"
+                    >
+                      <option value="Power">Power</option>
+                      <option value="Water">Water</option>
+                    </select>
+                  </div>
+
+                  <!-- Due Date -->
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider mb-1.5">
+                      Due Date <span class="text-red-500">*</span>
+                    </label>
+                    <input 
+                      type="date" 
+                      id="billReqDueDate" 
+                      required 
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono cursor-pointer"
+                    />
+                  </div>
+                </div>
+
+                <!-- Account Number Combobox (From Billers sheet Col A: Account No, Col B: Site, Col C: Biller) -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider">
+                      Account Number (Select from Billers) <span class="text-red-500">*</span>
+                    </label>
+                    <!-- Admin & Subadmin manual sync button -->
+                    <button 
+                      type="button" 
+                      id="adminAccountSyncBtn" 
+                      onclick="handleSyncBillersClick()" 
+                      class="hidden items-center space-x-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer"
+                    >
+                      <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+                      <span>Sync Billers (GSheet)</span>
+                    </button>
+                  </div>
+
+                  <div class="relative" id="accountComboboxWrapper">
+                    <input 
+                      type="text" 
+                      id="billReqAccountDisplay" 
+                      required 
+                      autocomplete="off"
+                      placeholder="Type or click to search account number..." 
+                      onfocus="openAccountDropdown()" 
+                      oninput="filterAccountDropdown(this.value)"
+                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono font-bold"
+                    />
+                    <input type="hidden" id="billReqSelectedAccountVal" value="" />
+                    <input type="hidden" id="billReqSelectedSiteVal" value="" />
+                    <input type="hidden" id="billReqSelectedBillerVal" value="" />
+
+                    <div 
+                      id="accountDropdownList" 
+                      class="hidden absolute left-0 right-0 top-full mt-1 max-h-60 overflow-y-auto bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-700 rounded-xl shadow-xl z-50 divide-y divide-slate-100 dark:divide-royal-800"
+                    >
+                      <!-- Dropdown items populated via JS -->
+                    </div>
+                  </div>
+                  <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-1">Displays plain account number; submitted format will be <span class="font-mono text-blue-600 dark:text-blue-400">AccountNumber_Site_Biller</span>.</p>
+                </div>
+
+                <!-- Single File Attachment (Renamed: billmonth_accountnumber_duedate.ext) -->
+                <div>
+                  <div class="flex items-center justify-between mb-1.5">
+                    <label class="text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider flex items-center space-x-1.5">
+                      <i data-lucide="paperclip" class="w-3.5 h-3.5 text-blue-500"></i>
+                      <span>Attach Statement / Proof (Limit: 1 file) <span class="text-red-500">*</span></span>
+                    </label>
+                    <a 
+                      href="https://drive.google.com/drive/folders/1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      <span>Drive Folder</span>
+                      <i data-lucide="external-link" class="w-3 h-3"></i>
+                    </a>
+                  </div>
+
+                  <input 
+                    type="file" 
+                    id="billReqFileInput" 
+                    required 
+                    accept=".pdf,.png,.jpg,.jpeg"
+                    onchange="handleBillPaymentFileSelected(this)"
+                    class="block w-full text-xs text-slate-500 dark:text-neutral-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-blue-500/10 file:text-blue-600 dark:file:text-blue-400 hover:file:bg-blue-500/20 cursor-pointer"
+                  />
+                  
+                  <!-- Formatted Filename Preview -->
+                  <div id="formattedFileNamePreview" class="hidden mt-2 p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 dark:text-blue-300 flex items-center space-x-2">
+                    <i data-lucide="file-check-2" class="w-4 h-4 flex-shrink-0 text-blue-500"></i>
+                    <div>
+                      <span class="text-[10px] uppercase font-bold text-blue-500 block">Renamed for Storage:</span>
+                      <span id="previewRenamedText" class="font-mono font-semibold">billmonth_accountnumber_duedate.pdf</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="pt-4 flex items-center justify-end space-x-3">
+                  <button 
+                    type="button" 
+                    onclick="switchTab('overview')"
+                    class="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-neutral-300 hover:bg-slate-100 dark:hover:bg-royal-900 cursor-pointer"
+                  >
+                    Cancel
+                  </button>
+                  <button 
+                    type="submit" 
+                    id="billPaymentSubmitBtn"
+                    class="inline-flex items-center space-x-2 px-6 py-2.5 rounded-xl text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-md shadow-royal-500/25 transition-all cursor-pointer"
+                  >
+                    <i id="billPaymentSubmitIcon" data-lucide="send" class="w-4 h-4"></i>
+                    <span id="billPaymentSubmitText">Submit Payment Request</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 5: VIEW REQUEST BILL PAYMENT STATUS -->
+          <div id="tabContent-payment-status" class="hidden animate-fade-in py-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6 gap-3">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">View Request Bill Payment Status</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Real-time status updates synced live from Google Sheet (Request Bill Payments)</p>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button 
+                  type="button" 
+                  onclick="switchTab('request-payment')" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer"
+                >
+                  <i data-lucide="credit-card" class="w-3.5 h-3.5"></i>
+                  <span>New Request</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Payment Filter & Search Bar -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1">
+                <!-- Search Input -->
+                <div class="w-full sm:w-64 relative">
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                  <input 
+                    type="text" 
+                    id="paymentSearchInput" 
+                    oninput="renderBillPaymentTable()" 
+                    placeholder="Search by ID, account, site, status, viber..." 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  />
+                </div>
+
+                <!-- Status Filter Dropdown -->
+                <div class="flex items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Status:</label>
+                  <select 
+                    id="paymentStatusFilter" 
+                    onchange="renderBillPaymentTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Statuses</option>
+                  </select>
+                </div>
+
+                <!-- Admin Scope Filter (All Submissions vs My Submissions) -->
+                <div id="adminPaymentScopeWrapper" class="hidden items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
+                  <select 
+                    id="adminPaymentScopeSelect" 
+                    onchange="renderBillPaymentTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="all">All Requests</option>
+                    <option value="my">My Submissions</option>
+                  </select>
+                </div>
+
+                <!-- Sort Indicator -->
+                <span class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[10px] font-medium bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-[#2e2e2e] whitespace-nowrap">
+                  <i data-lucide="arrow-down-up" class="w-3 h-3 text-blue-500"></i>
+                  <span>Sorted by Date (Newest first)</span>
+                </span>
+                
+                <span id="paymentRequestsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">
+                  0 Requests
+                </span>
+              </div>
+
+              <!-- Live Status Sync Trigger & Last Synced Timestamp -->
+              <div class="flex items-center space-x-2 self-end md:self-auto">
+                <span id="paymentStatusLastSyncTime" class="text-[11px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">Live GSheet: Auto-polled</span>
+                <button 
+                  type="button" 
+                  id="refreshLiveStatusBtn" 
+                  onclick="handleRefreshLiveStatusClick()" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-300 dark:border-[#2e2e2e] shadow-sm transition-all cursor-pointer"
+                  title="Fetch latest statuses from Google Sheet immediately"
+                >
+                  <i id="refreshLiveStatusIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
+                  <span>Refresh</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Payment Requests Table -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4 whitespace-nowrap">Request ID</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Requestor</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Date Submitted</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Viber</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Month &amp; Type</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Due Date</th>
+                      <th class="py-3 px-4">Account Number / Site</th>
+                      <th class="py-3 px-4">Attachment</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody id="billPaymentTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50">
+                    <tr>
+                      <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+                        Loading live payment requests...
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 6: USER MANAGEMENT (ADMIN & SUBADMIN ONLY) -->
+          <div id="tabContent-user-management" class="hidden animate-fade-in py-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6 gap-3">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">User Management</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Manage portal user accounts, roles, access levels, and credentials</p>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button 
+                  type="button" 
+                  onclick="toggleAddUserModal(true)" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm cursor-pointer"
+                >
+                  <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+                  <span>Add New User</span>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="syncUsersWithGSheet()" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
+                  title="Sync with UserData Google Sheet"
+                >
+                  <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                  <span>Sync GSheet</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- User Management Filter Bar -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1">
+                <div class="w-full sm:w-64 relative">
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                  <input 
+                    type="text" 
+                    id="userSearchInput" 
+                    oninput="renderUserManagementTable()" 
+                    placeholder="Search by ID, username, name, role..." 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                  />
+                </div>
+
+                <div class="flex items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Role:</label>
+                  <select 
+                    id="userRoleFilter" 
+                    onchange="renderUserManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Roles</option>
+                    <option value="Administrator">Administrator</option>
+                    <option value="Sub-Administrator">Sub-Administrator</option>
+                    <option value="Level 1">Level 1</option>
+                    <option value="Level 2">Level 2</option>
+                    <option value="Level 3">Level 3</option>
+                    <option value="Level 4">Level 4</option>
+                    <option value="Level 5">Level 5</option>
+                  </select>
+                </div>
+
+                <span id="userCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 whitespace-nowrap">
+                  0 Users
+                </span>
+              </div>
+            </div>
+
+            <!-- Users Table -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4 whitespace-nowrap">User ID</th>
+                      <th class="py-3 px-4">User &amp; Full Name</th>
+                      <th class="py-3 px-4">Contact (Email &amp; Viber)</th>
+                      <th class="py-3 px-4">Site / Office</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Access Level</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                      <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="userTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 7: ACCOUNT NUMBER MANAGEMENT (ADMIN & SUBADMIN ONLY) -->
+          <div id="tabContent-account-management" class="hidden animate-fade-in py-2">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6 gap-3">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">Account Number Management</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Manage master billers accounts list (Google Sheet tab: Billers, Col A: Account No, Col B: Site, Col C: Biller)</p>
+                </div>
+              </div>
+
+              <div class="flex items-center space-x-2">
+                <button 
+                  type="button" 
+                  onclick="toggleAddAccountModal(true)" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
+                >
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <span>Add Account Number</span>
+                </button>
+                <button 
+                  type="button" 
+                  id="syncBillersBtn"
+                  onclick="handleSyncBillersClick()" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer"
+                  title="Sync with Google Sheet 'Billers' Tab"
+                >
+                  <i id="syncBillersIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  <span id="syncBillersText">Sync with GSheet</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Account Filter & Search Bar -->
+            <div class="mb-4 flex flex-col md:flex-row md:items-center justify-between gap-3 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm">
+              <div class="flex flex-col sm:flex-row sm:items-center gap-2.5 flex-1">
+                <div class="w-full sm:w-64 relative">
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                  <input 
+                    type="text" 
+                    id="accountSearchInput" 
+                    oninput="renderAccountsManagementTable()" 
+                    placeholder="Search account no, site, biller..." 
+                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+                  />
+                </div>
+
+                <div class="flex items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Utility:</label>
+                  <select 
+                    id="accountTypeFilter" 
+                    onchange="renderAccountsManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Types</option>
+                    <option value="Power">Power</option>
+                    <option value="Water">Water</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center space-x-1.5">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Status:</label>
+                  <select 
+                    id="accountStatusFilter" 
+                    onchange="renderAccountsManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Statuses</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                  </select>
+                </div>
+
+                <span id="accountsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap">
+                  0 Accounts
+                </span>
+              </div>
+            </div>
+
+            <!-- Accounts Table -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs">
+                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+                    <tr>
+                      <th class="py-3 px-4 whitespace-nowrap">Account Number (Col A)</th>
+                      <th class="py-3 px-4">Site / Project (Col B)</th>
+                      <th class="py-3 px-4">Biller Name (Col C)</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Type</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Status</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Last Updated</th>
+                      <th class="py-3 px-4 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="accountsTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50">
+                    <!-- Populated via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: ADD / EDIT USER (ADMIN ONLY) -->
+  <div id="userModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-7">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800 mb-4">
+        <h4 id="userModalTitle" class="text-base font-bold text-slate-900 dark:text-white">Add New User</h4>
+        <button type="button" onclick="toggleAddUserModal(false)" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="userModalForm" onsubmit="handleUserModalSubmit(event)" class="space-y-4">
+        <input type="hidden" id="userFormEditingId" value="" />
+        
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">User ID</label>
+            <input type="text" id="userInputId" placeholder="e.g. APEC-USR-0019" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Username <span class="text-red-500">*</span></label>
+            <input type="text" id="userInputUsername" required placeholder="e.g. jdelacruz" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">First Name</label>
+            <input type="text" id="userInputFirstName" placeholder="Juan" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Last Name</label>
+            <input type="text" id="userInputLastName" placeholder="Dela Cruz" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Email</label>
+            <input type="email" id="userInputEmail" placeholder="juan@apechomes.com" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber No</label>
+            <input type="text" id="userInputViber" placeholder="09171234567" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Access Level <span class="text-red-500">*</span></label>
+            <select id="userInputAccessLevel" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
+              <option value="Administrator">Administrator</option>
+              <option value="Sub-Administrator">Sub-Administrator</option>
+              <option value="Level 1">Level 1</option>
+              <option value="Level 2">Level 2</option>
+              <option value="Level 3">Level 3</option>
+              <option value="Level 4">Level 4</option>
+              <option value="Level 5">Level 5</option>
+              <option value="Level 6">Level 6</option>
+              <option value="Level 7">Level 7</option>
+              <option value="Level 8">Level 8</option>
+              <option value="Level 9">Level 9</option>
+              <option value="Level 10">Level 10</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Office</label>
+            <input type="text" id="userInputSite" placeholder="e.g. AHC2, Head Office" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Initial / Default Password</label>
+            <input type="text" id="userInputDefaultPw" placeholder="123456" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Status</label>
+            <select id="userInputStatus" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-3">
+          <button type="button" onclick="toggleAddUserModal(false)" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md cursor-pointer">
+            Save User
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD / EDIT ACCOUNT NUMBER (ADMIN ONLY) -->
+  <div id="accountModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-md w-full p-6 sm:p-7">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800 mb-4">
+        <h4 id="accountModalTitle" class="text-base font-bold text-slate-900 dark:text-white">Add Account Number</h4>
+        <button type="button" onclick="toggleAddAccountModal(false)" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form id="accountModalForm" onsubmit="handleAccountModalSubmit(event)" class="space-y-4">
+        <input type="hidden" id="accountFormEditingAcc" value="" />
+        
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">
+            Account Number (Col A) <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="accountInputAccNo" 
+            required 
+            placeholder="e.g. 457117000101" 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold" 
+          />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">
+            Site / Subdivision (Col B) <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="accountInputSite" 
+            required 
+            placeholder="e.g. AHC2, AHT, Montefaro Heights" 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" 
+          />
+        </div>
+
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">
+            Biller Name (Col C) <span class="text-red-500">*</span>
+          </label>
+          <input 
+            type="text" 
+            id="accountInputBiller" 
+            required 
+            placeholder="e.g. Meralco, Maynilad, PrimeWater" 
+            class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" 
+          />
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Utility Type</label>
+            <select id="accountInputType" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
+              <option value="Power">Power</option>
+              <option value="Water">Water</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Status</label>
+            <select id="accountInputStatus" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
+              <option value="Active">Active</option>
+              <option value="Inactive">Inactive</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end space-x-2 pt-3">
+          <button type="button" onclick="toggleAddAccountModal(false)" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
+            Cancel
+          </button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">
+            Save Account
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="w-full border-t border-neutral-200 dark:border-[#262626] bg-white dark:bg-[#121212] py-4 text-center text-xs text-neutral-500 dark:text-neutral-400">
+    <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+      <div class="flex items-center space-x-2">
+        <span class="font-bold text-slate-800 dark:text-neutral-200">APECHOMES Utility Portal</span>
+        <span>&bull;</span>
+        <span>Active Role: <strong id="footerRole" class="text-blue-600 dark:text-blue-400">Guest</strong></span>
+      </div>
+      <div>
+        <span>Spreadsheet: <code class="font-mono text-[10px]">1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA</code></span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========================================== -->
+  <!-- SCRIPT LOGIC (STANDALONE CONSOLIDATED)     -->
+  <!-- ========================================== -->
+  <script>
+    const SPREADSHEET_ID = "1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY";
+    const BILL_PAYMENT_SPREADSHEET_ID = "1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA";
+    const GDRIVE_FOLDER_ID = "1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13";
+    const DRIVE_LETTER_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing";
+    const DRIVE_SOA_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd";
+
+    // Primary User Database
+    let userDatabase = [
+      { userId: "APEC-USR-0001", username: "admin", currentPassword: "admin123", defaultPassword: "", firstName: "System", lastName: "Admin", accessLevel: "Administrator", status: "Active", email: "admin@apechomes.com", viberNumber: "09171230001", site: "Head Office" },
+      { userId: "APEC-USR-0002", username: "subadmin", currentPassword: "sub123", defaultPassword: "", firstName: "Operations", lastName: "SubAdmin", accessLevel: "Sub-Administrator", status: "Active", email: "operations@apechomes.com", viberNumber: "09171230002", site: "Regional Office" },
+      { userId: "APEC-USR-0003", username: "LSarmiento", currentPassword: "LSarmiento", defaultPassword: "", firstName: "Louie", lastName: "Sarmiento", accessLevel: "Administrator", status: "Active", email: "lasarmiento.apec@gmail.com", viberNumber: "09171234567", site: "Head Office" },
+      { userId: "APEC-USR-0004", username: "RCBorromeo", currentPassword: "RCBorromeo", defaultPassword: "", firstName: "Regine", lastName: "Borromeo", accessLevel: "Sub-Administrator", status: "Active", email: "rcborromeo@apechomes.com", viberNumber: "09171234568", site: "Head Office" },
+      { userId: "APEC-USR-0005", username: "user1", currentPassword: "", defaultPassword: "1234", firstName: "Test", lastName: "User", accessLevel: "Level 1", status: "Active", email: "user1@apechomes.com", viberNumber: "09171234569", site: "Montefaro Heights" },
+      { userId: "APEC-USR-0006", username: "user_lvl2", currentPassword: "", defaultPassword: "", firstName: "Ian", lastName: "Aquino", accessLevel: "Level 2", status: "Active", email: "ian.aquino@apechomes.com", viberNumber: "09171234570", site: "Carissa Homes" },
+      { userId: "APEC-USR-0007", username: "user_lvl3", currentPassword: "pass3", defaultPassword: "", firstName: "Hannah", lastName: "Villanueva", accessLevel: "Level 3", status: "Active", email: "hannah.v@apechomes.com", viberNumber: "09171234571", site: "Valley Breeze" },
+      { userId: "APEC-USR-0008", username: "user_lvl4", currentPassword: "", defaultPassword: "pass4", firstName: "Gabriel", lastName: "Ramos", accessLevel: "Level 4", status: "Active", email: "gabriel.r@apechomes.com", viberNumber: "09171234572", site: "APEC Homes - Tanza" },
+      { userId: "APEC-USR-0009", username: "user_lvl5", currentPassword: "pass5", defaultPassword: "", firstName: "Fiona", lastName: "Garcia", accessLevel: "Level 5", status: "Active", email: "fiona.g@apechomes.com", viberNumber: "09171234573", site: "APEC Homes - Naic" },
+      { userId: "APEC-USR-0010", username: "user_lvl6", currentPassword: "", defaultPassword: "pass6", firstName: "Eduardo", lastName: "Santos", accessLevel: "Level 6", status: "Active", email: "eduardo.s@apechomes.com", viberNumber: "09171234574", site: "APEC Homes - Calamba" },
+      { userId: "APEC-USR-0015", username: "finance1", currentPassword: "fin123", defaultPassword: "", firstName: "Financial", lastName: "Officer", accessLevel: "Level 5", status: "Active", email: "finance@apechomes.com", viberNumber: "09171234575", site: "Head Office" },
+      { userId: "APEC-USR-0017", username: "mgr_site", currentPassword: "site123", defaultPassword: "", firstName: "Site", lastName: "ProjectMgr", accessLevel: "Level 7", status: "Active", email: "mgr_site@apechomes.com", viberNumber: "09171234576", site: "AHC2" }
+    ];
+
+    try {
+      const savedU = localStorage.getItem("apechomes_user_db_v3");
+      if (savedU) {
+        const parsed = JSON.parse(savedU);
+        if (Array.isArray(parsed) && parsed.length > 0) userDatabase = parsed;
+      }
+    } catch(e) {}
+
+    // Master Billers Catalog (Col A: Account No, Col B: Site, Col C: Biller)
+    let billers = [];
+    try {
+      const savedB = localStorage.getItem("apechomes_billers_catalog_v2");
+      if (savedB) {
+        const parsedB = JSON.parse(savedB);
+        if (Array.isArray(parsedB) && parsedB.length > 0) billers = parsedB;
+      }
+    } catch(e) {}
+
+    // Payment Requests (Request Bill Payments)
+    let paymentRequests = [];
+    try {
+      const savedP = localStorage.getItem("apechomes_bill_payment_requests");
+      if (savedP) {
+        const parsedP = JSON.parse(savedP);
+        if (Array.isArray(parsedP)) paymentRequests = parsedP;
+      }
+    } catch(e) {}
+
+    // Enrollments (New Bill Endorsement)
+    let enrollmentRequests = [];
+    try {
+      const savedE = localStorage.getItem("apechomes_enrollments_requests");
+      if (savedE) {
+        const parsedE = JSON.parse(savedE);
+        if (Array.isArray(parsedE)) enrollmentRequests = parsedE;
+      }
+    } catch(e) {}
+
+    let currentUser = null;
+    let pendingUserForPwChange = null;
+    let currentTab = "overview";
+    let isUploadingFile = null;
+
+    // Helper: Escape HTML
+    function escapeHtml(str) {
+      if (!str) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // Helper: Parse Date submitted for robust sorting
+    function parseSubmittedTime(str) {
+      if (!str) return 0;
+      const s = String(str).trim();
+      const match = s.match(/Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)/);
+      if (match) {
+        const y = parseInt(match[1], 10);
+        const m = parseInt(match[2], 10);
+        const d = parseInt(match[3], 10);
+        const h = match[4] ? parseInt(match[4], 10) : 0;
+        const min = match[5] ? parseInt(match[5], 10) : 0;
+        const sec = match[6] ? parseInt(match[6], 10) : 0;
+        return Date.UTC(y, m, d, h, min, sec);
+      }
+      const parsed = Date.parse(s);
+      return isNaN(parsed) ? 0 : parsed;
+    }
+
+    // Theme logic
+    function initTheme() {
+      const saved = localStorage.getItem("theme") || "dark";
+      setTheme(saved);
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.contains("dark");
+      setTheme(isDark ? "light" : "dark");
+    }
+
+    function setTheme(theme) {
+      const icon = document.getElementById("themeIcon");
+      const text = document.getElementById("themeText");
+      if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        if (icon) { icon.setAttribute("data-lucide", "sun"); icon.className = "w-4 h-4 text-amber-400"; }
+        if (text) text.innerText = "Light Mode";
+        localStorage.setItem("theme", "dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+        if (icon) { icon.setAttribute("data-lucide", "moon"); icon.className = "w-4 h-4 text-slate-700"; }
+        if (text) text.innerText = "Dark Mode";
+        localStorage.setItem("theme", "light");
+      }
+      lucide.createIcons();
+    }
+
+    // Access control UI update
+    function updateAccessUI() {
+      if (!currentUser) return;
+      const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
+
+      // Tab Visibility for Admin & Sub-Admin
+      const tabBtnUserMgmt = document.getElementById("tabBtn-user-management");
+      const tabBtnAccountMgmt = document.getElementById("tabBtn-account-management");
+      const adminPaymentScopeWrapper = document.getElementById("adminPaymentScopeWrapper");
+      const adminEnrollScopeWrapper = document.getElementById("adminEnrollScopeWrapper");
+      const adminAccountSyncBtn = document.getElementById("adminAccountSyncBtn");
+      const adminGsheetCard = document.getElementById("adminGsheetCard");
+      const adminGsheetControls = document.getElementById("adminGsheetControls");
+      const roleTesterWrapper = document.getElementById("roleTesterWrapper");
+      const docConfigBtn = document.getElementById("docConfigBtn");
+
+      if (isAdminOrSub) {
+        if (tabBtnUserMgmt) tabBtnUserMgmt.classList.remove("hidden");
+        if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.remove("hidden");
+        if (adminPaymentScopeWrapper) { adminPaymentScopeWrapper.classList.remove("hidden"); adminPaymentScopeWrapper.classList.add("flex"); }
+        if (adminEnrollScopeWrapper) { adminEnrollScopeWrapper.classList.remove("hidden"); adminEnrollScopeWrapper.classList.add("flex"); }
+        if (adminAccountSyncBtn) { adminAccountSyncBtn.classList.remove("hidden"); adminAccountSyncBtn.classList.add("inline-flex"); }
+        if (adminGsheetCard) adminGsheetCard.classList.remove("hidden");
+        if (adminGsheetControls) { adminGsheetControls.classList.remove("hidden"); adminGsheetControls.classList.add("flex"); }
+        if (roleTesterWrapper) { roleTesterWrapper.classList.remove("hidden"); roleTesterWrapper.classList.add("flex"); }
+        if (docConfigBtn) docConfigBtn.classList.remove("hidden");
+      } else {
+        if (tabBtnUserMgmt) tabBtnUserMgmt.classList.add("hidden");
+        if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.add("hidden");
+        if (adminPaymentScopeWrapper) { adminPaymentScopeWrapper.classList.add("hidden"); adminPaymentScopeWrapper.classList.remove("flex"); }
+        if (adminEnrollScopeWrapper) { adminEnrollScopeWrapper.classList.add("hidden"); adminEnrollScopeWrapper.classList.remove("flex"); }
+        if (adminAccountSyncBtn) { adminAccountSyncBtn.classList.add("hidden"); adminAccountSyncBtn.classList.remove("inline-flex"); }
+        if (adminGsheetCard) adminGsheetCard.classList.add("hidden");
+        if (adminGsheetControls) { adminGsheetControls.classList.add("hidden"); adminGsheetControls.classList.remove("flex"); }
+        if (roleTesterWrapper) { roleTesterWrapper.classList.add("hidden"); roleTesterWrapper.classList.remove("flex"); }
+        if (docConfigBtn) docConfigBtn.classList.add("hidden");
+      }
+
+      const displayAccess = document.getElementById("displayAccessLevel");
+      if (displayAccess) displayAccess.innerText = currentUser.accessLevel;
+      const displayUserIdTag = document.getElementById("displayUserIdTag");
+      if (displayUserIdTag) displayUserIdTag.innerText = currentUser.userId;
+      const headerRole = document.getElementById("headerRole");
+      if (headerRole) headerRole.innerText = currentUser.accessLevel;
+      const footerRole = document.getElementById("footerRole");
+      if (footerRole) footerRole.innerText = `${currentUser.fullName} (${currentUser.accessLevel})`;
+
+      const roleSelect = document.getElementById("roleTesterSelect");
+      if (roleSelect) roleSelect.value = currentUser.accessLevel;
+
+      lucide.createIcons();
+    }
+
+    function handleRoleSwitch(newRole) {
+      if (!currentUser) return;
+      currentUser.accessLevel = newRole;
+      updateAccessUI();
+      if ((currentTab === "user-management" || currentTab === "account-management") && newRole !== "Administrator" && newRole !== "Sub-Administrator") {
+        switchTab("overview");
+      } else if (currentTab === "payment-status") {
+        renderBillPaymentTable();
+      } else if (currentTab === "enroll-status") {
+        renderEnrollmentStatusTable();
+      }
+    }
+
+    // Switch active tab
+    function switchTab(tabId) {
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      if ((tabId === "user-management" || tabId === "account-management") && !isAdminOrSub) {
+        tabId = "overview";
+      }
+      currentTab = tabId;
+      const tabs = ["overview", "enroll-bill", "enroll-status", "request-payment", "payment-status", "user-management", "account-management"];
+      
+      tabs.forEach(t => {
+        const content = document.getElementById("tabContent-" + t);
+        const btn = document.getElementById("tabBtn-" + t);
+        if (content) {
+          if (t === tabId) content.classList.remove("hidden");
+          else content.classList.add("hidden");
+        }
+        if (btn) {
+          if (t === tabId) {
+            btn.className = "inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20";
+          } else {
+            btn.className = "inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50";
+          }
+        }
+      });
+
+      if (tabId === "enroll-bill") {
+        populateEnrollmentFormDefaults();
+      } else if (tabId === "enroll-status") {
+        renderEnrollmentStatusTable();
+        syncLiveEnrollmentsFromGSheet(false);
+      } else if (tabId === "request-payment") {
+        populatePaymentFormDefaults();
+        renderAccountDropdown();
+      } else if (tabId === "payment-status") {
+        renderBillPaymentTable();
+        syncLivePaymentRequestsFromGSheet(false);
+      } else if (tabId === "user-management") {
+        renderUserManagementTable();
+      } else if (tabId === "account-management") {
+        renderAccountsManagementTable();
+      }
+
+      updateAccessUI();
+      lucide.createIcons();
+    }
+
+    // ==========================================
+    // STATUS BADGE STYLING (PLAIN TEXT ONLY, NO ICONS)
+    // ==========================================
+    function getStatusBadgeStyle(status) {
+      const s = (status || "").toLowerCase().trim();
+      if (s.includes("paid") || s.includes("settled") || s.includes("complete")) {
+        return "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30";
+      }
+      if (s.includes("rfp") || s.includes("check") || s.includes("queue") || s.includes("process") || s.includes("accounting") || s.includes("review")) {
+        return "bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30";
+      }
+      if (s.includes("approv") || s.includes("verif") || s.includes("ready") || s.includes("accepted")) {
+        return "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30";
+      }
+      if (s.includes("reject") || s.includes("cancel") || s.includes("disapprov") || s.includes("deni") || s.includes("failed")) {
+        return "bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30";
+      }
+      if (s.includes("pending") || s.includes("wait") || s.includes("hold")) {
+        return "bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30";
+      }
+      return "bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-500/30";
+    }
+
+    // ========================================================
+    // TAB 2: ENROLL NEW UTILITY BILL (NEW BILL ENDORSEMENT)
+    // ========================================================
+    function populateEnrollmentFormDefaults() {
+      if (!currentUser) return;
+      const uidInput = document.getElementById("enrollUserId");
+      const nameInput = document.getElementById("enrollRequestorName");
+      const emailInput = document.getElementById("enrollEmail");
+      const viberInput = document.getElementById("enrollViber");
+
+      if (uidInput) uidInput.value = currentUser.userId;
+      if (nameInput) nameInput.value = currentUser.fullName || currentUser.username;
+      if (emailInput && !emailInput.value) emailInput.value = currentUser.email || "";
+      if (viberInput && !viberInput.value) viberInput.value = currentUser.viberNumber || "";
+    }
+
+    function handleEnrollLetterSelected(input) {
+      const preview = document.getElementById("enrollLetterNamePreview");
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (preview) {
+          preview.innerText = `Selected letter file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+          preview.classList.remove("hidden");
+        }
+      }
+    }
+
+    function handleEnrollSoaSelected(input) {
+      const preview = document.getElementById("enrollSoaNamePreview");
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        if (preview) {
+          preview.innerText = `Selected SOA file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+          preview.classList.remove("hidden");
+        }
+      }
+    }
+
+    async function handleEnrollBillSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("enrollSubmitBtn");
+      const icon = document.getElementById("enrollSubmitIcon");
+      const text = document.getElementById("enrollSubmitText");
+      const alertBox = document.getElementById("enrollSuccessAlert");
+
+      const uid = document.getElementById("enrollUserId").value || currentUser?.userId || "APEC-USR-0001";
+      const email = document.getElementById("enrollEmail").value.trim();
+      const viber = document.getElementById("enrollViber").value.trim();
+      const accountNo = document.getElementById("enrollAccountNo").value.trim();
+      const site = document.getElementById("enrollSite").value.trim();
+      const biller = document.getElementById("enrollBiller").value.trim();
+      const letterFileInput = document.getElementById("enrollRequestLetterFile");
+      const soaFileInput = document.getElementById("enrollSoaFile");
+
+      if (!accountNo || !email || !viber) {
+        alert("Please fill in all required fields (Account Number, Email, Viber).");
+        return;
+      }
+
+      const letterFileName = (letterFileInput.files && letterFileInput.files[0]) ? letterFileInput.files[0].name : "Approved_Letter.pdf";
+      const soaFileName = (soaFileInput.files && soaFileInput.files[0]) ? soaFileInput.files[0].name : "SOA_Billing.pdf";
+
+      btn.disabled = true;
+      icon.classList.add("animate-spin");
+      text.innerText = "Submitting Endorsement...";
+
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      const todayIso = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      const reqId = `ENR-${todayIso}-${rand}`;
+      const nowStr = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
+
+      const newRecord = {
+        requestId: reqId,
+        userId: uid,
+        email: email,
+        viberNumber: viber,
+        accountNumber: accountNo,
+        site: site || "General Site",
+        biller: biller || "Utility Provider",
+        requestLetterFileName: letterFileName,
+        soaFileName: soaFileName,
+        driveLetterFolderUrl: DRIVE_LETTER_FOLDER,
+        driveSoaFolderUrl: DRIVE_SOA_FOLDER,
+        status: "Pending",
+        submittedAt: nowStr
+      };
+
+      // 1. Prepend to local memory and storage
+      enrollmentRequests = [newRecord, ...enrollmentRequests.filter(x => x.requestId !== reqId)];
+      localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+
+      // 2. Post to backend
+      try {
+        await fetch("/api/enrollments/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newRecord)
+        });
+      } catch (err) {
+        console.warn("Backend enrollment submit notice:", err);
+      }
+
+      btn.disabled = false;
+      icon.classList.remove("animate-spin");
+      text.innerText = "Submit Utility Bill Endorsement";
+
+      if (alertBox) {
+        document.getElementById("enrollSuccessText").innerText = `Endorsement registered with Request ID: ${reqId}. Stored under sheet 'New Bill Endorsement'.`;
+        alertBox.classList.remove("hidden");
+      }
+
+      // Reset form fields
+      document.getElementById("enrollAccountNo").value = "";
+      document.getElementById("enrollSite").value = "";
+      document.getElementById("enrollBiller").value = "";
+      if (letterFileInput) letterFileInput.value = "";
+      if (soaFileInput) soaFileInput.value = "";
+      document.getElementById("enrollLetterNamePreview")?.classList.add("hidden");
+      document.getElementById("enrollSoaNamePreview")?.classList.add("hidden");
+    }
+
+    // ========================================================
+    // TAB 3: VIEW ENROLLMENT STATUS (NEW BILL ENDORSEMENT)
+    // ========================================================
+    function renderEnrollmentStatusTable() {
+      const tbody = document.getElementById("enrollmentTableBody");
+      const countBadge = document.getElementById("enrollmentsCountBadge");
+      const searchInput = document.getElementById("enrollSearchInput");
+      const statusSelect = document.getElementById("enrollStatusFilter");
+      const scopeSelect = document.getElementById("adminEnrollScopeSelect");
+
+      if (!tbody) return;
+
+      const query = (searchInput?.value || "").toLowerCase().trim();
+      const statusFilter = statusSelect ? statusSelect.value : "All";
+      const scope = scopeSelect ? scopeSelect.value : "all";
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+
+      let list = [...enrollmentRequests];
+
+      // Access control: Non-admins strictly view only their own records by userId
+      if (!isAdminOrSub || scope === "my") {
+        list = list.filter(r => (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()));
+      }
+
+      if (statusFilter && statusFilter !== "All") {
+        list = list.filter(r => (r.status || "").toLowerCase().trim() === statusFilter.toLowerCase().trim());
+      }
+
+      if (query) {
+        list = list.filter(r => 
+          (r.requestId || "").toLowerCase().includes(query) ||
+          (r.userId || "").toLowerCase().includes(query) ||
+          (r.email || "").toLowerCase().includes(query) ||
+          (r.viberNumber || "").toLowerCase().includes(query) ||
+          (r.accountNumber || "").toLowerCase().includes(query) ||
+          (r.site || "").toLowerCase().includes(query) ||
+          (r.biller || "").toLowerCase().includes(query) ||
+          (r.status || "").toLowerCase().includes(query)
+        );
+      }
+
+      list.sort((a, b) => parseSubmittedTime(b.submittedAt) - parseSubmittedTime(a.submittedAt));
+
+      if (countBadge) {
+        countBadge.innerText = `${list.length} Endorsement${list.length === 1 ? "" : "s"}`;
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+              ${query || (statusFilter && statusFilter !== "All") ? "No endorsements match your search filter." : (isAdminOrSub ? "No utility bill endorsements submitted yet." : "You have not submitted any utility endorsements under user ID " + (currentUser?.userId || "") + ".")}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        const curStatus = item.status || "Pending";
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
+              ${escapeHtml(item.requestId)}
+            </td>
+            <td class="py-3 px-4 font-mono text-[11px] font-semibold text-slate-700 dark:text-neutral-200 whitespace-nowrap">
+              ${escapeHtml(item.userId)}
+            </td>
+            <td class="py-3 px-4">
+              <div class="text-xs font-medium text-slate-900 dark:text-white">${escapeHtml(item.email)}</div>
+              <div class="font-mono text-[11px] text-slate-500 dark:text-neutral-400">${escapeHtml(item.viberNumber)}</div>
+            </td>
+            <td class="py-3 px-4 font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+              ${escapeHtml(item.accountNumber)}
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-semibold text-slate-800 dark:text-neutral-200 text-xs">${escapeHtml(item.site)}</div>
+              <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.biller)}</div>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <a href="${item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "View Letter")}</span>
+              </a>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <a href="${item.driveSoaFolderUrl || DRIVE_SOA_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline">
+                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "View SOA")}</span>
+              </a>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
+                ${escapeHtml(curStatus)}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-slate-500 dark:text-neutral-400 whitespace-nowrap text-[11px]">
+              ${escapeHtml(item.submittedAt)}
+            </td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    }
+
+    async function syncLiveEnrollmentsFromGSheet(isManual = false) {
+      const icon = document.getElementById("refreshEnrollIcon");
+      const timeElem = document.getElementById("enrollStatusLastSyncTime");
+      if (isManual && icon) icon.classList.add("animate-spin");
+
+      let synced = false;
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("New Bill Endorsement")}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const raw = await res.text();
+          const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            const rows = data.table?.rows;
+            if (Array.isArray(rows)) {
+              const list = [];
+              for (const r of rows) {
+                const c = r?.c;
+                if (!c) continue;
+                const reqId = c[0]?.v ? String(c[0].v).trim() : "";
+                if (!reqId || reqId.toLowerCase().includes("id") || reqId.toLowerCase().includes("request")) continue;
+                list.push({
+                  requestId: reqId,
+                  userId: c[1]?.v ? String(c[1].v).trim() : "",
+                  email: c[2]?.v ? String(c[2].v).trim() : "",
+                  viberNumber: c[3]?.v ? String(c[3].v).trim() : "",
+                  accountNumber: c[4]?.v ? String(c[4].v).trim() : "",
+                  site: c[5]?.v ? String(c[5].v).trim() : "",
+                  biller: c[6]?.v ? String(c[6].v).trim() : "",
+                  requestLetterFileName: c[7]?.v ? String(c[7].v).trim() : "Approved_Letter.pdf",
+                  soaFileName: c[8]?.v ? String(c[8].v).trim() : "SOA_Billing.pdf",
+                  driveLetterFolderUrl: DRIVE_LETTER_FOLDER,
+                  driveSoaFolderUrl: DRIVE_SOA_FOLDER,
+                  status: c[9]?.v ? String(c[9].v).trim() : "Pending",
+                  submittedAt: c[10]?.f || c[10]?.v || new Date().toISOString()
+                });
+              }
+              // Authoritative overwrite: Google sheet is the source of truth
+              enrollmentRequests = list;
+              localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+              synced = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Direct GViz enrollment sync notice:", err);
+      }
+
+      if (!synced) {
+        try {
+          const res = await fetch("/api/enrollments/gsheet-sync");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.enrollments && Array.isArray(data.enrollments)) {
+              enrollmentRequests = data.enrollments;
+              localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+              synced = true;
+            }
+          }
+        } catch(e) {}
+      }
+
+      renderEnrollmentStatusTable();
+      if (timeElem) timeElem.innerText = `Synced: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+      if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
+    }
+
+    // ========================================================
+    // TAB 4: REQUEST BILL PAYMENT
+    // ========================================================
+    function populatePaymentFormDefaults() {
+      if (!currentUser) return;
+      const uidHidden = document.getElementById("billReqHiddenUserId");
+      const nameInput = document.getElementById("billReqName");
+      const viberInput = document.getElementById("billReqViber");
+
+      if (uidHidden) uidHidden.value = currentUser.userId;
+      if (nameInput) nameInput.value = currentUser.fullName || currentUser.username;
+      if (viberInput && !viberInput.value) viberInput.value = currentUser.viberNumber || "";
+    }
+
+    function renderAccountDropdown(filtered) {
+      const listEl = document.getElementById("accountDropdownList");
+      if (!listEl) return;
+      const items = filtered || billers;
+
+      if (items.length === 0) {
+        listEl.innerHTML = `<div class="p-3 text-xs text-slate-400 dark:text-neutral-500 italic text-center">No matching accounts found</div>`;
+        return;
+      }
+
+      listEl.innerHTML = items.slice(0, 100).map(b => `
+        <div 
+          onclick="selectAccountItem('${escapeHtml(b.accountNumber)}', '${escapeHtml(b.site)}', '${escapeHtml(b.billerName)}')"
+          class="p-2.5 hover:bg-blue-50 dark:hover:bg-royal-800/60 cursor-pointer transition-colors text-xs"
+        >
+          <div class="font-mono font-bold text-slate-900 dark:text-white">${escapeHtml(b.accountNumber)}</div>
+          <div class="text-[11px] text-slate-500 dark:text-royal-300/80">${escapeHtml(b.site)} &bull; ${escapeHtml(b.billerName)}</div>
+        </div>
+      `).join("");
+    }
+
+    function openAccountDropdown() {
+      const listEl = document.getElementById("accountDropdownList");
+      if (listEl) {
+        listEl.classList.remove("hidden");
+        renderAccountDropdown();
+      }
+    }
+
+    function filterAccountDropdown(q) {
+      const listEl = document.getElementById("accountDropdownList");
+      if (listEl) listEl.classList.remove("hidden");
+      const term = (q || "").toLowerCase().trim();
+      const filtered = billers.filter(b => 
+        (b.accountNumber || "").toLowerCase().includes(term) ||
+        (b.site || "").toLowerCase().includes(term) ||
+        (b.billerName || "").toLowerCase().includes(term)
+      );
+      renderAccountDropdown(filtered);
+    }
+
+    function selectAccountItem(acc, site, biller) {
+      const input = document.getElementById("billReqAccountDisplay");
+      const hiddenAcc = document.getElementById("billReqSelectedAccountVal");
+      const hiddenSite = document.getElementById("billReqSelectedSiteVal");
+      const hiddenBiller = document.getElementById("billReqSelectedBillerVal");
+
+      // Strictly display plain account number in the input box
+      if (input) input.value = acc;
+      if (hiddenAcc) hiddenAcc.value = acc;
+      if (hiddenSite) hiddenSite.value = site;
+      if (hiddenBiller) hiddenBiller.value = biller;
+
+      const listEl = document.getElementById("accountDropdownList");
+      if (listEl) listEl.classList.add("hidden");
+
+      updateFormattedFileName();
+    }
+
+    document.addEventListener("click", function(e) {
+      const wrapper = document.getElementById("accountComboboxWrapper");
+      const listEl = document.getElementById("accountDropdownList");
+      if (wrapper && !wrapper.contains(e.target) && listEl) {
+        listEl.classList.add("hidden");
+      }
+    });
+
+    function updateFormattedFileName() {
+      const month = (document.getElementById("billReqMonth")?.value || "month").toLowerCase().trim();
+      const acc = (document.getElementById("billReqAccountDisplay")?.value || "accountnumber").replace(/[^a-zA-Z0-9-]/g, "").trim();
+      const due = (document.getElementById("billReqDueDate")?.value || "duedate").trim();
+      const fileInput = document.getElementById("billReqFileInput");
+      let ext = "pdf";
+      if (fileInput?.files && fileInput.files[0]) {
+        const parts = fileInput.files[0].name.split(".");
+        if (parts.length > 1) ext = parts[parts.length - 1].toLowerCase();
+      }
+
+      const formatted = `${month}_${acc}_${due}.${ext}`;
+      const preview = document.getElementById("formattedFileNamePreview");
+      const previewText = document.getElementById("previewRenamedText");
+
+      if (previewText) previewText.innerText = formatted;
+      if (preview && fileInput?.files && fileInput.files[0]) {
+        preview.classList.remove("hidden");
+      }
+    }
+
+    function handleBillPaymentFileSelected(input) {
+      updateFormattedFileName();
+    }
+
+    async function handleBillPaymentSubmit(e) {
+      e.preventDefault();
+      const btn = document.getElementById("billPaymentSubmitBtn");
+      const icon = document.getElementById("billPaymentSubmitIcon");
+      const text = document.getElementById("billPaymentSubmitText");
+      const alertBox = document.getElementById("billPaymentSuccessAlert");
+
+      const uid = document.getElementById("billReqHiddenUserId").value || currentUser?.userId || "APEC-USR-0001";
+      const name = document.getElementById("billReqName").value.trim() || currentUser?.fullName || "User";
+      const viber = document.getElementById("billReqViber").value.trim();
+      const month = document.getElementById("billReqMonth").value;
+      const type = document.getElementById("billReqType").value;
+      const dueDate = document.getElementById("billReqDueDate").value;
+      const plainAcc = document.getElementById("billReqAccountDisplay").value.trim();
+      const site = document.getElementById("billReqSelectedSiteVal").value || "General Site";
+      const biller = document.getElementById("billReqSelectedBillerVal").value || "Utility Provider";
+      const fileInput = document.getElementById("billReqFileInput");
+
+      if (!plainAcc || !viber || !dueDate) {
+        alert("Please fill in all required fields (Account Number, Viber, Due Date).");
+        return;
+      }
+
+      // Requirement: format the Account Number as AccountNumber_Site_Biller when posting
+      const formattedAcc = `${plainAcc}_${site}_${biller}`;
+
+      let ext = "pdf";
+      if (fileInput?.files && fileInput.files[0]) {
+        const parts = fileInput.files[0].name.split(".");
+        if (parts.length > 1) ext = parts[parts.length - 1].toLowerCase();
+      }
+      const formattedFileName = `${month.toLowerCase()}_${plainAcc}_${dueDate}.${ext}`;
+
+      btn.disabled = true;
+      icon.classList.add("animate-spin");
+      text.innerText = "Submitting Request...";
+
+      const rand = Math.floor(1000 + Math.random() * 9000);
+      const todayIso = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+      const reqId = `REQ-${todayIso}-${rand}`;
+      const nowStr = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
+
+      const newRecord = {
+        requestId: reqId,
+        userId: uid,
+        requestorName: name,
+        viberNumber: viber,
+        billMonth: month,
+        billType: type,
+        dueDate: dueDate,
+        site: site,
+        biller: biller,
+        accountNumber: formattedAcc,
+        fileName: formattedFileName,
+        fileUrl: `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`,
+        status: "Pending",
+        submittedAt: nowStr
+      };
+
+      // Prepend to local memory & storage
+      paymentRequests = [newRecord, ...paymentRequests.filter(p => p.requestId !== reqId)];
+      localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+
+      // Post to backend
+      try {
+        await fetch("/api/bill-payment/submit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(newRecord)
+        });
+      } catch (err) {
+        console.warn("Backend bill payment submit notice:", err);
+      }
+
+      btn.disabled = false;
+      icon.classList.remove("animate-spin");
+      text.innerText = "Submit Payment Request";
+
+      if (alertBox) {
+        document.getElementById("billPaymentSuccessText").innerText = `Payment request registered with Request ID: ${reqId}. Formatted account: ${formattedAcc}.`;
+        alertBox.classList.remove("hidden");
+      }
+
+      // Reset file input
+      if (fileInput) fileInput.value = "";
+      document.getElementById("formattedFileNamePreview")?.classList.add("hidden");
+    }
+
+    // ========================================================
+    // TAB 5: VIEW REQUEST BILL PAYMENT STATUS
+    // ========================================================
+    function renderBillPaymentTable() {
+      const tbody = document.getElementById("billPaymentTableBody");
+      const countBadge = document.getElementById("paymentRequestsCountBadge");
+      const searchInput = document.getElementById("paymentSearchInput");
+      const statusSelect = document.getElementById("paymentStatusFilter");
+      const scopeSelect = document.getElementById("adminPaymentScopeSelect");
+
+      if (!tbody) return;
+
+      const query = (searchInput?.value || "").toLowerCase().trim();
+      const statusFilter = statusSelect ? statusSelect.value : "All";
+      const scope = scopeSelect ? scopeSelect.value : "all";
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+
+      let list = [...paymentRequests];
+
+      // REQUIREMENT 5: STRICTLY RESTRICT BY USER ID ONLY (NOT REQUESTOR NAME)
+      if (!isAdminOrSub || scope === "my") {
+        list = list.filter(r => (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()));
+      }
+
+      // Dynamic Status Dropdown population
+      if (statusSelect) {
+        const currentSelected = statusSelect.value || "All";
+        const distinctStatuses = Array.from(new Set(paymentRequests.map(r => (r.status || "Pending").trim()))).filter(Boolean);
+        let optionsHtml = `<option value="All">All Statuses</option>`;
+        for (const st of distinctStatuses) {
+          optionsHtml += `<option value="${escapeHtml(st)}" ${st.toLowerCase() === currentSelected.toLowerCase() ? "selected" : ""}>${escapeHtml(st)}</option>`;
+        }
+        statusSelect.innerHTML = optionsHtml;
+      }
+
+      if (statusFilter && statusFilter !== "All") {
+        list = list.filter(r => (r.status || "").toLowerCase().trim() === statusFilter.toLowerCase().trim());
+      }
+
+      // Requirement 4: Search filter across all columns
+      if (query) {
+        list = list.filter(r => 
+          (r.requestId || "").toLowerCase().includes(query) ||
+          (r.userId || "").toLowerCase().includes(query) ||
+          (r.requestorName || "").toLowerCase().includes(query) ||
+          (r.accountNumber || "").toLowerCase().includes(query) ||
+          (r.site || "").toLowerCase().includes(query) ||
+          (r.biller || "").toLowerCase().includes(query) ||
+          (r.billType || "").toLowerCase().includes(query) ||
+          (r.billMonth || "").toLowerCase().includes(query) ||
+          (r.status || "").toLowerCase().includes(query) ||
+          (r.viberNumber || "").toLowerCase().includes(query) ||
+          (r.dueDate || "").toLowerCase().includes(query)
+        );
+      }
+
+      // Requirement: Sort by Date Submitted descending (newest first)
+      list.sort((a, b) => parseSubmittedTime(b.submittedAt) - parseSubmittedTime(a.submittedAt));
+
+      if (countBadge) {
+        countBadge.innerText = `${list.length} Request${list.length === 1 ? "" : "s"}`;
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+              ${query || (statusFilter && statusFilter !== "All") ? "No payment requests match your search and filter criteria." : (isAdminOrSub ? "No payment requests found." : "No payment requests found for your User ID (" + (currentUser?.userId || "") + ").")}
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.map(item => {
+        const curStatus = item.status || "Pending";
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
+              ${escapeHtml(item.requestId)}
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(item.requestorName)}</div>
+              <div class="font-mono text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.userId)}</div>
+            </td>
+            <td class="py-3 px-4 text-slate-500 dark:text-neutral-400 whitespace-nowrap text-[11px]">
+              ${escapeHtml(item.submittedAt)}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-slate-600 dark:text-neutral-300">
+              ${escapeHtml(item.viberNumber)}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="font-medium text-xs">${escapeHtml(item.billMonth)}</span>
+              <span class="ml-1.5 px-1.5 py-0.5 rounded text-[10px] font-bold ${item.billType === "Power" ? "bg-amber-500/10 text-amber-600 dark:text-amber-400" : "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400"}">${escapeHtml(item.billType)}</span>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-slate-600 dark:text-neutral-300">
+              ${escapeHtml(item.dueDate)}
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-mono text-xs font-semibold text-slate-800 dark:text-neutral-200">${escapeHtml(item.accountNumber)}</div>
+              <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.site)} &bull; ${escapeHtml(item.biller)}</div>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <a href="${item.fileUrl || `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
+                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[130px] truncate" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName || "View Attachment")}</span>
+              </a>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <!-- Strictly plain-text status badge without icons (variable Google Sheet status supported) -->
+              <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
+                ${escapeHtml(curStatus)}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    }
+
+    // REQUIREMENT 3: AUTHORITATIVE LIVE GOOGLE SHEET SYNC (DELETED ENTRIES ARE REMOVED)
+    async function syncLivePaymentRequestsFromGSheet(isManual = false) {
+      const btn = document.getElementById("refreshLiveStatusBtn");
+      const icon = document.getElementById("refreshLiveStatusIcon");
+      const timeElem = document.getElementById("paymentStatusLastSyncTime");
+
+      if (isManual && icon) icon.classList.add("animate-spin");
+
+      let synced = false;
+
+      // 1. Direct GViz query
+      try {
+        const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("Request Bill Payments")}`;
+        const res = await fetch(gvizUrl);
+        if (res.ok) {
+          const text = await res.text();
+          const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            const rows = data.table?.rows;
+            if (Array.isArray(rows)) {
+              const remoteList = [];
+              for (const r of rows) {
+                const c = r?.c;
+                if (!c) continue;
+                const reqId = c[0]?.v ? String(c[0].v).trim() : "";
+                if (!reqId || reqId.toLowerCase() === "request id") continue;
+                remoteList.push({
+                  requestId: reqId,
+                  userId: c[1]?.v ? String(c[1].v).trim() : "",
+                  requestorName: c[2]?.v ? String(c[2].v).trim() : "",
+                  viberNumber: c[3]?.v ? String(c[3].v).trim() : "",
+                  billMonth: c[4]?.v ? String(c[4].v).trim() : "",
+                  billType: c[5]?.v ? String(c[5].v).trim() : "Power",
+                  dueDate: c[6]?.f || (c[6]?.v ? String(c[6].v).trim() : ""),
+                  site: c[7]?.v ? String(c[7].v).trim() : "",
+                  biller: c[8]?.v ? String(c[8].v).trim() : "",
+                  accountNumber: c[9]?.v ? String(c[9].v).trim() : "",
+                  fileName: c[10]?.v ? String(c[10].v).trim() : "",
+                  fileUrl: c[11]?.v ? String(c[11].v).trim() : `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`,
+                  status: c[12]?.v ? String(c[12].v).trim() : "Pending",
+                  submittedAt: c[13]?.f || (c[13]?.v ? String(c[13].v).trim() : new Date().toISOString())
+                });
+              }
+
+              // AUTHORITATIVE OVERWRITE: Google Sheet rows replace local state!
+              // Deleted entries in Google Sheet are purged immediately!
+              paymentRequests = remoteList;
+              localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+              synced = true;
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Direct GViz query notice:", err);
+      }
+
+      // 2. Server proxy fallback
+      if (!synced) {
+        try {
+          const res = await fetch("/api/bill-payment/gsheet-status-sync");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.requests && Array.isArray(data.requests)) {
+              paymentRequests = data.requests;
+              localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+              synced = true;
+            }
+          }
+        } catch(e) {}
+      }
+
+      renderBillPaymentTable();
+      const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      if (timeElem) timeElem.innerText = `Live GSheet: Synced at ${timeStr}`;
+      if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
+    }
+
+    function handleRefreshLiveStatusClick() {
+      syncLivePaymentRequestsFromGSheet(true);
+    }
+
+    // ========================================================
+    // TAB 6: USER MANAGEMENT (ADMIN & SUB-ADMIN ONLY)
+    // ========================================================
+    function renderUserManagementTable() {
+      const tbody = document.getElementById("userTableBody");
+      const countBadge = document.getElementById("userCountBadge");
+      const searchInput = document.getElementById("userSearchInput");
+      const roleFilter = document.getElementById("userRoleFilter");
+
+      if (!tbody) return;
+
+      const q = (searchInput?.value || "").toLowerCase().trim();
+      const role = roleFilter ? roleFilter.value : "All";
+
+      let list = [...userDatabase];
+
+      if (role && role !== "All") {
+        list = list.filter(u => (u.accessLevel || "").toLowerCase() === role.toLowerCase());
+      }
+
+      if (q) {
+        list = list.filter(u => 
+          (u.userId || "").toLowerCase().includes(q) ||
+          (u.username || "").toLowerCase().includes(q) ||
+          (u.firstName || "").toLowerCase().includes(q) ||
+          (u.lastName || "").toLowerCase().includes(q) ||
+          (u.email || "").toLowerCase().includes(q) ||
+          (u.accessLevel || "").toLowerCase().includes(q) ||
+          (u.site || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (countBadge) {
+        countBadge.innerText = `${list.length} User${list.length === 1 ? "" : "s"}`;
+      }
+
+      tbody.innerHTML = list.map(u => {
+        const isSelf = currentUser && u.userId === currentUser.userId;
+        const isActive = u.status !== "Inactive";
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-xs text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
+              ${escapeHtml(u.userId)}
+            </td>
+            <td class="py-3 px-4">
+              <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</div>
+              <div class="font-mono text-[10px] text-slate-400 dark:text-neutral-500">@${escapeHtml(u.username)}</div>
+            </td>
+            <td class="py-3 px-4">
+              <div class="text-xs text-slate-700 dark:text-neutral-300">${escapeHtml(u.email || "No email")}</div>
+              <div class="font-mono text-[10px] text-slate-400">${escapeHtml(u.viberNumber || "-")}</div>
+            </td>
+            <td class="py-3 px-4 text-xs text-slate-600 dark:text-neutral-300">
+              ${escapeHtml(u.site || "General Site")}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
+                u.accessLevel === "Administrator" ? "bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20" :
+                u.accessLevel === "Sub-Administrator" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20" :
+                "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+              }">
+                ${escapeHtml(u.accessLevel)}
+              </span>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isActive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/10 text-slate-500"}">
+                ${isActive ? "Active" : "Inactive"}
+              </span>
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center space-x-1.5">
+                <button 
+                  type="button" 
+                  onclick="openEditUserModal('${escapeHtml(u.userId)}')" 
+                  class="p-1 rounded text-slate-600 dark:text-neutral-300 hover:bg-slate-200 dark:hover:bg-neutral-800" 
+                  title="Edit User"
+                >
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="resetUserPassword('${escapeHtml(u.userId)}')" 
+                  class="p-1 rounded text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/30" 
+                  title="Reset Password to Default"
+                >
+                  <i data-lucide="key" class="w-3.5 h-3.5"></i>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="toggleUserStatus('${escapeHtml(u.userId)}')" 
+                  class="p-1 rounded ${isActive ? 'text-slate-400 hover:text-amber-500' : 'text-emerald-500'}" 
+                  title="${isActive ? 'Deactivate' : 'Activate'}"
+                >
+                  <i data-lucide="${isActive ? 'user-x' : 'user-check'}" class="w-3.5 h-3.5"></i>
+                </button>
+                ${!isSelf ? `
+                  <button 
+                    type="button" 
+                    onclick="deleteUser('${escapeHtml(u.userId)}')" 
+                    class="p-1 rounded text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30" 
+                    title="Delete User"
+                  >
+                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                  </button>
+                ` : ''}
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    }
+
+    function toggleAddUserModal(open) {
+      const modal = document.getElementById("userModal");
+      const title = document.getElementById("userModalTitle");
+      const form = document.getElementById("userModalForm");
+      if (!modal) return;
+      if (open) {
+        modal.classList.remove("hidden");
+        form.reset();
+        document.getElementById("userFormEditingId").value = "";
+        const nextNum = userDatabase.length + 1;
+        document.getElementById("userInputId").value = `APEC-USR-${String(nextNum).padStart(4, "0")}`;
+        document.getElementById("userInputId").disabled = false;
+        if (title) title.innerText = "Add New User";
+      } else {
+        modal.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    function openEditUserModal(uid) {
+      const u = userDatabase.find(x => x.userId === uid);
+      if (!u) return;
+      toggleAddUserModal(true);
+      document.getElementById("userModalTitle").innerText = `Edit User: ${u.username}`;
+      document.getElementById("userFormEditingId").value = u.userId;
+      const idInput = document.getElementById("userInputId");
+      idInput.value = u.userId;
+      idInput.disabled = true;
+      document.getElementById("userInputUsername").value = u.username;
+      document.getElementById("userInputFirstName").value = u.firstName || "";
+      document.getElementById("userInputLastName").value = u.lastName || "";
+      document.getElementById("userInputEmail").value = u.email || "";
+      document.getElementById("userInputViber").value = u.viberNumber || "";
+      document.getElementById("userInputAccessLevel").value = u.accessLevel || "Level 1";
+      document.getElementById("userInputSite").value = u.site || "";
+      document.getElementById("userInputDefaultPw").value = u.defaultPassword || "";
+      document.getElementById("userInputStatus").value = u.status || "Active";
+    }
+
+    function handleUserModalSubmit(e) {
+      e.preventDefault();
+      const editingId = document.getElementById("userFormEditingId").value;
+      const uid = document.getElementById("userInputId").value.trim();
+      const username = document.getElementById("userInputUsername").value.trim();
+      const firstName = document.getElementById("userInputFirstName").value.trim();
+      const lastName = document.getElementById("userInputLastName").value.trim();
+      const email = document.getElementById("userInputEmail").value.trim();
+      const viber = document.getElementById("userInputViber").value.trim();
+      const accessLevel = document.getElementById("userInputAccessLevel").value;
+      const site = document.getElementById("userInputSite").value.trim();
+      const defaultPw = document.getElementById("userInputDefaultPw").value.trim();
+      const status = document.getElementById("userInputStatus").value;
+
+      if (editingId) {
+        const idx = userDatabase.findIndex(u => u.userId === editingId);
+        if (idx !== -1) {
+          userDatabase[idx] = {
+            ...userDatabase[idx],
+            username,
+            firstName,
+            lastName,
+            email,
+            viberNumber: viber,
+            accessLevel,
+            site,
+            defaultPassword: defaultPw,
+            status
+          };
+        }
+      } else {
+        const newUser = {
+          userId: uid || `APEC-USR-${String(userDatabase.length + 1).padStart(4, "0")}`,
+          username,
+          currentPassword: "",
+          defaultPassword: defaultPw || "123456",
+          firstName,
+          lastName,
+          email,
+          viberNumber: viber,
+          accessLevel,
+          site: site || "General Site",
+          status
+        };
+        userDatabase.push(newUser);
+      }
+
+      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      fetch("/api/users/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ users: userDatabase })
+      }).catch(() => {});
+
+      toggleAddUserModal(false);
+      renderUserManagementTable();
+    }
+
+    function resetUserPassword(uid) {
+      const u = userDatabase.find(x => x.userId === uid);
+      if (!u) return;
+      const tempPw = prompt(`Enter new temporary password for ${u.username}:`, "123456");
+      if (tempPw === null) return;
+      u.defaultPassword = tempPw;
+      u.currentPassword = "";
+      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      alert(`Password for ${u.username} has been reset. On next sign-in, user must enter temporary password "${tempPw}" and set a permanent password.`);
+      renderUserManagementTable();
+    }
+
+    function toggleUserStatus(uid) {
+      const u = userDatabase.find(x => x.userId === uid);
+      if (!u) return;
+      u.status = u.status === "Inactive" ? "Active" : "Inactive";
+      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      renderUserManagementTable();
+    }
+
+    function deleteUser(uid) {
+      const u = userDatabase.find(x => x.userId === uid);
+      if (!u) return;
+      if (u.username === "admin" || u.username === "LSarmiento") {
+        alert("Primary administrator accounts cannot be deleted.");
+        return;
+      }
+      if (!confirm(`Are you sure you want to delete user ${u.username} (${u.userId})?`)) return;
+      userDatabase = userDatabase.filter(x => x.userId !== uid);
+      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      fetch("/api/users/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: uid })
+      }).catch(() => {});
+      renderUserManagementTable();
+    }
+
+    async function syncUsersWithGSheet() {
+      await syncDatabaseFromGSheet(true);
+      renderUserManagementTable();
+    }
+
+    // ========================================================
+    // TAB 7: ACCOUNT NUMBER MANAGEMENT (BILLERS CATALOG)
+    // ========================================================
+    function renderAccountsManagementTable() {
+      const tbody = document.getElementById("accountsTableBody");
+      const countBadge = document.getElementById("accountsCountBadge");
+      const searchInput = document.getElementById("accountSearchInput");
+      const typeFilter = document.getElementById("accountTypeFilter");
+      const statusFilter = document.getElementById("accountStatusFilter");
+
+      if (!tbody) return;
+
+      const q = (searchInput?.value || "").toLowerCase().trim();
+      const type = typeFilter ? typeFilter.value : "All";
+      const status = statusFilter ? statusFilter.value : "All";
+
+      let list = [...billers];
+
+      if (type && type !== "All") {
+        list = list.filter(b => (b.utilityType || "").toLowerCase() === type.toLowerCase());
+      }
+      if (status && status !== "All") {
+        list = list.filter(b => (b.status || "").toLowerCase() === status.toLowerCase());
+      }
+      if (q) {
+        list = list.filter(b => 
+          (b.accountNumber || "").toLowerCase().includes(q) ||
+          (b.site || "").toLowerCase().includes(q) ||
+          (b.billerName || "").toLowerCase().includes(q)
+        );
+      }
+
+      if (countBadge) {
+        countBadge.innerText = `${list.length} Account${list.length === 1 ? "" : "s"}`;
+      }
+
+      if (list.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+              No account records match your search criteria.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = list.slice(0, 200).map(b => {
+        const isActive = b.status !== "Inactive";
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+            <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
+              ${escapeHtml(b.accountNumber)}
+            </td>
+            <td class="py-3 px-4 font-medium text-slate-800 dark:text-neutral-200 text-xs">
+              ${escapeHtml(b.site)}
+            </td>
+            <td class="py-3 px-4 text-slate-700 dark:text-neutral-300 text-xs">
+              ${escapeHtml(b.billerName)}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${b.utilityType === "Water" ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"}">
+                ${escapeHtml(b.utilityType || "Power")}
+              </span>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${isActive ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400" : "bg-slate-500/10 text-slate-500"}">
+                ${isActive ? "Active" : "Inactive"}
+              </span>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap text-slate-400 text-[11px] font-mono">
+              ${escapeHtml(b.lastUpdated || "-")}
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              <div class="inline-flex items-center space-x-1.5">
+                <button 
+                  type="button" 
+                  onclick="openEditAccountModal('${escapeHtml(b.accountNumber)}')" 
+                  class="p-1 rounded text-slate-600 dark:text-neutral-300 hover:bg-slate-200 dark:hover:bg-neutral-800" 
+                  title="Edit Account"
+                >
+                  <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="toggleAccountStatus('${escapeHtml(b.accountNumber)}')" 
+                  class="p-1 rounded ${isActive ? 'text-slate-400 hover:text-amber-500' : 'text-emerald-500'}" 
+                  title="${isActive ? 'Deactivate' : 'Activate'}"
+                >
+                  <i data-lucide="${isActive ? 'power-off' : 'check'}" class="w-3.5 h-3.5"></i>
+                </button>
+                <button 
+                  type="button" 
+                  onclick="deleteAccount('${escapeHtml(b.accountNumber)}')" 
+                  class="p-1 rounded text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30" 
+                  title="Delete Account"
+                >
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+      lucide.createIcons();
+    }
+
+    function toggleAddAccountModal(open) {
+      const modal = document.getElementById("accountModal");
+      const title = document.getElementById("accountModalTitle");
+      const form = document.getElementById("accountModalForm");
+      if (!modal) return;
+      if (open) {
+        modal.classList.remove("hidden");
+        form.reset();
+        document.getElementById("accountFormEditingAcc").value = "";
+        document.getElementById("accountInputAccNo").disabled = false;
+        if (title) title.innerText = "Add Account Number";
+      } else {
+        modal.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    function openEditAccountModal(accNo) {
+      const b = billers.find(x => x.accountNumber === accNo);
+      if (!b) return;
+      toggleAddAccountModal(true);
+      document.getElementById("accountModalTitle").innerText = `Edit Account: ${b.accountNumber}`;
+      document.getElementById("accountFormEditingAcc").value = b.accountNumber;
+      const accInput = document.getElementById("accountInputAccNo");
+      accInput.value = b.accountNumber;
+      accInput.disabled = true;
+      document.getElementById("accountInputSite").value = b.site || "";
+      document.getElementById("accountInputBiller").value = b.billerName || "";
+      document.getElementById("accountInputType").value = b.utilityType || "Power";
+      document.getElementById("accountInputStatus").value = b.status || "Active";
+    }
+
+    function handleAccountModalSubmit(e) {
+      e.preventDefault();
+      const editingAcc = document.getElementById("accountFormEditingAcc").value;
+      const accNo = document.getElementById("accountInputAccNo").value.trim();
+      const site = document.getElementById("accountInputSite").value.trim();
+      const biller = document.getElementById("accountInputBiller").value.trim();
+      const type = document.getElementById("accountInputType").value;
+      const status = document.getElementById("accountInputStatus").value;
+      const today = new Date().toISOString().slice(0, 10);
+
+      if (editingAcc) {
+        const idx = billers.findIndex(x => x.accountNumber === editingAcc);
+        if (idx !== -1) {
+          billers[idx] = {
+            ...billers[idx],
+            site,
+            billerName: biller,
+            utilityType: type,
+            status,
+            lastUpdated: today
+          };
+        }
+      } else {
+        const newBiller = {
+          billerId: `BIL-${String(billers.length + 1).padStart(3, "0")}`,
+          accountNumber: accNo,
+          site,
+          billerName: biller,
+          utilityType: type,
+          status,
+          lastUpdated: today
+        };
+        billers.push(newBiller);
+      }
+
+      localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      fetch("/api/billers/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ billers })
+      }).catch(() => {});
+
+      toggleAddAccountModal(false);
+      renderAccountsManagementTable();
+      renderAccountDropdown();
+    }
+
+    function toggleAccountStatus(accNo) {
+      const b = billers.find(x => x.accountNumber === accNo);
+      if (!b) return;
+      b.status = b.status === "Inactive" ? "Active" : "Inactive";
+      b.lastUpdated = new Date().toISOString().slice(0, 10);
+      localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      renderAccountsManagementTable();
+      renderAccountDropdown();
+    }
+
+    function deleteAccount(accNo) {
+      if (!confirm(`Are you sure you want to remove account ${accNo}?`)) return;
+      billers = billers.filter(x => x.accountNumber !== accNo);
+      localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      renderAccountsManagementTable();
+      renderAccountDropdown();
+    }
+
+    // Direct GViz Sync from Billers sheet (Col A: Account No, Col B: Site, Col C: Biller)
+    async function handleSyncBillersClick() {
+      const btn = document.getElementById("syncBillersBtn");
+      const icon = document.getElementById("syncBillersIcon");
+      const text = document.getElementById("syncBillersText");
+
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add("animate-spin");
+      if (text) text.innerText = "Syncing Sheet...";
+
+      let synced = false;
+
+      // 1. Direct GViz query
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("Billers")}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const raw = await res.text();
+          const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            const rows = data.table?.rows;
+            if (Array.isArray(rows) && rows.length > 0) {
+              const list = [];
+              const today = new Date().toISOString().slice(0, 10);
+              for (let i = 0; i < rows.length; i++) {
+                const c = rows[i]?.c;
+                if (!c) continue;
+                const accNo = c[0]?.v ? String(c[0].v).trim() : "";
+                const site = c[1]?.v ? String(c[1].v).trim() : "";
+                const biller = c[2]?.v ? String(c[2].v).trim() : "";
+                if (!accNo || accNo.toLowerCase() === "account no" || accNo.toLowerCase() === "account number") continue;
+
+                const isWater = /water|sinukuan|district|laguna/i.test(biller);
+                list.push({
+                  billerId: `BIL-${String(i + 1).padStart(3, "0")}`,
+                  site: site || "General Site",
+                  billerName: biller || "Utility Provider",
+                  accountNumber: accNo,
+                  utilityType: isWater ? "Water" : "Power",
+                  status: "Active",
+                  lastUpdated: today
+                });
+              }
+
+              if (list.length > 0) {
+                billers = list;
+                localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+                synced = true;
+                fetch("/api/billers/save", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ billers: list })
+                }).catch(() => {});
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("Direct Billers sheet fetch notice:", err);
+      }
+
+      // 2. Server proxy fallback
+      if (!synced) {
+        try {
+          const res = await fetch("/api/billers/gsheet-sync");
+          if (res.ok) {
+            const data = await res.json();
+            if (data.billers && data.billers.length > 0) {
+              billers = data.billers;
+              localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+              synced = true;
+            }
+          }
+        } catch(e) {}
+      }
+
+      renderAccountDropdown();
+      if (currentTab === "account-management") renderAccountsManagementTable();
+
+      setTimeout(() => {
+        if (btn) btn.disabled = false;
+        if (icon) icon.classList.remove("animate-spin");
+        if (text) text.innerText = "Sync with GSheet";
+      }, 400);
+    }
+
+    // ========================================================
+    // AUTHENTICATION & LOGIN WORKFLOW
+    // ========================================================
+    function togglePasswordVisibility() {
+      const input = document.getElementById("passwordInput");
+      const icon = document.getElementById("eyeIcon");
+      if (input.type === "password") {
+        input.type = "text";
+        if (icon) icon.setAttribute("data-lucide", "eye-off");
+      } else {
+        input.type = "password";
+        if (icon) icon.setAttribute("data-lucide", "eye");
+      }
+      lucide.createIcons();
+    }
+
+    function toggleNewPasswordVisibility(inputId, iconId) {
+      const input = document.getElementById(inputId);
+      const icon = document.getElementById(iconId);
+      if (input.type === "password") {
+        input.type = "text";
+        if (icon) icon.setAttribute("data-lucide", "eye-off");
+      } else {
+        input.type = "password";
+        if (icon) icon.setAttribute("data-lucide", "eye");
+      }
+      lucide.createIcons();
+    }
+
+    function showLoginError(msg) {
+      const alert = document.getElementById("errorAlert");
+      const text = document.getElementById("errorMessage");
+      if (alert && text) {
+        text.innerText = msg;
+        alert.classList.remove("hidden");
+      }
+    }
+
+    function cancelPasswordChange() {
+      pendingUserForPwChange = null;
+      document.getElementById("passwordChangeView").classList.add("hidden");
+      document.getElementById("loginForm").classList.remove("hidden");
+      document.getElementById("loginSubmitBtn").disabled = false;
+      document.getElementById("loginSubmitBtn").classList.remove("opacity-80", "cursor-wait");
+      document.getElementById("loginBtnText").innerText = "Sign In";
+    }
+
+    function handlePasswordChangeSubmit(e) {
+      e.preventDefault();
+      const newPw = document.getElementById("newPasswordInput").value.trim();
+      const confPw = document.getElementById("confirmPasswordInput").value.trim();
+      const alert = document.getElementById("pwChangeErrorAlert");
+      const alertText = document.getElementById("pwChangeErrorText");
+
+      if (newPw.length < 4) {
+        if (alert && alertText) {
+          alertText.innerText = "Password must be at least 4 characters.";
+          alert.classList.remove("hidden");
+        }
+        return;
+      }
+
+      if (newPw !== confPw) {
+        if (alert && alertText) {
+          alertText.innerText = "New passwords do not match. Please re-enter.";
+          alert.classList.remove("hidden");
+        }
+        return;
+      }
+
+      if (pendingUserForPwChange) {
+        const u = userDatabase.find(x => x.userId === pendingUserForPwChange.userId);
+        if (u) {
+          u.currentPassword = newPw;
+          u.defaultPassword = "";
+          localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+        }
+
+        currentUser = {
+          userId: pendingUserForPwChange.userId,
+          username: pendingUserForPwChange.username,
+          firstName: pendingUserForPwChange.firstName,
+          lastName: pendingUserForPwChange.lastName,
+          fullName: `${pendingUserForPwChange.firstName} ${pendingUserForPwChange.lastName}`.trim() || pendingUserForPwChange.username,
+          accessLevel: pendingUserForPwChange.accessLevel,
+          email: pendingUserForPwChange.email,
+          viberNumber: pendingUserForPwChange.viberNumber,
+          site: pendingUserForPwChange.site
+        };
+
+        pendingUserForPwChange = null;
+        document.getElementById("passwordChangeView").classList.add("hidden");
+        document.getElementById("loginForm").classList.remove("hidden");
+        completeLoginSuccess(currentUser);
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const usernameInput = document.getElementById("usernameInput").value.trim();
+      const passwordVal = document.getElementById("passwordInput").value;
+      const submitBtn = document.getElementById("loginSubmitBtn");
+      const btnText = document.getElementById("loginBtnText");
+
+      document.getElementById("errorAlert").classList.add("hidden");
+
+      if (!usernameInput || !passwordVal) {
+        showLoginError("Please enter your username and password.");
+        return;
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.classList.add("opacity-80", "cursor-wait");
+      btnText.innerText = "Verifying...";
+
+      setTimeout(() => {
+        const matchedUser = userDatabase.find(
+          u => u.username.toLowerCase() === usernameInput.toLowerCase() ||
+               (u.userId && u.userId.toLowerCase() === usernameInput.toLowerCase())
+        );
+
+        if (!matchedUser) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove("opacity-80", "cursor-wait");
+          btnText.innerText = "Sign In";
+          showLoginError("Account not found. Please verify your username.");
+          return;
+        }
+
+        const currentPw = (matchedUser.currentPassword || "").trim();
+        const defaultPw = (matchedUser.defaultPassword || "").trim();
+
+        if (currentPw) {
+          if (passwordVal === currentPw) {
+            currentUser = {
+              userId: matchedUser.userId,
+              username: matchedUser.username,
+              firstName: matchedUser.firstName,
+              lastName: matchedUser.lastName,
+              fullName: `${matchedUser.firstName} ${matchedUser.lastName}`.trim() || matchedUser.username,
+              accessLevel: matchedUser.accessLevel,
+              email: matchedUser.email,
+              viberNumber: matchedUser.viberNumber,
+              site: matchedUser.site
+            };
+            completeLoginSuccess(currentUser);
+            return;
+          } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("opacity-80", "cursor-wait");
+            btnText.innerText = "Sign In";
+            showLoginError("Access denied: Incorrect password.");
+            return;
+          }
+        }
+
+        if (!currentPw && defaultPw) {
+          if (passwordVal === defaultPw) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("opacity-80", "cursor-wait");
+            btnText.innerText = "Sign In";
+
+            pendingUserForPwChange = matchedUser;
+            const fullName = `${matchedUser.firstName} ${matchedUser.lastName}`.trim() || matchedUser.username;
+            document.getElementById("pwChangeFullName").innerText = fullName;
+            document.getElementById("loginForm").classList.add("hidden");
+            document.getElementById("passwordChangeView").classList.remove("hidden");
+            document.getElementById("newPasswordInput").value = "";
+            document.getElementById("confirmPasswordInput").value = "";
+            document.getElementById("newPasswordInput").focus();
+            return;
+          } else {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("opacity-80", "cursor-wait");
+            btnText.innerText = "Sign In";
+            showLoginError("Access denied: Incorrect temporary password.");
+            return;
+          }
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.classList.remove("opacity-80", "cursor-wait");
+        btnText.innerText = "Sign In";
+        showLoginError("Access denied: Account configuration error. Contact admin.");
+      }, 350);
+    }
+
+    function completeLoginSuccess(user) {
+      document.getElementById("loginView").classList.add("hidden");
+      document.getElementById("dashboardView").classList.remove("hidden");
+      document.getElementById("userHeaderProfile").classList.remove("hidden");
+
+      const avatar = document.getElementById("headerAvatar");
+      if (avatar) avatar.innerText = (user.firstName ? user.firstName[0] : user.username[0] || "U").toUpperCase();
+      const usernameSpan = document.getElementById("headerUsername");
+      if (usernameSpan) usernameSpan.innerText = user.username;
+      const displayFullName = document.getElementById("displayFullName");
+      if (displayFullName) displayFullName.innerText = user.fullName || user.username;
+
+      updateAccessUI();
+      switchTab("overview");
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      cancelPasswordChange();
+      document.getElementById("dashboardView").classList.add("hidden");
+      document.getElementById("loginView").classList.remove("hidden");
+      document.getElementById("userHeaderProfile").classList.add("hidden");
+      document.getElementById("usernameInput").value = "";
+      document.getElementById("passwordInput").value = "";
+      document.getElementById("loginSubmitBtn").disabled = false;
+      document.getElementById("loginBtnText").innerText = "Sign In";
+      document.getElementById("errorAlert").classList.add("hidden");
+    }
+
+    // Google Sheet UserData Database Sync
+    async function syncDatabaseFromGSheet(isManual = false) {
+      const icon = document.getElementById("syncDbIcon");
+      const statusText = document.getElementById("sheetStatusText");
+      if (isManual && icon) icon.classList.add("animate-spin");
+
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=UserData`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const raw = await res.text();
+          const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            const rows = data.table?.rows;
+            if (Array.isArray(rows) && rows.length > 0) {
+              const list = [];
+              for (const r of rows) {
+                const c = r?.c;
+                if (!c) continue;
+                const uid = c[0]?.v ? String(c[0].v).trim() : "";
+                const curPw = c[1]?.v ? String(c[1].v).trim() : "";
+                const defPw = c[2]?.v ? String(c[2].v).trim() : "";
+                const fn = c[3]?.v ? String(c[3].v).trim() : "";
+                const ln = c[4]?.v ? String(c[4].v).trim() : "";
+                const access = c[5]?.v ? String(c[5].v).trim() : "Level 1";
+                const uname = c[6]?.v ? String(c[6].v).trim() : uid;
+
+                if (!uid || uid.toLowerCase() === "user id") continue;
+                list.push({
+                  userId: uid,
+                  username: uname || uid,
+                  currentPassword: curPw,
+                  defaultPassword: defPw,
+                  firstName: fn,
+                  lastName: ln,
+                  accessLevel: access,
+                  status: "Active"
+                });
+              }
+              if (list.length > 0) {
+                userDatabase = list;
+                localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+                if (statusText) statusText.innerText = "UserData DB Live";
+              }
+            }
+          }
+        }
+      } catch (err) {
+        console.warn("UserData sheet sync notice:", err);
+      }
+
+      if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
+      if (currentTab === "user-management") renderUserManagementTable();
+    }
+
+    // Google Doc Announcements Sync
+    async function syncAnnouncementFromDoc() {
+      try {
+        const res = await fetch("/api/announcements/sync");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.text) {
+            const lines = data.text.trim().split("\n").filter(Boolean);
+            if (lines.length > 0) {
+              document.getElementById("announceTitle").innerText = lines[0];
+              document.getElementById("announceParagraphs").innerHTML = lines.slice(1).map(l => `<p class="whitespace-pre-wrap">${escapeHtml(l)}</p>`).join("");
+              document.getElementById("announceTime").innerText = `Updated at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+            }
+          }
+        }
+      } catch(e) {}
+    }
+
+    // ==========================================
+    // INITIALIZATION & PERIODIC AUTO-POLLING
+    // ==========================================
+    initTheme();
+    syncDatabaseFromGSheet();
+    syncAnnouncementFromDoc();
+    handleSyncBillersClick();
+    syncLivePaymentRequestsFromGSheet(false);
+    syncLiveEnrollmentsFromGSheet(false);
+
+    // Auto-polling every 25 seconds: keep statuses perfectly fresh!
+    setInterval(() => {
+      syncLivePaymentRequestsFromGSheet(false);
+      syncLiveEnrollmentsFromGSheet(false);
+    }, 25000);
+
+    // Dynamic filename update listeners
+    document.getElementById("billReqMonth")?.addEventListener("change", updateFormattedFileName);
+    document.getElementById("billReqDueDate")?.addEventListener("change", updateFormattedFileName);
+  </script>
+</body>
+</html>
