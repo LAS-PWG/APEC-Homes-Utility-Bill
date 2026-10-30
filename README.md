@@ -15,7 +15,8 @@ This package is pre-configured and ready for 1-click static deployment on **Netl
 - `_redirects`: SPA rewrite rule (/* /index.html 200) for Netlify.
 - `netlify.toml`: Configuration file for Netlify zero-config builds.
 - `.nojekyll`: Bypasses Jekyll on GitHub Pages to preserve underscore files like `_redirects`.
-- `apechomes-logo.png`: High-resolution APEC Homes branding asset.
+- `apechomes-logo.png`: High-resolution APEC Homes branding asset (relative asset path).
+- `GoogleAppsScript_Code.js`: Complete Apps Script automation for Google Sheets & Google Drive (handles unique file renaming, physical uploads to Drive, and direct file link generation).
 
 ---
 

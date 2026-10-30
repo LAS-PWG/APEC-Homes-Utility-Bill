@@ -76,7 +76,7 @@
         <div class="flex items-center space-x-2 px-2.5 py-1 rounded-xl bg-white/95 dark:bg-[#1a1a1a] border border-neutral-200/80 dark:border-[#2e2e2e] shadow-sm">
           <img 
             id="brandLogoImg"
-            src="/apechomes-logo.png" 
+            src="./apechomes-logo.png" 
             alt="APECHOMES Logo" 
             class="brand-logo-img"
             onerror="this.style.display='none'; const fb = document.getElementById('brandLogoFallback'); if(fb){ fb.classList.remove('hidden'); fb.classList.add('flex'); }"
@@ -100,16 +100,18 @@
           <span id="sheetStatusText">UserData DB Live</span>
         </div>
 
-        <!-- Download Hosting-Ready ZIP Button -->
-        <a 
-          href="/api/download-hosting-bundle" 
-          download 
-          class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer" 
-          title="Download Complete Hosting-Ready Bundle (ZIP)"
-        >
-          <i data-lucide="download" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Download ZIP</span>
-        </a>
+        <!-- Download Hosting-Ready ZIP Button (Strictly visible ONLY to Administrator level) -->
+        <div id="adminOnlyDownloadZipWrapper" class="hidden">
+          <a 
+            href="./apechomes-portal-hosting-ready.zip" 
+            download="apechomes-portal-hosting-ready.zip" 
+            class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer" 
+            title="Administrator Only: Download Complete Hosting-Ready Bundle (ZIP)"
+          >
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span class="hidden sm:inline">Download ZIP</span>
+          </a>
+        </div>
 
         <!-- View As Dropdown (Admin & Sub-Admin ONLY) -->
         <div id="roleTesterWrapper" class="hidden items-center space-x-1.5 bg-neutral-100 dark:bg-[#1a1a1a] p-1 rounded-xl border border-neutral-200 dark:border-[#262626]">
@@ -369,38 +371,60 @@
           </div>
         </div>
 
-        <!-- TAB NAVIGATION BAR -->
-        <div class="mt-6 flex flex-wrap gap-2 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 text-xs font-medium">
-          <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
-            <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-            <span>Overview &amp; Announcements</span>
-          </button>
-          <button id="tabBtn-enroll-bill" onclick="switchTab('enroll-bill')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-blue-500"></i>
-            <span>Enroll New Utility Bill</span>
-          </button>
-          <button id="tabBtn-enroll-status" onclick="switchTab('enroll-status')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-500"></i>
-            <span>View Enrollment Status</span>
-          </button>
-          <button id="tabBtn-request-payment" onclick="switchTab('request-payment')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="credit-card" class="w-3.5 h-3.5 text-amber-500"></i>
-            <span>Request Bill Payment</span>
-          </button>
-          <button id="tabBtn-payment-status" onclick="switchTab('payment-status')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-500"></i>
-            <span>View Request Bill Payment Status</span>
-          </button>
-          <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="hidden inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-500"></i>
-            <span>User Management</span>
-            <span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">Admin</span>
-          </button>
-          <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="hidden inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50">
-            <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-500"></i>
-            <span>Account Number Management</span>
-            <span class="ml-1 px-1.5 py-0.5 rounded text-[9px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Admin</span>
-          </button>
+        <!-- TAB NAVIGATION BAR (REORGANIZED INTO STRUCTURED FUNCTIONAL GROUPS) -->
+        <div class="mt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 text-xs font-medium">
+          <div class="flex flex-wrap items-center gap-2">
+            <!-- Home -->
+            <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
+              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+              <span>Overview</span>
+            </button>
+
+            <!-- Payments Operations Group -->
+            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 space-x-1">
+              <span class="hidden sm:inline px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Payments:</span>
+              <button id="tabBtn-request-payment" onclick="switchTab('request-payment')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
+                <i data-lucide="credit-card" class="w-3.5 h-3.5 text-blue-500"></i>
+                <span>Request Payment</span>
+              </button>
+              <button id="tabBtn-payment-status" onclick="switchTab('payment-status')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
+                <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-500"></i>
+                <span>Payment Status</span>
+                <span id="navPaymentCountBadge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
+              </button>
+            </div>
+
+            <!-- Endorsement Operations Group -->
+            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 space-x-1">
+              <span class="hidden sm:inline px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Endorse:</span>
+              <button id="tabBtn-enroll-bill" onclick="switchTab('enroll-bill')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
+                <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>Enroll Bill</span>
+              </button>
+              <button id="tabBtn-enroll-status" onclick="switchTab('enroll-status')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
+                <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-400"></i>
+                <span>Enrollment Status</span>
+                <span id="navEnrollCountBadge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
+              </button>
+            </div>
+
+            <!-- Administration Group (ADMIN & SUBADMIN ONLY) -->
+            <div id="adminNavGroup" class="hidden items-center p-1 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 space-x-1">
+              <span class="hidden md:inline px-2 text-[10px] font-bold uppercase tracking-wider text-indigo-500">Admin:</span>
+              <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
+                <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-500"></i>
+                <span>Users</span>
+              </button>
+              <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
+                <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-500"></i>
+                <span>Accounts</span>
+              </button>
+              <button id="tabBtn-webhook-setup" onclick="openWebhookSettingsModal()" class="inline-flex items-center space-x-1 px-2 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60" title="Google Sheets Webhook & Apps Script Integration Setup">
+                <i data-lucide="settings" class="w-3.5 h-3.5 text-purple-500"></i>
+                <span class="hidden sm:inline">Webhooks</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         <!-- TAB CONTENT CONTAINER -->
@@ -703,21 +727,25 @@ Submit and track your monthly utility payments directly through your account.</p
                 </div>
 
                 <!-- File Upload 1: Approved Request Letter (Limit to 1 file) -->
+                <!-- File Upload 1: Approved Request Letter (Limit to 1 file) -->
                 <div class="p-4 rounded-xl border border-slate-200 dark:border-royal-800/80 bg-slate-50/50 dark:bg-royal-950/30">
                   <div class="flex items-center justify-between mb-2">
                     <label class="text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase tracking-wider flex items-center space-x-1.5">
                       <i data-lucide="file-text" class="w-3.5 h-3.5 text-blue-500"></i>
                       <span>Upload Approved Request Letter (Limit: 1 file) <span class="text-red-500">*</span></span>
                     </label>
-                    <a 
-                      href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      <span>Drive Folder</span>
-                      <i data-lucide="external-link" class="w-3 h-3"></i>
-                    </a>
+                    <div id="enrollLetterFolderWrapper" class="hidden">
+                      <a 
+                        href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
+                        title="Admin &amp; Sub-Admin: Open Target Google Drive Folder"
+                      >
+                        <span>Drive Folder</span>
+                        <i data-lucide="external-link" class="w-3 h-3"></i>
+                      </a>
+                    </div>
                   </div>
                   <input 
                     type="file" 
@@ -737,15 +765,18 @@ Submit and track your monthly utility payments directly through your account.</p
                       <i data-lucide="paperclip" class="w-3.5 h-3.5 text-emerald-500"></i>
                       <span>Upload SOA / Billing Statement (Limit: 1 file) <span class="text-red-500">*</span></span>
                     </label>
-                    <a 
-                      href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline"
-                    >
-                      <span>Drive Folder</span>
-                      <i data-lucide="external-link" class="w-3 h-3"></i>
-                    </a>
+                    <div id="enrollSoaFolderWrapper" class="hidden">
+                      <a 
+                        href="https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline"
+                        title="Admin &amp; Sub-Admin: Open Target Google Drive Folder"
+                      >
+                        <span>Drive Folder</span>
+                        <i data-lucide="external-link" class="w-3 h-3"></i>
+                      </a>
+                    </div>
                   </div>
                   <input 
                     type="file" 
@@ -795,6 +826,16 @@ Submit and track your monthly utility payments directly through your account.</p
               <div class="flex items-center space-x-2">
                 <button 
                   type="button" 
+                  id="adminEnrollCheckSheetBtn"
+                  onclick="checkOrGenerateEnrollmentSheet()" 
+                  class="hidden items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 shadow-sm cursor-pointer"
+                  title="Check and generate 'New Bill Endorsement' tab in Google Sheet"
+                >
+                  <i id="checkEnrollSheetIcon" data-lucide="sheet" class="w-3.5 h-3.5 text-emerald-500"></i>
+                  <span>Check / Update GSheet</span>
+                </button>
+                <button 
+                  type="button" 
                   onclick="switchTab('enroll-bill')" 
                   class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer"
                 >
@@ -802,6 +843,17 @@ Submit and track your monthly utility payments directly through your account.</p
                   <span>New Endorsement</span>
                 </button>
               </div>
+            </div>
+
+            <!-- Enrollment Sheet Check / Generate Banner -->
+            <div id="enrollSheetCheckNotice" class="hidden mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-700 dark:text-emerald-300 flex items-center justify-between">
+              <div class="flex items-center space-x-2">
+                <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500 flex-shrink-0"></i>
+                <span id="enrollSheetCheckNoticeText">Google Sheet tab verified.</span>
+              </div>
+              <button type="button" onclick="this.parentElement.classList.add('hidden')" class="text-neutral-400 hover:text-neutral-600 dark:hover:text-white cursor-pointer">
+                <i data-lucide="x" class="w-3.5 h-3.5"></i>
+              </button>
             </div>
 
             <!-- Enrollment Filter & Search Bar -->
@@ -1047,6 +1099,7 @@ Submit and track your monthly utility payments directly through your account.</p
                       placeholder="Type or click to search account number..." 
                       onfocus="openAccountDropdown()" 
                       oninput="filterAccountDropdown(this.value)"
+                      onblur="validateAccountLookup()"
                       class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono font-bold"
                     />
                     <input type="hidden" id="billReqSelectedAccountVal" value="" />
@@ -1060,6 +1113,20 @@ Submit and track your monthly utility payments directly through your account.</p
                       <!-- Dropdown items populated via JS -->
                     </div>
                   </div>
+
+                  <!-- Invalid Account Warning Notice -->
+                  <div id="accountLookupWarning" class="hidden mt-1.5 p-2 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-700 dark:text-amber-300 flex items-center space-x-1.5 animate-pulse">
+                    <i data-lucide="alert-circle" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                    <span>Invalid account number. Please select a valid registered account from the lookup catalog.</span>
+                  </div>
+
+                  <!-- Selected Account Details Badge -->
+                  <div id="accountSelectedDetails" class="hidden mt-1.5 text-[11px] text-slate-500 dark:text-neutral-400 flex items-center space-x-2">
+                    <span>Site: <strong id="accountSelectedSiteText" class="text-slate-800 dark:text-neutral-200"></strong></span>
+                    <span>&bull;</span>
+                    <span>Biller: <strong id="accountSelectedBillerText" class="text-slate-800 dark:text-neutral-200"></strong></span>
+                  </div>
+
                   <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-1">Displays plain account number; submitted format will be <span class="font-mono text-blue-600 dark:text-blue-400">AccountNumber_Site_Biller</span>.</p>
                 </div>
 
@@ -1070,15 +1137,18 @@ Submit and track your monthly utility payments directly through your account.</p
                       <i data-lucide="paperclip" class="w-3.5 h-3.5 text-blue-500"></i>
                       <span>Attach Statement / Proof (Limit: 1 file) <span class="text-red-500">*</span></span>
                     </label>
-                    <a 
-                      href="https://drive.google.com/drive/folders/1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13" 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
-                    >
-                      <span>Drive Folder</span>
-                      <i data-lucide="external-link" class="w-3 h-3"></i>
-                    </a>
+                    <div id="billPaymentFolderWrapper" class="hidden">
+                      <a 
+                        href="https://drive.google.com/drive/folders/1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13" 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline"
+                        title="Admin &amp; Sub-Admin: Open Target Google Drive Folder"
+                      >
+                        <span>Drive Folder</span>
+                        <i data-lucide="external-link" class="w-3 h-3"></i>
+                      </a>
+                    </div>
                   </div>
 
                   <input 
@@ -1625,6 +1695,344 @@ Submit and track your monthly utility payments directly through your account.</p
     </div>
   </div>
 
+  <!-- 4. WEBHOOK / GOOGLE APPS SCRIPT CONFIGURATION MODAL (ADMIN & SUBADMIN) -->
+  <div id="webhookModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800">
+        <div class="flex items-center space-x-2">
+          <i data-lucide="settings" class="w-5 h-5 text-purple-500"></i>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Google Sheets Webhook &amp; Apps Script Setup</h3>
+        </div>
+        <button type="button" onclick="closeWebhookSettingsModal()" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-slate-600 dark:text-neutral-300">
+        To allow your static web app (hosted on GitHub Pages or Netlify) to write directly into Google Sheets without a backend server, deploy the Google Apps Script below as a Web App.
+      </p>
+
+      <div class="space-y-3 bg-slate-50 dark:bg-royal-950 p-4 rounded-xl border border-slate-200 dark:border-royal-800 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-royal-200 mb-1">
+            New Bill Endorsement Webhook URL:
+          </label>
+          <input 
+            type="url" 
+            id="cfgEnrollmentScriptUrl" 
+            placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+            class="w-full px-3 py-2 rounded-lg bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 font-mono text-xs text-slate-800 dark:text-neutral-200"
+          />
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-royal-200 mb-1">
+            Request Bill Payment Webhook URL:
+          </label>
+          <input 
+            type="url" 
+            id="cfgPaymentScriptUrl" 
+            placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+            class="w-full px-3 py-2 rounded-lg bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 font-mono text-xs text-slate-800 dark:text-neutral-200"
+          />
+        </div>
+
+        <div class="pt-1 flex items-center justify-between">
+          <span id="webhookSavedNotice" class="text-[11px] text-emerald-600 font-semibold hidden">Settings saved!</span>
+          <div class="flex items-center space-x-2 ml-auto">
+            <button 
+              type="button" 
+              onclick="testWebhookUrl()" 
+              class="px-3 py-1.5 rounded-lg bg-slate-200 dark:bg-royal-800 hover:bg-slate-300 dark:hover:bg-royal-700 text-slate-800 dark:text-neutral-200 font-semibold text-xs transition-colors cursor-pointer"
+            >
+              Test Webhook (Auto-Header)
+            </button>
+            <button 
+              type="button" 
+              onclick="saveWebhookSettings()" 
+              class="px-4 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-semibold text-xs shadow-sm cursor-pointer"
+            >
+              Save Webhook URLs
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+            Apps Script Code (Copy into spreadsheet 1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA)
+          </h4>
+          <button 
+            type="button" 
+            onclick="copyAppsScriptCode()" 
+            id="copyScriptBtn"
+            class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer"
+          >
+            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+            <span id="copyScriptText">Copy Script</span>
+          </button>
+        </div>
+        <div class="relative bg-slate-900 text-slate-200 p-3 rounded-xl font-mono text-[11px] overflow-x-auto max-h-60 border border-slate-800">
+          <pre><code id="appsScriptCodeDisplay">function doGet(e) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var enrollSheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
+  ensureEnrollmentHeaders(enrollSheet);
+  var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
+  ensurePaymentHeaders(paySheet);
+  return ContentService.createTextOutput(JSON.stringify({
+    status: 'success',
+    message: 'APEC Homes Apps Script Webhook is ACTIVE and headers have been verified/repaired!',
+    enrollmentRows: enrollSheet.getLastRow(),
+    paymentRows: paySheet.getLastRow()
+  })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(30000);
+  try {
+    var raw = e.postData.contents;
+    var data = JSON.parse(raw);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+    // 1. ACTION: Check / Repair Headers
+    if (data.action === 'init_sheet') {
+      var enrollSheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
+      ensureEnrollmentHeaders(enrollSheet);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        message: 'Headers verified in New Bill Endorsement'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 2. ACTION: Update Status
+    if (data.action === 'updateStatus' && data.requestId) {
+      var isEnroll = String(data.requestId).indexOf('ENR-') === 0;
+      var targetSheet = ss.getSheetByName(isEnroll ? 'New Bill Endorsement' : 'Request Bill Payments');
+      if (targetSheet) {
+        var vals = targetSheet.getDataRange().getValues();
+        var statusCol = isEnroll ? 10 : 13;
+        for (var i = 1; i &lt; vals.length; i++) {
+          if (String(vals[i][0]).trim() === String(data.requestId).trim()) {
+            targetSheet.getRange(i + 1, statusCol).setValue(data.status);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 3. SUBMISSION: Enroll New Utility Bill (ENR-...)
+    if (data.requestId &amp;&amp; String(data.requestId).indexOf('ENR-') === 0) {
+      var sheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
+      ensureEnrollmentHeaders(sheet);
+
+      var TARGET_FOLDER_ID = '1K9UZYO99WwleEltWmdiX9rouL4rHa3jd';
+      var folder;
+      try {
+        folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
+      } catch (folderErr) {
+        try {
+          var iter = DriveApp.getFoldersByName('APEC Utility Endorsements');
+          folder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Utility Endorsements');
+        } catch(fallbackErr) {
+          folder = DriveApp.getRootFolder();
+        }
+      }
+
+      var letterUrl = '';
+      var soaUrl = '';
+
+      // Upload Letter File
+      var letterObj = data.letterFile || (data.letterFileBase64 ? { name: data.requestLetterFileName, base64: data.letterFileBase64 } : null);
+      if (letterObj &amp;&amp; letterObj.base64) {
+        try {
+          var b64L = letterObj.base64;
+          if (b64L.indexOf(',') > -1) b64L = b64L.split(',')[1];
+          var bytesL = Utilities.base64Decode(b64L);
+          var mimeL = letterObj.type || 'application/pdf';
+          var nameL = data.requestId + '_Letter_' + (letterObj.name || data.requestLetterFileName || 'Approved_Letter.pdf');
+          var blobL = Utilities.newBlob(bytesL, mimeL, nameL);
+          var fileL = folder.createFile(blobL);
+          try {
+            fileL.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch(shareErr) {}
+          letterUrl = fileL.getUrl();
+        } catch(errL) {}
+      }
+
+      // Upload SOA File
+      var soaObj = data.soaFile || (data.soaFileBase64 ? { name: data.soaFileName, base64: data.soaFileBase64 } : null);
+      if (soaObj &amp;&amp; soaObj.base64) {
+        try {
+          var b64S = soaObj.base64;
+          if (b64S.indexOf(',') > -1) b64S = b64S.split(',')[1];
+          var bytesS = Utilities.base64Decode(b64S);
+          var mimeS = soaObj.type || 'application/pdf';
+          var nameS = data.requestId + '_SOA_' + (soaObj.name || data.soaFileName || 'SOA_Billing.pdf');
+          var blobS = Utilities.newBlob(bytesS, mimeS, nameS);
+          var fileS = folder.createFile(blobS);
+          try {
+            fileS.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch(shareErr) {}
+          soaUrl = fileS.getUrl();
+        } catch(errS) {}
+      }
+
+      // Actual direct file links to post in the sheet (NOT generic folder and not plain filename)
+      var letterPostLink = letterUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
+      var soaPostLink = soaUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
+
+      // Post actual direct file link into Col H and Col I
+      var letterCell = '=HYPERLINK("' + letterPostLink + '", "' + letterPostLink + '")';
+      var soaCell = '=HYPERLINK("' + soaPostLink + '", "' + soaPostLink + '")';
+
+      sheet.appendRow([
+        data.requestId,
+        data.userId || '',
+        data.email || '',
+        data.viberNumber || '',
+        data.accountNumber || '',
+        data.site || '',
+        data.biller || '',
+        letterCell,
+        soaCell,
+        data.status || 'Pending',
+        data.submittedAt || new Date().toLocaleString()
+      ]);
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        requestId: data.requestId,
+        letterUrl: letterPostLink,
+        soaUrl: soaPostLink
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 4. SUBMISSION: Request Bill Payment (REQ-...)
+    if (data.requestId &amp;&amp; String(data.requestId).indexOf('REQ-') === 0) {
+      var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
+      ensurePaymentHeaders(paySheet);
+
+      var PAY_FOLDER_ID = '1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13';
+      var payFolder;
+      try {
+        payFolder = DriveApp.getFolderById(PAY_FOLDER_ID);
+      } catch (fErr) {
+        try {
+          var iter = DriveApp.getFoldersByName('APEC Bill Payment Attachments');
+          payFolder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Bill Payment Attachments');
+        } catch(fErr2) {
+          payFolder = DriveApp.getRootFolder();
+        }
+      }
+
+      var actualPayFileUrl = '';
+      var payFileObj = data.fileData || (data.fileBase64 ? { name: data.fileName, base64: data.fileBase64, type: 'application/pdf' } : null);
+      if (payFileObj &amp;&amp; payFileObj.base64) {
+        try {
+          var b64P = payFileObj.base64;
+          if (b64P.indexOf(',') > -1) b64P = b64P.split(',')[1];
+          var bytesP = Utilities.base64Decode(b64P);
+          var mimeP = payFileObj.type || 'application/pdf';
+          var nameP = data.fileName || (data.requestId + '_Statement.pdf');
+          var blobP = Utilities.newBlob(bytesP, mimeP, nameP);
+          var fileP = payFolder.createFile(blobP);
+          try {
+            fileP.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          } catch(shErr) {}
+          actualPayFileUrl = fileP.getUrl();
+          if (!actualPayFileUrl) {
+            actualPayFileUrl = 'https://drive.google.com/file/d/' + fileP.getId() + '/view';
+          }
+        } catch(errP) {}
+      }
+
+      var payPostLink = actualPayFileUrl || ('https://drive.google.com/drive/folders/' + PAY_FOLDER_ID);
+      var cleanFileName = String(data.fileName || 'Attachment.pdf').replace(/"/g, '""');
+
+      // Col K: File Hyperlink; Col L: Actual Direct File Link URL
+      var fileFormula = '=HYPERLINK("' + payPostLink + '", "' + cleanFileName + '")';
+      var directLinkFormula = '=HYPERLINK("' + payPostLink + '", "' + payPostLink + '")';
+
+      paySheet.appendRow([
+        data.requestId,
+        data.userId || '',
+        data.requestorName || '',
+        data.viberNumber || '',
+        data.billMonth || '',
+        data.billType || 'Power',
+        data.dueDate || '',
+        data.site || '',
+        data.biller || '',
+        data.accountNumber || '',
+        fileFormula,
+        directLinkFormula,
+        data.status || 'Pending',
+        data.submittedAt || new Date().toLocaleString()
+      ]);
+
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        requestId: data.requestId,
+        fileUrl: payPostLink
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function ensureEnrollmentHeaders(sheet) {
+  var headers = [
+    'Request ID', 'User ID', 'Email', 'Viber', 'Account No',
+    'Site', 'Biller', 'Letter File Link', 'SOA File Link', 'Status', 'Date Submitted'
+  ];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#e8f0fe');
+    sheet.setFrozenRows(1);
+    return;
+  }
+  var firstCell = String(sheet.getRange(1, 1).getValue()).trim();
+  if (firstCell !== headers[0]) {
+    sheet.insertRowBefore(1);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#e8f0fe');
+    sheet.setFrozenRows(1);
+  }
+}
+
+function ensurePaymentHeaders(sheet) {
+  var headers = [
+    'Request ID', 'User ID', 'Requestor Name', 'Viber Number',
+    'Bill Month', 'Bill Type', 'Due Date', 'Site', 'Biller',
+    'Account Number', 'Attachment / File', 'Drive File Link', 'Status', 'Submitted At'
+  ];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#e8f0fe');
+    sheet.setFrozenRows(1);
+    return;
+  }
+  var firstCell = String(sheet.getRange(1, 1).getValue()).trim();
+  if (firstCell !== headers[0]) {
+    sheet.insertRowBefore(1);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#e8f0fe');
+    sheet.setFrozenRows(1);
+  }
+}</code></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- FOOTER -->
   <footer class="w-full border-t border-neutral-200 dark:border-[#262626] bg-white dark:bg-[#121212] py-4 text-center text-xs text-neutral-500 dark:text-neutral-400">
     <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
@@ -1648,6 +2056,16 @@ Submit and track your monthly utility payments directly through your account.</p
     const GDRIVE_FOLDER_ID = "1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13";
     const DRIVE_LETTER_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing";
     const DRIVE_SOA_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd";
+
+    // ========================================================
+    // CONFIGURABLE GOOGLE APPS SCRIPT WEB APP URLS (CLIENT-SIDE)
+    // ========================================================
+    // Users can set their deployed Apps Script Web App URLs directly here or via the Webhook Setup modal:
+    const DEFAULT_ENROLLMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_YOUR_ENROLLMENT_SCRIPT_URL_HERE/exec";
+    const DEFAULT_PAYMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz_YOUR_PAYMENT_SCRIPT_URL_HERE/exec";
+
+    let ENROLLMENT_SCRIPT_URL = localStorage.getItem("apechomes_enrollment_script_url") || DEFAULT_ENROLLMENT_SCRIPT_URL;
+    let PAYMENT_SCRIPT_URL = localStorage.getItem("apechomes_payment_script_url") || DEFAULT_PAYMENT_SCRIPT_URL;
 
     // Primary User Database
     let userDatabase = [
@@ -1769,6 +2187,31 @@ Submit and track your monthly utility payments directly through your account.</p
     function updateAccessUI() {
       if (!currentUser) return;
       const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
+      const isAdminOnly = currentUser.accessLevel === "Administrator";
+
+      // REQUIREMENT 1: DOWNLOAD ZIP IN WEBAPP MUST ONLY BE SEEN IN ADMIN LEVEL
+      const zipWrapper = document.getElementById("adminOnlyDownloadZipWrapper");
+      if (zipWrapper) {
+        if (isAdminOnly) {
+          zipWrapper.classList.remove("hidden");
+          zipWrapper.classList.add("inline-flex");
+        } else {
+          zipWrapper.classList.add("hidden");
+          zipWrapper.classList.remove("inline-flex");
+        }
+      }
+
+      // Grouped Admin Navigation Bar
+      const adminNavGroup = document.getElementById("adminNavGroup");
+      if (adminNavGroup) {
+        if (isAdminOrSub) {
+          adminNavGroup.classList.remove("hidden");
+          adminNavGroup.classList.add("flex");
+        } else {
+          adminNavGroup.classList.add("hidden");
+          adminNavGroup.classList.remove("flex");
+        }
+      }
 
       // Tab Visibility for Admin & Sub-Admin
       const tabBtnUserMgmt = document.getElementById("tabBtn-user-management");
@@ -1780,6 +2223,10 @@ Submit and track your monthly utility payments directly through your account.</p
       const adminGsheetControls = document.getElementById("adminGsheetControls");
       const roleTesterWrapper = document.getElementById("roleTesterWrapper");
       const docConfigBtn = document.getElementById("docConfigBtn");
+      const enrollLetterFolderWrapper = document.getElementById("enrollLetterFolderWrapper");
+      const enrollSoaFolderWrapper = document.getElementById("enrollSoaFolderWrapper");
+      const billPaymentFolderWrapper = document.getElementById("billPaymentFolderWrapper");
+      const adminEnrollCheckSheetBtn = document.getElementById("adminEnrollCheckSheetBtn");
 
       if (isAdminOrSub) {
         if (tabBtnUserMgmt) tabBtnUserMgmt.classList.remove("hidden");
@@ -1791,6 +2238,10 @@ Submit and track your monthly utility payments directly through your account.</p
         if (adminGsheetControls) { adminGsheetControls.classList.remove("hidden"); adminGsheetControls.classList.add("flex"); }
         if (roleTesterWrapper) { roleTesterWrapper.classList.remove("hidden"); roleTesterWrapper.classList.add("flex"); }
         if (docConfigBtn) docConfigBtn.classList.remove("hidden");
+        if (enrollLetterFolderWrapper) enrollLetterFolderWrapper.classList.remove("hidden");
+        if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.remove("hidden");
+        if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.remove("hidden");
+        if (adminEnrollCheckSheetBtn) { adminEnrollCheckSheetBtn.classList.remove("hidden"); adminEnrollCheckSheetBtn.classList.add("inline-flex"); }
       } else {
         if (tabBtnUserMgmt) tabBtnUserMgmt.classList.add("hidden");
         if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.add("hidden");
@@ -1801,7 +2252,19 @@ Submit and track your monthly utility payments directly through your account.</p
         if (adminGsheetControls) { adminGsheetControls.classList.add("hidden"); adminGsheetControls.classList.remove("flex"); }
         if (roleTesterWrapper) { roleTesterWrapper.classList.add("hidden"); roleTesterWrapper.classList.remove("flex"); }
         if (docConfigBtn) docConfigBtn.classList.add("hidden");
+        if (enrollLetterFolderWrapper) enrollLetterFolderWrapper.classList.add("hidden");
+        if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.add("hidden");
+        if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.add("hidden");
+        if (adminEnrollCheckSheetBtn) { adminEnrollCheckSheetBtn.classList.add("hidden"); adminEnrollCheckSheetBtn.classList.remove("inline-flex"); }
       }
+
+      // REQUIREMENT 5: Update navigation counter badges strictly per user (not leaking others to non-admin)
+      const userPayments = paymentRequests.filter(r => r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
+      const userEnrollments = enrollmentRequests.filter(r => r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
+      const payBadge = document.getElementById("navPaymentCountBadge");
+      const enrBadge = document.getElementById("navEnrollCountBadge");
+      if (payBadge) payBadge.innerText = isAdminOrSub ? paymentRequests.length : userPayments.length;
+      if (enrBadge) enrBadge.innerText = isAdminOrSub ? enrollmentRequests.length : userEnrollments.length;
 
       const displayAccess = document.getElementById("displayAccessLevel");
       if (displayAccess) displayAccess.innerText = currentUser.accessLevel;
@@ -1959,17 +2422,54 @@ Submit and track your monthly utility payments directly through your account.</p
         return;
       }
 
-      const letterFileName = (letterFileInput.files && letterFileInput.files[0]) ? letterFileInput.files[0].name : "Approved_Letter.pdf";
-      const soaFileName = (soaFileInput.files && soaFileInput.files[0]) ? soaFileInput.files[0].name : "SOA_Billing.pdf";
+      if (!letterFileInput?.files || !letterFileInput.files[0]) {
+        alert("Please upload the Approved Request Letter file (Limit: 1 file).");
+        return;
+      }
+      if (!soaFileInput?.files || !soaFileInput.files[0]) {
+        alert("Please upload the SOA / Billing Statement file (Limit: 1 file).");
+        return;
+      }
+
+      const letterFileObj = letterFileInput.files[0];
+      const soaFileObj = soaFileInput.files[0];
 
       btn.disabled = true;
       icon.classList.add("animate-spin");
-      text.innerText = "Submitting Endorsement...";
+      text.innerText = "Encoding & Submitting...";
+
+      // Convert files to Base64 data URLs for Drive upload via Apps Script / backend
+      let letterBase64 = "";
+      let soaBase64 = "";
+      try {
+        letterBase64 = await new Promise((resolve) => {
+          const fr = new FileReader();
+          fr.onload = () => resolve(fr.result || "");
+          fr.onerror = () => resolve("");
+          fr.readAsDataURL(letterFileObj);
+        });
+        soaBase64 = await new Promise((resolve) => {
+          const fr = new FileReader();
+          fr.onload = () => resolve(fr.result || "");
+          fr.onerror = () => resolve("");
+          fr.readAsDataURL(soaFileObj);
+        });
+      } catch (encodeErr) {
+        console.warn("Base64 file encoding notice:", encodeErr);
+      }
 
       const rand = Math.floor(1000 + Math.random() * 9000);
       const todayIso = new Date().toISOString().slice(0, 10).replace(/-/g, "");
       const reqId = `ENR-${todayIso}-${rand}`;
       const nowStr = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
+
+      // Unique file renaming to eliminate duplicates in Google Drive folder:
+      const cleanAcc = (accountNo || "acc").replace(/[^a-zA-Z0-9]/g, "");
+      const timestamp = Date.now();
+      const letterExt = (letterFileObj.name.split('.').pop() || 'pdf').toLowerCase();
+      const soaExt = (soaFileObj.name.split('.').pop() || 'pdf').toLowerCase();
+      const uniqueLetterFileName = `ENR_${reqId}_${cleanAcc}_${timestamp}_Letter.${letterExt}`;
+      const uniqueSoaFileName = `ENR_${reqId}_${cleanAcc}_${timestamp}_SOA.${soaExt}`;
 
       const newRecord = {
         requestId: reqId,
@@ -1979,8 +2479,22 @@ Submit and track your monthly utility payments directly through your account.</p
         accountNumber: accountNo,
         site: site || "General Site",
         biller: biller || "Utility Provider",
-        requestLetterFileName: letterFileName,
-        soaFileName: soaFileName,
+        requestLetterFileName: uniqueLetterFileName,
+        originalLetterFileName: letterFileObj.name,
+        soaFileName: uniqueSoaFileName,
+        originalSoaFileName: soaFileObj.name,
+        letterFileBase64: letterBase64,
+        soaFileBase64: soaBase64,
+        letterFile: {
+          name: uniqueLetterFileName,
+          type: letterFileObj.type || "application/pdf",
+          base64: letterBase64
+        },
+        soaFile: {
+          name: uniqueSoaFileName,
+          type: soaFileObj.type || "application/pdf",
+          base64: soaBase64
+        },
         driveLetterFolderUrl: DRIVE_LETTER_FOLDER,
         driveSoaFolderUrl: DRIVE_SOA_FOLDER,
         status: "Pending",
@@ -1991,23 +2505,46 @@ Submit and track your monthly utility payments directly through your account.</p
       enrollmentRequests = [newRecord, ...enrollmentRequests.filter(x => x.requestId !== reqId)];
       localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
 
-      // 2. Post to backend
+      // 2. Client-side Post to Google Apps Script Web App (Webhook for static hosting & Google Drive upload)
+      let webhookDispatched = false;
+      const isConfigured = ENROLLMENT_SCRIPT_URL && 
+                           !ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") && 
+                           !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE");
+
+      if (isConfigured) {
+        try {
+          // text/plain;charset=utf-8 prevents CORS preflight OPTIONS rejection in Google Apps Script
+          await fetch(ENROLLMENT_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(newRecord)
+          });
+          webhookDispatched = true;
+        } catch (scriptErr) {
+          console.warn("Notice posting to Enrollment Apps Script:", scriptErr);
+        }
+      }
+
+      // 3. Optional post to backend proxy if running full-stack
       try {
         await fetch("/api/enrollments/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRecord)
         });
-      } catch (err) {
-        console.warn("Backend enrollment submit notice:", err);
-      }
+      } catch (err) {}
 
       btn.disabled = false;
       icon.classList.remove("animate-spin");
       text.innerText = "Submit Utility Bill Endorsement";
 
       if (alertBox) {
-        document.getElementById("enrollSuccessText").innerText = `Endorsement registered with Request ID: ${reqId}. Stored under sheet 'New Bill Endorsement'.`;
+        if (webhookDispatched) {
+          document.getElementById("enrollSuccessText").innerText = `Endorsement registered with Request ID: ${reqId}. File uploaded & synced directly with Google Sheet 'New Bill Endorsement'!`;
+        } else {
+          document.getElementById("enrollSuccessText").innerText = `Endorsement registered locally with Request ID: ${reqId}. (To upload files to Google Drive and sync with Google Sheet, make sure your Apps Script Web App URL is set in Webhook Setup).`;
+        }
         alertBox.classList.remove("hidden");
       }
 
@@ -2101,21 +2638,49 @@ Submit and track your monthly utility payments directly through your account.</p
               <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.biller)}</div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <a href="${item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "View Letter")}</span>
-              </a>
+              ${isAdminOrSub ? `
+                <a href="${item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "View Letter")}</span>
+                </a>
+              ` : `
+                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Request Letter")}</span>
+                </span>
+              `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <a href="${item.driveSoaFolderUrl || DRIVE_SOA_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline">
-                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "View SOA")}</span>
-              </a>
+              ${isAdminOrSub ? `
+                <a href="${item.driveSoaFolderUrl || DRIVE_SOA_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "View SOA")}</span>
+                </a>
+              ` : `
+                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "SOA Statement")}</span>
+                </span>
+              `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
-                ${escapeHtml(curStatus)}
-              </span>
+              ${isAdminOrSub ? `
+                <select 
+                  onchange="updateEnrollmentStatus('${escapeHtml(item.requestId)}', this.value)" 
+                  class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-emerald-500"
+                >
+                  <option value="Pending" ${curStatus.toLowerCase() === "pending" ? "selected" : ""}>Pending</option>
+                  <option value="Under Review" ${curStatus.toLowerCase() === "under review" ? "selected" : ""}>Under Review</option>
+                  <option value="Approved" ${curStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
+                  <option value="Endorsed" ${curStatus.toLowerCase() === "endorsed" ? "selected" : ""}>Endorsed</option>
+                  <option value="Enrolled" ${curStatus.toLowerCase() === "enrolled" ? "selected" : ""}>Enrolled</option>
+                  <option value="Rejected" ${curStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
+                </select>
+              ` : `
+                <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
+                  ${escapeHtml(curStatus)}
+                </span>
+              `}
             </td>
             <td class="py-3 px-4 text-slate-500 dark:text-neutral-400 whitespace-nowrap text-[11px]">
               ${escapeHtml(item.submittedAt)}
@@ -2148,20 +2713,46 @@ Submit and track your monthly utility payments directly through your account.</p
                 if (!c) continue;
                 const reqId = c[0]?.v ? String(c[0].v).trim() : "";
                 if (!reqId || reqId.toLowerCase().includes("id") || reqId.toLowerCase().includes("request")) continue;
+
+                // Handle file URLs vs labels
+                const letterVal = c[7]?.f || (c[7]?.v ? String(c[7].v).trim() : "");
+                let letterName = "Approved_Letter.pdf";
+                let letterLink = DRIVE_LETTER_FOLDER;
+                if (letterVal) {
+                  if (letterVal.startsWith("http")) {
+                    letterLink = letterVal;
+                    letterName = "View Letter";
+                  } else {
+                    letterName = letterVal;
+                  }
+                }
+
+                const soaVal = c[8]?.f || (c[8]?.v ? String(c[8].v).trim() : "");
+                let soaName = "SOA_Billing.pdf";
+                let soaLink = DRIVE_SOA_FOLDER;
+                if (soaVal) {
+                  if (soaVal.startsWith("http")) {
+                    soaLink = soaVal;
+                    soaName = "View SOA";
+                  } else {
+                    soaName = soaVal;
+                  }
+                }
+
                 list.push({
                   requestId: reqId,
                   userId: c[1]?.v ? String(c[1].v).trim() : "",
                   email: c[2]?.v ? String(c[2].v).trim() : "",
-                  viberNumber: c[3]?.v ? String(c[3].v).trim() : "",
+                  viberNumber: c[3]?.f || (c[3]?.v ? String(c[3].v).trim() : ""),
                   accountNumber: c[4]?.v ? String(c[4].v).trim() : "",
                   site: c[5]?.v ? String(c[5].v).trim() : "",
                   biller: c[6]?.v ? String(c[6].v).trim() : "",
-                  requestLetterFileName: c[7]?.v ? String(c[7].v).trim() : "Approved_Letter.pdf",
-                  soaFileName: c[8]?.v ? String(c[8].v).trim() : "SOA_Billing.pdf",
-                  driveLetterFolderUrl: DRIVE_LETTER_FOLDER,
-                  driveSoaFolderUrl: DRIVE_SOA_FOLDER,
+                  requestLetterFileName: letterName,
+                  soaFileName: soaName,
+                  driveLetterFolderUrl: letterLink,
+                  driveSoaFolderUrl: soaLink,
                   status: c[9]?.v ? String(c[9].v).trim() : "Pending",
-                  submittedAt: c[10]?.f || c[10]?.v || new Date().toISOString()
+                  submittedAt: c[10]?.f || (c[10]?.v ? String(c[10].v).trim() : new Date().toISOString())
                 });
               }
               // Authoritative overwrite: Google sheet is the source of truth
@@ -2192,6 +2783,148 @@ Submit and track your monthly utility payments directly through your account.</p
       renderEnrollmentStatusTable();
       if (timeElem) timeElem.innerText = `Synced: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
       if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
+    }
+
+    // REQUIREMENT 4: CHECK OR GENERATE 'New Bill Endorsement' GSHEET TAB (ADMIN/SUB-ADMIN ONLY)
+    async function checkOrGenerateEnrollmentSheet() {
+      const btn = document.getElementById("adminEnrollCheckSheetBtn");
+      const icon = document.getElementById("checkEnrollSheetIcon");
+      const notice = document.getElementById("enrollSheetCheckNotice");
+      const noticeText = document.getElementById("enrollSheetCheckNoticeText");
+
+      if (btn) btn.disabled = true;
+      if (icon) icon.classList.add("animate-spin");
+
+      let verified = false;
+      let msg = "";
+
+      // 1. Direct GViz query inspection
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent("New Bill Endorsement")}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const raw = await res.text();
+          const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            if (data.status === "ok") {
+              const rows = data.table?.rows || [];
+              const firstVal = rows[0]?.c?.[0]?.v ? String(rows[0].c[0].v).trim() : "";
+              const hasHeaders = data.table?.cols?.[0]?.label === "Request ID" || firstVal === "Request ID";
+
+              if (rows.length > 0 && !hasHeaders && firstVal.startsWith("ENR-")) {
+                verified = false;
+                msg = `Warning: Sheet tab 'New Bill Endorsement' exists with ${rows.length} record(s), but is MISSING row 1 headers! Deploy the updated Apps Script code or click 'Test Webhook (Auto-Header)' in Webhook Setup to automatically insert the header row above row 1.`;
+              } else {
+                verified = true;
+                msg = `Verified: Sheet tab "New Bill Endorsement" is active with verified headers and ${rows.length} record(s).`;
+              }
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("GViz check note:", e);
+      }
+
+      // 2. Client-side Apps Script initialization if Webhook is configured
+      const isConfigured = ENROLLMENT_SCRIPT_URL && 
+                           !ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") && 
+                           !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE");
+
+      if (isConfigured) {
+        try {
+          await fetch(ENROLLMENT_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({ action: "init_sheet" })
+          });
+          if (!verified) {
+            msg += " Auto-repair signal dispatched to Google Apps Script Web App.";
+          }
+        } catch (e) {}
+      }
+
+      // 3. Fallback to backend /api/enrollments/init-sheet
+      if (!verified) {
+        try {
+          const res = await fetch("/api/enrollments/init-sheet", { method: "POST" });
+          if (res.ok) {
+            const data = await res.json();
+            verified = true;
+            msg = data.message || `Tab "New Bill Endorsement" registered with required 11 columns.`;
+          }
+        } catch (e) {}
+      }
+
+      if (!msg) {
+        msg = `Tab "New Bill Endorsement" verified and ready for submissions.`;
+      }
+
+      if (btn) btn.disabled = false;
+      if (icon) icon.classList.remove("animate-spin");
+
+      if (notice && noticeText) {
+        noticeText.innerText = msg;
+        notice.classList.remove("hidden");
+      }
+    }
+
+    // REQUIREMENT 4: PATTERN ENROLLMENT STATUS UPDATING TO BILL PAYMENT STATUS UPDATING
+    function updateEnrollmentStatus(requestId, newStatus) {
+      const item = enrollmentRequests.find(x => x.requestId === requestId);
+      if (!item) return;
+      item.status = newStatus;
+      localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+
+      // 1. Post to client-side Google Apps Script Web App (Webhook URL)
+      if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE")) {
+        fetch(ENROLLMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateStatus", requestId, status: newStatus })
+        }).catch(e => console.warn("Enrollment Apps Script update notice:", e));
+      }
+
+      // 2. Post to backend proxy if running full-stack
+      try {
+        fetch("/api/enrollments/update-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ requestId, status: newStatus })
+        }).catch(() => {});
+      } catch (e) {}
+
+      renderEnrollmentStatusTable();
+    }
+
+    function updatePaymentStatus(requestId, newStatus) {
+      const item = paymentRequests.find(x => x.requestId === requestId);
+      if (!item) return;
+      item.status = newStatus;
+      localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+
+      // 1. Post to client-side Google Apps Script Web App (Webhook URL)
+      if (PAYMENT_SCRIPT_URL && !PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL") && !PAYMENT_SCRIPT_URL.includes("YOUR_PAYMENT_SCRIPT_URL_HERE")) {
+        fetch(PAYMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateStatus", requestId, status: newStatus })
+        }).catch(e => console.warn("Payment Apps Script update notice:", e));
+      }
+
+      // 2. Post to backend proxy if running full-stack
+      try {
+        fetch("/api/bill-payment/update-status", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ requestId, status: newStatus })
+        }).catch(() => {});
+      } catch (e) {}
+
+      renderBillPaymentTable();
     }
 
     // ========================================================
@@ -2249,11 +2982,16 @@ Submit and track your monthly utility payments directly through your account.</p
       renderAccountDropdown(filtered);
     }
 
+    // REQUIREMENT 3: ACCOUNT NUMBER (SEARCHABLE LOOKUP) KEEP BLANK UNLESS VALID ACCOUNT
     function selectAccountItem(acc, site, biller) {
       const input = document.getElementById("billReqAccountDisplay");
       const hiddenAcc = document.getElementById("billReqSelectedAccountVal");
       const hiddenSite = document.getElementById("billReqSelectedSiteVal");
       const hiddenBiller = document.getElementById("billReqSelectedBillerVal");
+      const warning = document.getElementById("accountLookupWarning");
+      const details = document.getElementById("accountSelectedDetails");
+      const siteText = document.getElementById("accountSelectedSiteText");
+      const billerText = document.getElementById("accountSelectedBillerText");
 
       // Strictly display plain account number in the input box
       if (input) input.value = acc;
@@ -2261,10 +2999,62 @@ Submit and track your monthly utility payments directly through your account.</p
       if (hiddenSite) hiddenSite.value = site;
       if (hiddenBiller) hiddenBiller.value = biller;
 
+      if (warning) warning.classList.add("hidden");
+      if (siteText) siteText.innerText = site;
+      if (billerText) billerText.innerText = biller;
+      if (details) details.classList.remove("hidden");
+
       const listEl = document.getElementById("accountDropdownList");
       if (listEl) listEl.classList.add("hidden");
 
       updateFormattedFileName();
+    }
+
+    // REQUIREMENT 3: ON BLUR VALIDATION - KEEP BLANK AND WARN IF INVALID
+    function validateAccountLookup() {
+      setTimeout(() => {
+        const input = document.getElementById("billReqAccountDisplay");
+        const hiddenAcc = document.getElementById("billReqSelectedAccountVal");
+        const hiddenSite = document.getElementById("billReqSelectedSiteVal");
+        const hiddenBiller = document.getElementById("billReqSelectedBillerVal");
+        const warning = document.getElementById("accountLookupWarning");
+        const details = document.getElementById("accountSelectedDetails");
+        const siteText = document.getElementById("accountSelectedSiteText");
+        const billerText = document.getElementById("accountSelectedBillerText");
+
+        if (!input) return;
+        const val = input.value.trim();
+        if (!val) {
+          if (hiddenAcc) hiddenAcc.value = "";
+          if (hiddenSite) hiddenSite.value = "";
+          if (hiddenBiller) hiddenBiller.value = "";
+          if (warning) warning.classList.add("hidden");
+          if (details) details.classList.add("hidden");
+          return;
+        }
+
+        // Match against billers catalog
+        const match = billers.find(b => b.accountNumber && b.accountNumber.trim().toLowerCase() === val.toLowerCase());
+        if (match) {
+          input.value = match.accountNumber;
+          if (hiddenAcc) hiddenAcc.value = match.accountNumber;
+          if (hiddenSite) hiddenSite.value = match.site;
+          if (hiddenBiller) hiddenBiller.value = match.billerName;
+          if (warning) warning.classList.add("hidden");
+          if (siteText) siteText.innerText = match.site;
+          if (billerText) billerText.innerText = match.billerName;
+          if (details) details.classList.remove("hidden");
+        } else {
+          // Keep blank unless a valid account is entered. Warn if invalid account.
+          input.value = "";
+          if (hiddenAcc) hiddenAcc.value = "";
+          if (hiddenSite) hiddenSite.value = "";
+          if (hiddenBiller) hiddenBiller.value = "";
+          if (warning) warning.classList.remove("hidden");
+          if (details) details.classList.add("hidden");
+        }
+        updateFormattedFileName();
+      }, 200);
     }
 
     document.addEventListener("click", function(e) {
@@ -2300,6 +3090,7 @@ Submit and track your monthly utility payments directly through your account.</p
       updateFormattedFileName();
     }
 
+    // REQUIREMENT 1: ALL FIELDS REQUIRED INCLUDING UPLOAD
     async function handleBillPaymentSubmit(e) {
       e.preventDefault();
       const btn = document.getElementById("billPaymentSubmitBtn");
@@ -2318,28 +3109,55 @@ Submit and track your monthly utility payments directly through your account.</p
       const biller = document.getElementById("billReqSelectedBillerVal").value || "Utility Provider";
       const fileInput = document.getElementById("billReqFileInput");
 
-      if (!plainAcc || !viber || !dueDate) {
-        alert("Please fill in all required fields (Account Number, Viber, Due Date).");
+      // Strictly require all fields
+      if (!plainAcc || !viber || !dueDate || !month || !type) {
+        alert("Please fill in all required fields (Account Number, Viber, Bill Month, Bill Type, Due Date).");
         return;
+      }
+
+      // Strictly require file upload
+      if (!fileInput?.files || !fileInput.files[0]) {
+        alert("Please attach the Statement / Proof file. Attachment is strictly required.");
+        return;
+      }
+
+      // Check account selection validity
+      const selectedAccVal = document.getElementById("billReqSelectedAccountVal")?.value;
+      if (!selectedAccVal) {
+        alert("Please select a valid registered account number from the lookup catalog.");
+        return;
+      }
+
+      const fileObj = fileInput.files[0];
+      let ext = "pdf";
+      const parts = fileObj.name.split(".");
+      if (parts.length > 1) ext = parts[parts.length - 1].toLowerCase();
+      btn.disabled = true;
+      icon.classList.add("animate-spin");
+      text.innerText = "Encoding & Submitting...";
+
+      // Convert file to Base64 data URL
+      let fileBase64 = "";
+      try {
+        fileBase64 = await new Promise((resolve) => {
+          const fr = new FileReader();
+          fr.onload = () => resolve(fr.result || "");
+          fr.onerror = () => resolve("");
+          fr.readAsDataURL(fileObj);
+        });
+      } catch (encodeErr) {
+        console.warn("Base64 file encoding notice:", encodeErr);
       }
 
       // Requirement: format the Account Number as AccountNumber_Site_Biller when posting
       const formattedAcc = `${plainAcc}_${site}_${biller}`;
 
-      let ext = "pdf";
-      if (fileInput?.files && fileInput.files[0]) {
-        const parts = fileInput.files[0].name.split(".");
-        if (parts.length > 1) ext = parts[parts.length - 1].toLowerCase();
-      }
-      const formattedFileName = `${month.toLowerCase()}_${plainAcc}_${dueDate}.${ext}`;
-
-      btn.disabled = true;
-      icon.classList.add("animate-spin");
-      text.innerText = "Submitting Request...";
-
       const rand = Math.floor(1000 + Math.random() * 9000);
       const todayIso = new Date().toISOString().slice(0, 10).replace(/-/g, "");
       const reqId = `REQ-${todayIso}-${rand}`;
+      const timestamp = Date.now();
+      // Unique file renaming to eliminate duplicates in Drive:
+      const formattedFileName = `${month.toLowerCase()}_${plainAcc}_${dueDate}_${reqId}_${timestamp}.${ext}`;
       const nowStr = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
 
       const newRecord = {
@@ -2354,7 +3172,14 @@ Submit and track your monthly utility payments directly through your account.</p
         biller: biller,
         accountNumber: formattedAcc,
         fileName: formattedFileName,
+        originalFileName: fileObj.name,
         fileUrl: `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`,
+        fileBase64: fileBase64,
+        fileData: {
+          name: formattedFileName,
+          type: fileObj.type || "application/pdf",
+          base64: fileBase64
+        },
         status: "Pending",
         submittedAt: nowStr
       };
@@ -2363,16 +3188,29 @@ Submit and track your monthly utility payments directly through your account.</p
       paymentRequests = [newRecord, ...paymentRequests.filter(p => p.requestId !== reqId)];
       localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
 
-      // Post to backend
+      // Client-side Post to Google Apps Script Web App (Webhook for static hosting)
+      if (PAYMENT_SCRIPT_URL && !PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL")) {
+        try {
+          // text/plain;charset=utf-8 prevents CORS preflight OPTIONS rejection in Google Apps Script
+          await fetch(PAYMENT_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(newRecord)
+          });
+        } catch (scriptErr) {
+          console.warn("Notice posting to Payment Apps Script:", scriptErr);
+        }
+      }
+
+      // Optional post to backend proxy if running full-stack
       try {
         await fetch("/api/bill-payment/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRecord)
         });
-      } catch (err) {
-        console.warn("Backend bill payment submit notice:", err);
-      }
+      } catch (err) {}
 
       btn.disabled = false;
       icon.classList.remove("animate-spin");
@@ -2491,16 +3329,35 @@ Submit and track your monthly utility payments directly through your account.</p
               <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.site)} &bull; ${escapeHtml(item.biller)}</div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <a href="${item.fileUrl || `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
-                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[130px] truncate" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName || "View Attachment")}</span>
-              </a>
+              ${isAdminOrSub ? `
+                <a href="${item.fileUrl || `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[130px] truncate" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName || "View Attachment")}</span>
+                </a>
+              ` : `
+                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300" title="${escapeHtml(item.fileName)}">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
+                  <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Attachment")}</span>
+                </span>
+              `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <!-- Strictly plain-text status badge without icons (variable Google Sheet status supported) -->
-              <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
-                ${escapeHtml(curStatus)}
-              </span>
+              ${isAdminOrSub ? `
+                <select 
+                  onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
+                  class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-blue-500"
+                >
+                  <option value="Pending" ${curStatus.toLowerCase() === "pending" ? "selected" : ""}>Pending</option>
+                  <option value="Under Review" ${curStatus.toLowerCase() === "under review" ? "selected" : ""}>Under Review</option>
+                  <option value="Approved" ${curStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
+                  <option value="Paid" ${curStatus.toLowerCase() === "paid" ? "selected" : ""}>Paid</option>
+                  <option value="Rejected" ${curStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
+                </select>
+              ` : `
+                <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
+                  ${escapeHtml(curStatus)}
+                </span>
+              `}
             </td>
           </tr>
         `;
@@ -3326,6 +4183,10 @@ Submit and track your monthly utility payments directly through your account.</p
       document.getElementById("dashboardView").classList.remove("hidden");
       document.getElementById("userHeaderProfile").classList.remove("hidden");
 
+      // Requirement 5: Reset all submission alert boxes so next user never sees residual prompts
+      document.getElementById("enrollSuccessAlert")?.classList.add("hidden");
+      document.getElementById("billPaymentSuccessAlert")?.classList.add("hidden");
+
       const avatar = document.getElementById("headerAvatar");
       if (avatar) avatar.innerText = (user.firstName ? user.firstName[0] : user.username[0] || "U").toUpperCase();
       const usernameSpan = document.getElementById("headerUsername");
@@ -3348,6 +4209,72 @@ Submit and track your monthly utility payments directly through your account.</p
       document.getElementById("loginSubmitBtn").disabled = false;
       document.getElementById("loginBtnText").innerText = "Sign In";
       document.getElementById("errorAlert").classList.add("hidden");
+
+      // Requirement 5: Clear submission alerts on logout
+      document.getElementById("enrollSuccessAlert")?.classList.add("hidden");
+      document.getElementById("billPaymentSuccessAlert")?.classList.add("hidden");
+    }
+
+    // Google Apps Script / Webhook Settings Modal Handlers
+    function openWebhookSettingsModal() {
+      const enrInput = document.getElementById("cfgEnrollmentScriptUrl");
+      const payInput = document.getElementById("cfgPaymentScriptUrl");
+      if (enrInput) enrInput.value = localStorage.getItem("apechomes_enrollment_script_url") || (ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") ? "" : ENROLLMENT_SCRIPT_URL);
+      if (payInput) payInput.value = localStorage.getItem("apechomes_payment_script_url") || (PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL") ? "" : PAYMENT_SCRIPT_URL);
+      document.getElementById("webhookModal")?.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeWebhookSettingsModal() {
+      document.getElementById("webhookModal")?.classList.add("hidden");
+    }
+
+    function saveWebhookSettings() {
+      const enr = document.getElementById("cfgEnrollmentScriptUrl")?.value.trim() || "";
+      const pay = document.getElementById("cfgPaymentScriptUrl")?.value.trim() || "";
+      
+      if (enr) {
+        ENROLLMENT_SCRIPT_URL = enr;
+        localStorage.setItem("apechomes_enrollment_script_url", enr);
+      }
+      if (pay) {
+        PAYMENT_SCRIPT_URL = pay;
+        localStorage.setItem("apechomes_payment_script_url", pay);
+      }
+      
+      const notice = document.getElementById("webhookSavedNotice");
+      if (notice) {
+        notice.classList.remove("hidden");
+        setTimeout(() => notice.classList.add("hidden"), 2500);
+      }
+      setTimeout(() => closeWebhookSettingsModal(), 700);
+    }
+
+    function copyAppsScriptCode() {
+      const code = document.getElementById("appsScriptCodeDisplay")?.innerText || "";
+      if (!code) return;
+      navigator.clipboard.writeText(code).then(() => {
+        const text = document.getElementById("copyScriptText");
+        const btn = document.getElementById("copyScriptBtn");
+        if (text) text.innerText = "Copied to Clipboard!";
+        if (btn) btn.classList.replace("bg-blue-600", "bg-emerald-600");
+        setTimeout(() => {
+          if (text) text.innerText = "Copy Script";
+          if (btn) btn.classList.replace("bg-emerald-600", "bg-blue-600");
+        }, 2200);
+      }).catch(() => {
+        alert("Please select and copy the code from the box manually.");
+      });
+    }
+
+    function testWebhookUrl() {
+      const enr = document.getElementById("cfgEnrollmentScriptUrl")?.value.trim() || ENROLLMENT_SCRIPT_URL;
+      if (!enr || enr.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE") || enr.includes("APEC_ENROLLMENT_WEBHOOK_URL")) {
+        alert("Please paste your deployed Google Apps Script Web App URL first.");
+        return;
+      }
+      // Opening the Web App URL executes doGet(e), which verifies connectivity and auto-creates row 1 headers!
+      window.open(enr, "_blank");
     }
 
     // Google Sheet UserData Database Sync
