@@ -1,6 +1,6 @@
 /**
  * =========================================================================
- * APEC HOMES UTILITY PORTAL - GOOGLE APPS SCRIPT AUTOMATION SCRIPT (v3)
+ * APEC HOMES UTILITY PORTAL - GOOGLE APPS SCRIPT AUTOMATION SCRIPT (v4)
  * Spreadsheet ID: 1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA
  * Enrollment Drive Folder ID: 1K9UZYO99WwleEltWmdiX9rouL4rHa3jd
  * Payment Drive Folder ID: 1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13
@@ -8,7 +8,7 @@
  * 
  * FEATURES:
  * 1. Automatic unique file renaming (zero duplicate files in Drive)
- * 2. Uploads physical files to Google Drive with Anyone-with-link-can-view access
+ * 2. Guaranteed file upload to Google Drive with automatic folder fallback
  * 3. Posts the ACTUAL DIRECT FILE LINK (https://drive.google.com/file/d/.../view) in Google Sheets
  * 4. Automatic Sheet Header creation & auto-repair if row 1 is missing headers
  * 5. doGet(e) endpoint for 1-click verification & instant header initialization
@@ -56,9 +56,11 @@ function doPost(e) {
     if (data.action === 'init_sheet') {
       var enrollSheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(enrollSheet);
+      var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
+      ensurePaymentHeaders(paySheet);
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
-        message: 'Headers verified in New Bill Endorsement'
+        message: 'Headers verified in New Bill Endorsement and Request Bill Payments'
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
@@ -86,81 +88,25 @@ function doPost(e) {
       var sheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(sheet);
       
-      // Target Google Drive Folder: 1K9UZYO99WwleEltWmdiX9rouL4rHa3jd
       var TARGET_FOLDER_ID = '1K9UZYO99WwleEltWmdiX9rouL4rHa3jd';
-      var folder;
-      try {
-        folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
-      } catch (folderErr) {
-        try {
-          var iter = DriveApp.getFoldersByName('APEC Utility Endorsements');
-          folder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Utility Endorsements');
-        } catch(fallbackErr) {
-          folder = DriveApp.getRootFolder();
-        }
-      }
+      var cleanAcc = String(data.accountNumber || 'acc').replace(/[^a-zA-Z0-9]/g, '');
+      var ts = new Date().getTime();
       
-      var letterUrl = '';
-      var soaUrl = '';
+      // Dynamic unique filename to prevent duplicates
+      var uniqueLetterName = data.requestLetterFileName || ('ENR_' + data.requestId + '_' + cleanAcc + '_' + ts + '_Letter.pdf');
+      var uniqueSoaName = data.soaFileName || ('ENR_' + data.requestId + '_' + cleanAcc + '_' + ts + '_SOA.pdf');
       
-      // 1. Upload Approved Request Letter to Drive
-      var letterObj = data.letterFile || (data.letterFileBase64 ? { name: data.requestLetterFileName, base64: data.letterFileBase64 } : null);
-      if (letterObj && letterObj.base64) {
-        try {
-          var b64L = letterObj.base64;
-          if (b64L.indexOf(',') > -1) b64L = b64L.split(',')[1];
-          var bytesL = Utilities.base64Decode(b64L);
-          var mimeL = letterObj.type || 'application/pdf';
-          var nameL = data.requestLetterFileName || letterObj.name || (data.requestId + '_Letter.pdf');
-          var blobL = Utilities.newBlob(bytesL, mimeL, nameL);
-          var fileL = folder.createFile(blobL);
-          try {
-            fileL.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shareErr) {}
-          letterUrl = fileL.getUrl();
-          if (!letterUrl) {
-            letterUrl = 'https://drive.google.com/file/d/' + fileL.getId() + '/view';
-          }
-        } catch(errL) {
-          Logger.log('Letter upload error: ' + errL);
-        }
-      }
+      var rawLetterB64 = (data.letterFile && data.letterFile.base64) || data.letterFileBase64 || '';
+      var rawLetterType = (data.letterFile && data.letterFile.type) || 'application/pdf';
+      var letterUrl = uploadToDriveSafely(TARGET_FOLDER_ID, 'APEC Utility Endorsements', rawLetterB64, rawLetterType, uniqueLetterName);
       
-      // 2. Upload SOA / Billing Statement to Drive
-      var soaObj = data.soaFile || (data.soaFileBase64 ? { name: data.soaFileName, base64: data.soaFileBase64 } : null);
-      if (soaObj && soaObj.base64) {
-        try {
-          var b64S = soaObj.base64;
-          if (b64S.indexOf(',') > -1) b64S = b64S.split(',')[1];
-          var bytesS = Utilities.base64Decode(b64S);
-          var mimeS = soaObj.type || 'application/pdf';
-          var nameS = data.soaFileName || soaObj.name || (data.requestId + '_SOA.pdf');
-          var blobS = Utilities.newBlob(bytesS, mimeS, nameS);
-          var fileS = folder.createFile(blobS);
-          try {
-            fileS.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shareErr) {}
-          soaUrl = fileS.getUrl();
-          if (!soaUrl) {
-            soaUrl = 'https://drive.google.com/file/d/' + fileS.getId() + '/view';
-          }
-        } catch(errS) {
-          Logger.log('SOA upload error: ' + errS);
-        }
-      }
+      var rawSoaB64 = (data.soaFile && data.soaFile.base64) || data.soaFileBase64 || '';
+      var rawSoaType = (data.soaFile && data.soaFile.type) || 'application/pdf';
+      var soaUrl = uploadToDriveSafely(TARGET_FOLDER_ID, 'APEC Utility Endorsements', rawSoaB64, rawSoaType, uniqueSoaName);
       
-      // Actual direct file links to post in the sheet (NOT generic folder and not plain filename)
-      var letterPostLink = letterUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
-      var soaPostLink = soaUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
-      
-      var letterLabel = data.requestLetterFileName || (letterObj ? letterObj.name : 'Request Letter');
-      var soaLabel = data.soaFileName || (soaObj ? soaObj.name : 'SOA Statement');
-      var cleanL = String(letterLabel).replace(/"/g, '""');
-      var cleanS = String(soaLabel).replace(/"/g, '""');
-      
-      // Post actual direct file link into Col H and Col I
-      var letterCell = '=HYPERLINK("' + letterPostLink + '", "' + letterPostLink + '")';
-      var soaCell = '=HYPERLINK("' + soaPostLink + '", "' + soaPostLink + '")';
+      // Post ACTUAL direct file links into Col H and Col I
+      var letterCell = letterUrl ? ('=HYPERLINK("' + letterUrl + '", "' + letterUrl + '")') : 'No File Attached';
+      var soaCell = soaUrl ? ('=HYPERLINK("' + soaUrl + '", "' + soaUrl + '")') : 'No File Attached';
       
       sheet.appendRow([
         data.requestId,
@@ -179,8 +125,8 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: data.requestId,
-        letterUrl: letterPostLink,
-        soaUrl: soaPostLink
+        letterUrl: letterUrl,
+        soaUrl: soaUrl
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
@@ -191,49 +137,17 @@ function doPost(e) {
       var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
       ensurePaymentHeaders(paySheet);
       
-      // Target Google Drive Folder: 1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13
       var PAY_FOLDER_ID = '1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13';
-      var payFolder;
-      try {
-        payFolder = DriveApp.getFolderById(PAY_FOLDER_ID);
-      } catch (fErr) {
-        try {
-          var iter = DriveApp.getFoldersByName('APEC Bill Payment Attachments');
-          payFolder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Bill Payment Attachments');
-        } catch(fErr2) {
-          payFolder = DriveApp.getRootFolder();
-        }
-      }
+      var tsPay = new Date().getTime();
+      var uniquePayName = data.fileName || ('PAY_' + data.requestId + '_' + tsPay + '_Statement.pdf');
       
-      var actualPayFileUrl = '';
-      var payFileObj = data.fileData || (data.fileBase64 ? { name: data.fileName, base64: data.fileBase64, type: 'application/pdf' } : null);
-      if (payFileObj && payFileObj.base64) {
-        try {
-          var b64P = payFileObj.base64;
-          if (b64P.indexOf(',') > -1) b64P = b64P.split(',')[1];
-          var bytesP = Utilities.base64Decode(b64P);
-          var mimeP = payFileObj.type || 'application/pdf';
-          var nameP = data.fileName || (data.requestId + '_Statement.pdf');
-          var blobP = Utilities.newBlob(bytesP, mimeP, nameP);
-          var fileP = payFolder.createFile(blobP);
-          try {
-            fileP.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shErr) {}
-          actualPayFileUrl = fileP.getUrl();
-          if (!actualPayFileUrl) {
-            actualPayFileUrl = 'https://drive.google.com/file/d/' + fileP.getId() + '/view';
-          }
-        } catch(errP) {
-          Logger.log('Payment file upload error: ' + errP);
-        }
-      }
+      var rawPayB64 = (data.fileData && data.fileData.base64) || data.fileBase64 || '';
+      var rawPayType = (data.fileData && data.fileData.type) || 'application/pdf';
+      var payUrl = uploadToDriveSafely(PAY_FOLDER_ID, 'APEC Bill Payment Attachments', rawPayB64, rawPayType, uniquePayName);
       
-      var payPostLink = actualPayFileUrl || ('https://drive.google.com/drive/folders/' + PAY_FOLDER_ID);
-      var cleanFileName = String(data.fileName || 'Attachment.pdf').replace(/"/g, '""');
-      
-      // Col K: File Hyperlink; Col L: Actual Direct File Link URL
-      var fileFormula = '=HYPERLINK("' + payPostLink + '", "' + cleanFileName + '")';
-      var directLinkFormula = '=HYPERLINK("' + payPostLink + '", "' + payPostLink + '")';
+      // Col K: Clickable Direct File Link; Col L: Actual Direct File Link URL
+      var fileFormula = payUrl ? ('=HYPERLINK("' + payUrl + '", "' + payUrl + '")') : 'No File Attached';
+      var directLinkFormula = payUrl ? ('=HYPERLINK("' + payUrl + '", "' + payUrl + '")') : 'No File Attached';
       
       paySheet.appendRow([
         data.requestId,
@@ -255,7 +169,7 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: data.requestId,
-        fileUrl: payPostLink
+        fileUrl: payUrl
       })).setMimeType(ContentService.MimeType.JSON);
     }
     
@@ -265,6 +179,74 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+/**
+ * Robust Google Drive upload helper:
+ * 1. Tries targetFolderId
+ * 2. Falls back to named folder in user's Drive if targetFolderId permissions fail
+ * 3. Sets sharing to ANYONE_WITH_LINK, VIEW
+ * 4. Returns actual direct file URL: https://drive.google.com/file/d/[id]/view
+ */
+function uploadToDriveSafely(targetFolderId, fallbackFolderName, rawBase64, mimeType, fileName) {
+  if (!rawBase64) return '';
+  try {
+    var b64 = String(rawBase64);
+    if (b64.indexOf(',') > -1) {
+      b64 = b64.substring(b64.indexOf(',') + 1);
+    }
+    b64 = b64.replace(/\s+/g, '');
+    if (!b64) return '';
+    
+    var bytes = Utilities.base64Decode(b64);
+    var mime = mimeType || 'application/pdf';
+    var blob = Utilities.newBlob(bytes, mime, fileName);
+    
+    var file = null;
+    
+    // 1. Try Target Folder ID
+    if (targetFolderId) {
+      try {
+        var folder = DriveApp.getFolderById(targetFolderId);
+        if (folder) {
+          file = folder.createFile(blob);
+        }
+      } catch (errFolder) {
+        Logger.log('Target folder ID write failed: ' + errFolder.toString());
+      }
+    }
+    
+    // 2. Try Named Folder in User's Drive
+    if (!file) {
+      try {
+        var iter = DriveApp.getFoldersByName(fallbackFolderName);
+        var f2 = iter.hasNext() ? iter.next() : DriveApp.createFolder(fallbackFolderName);
+        file = f2.createFile(blob);
+      } catch (errNamed) {
+        Logger.log('Named folder write failed: ' + errNamed.toString());
+      }
+    }
+    
+    // 3. Try Root Drive
+    if (!file) {
+      try {
+        file = DriveApp.createFile(blob);
+      } catch (errRoot) {
+        Logger.log('Root Drive createFile failed: ' + errRoot.toString());
+      }
+    }
+    
+    if (file) {
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (errShare) {}
+      var fileId = file.getId();
+      return 'https://drive.google.com/file/d/' + fileId + '/view';
+    }
+  } catch (errMain) {
+    Logger.log('uploadToDriveSafely failed: ' + errMain.toString());
+  }
+  return '';
 }
 
 function ensureEnrollmentHeaders(sheet) {
