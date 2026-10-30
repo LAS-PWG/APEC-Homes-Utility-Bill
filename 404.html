@@ -1782,7 +1782,7 @@ Submit and track your monthly utility payments directly through your account.</p
   ensurePaymentHeaders(paySheet);
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
-    message: 'APEC Homes Apps Script Webhook is ACTIVE and headers have been verified/repaired!',
+    message: 'APEC Homes Automation Webhook is ACTIVE! Headers verified and direct file links ready.',
     enrollmentRows: enrollSheet.getLastRow(),
     paymentRows: paySheet.getLastRow()
   })).setMimeType(ContentService.MimeType.JSON);
@@ -1796,18 +1796,20 @@ function doPost(e) {
     var data = JSON.parse(raw);
     var ss = SpreadsheetApp.getActiveSpreadsheet();
 
-    // 1. ACTION: Check / Repair Headers
+    // ACTION: Initialize / Check Headers
     if (data.action === 'init_sheet') {
       var enrollSheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(enrollSheet);
+      var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
+      ensurePaymentHeaders(paySheet);
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
-        message: 'Headers verified in New Bill Endorsement'
+        message: 'Headers verified in New Bill Endorsement and Request Bill Payments'
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 2. ACTION: Update Status
-    if (data.action === 'updateStatus' && data.requestId) {
+    // ACTION: Update Status
+    if (data.action === 'updateStatus' &amp;&amp; data.requestId) {
       var isEnroll = String(data.requestId).indexOf('ENR-') === 0;
       var targetSheet = ss.getSheetByName(isEnroll ? 'New Bill Endorsement' : 'Request Bill Payments');
       if (targetSheet) {
@@ -1823,70 +1825,29 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 3. SUBMISSION: Enroll New Utility Bill (ENR-...)
+    // 1. SUBMISSION: Enroll New Utility Bill (ENR-...)
     if (data.requestId &amp;&amp; String(data.requestId).indexOf('ENR-') === 0) {
       var sheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(sheet);
 
       var TARGET_FOLDER_ID = '1K9UZYO99WwleEltWmdiX9rouL4rHa3jd';
-      var folder;
-      try {
-        folder = DriveApp.getFolderById(TARGET_FOLDER_ID);
-      } catch (folderErr) {
-        try {
-          var iter = DriveApp.getFoldersByName('APEC Utility Endorsements');
-          folder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Utility Endorsements');
-        } catch(fallbackErr) {
-          folder = DriveApp.getRootFolder();
-        }
-      }
+      var cleanSite = String(data.site || 'site').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+      var cleanAcc = String(data.accountNumber || 'acc').replace(/[^a-zA-Z0-9]/g, '');
+      var ts = new Date().getTime();
 
-      var letterUrl = '';
-      var soaUrl = '';
+      var uniqueLetterName = data.requestLetterFileName || (data.requestId + '_' + cleanSite + '_' + cleanAcc + '_' + ts + '_RequestLetter.pdf');
+      var uniqueSoaName = data.soaFileName || (data.requestId + '_' + cleanSite + '_' + cleanAcc + '_' + ts + '_SOA.pdf');
 
-      // Upload Letter File
-      var letterObj = data.letterFile || (data.letterFileBase64 ? { name: data.requestLetterFileName, base64: data.letterFileBase64 } : null);
-      if (letterObj &amp;&amp; letterObj.base64) {
-        try {
-          var b64L = letterObj.base64;
-          if (b64L.indexOf(',') > -1) b64L = b64L.split(',')[1];
-          var bytesL = Utilities.base64Decode(b64L);
-          var mimeL = letterObj.type || 'application/pdf';
-          var nameL = data.requestId + '_Letter_' + (letterObj.name || data.requestLetterFileName || 'Approved_Letter.pdf');
-          var blobL = Utilities.newBlob(bytesL, mimeL, nameL);
-          var fileL = folder.createFile(blobL);
-          try {
-            fileL.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shareErr) {}
-          letterUrl = fileL.getUrl();
-        } catch(errL) {}
-      }
+      var rawLetterB64 = (data.letterFile &amp;&amp; data.letterFile.base64) || data.letterFileBase64 || '';
+      var rawLetterType = (data.letterFile &amp;&amp; data.letterFile.type) || 'application/pdf';
+      var letterUrl = uploadToDriveSafely(TARGET_FOLDER_ID, 'APEC Utility Endorsements', rawLetterB64, rawLetterType, uniqueLetterName);
 
-      // Upload SOA File
-      var soaObj = data.soaFile || (data.soaFileBase64 ? { name: data.soaFileName, base64: data.soaFileBase64 } : null);
-      if (soaObj &amp;&amp; soaObj.base64) {
-        try {
-          var b64S = soaObj.base64;
-          if (b64S.indexOf(',') > -1) b64S = b64S.split(',')[1];
-          var bytesS = Utilities.base64Decode(b64S);
-          var mimeS = soaObj.type || 'application/pdf';
-          var nameS = data.requestId + '_SOA_' + (soaObj.name || data.soaFileName || 'SOA_Billing.pdf');
-          var blobS = Utilities.newBlob(bytesS, mimeS, nameS);
-          var fileS = folder.createFile(blobS);
-          try {
-            fileS.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shareErr) {}
-          soaUrl = fileS.getUrl();
-        } catch(errS) {}
-      }
+      var rawSoaB64 = (data.soaFile &amp;&amp; data.soaFile.base64) || data.soaFileBase64 || '';
+      var rawSoaType = (data.soaFile &amp;&amp; data.soaFile.type) || 'application/pdf';
+      var soaUrl = uploadToDriveSafely(TARGET_FOLDER_ID, 'APEC Utility Endorsements', rawSoaB64, rawSoaType, uniqueSoaName);
 
-      // Actual direct file links to post in the sheet (NOT generic folder and not plain filename)
-      var letterPostLink = letterUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
-      var soaPostLink = soaUrl || ('https://drive.google.com/drive/folders/' + TARGET_FOLDER_ID);
-
-      // Post actual direct file link into Col H and Col I
-      var letterCell = '=HYPERLINK("' + letterPostLink + '", "' + letterPostLink + '")';
-      var soaCell = '=HYPERLINK("' + soaPostLink + '", "' + soaPostLink + '")';
+      var letterCell = letterUrl ? ('=HYPERLINK("' + letterUrl + '", "' + letterUrl + '")') : 'No File Attached';
+      var soaCell = soaUrl ? ('=HYPERLINK("' + soaUrl + '", "' + soaUrl + '")') : 'No File Attached';
 
       sheet.appendRow([
         data.requestId,
@@ -1905,56 +1866,26 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: data.requestId,
-        letterUrl: letterPostLink,
-        soaUrl: soaPostLink
+        letterUrl: letterUrl,
+        soaUrl: soaUrl
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 4. SUBMISSION: Request Bill Payment (REQ-...)
+    // 2. SUBMISSION: Request Bill Payment (REQ-...)
     if (data.requestId &amp;&amp; String(data.requestId).indexOf('REQ-') === 0) {
       var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
       ensurePaymentHeaders(paySheet);
 
       var PAY_FOLDER_ID = '1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13';
-      var payFolder;
-      try {
-        payFolder = DriveApp.getFolderById(PAY_FOLDER_ID);
-      } catch (fErr) {
-        try {
-          var iter = DriveApp.getFoldersByName('APEC Bill Payment Attachments');
-          payFolder = iter.hasNext() ? iter.next() : DriveApp.createFolder('APEC Bill Payment Attachments');
-        } catch(fErr2) {
-          payFolder = DriveApp.getRootFolder();
-        }
-      }
+      var tsPay = new Date().getTime();
+      var uniquePayName = data.fileName || ('PAY_' + data.requestId + '_' + tsPay + '_Statement.pdf');
 
-      var actualPayFileUrl = '';
-      var payFileObj = data.fileData || (data.fileBase64 ? { name: data.fileName, base64: data.fileBase64, type: 'application/pdf' } : null);
-      if (payFileObj &amp;&amp; payFileObj.base64) {
-        try {
-          var b64P = payFileObj.base64;
-          if (b64P.indexOf(',') > -1) b64P = b64P.split(',')[1];
-          var bytesP = Utilities.base64Decode(b64P);
-          var mimeP = payFileObj.type || 'application/pdf';
-          var nameP = data.fileName || (data.requestId + '_Statement.pdf');
-          var blobP = Utilities.newBlob(bytesP, mimeP, nameP);
-          var fileP = payFolder.createFile(blobP);
-          try {
-            fileP.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-          } catch(shErr) {}
-          actualPayFileUrl = fileP.getUrl();
-          if (!actualPayFileUrl) {
-            actualPayFileUrl = 'https://drive.google.com/file/d/' + fileP.getId() + '/view';
-          }
-        } catch(errP) {}
-      }
+      var rawPayB64 = (data.fileData &amp;&amp; data.fileData.base64) || data.fileBase64 || '';
+      var rawPayType = (data.fileData &amp;&amp; data.fileData.type) || 'application/pdf';
+      var payUrl = uploadToDriveSafely(PAY_FOLDER_ID, 'APEC Bill Payment Attachments', rawPayB64, rawPayType, uniquePayName);
 
-      var payPostLink = actualPayFileUrl || ('https://drive.google.com/drive/folders/' + PAY_FOLDER_ID);
-      var cleanFileName = String(data.fileName || 'Attachment.pdf').replace(/"/g, '""');
-
-      // Col K: File Hyperlink; Col L: Actual Direct File Link URL
-      var fileFormula = '=HYPERLINK("' + payPostLink + '", "' + cleanFileName + '")';
-      var directLinkFormula = '=HYPERLINK("' + payPostLink + '", "' + payPostLink + '")';
+      var fileFormula = payUrl ? ('=HYPERLINK("' + payUrl + '", "' + payUrl + '")') : 'No File Attached';
+      var directLinkFormula = payUrl ? ('=HYPERLINK("' + payUrl + '", "' + payUrl + '")') : 'No File Attached';
 
       paySheet.appendRow([
         data.requestId,
@@ -1976,7 +1907,7 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: data.requestId,
-        fileUrl: payPostLink
+        fileUrl: payUrl
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -1986,6 +1917,47 @@ function doPost(e) {
   } finally {
     lock.releaseLock();
   }
+}
+
+function uploadToDriveSafely(targetFolderId, fallbackFolderName, rawBase64, mimeType, fileName) {
+  if (!rawBase64) return '';
+  try {
+    var b64 = String(rawBase64);
+    if (b64.indexOf(',') > -1) {
+      b64 = b64.substring(b64.indexOf(',') + 1);
+    }
+    b64 = b64.replace(/\s+/g, '');
+    if (!b64) return '';
+    var bytes = Utilities.base64Decode(b64);
+    var mime = mimeType || 'application/pdf';
+    var blob = Utilities.newBlob(bytes, mime, fileName);
+    var file = null;
+    if (targetFolderId) {
+      try {
+        var folder = DriveApp.getFolderById(targetFolderId);
+        if (folder) file = folder.createFile(blob);
+      } catch (errFolder) {}
+    }
+    if (!file) {
+      try {
+        var iter = DriveApp.getFoldersByName(fallbackFolderName);
+        var f2 = iter.hasNext() ? iter.next() : DriveApp.createFolder(fallbackFolderName);
+        file = f2.createFile(blob);
+      } catch (errNamed) {}
+    }
+    if (!file) {
+      try {
+        file = DriveApp.createFile(blob);
+      } catch (errRoot) {}
+    }
+    if (file) {
+      try {
+        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      } catch (errShare) {}
+      return 'https://drive.google.com/file/d/' + file.getId() + '/view';
+    }
+  } catch (errMain) {}
+  return '';
 }
 
 function ensureEnrollmentHeaders(sheet) {
@@ -2395,8 +2367,11 @@ function ensurePaymentHeaders(sheet) {
       const preview = document.getElementById("enrollLetterNamePreview");
       if (input.files && input.files[0]) {
         const file = input.files[0];
+        const ext = (file.name.split('.').pop() || 'pdf').toLowerCase();
+        const acc = (document.getElementById("enrollAccountNo")?.value || "AccountNo").replace(/[^a-zA-Z0-9]/g, "");
+        const site = (document.getElementById("enrollSite")?.value || "Site").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
         if (preview) {
-          preview.innerText = `Selected letter file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+          preview.innerText = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB) • Auto-renamed to unique filename: ENR-YYYYMMDD-XXXX_${site}_${acc}_[Timestamp]_RequestLetter.${ext}`;
           preview.classList.remove("hidden");
         }
       }
@@ -2406,8 +2381,11 @@ function ensurePaymentHeaders(sheet) {
       const preview = document.getElementById("enrollSoaNamePreview");
       if (input.files && input.files[0]) {
         const file = input.files[0];
+        const ext = (file.name.split('.').pop() || 'pdf').toLowerCase();
+        const acc = (document.getElementById("enrollAccountNo")?.value || "AccountNo").replace(/[^a-zA-Z0-9]/g, "");
+        const site = (document.getElementById("enrollSite")?.value || "Site").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
         if (preview) {
-          preview.innerText = `Selected SOA file: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+          preview.innerText = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB) • Auto-renamed to unique filename: ENR-YYYYMMDD-XXXX_${site}_${acc}_[Timestamp]_SOA.${ext}`;
           preview.classList.remove("hidden");
         }
       }
@@ -2476,12 +2454,13 @@ function ensurePaymentHeaders(sheet) {
       const nowStr = new Date().toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit", hour12: true });
 
       // Unique file renaming to eliminate duplicates in Google Drive folder:
+      const cleanSite = (site || "site").replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
       const cleanAcc = (accountNo || "acc").replace(/[^a-zA-Z0-9]/g, "");
       const timestamp = Date.now();
       const letterExt = (letterFileObj.name.split('.').pop() || 'pdf').toLowerCase();
       const soaExt = (soaFileObj.name.split('.').pop() || 'pdf').toLowerCase();
-      const uniqueLetterFileName = `ENR_${reqId}_${cleanAcc}_${timestamp}_Letter.${letterExt}`;
-      const uniqueSoaFileName = `ENR_${reqId}_${cleanAcc}_${timestamp}_SOA.${soaExt}`;
+      const uniqueLetterFileName = `${reqId}_${cleanSite}_${cleanAcc}_${timestamp}_RequestLetter.${letterExt}`;
+      const uniqueSoaFileName = `${reqId}_${cleanSite}_${cleanAcc}_${timestamp}_SOA.${soaExt}`;
 
       const newRecord = {
         requestId: reqId,
@@ -2510,14 +2489,11 @@ function ensurePaymentHeaders(sheet) {
         driveLetterFolderUrl: DRIVE_LETTER_FOLDER,
         driveSoaFolderUrl: DRIVE_SOA_FOLDER,
         status: "Pending",
-        submittedAt: nowStr
+        submittedAt: nowStr,
+        webhookAlreadyUploaded: false
       };
 
-      // 1. Prepend to local memory and storage
-      enrollmentRequests = [newRecord, ...enrollmentRequests.filter(x => x.requestId !== reqId)];
-      localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
-
-      // 2. Client-side Post to Google Apps Script Web App (Webhook for static hosting & Google Drive upload)
+      // 1. Client-side Post to Google Apps Script Web App (Webhook for static hosting & Google Drive upload)
       let webhookDispatched = false;
       const isConfigured = ENROLLMENT_SCRIPT_URL && 
                            !ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") && 
@@ -2525,27 +2501,63 @@ function ensurePaymentHeaders(sheet) {
 
       if (isConfigured) {
         try {
-          // text/plain;charset=utf-8 prevents CORS preflight OPTIONS rejection in Google Apps Script
-          await fetch(ENROLLMENT_SCRIPT_URL, {
+          // Try standard CORS fetch first so we can capture direct letterUrl & soaUrl returned by Apps Script
+          const res = await fetch(ENROLLMENT_SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(newRecord)
           });
-          webhookDispatched = true;
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.status === "success") {
+              if (json.letterUrl) newRecord.driveLetterFolderUrl = json.letterUrl;
+              if (json.soaUrl) newRecord.driveSoaFolderUrl = json.soaUrl;
+              newRecord.webhookAlreadyUploaded = true;
+              webhookDispatched = true;
+            }
+          }
         } catch (scriptErr) {
-          console.warn("Notice posting to Enrollment Apps Script:", scriptErr);
+          try {
+            await fetch(ENROLLMENT_SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(newRecord)
+            });
+            newRecord.webhookAlreadyUploaded = true;
+            webhookDispatched = true;
+          } catch (noCorsErr) {
+            console.warn("Notice posting to Enrollment Apps Script:", noCorsErr);
+          }
         }
       }
 
-      // 3. Optional post to backend proxy if running full-stack
+      // 2. Optional post to backend proxy if running full-stack
       try {
-        await fetch("/api/enrollments/submit", {
+        const srvRes = await fetch("/api/enrollments/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRecord)
         });
+        if (srvRes.ok) {
+          const srvData = await srvRes.json();
+          if (srvData?.record?.driveLetterFolderUrl?.includes("/file/d/")) {
+            newRecord.driveLetterFolderUrl = srvData.record.driveLetterFolderUrl;
+          }
+          if (srvData?.record?.driveSoaFolderUrl?.includes("/file/d/")) {
+            newRecord.driveSoaFolderUrl = srvData.record.driveSoaFolderUrl;
+          }
+        }
       } catch (err) {}
+
+      // 3. Prepend to local memory and storage (without bloating localStorage with raw Base64)
+      const storedRecord = { ...newRecord };
+      delete storedRecord.letterFileBase64;
+      delete storedRecord.soaFileBase64;
+      delete storedRecord.letterFile;
+      delete storedRecord.soaFile;
+      enrollmentRequests = [storedRecord, ...enrollmentRequests.filter(x => x.requestId !== reqId)];
+      localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
 
       btn.disabled = false;
       icon.classList.remove("animate-spin");
@@ -3193,36 +3205,61 @@ function ensurePaymentHeaders(sheet) {
           base64: fileBase64
         },
         status: "Pending",
-        submittedAt: nowStr
+        submittedAt: nowStr,
+        webhookAlreadyUploaded: false
       };
 
-      // Prepend to local memory & storage
-      paymentRequests = [newRecord, ...paymentRequests.filter(p => p.requestId !== reqId)];
-      localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
-
-      // Client-side Post to Google Apps Script Web App (Webhook for static hosting)
-      if (PAYMENT_SCRIPT_URL && !PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL")) {
+      // 1. Client-side Post to Google Apps Script Web App (Webhook for static hosting & Google Drive upload)
+      if (PAYMENT_SCRIPT_URL && !PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL") && !PAYMENT_SCRIPT_URL.includes("YOUR_PAYMENT_SCRIPT_URL_HERE")) {
         try {
-          // text/plain;charset=utf-8 prevents CORS preflight OPTIONS rejection in Google Apps Script
-          await fetch(PAYMENT_SCRIPT_URL, {
+          const res = await fetch(PAYMENT_SCRIPT_URL, {
             method: "POST",
-            mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
             body: JSON.stringify(newRecord)
           });
+          if (res.ok) {
+            const json = await res.json();
+            if (json && json.status === "success") {
+              if (json.fileUrl) newRecord.fileUrl = json.fileUrl;
+              newRecord.webhookAlreadyUploaded = true;
+            }
+          }
         } catch (scriptErr) {
-          console.warn("Notice posting to Payment Apps Script:", scriptErr);
+          try {
+            await fetch(PAYMENT_SCRIPT_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(newRecord)
+            });
+            newRecord.webhookAlreadyUploaded = true;
+          } catch (noCorsErr) {
+            console.warn("Notice posting to Payment Apps Script:", noCorsErr);
+          }
         }
       }
 
-      // Optional post to backend proxy if running full-stack
+      // 2. Optional post to backend proxy if running full-stack
       try {
-        await fetch("/api/bill-payment/submit", {
+        const srvRes = await fetch("/api/bill-payment/submit", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(newRecord)
         });
+        if (srvRes.ok) {
+          const srvData = await srvRes.json();
+          if (srvData?.record?.driveFolderUrl?.includes("/file/d/")) {
+            newRecord.fileUrl = srvData.record.driveFolderUrl;
+          }
+        }
       } catch (err) {}
+
+      // 3. Prepend to local memory & storage (without bloating localStorage with raw Base64)
+      const storedRecord = { ...newRecord };
+      delete storedRecord.fileBase64;
+      delete storedRecord.fileData;
+      paymentRequests = [storedRecord, ...paymentRequests.filter(p => p.requestId !== reqId)];
+      localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
 
       btn.disabled = false;
       icon.classList.remove("animate-spin");
@@ -3415,8 +3452,12 @@ function ensurePaymentHeaders(sheet) {
                   site: c[7]?.v ? String(c[7].v).trim() : "",
                   biller: c[8]?.v ? String(c[8].v).trim() : "",
                   accountNumber: c[9]?.v ? String(c[9].v).trim() : "",
-                  fileName: c[10]?.v ? String(c[10].v).trim() : "",
-                  fileUrl: c[11]?.v ? String(c[11].v).trim() : `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`,
+                  fileName: (c[10]?.v && !String(c[10].v).trim().startsWith("http")) ? String(c[10].v).trim() : "View Uploaded Bill",
+                  fileUrl: (c[11]?.v && String(c[11].v).trim().startsWith("http"))
+                    ? String(c[11].v).trim()
+                    : ((c[10]?.v && String(c[10].v).trim().startsWith("http"))
+                        ? String(c[10].v).trim()
+                        : `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`),
                   status: c[12]?.v ? String(c[12].v).trim() : "Pending",
                   submittedAt: c[13]?.f || (c[13]?.v ? String(c[13].v).trim() : new Date().toISOString())
                 });

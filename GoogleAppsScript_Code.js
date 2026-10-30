@@ -89,12 +89,13 @@ function doPost(e) {
       ensureEnrollmentHeaders(sheet);
       
       var TARGET_FOLDER_ID = '1K9UZYO99WwleEltWmdiX9rouL4rHa3jd';
+      var cleanSite = String(data.site || 'site').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
       var cleanAcc = String(data.accountNumber || 'acc').replace(/[^a-zA-Z0-9]/g, '');
       var ts = new Date().getTime();
       
       // Dynamic unique filename to prevent duplicates
-      var uniqueLetterName = data.requestLetterFileName || ('ENR_' + data.requestId + '_' + cleanAcc + '_' + ts + '_Letter.pdf');
-      var uniqueSoaName = data.soaFileName || ('ENR_' + data.requestId + '_' + cleanAcc + '_' + ts + '_SOA.pdf');
+      var uniqueLetterName = data.requestLetterFileName || (data.requestId + '_' + cleanSite + '_' + cleanAcc + '_' + ts + '_RequestLetter.pdf');
+      var uniqueSoaName = data.soaFileName || (data.requestId + '_' + cleanSite + '_' + cleanAcc + '_' + ts + '_SOA.pdf');
       
       var rawLetterB64 = (data.letterFile && data.letterFile.base64) || data.letterFileBase64 || '';
       var rawLetterType = (data.letterFile && data.letterFile.type) || 'application/pdf';
