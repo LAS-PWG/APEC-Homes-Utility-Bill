@@ -455,7 +455,7 @@
               </div>
             </div>
 
-            <!-- Announcements Card from Google Docs -->
+            <!-- Announcements Card from Google Sheet (Announcements Tab) -->
             <div class="rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-6 sm:p-7 shadow-sm">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-royal-200/60 dark:border-royal-800/60 gap-3">
                 <div class="flex items-center space-x-2.5">
@@ -463,29 +463,98 @@
                     <i data-lucide="file-text" class="w-5 h-5"></i>
                   </div>
                   <div>
-                    <div class="flex items-center space-x-2">
+                    <div class="flex flex-wrap items-center gap-2">
                       <h3 class="text-base font-bold text-slate-900 dark:text-white">Announcements</h3>
                       <span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-royal-500/10 text-royal-600 dark:text-royal-300 border border-royal-500/20">
-                        <i data-lucide="file-text" class="w-3 h-3 text-royal-500"></i>
-                        <span>Google Docs Source</span>
+                        <i data-lucide="database" class="w-3 h-3 text-royal-500"></i>
+                        <span>Google Sheet Tab: Announcements</span>
                       </span>
                       <span id="announcementViewerTag" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-royal-900 text-slate-500 dark:text-royal-300">
                         Viewer Only
                       </span>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Official updates synced from Google Docs</p>
+                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Official updates extracted from Google Sheet</p>
                   </div>
                 </div>
 
-                <div class="flex items-center space-x-2 self-start sm:self-auto">
+                <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                  <span id="announceSyncNotice" class="hidden text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Synced!</span>
                   <span id="announcementSyncTime" class="text-[11px] text-slate-400 dark:text-royal-400/60">Synced: Just now</span>
-                  <button type="button" onclick="syncAnnouncementFromDoc()" class="p-1.5 rounded-lg text-royal-600 dark:text-royal-300 hover:bg-royal-100 dark:hover:bg-royal-800/60 transition-colors cursor-pointer" title="Refresh Announcement">
+                  <button type="button" onclick="syncAnnouncementFromDoc(true)" class="p-1.5 rounded-lg text-royal-600 dark:text-royal-300 hover:bg-royal-100 dark:hover:bg-royal-800/60 transition-colors cursor-pointer" title="Refresh Announcements from Google Sheet">
                     <i id="syncAnnounceIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                   </button>
-                  <button id="docConfigBtn" type="button" onclick="toggleDocSettings()" class="hidden inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-royal-500/10 hover:bg-royal-500/20 text-royal-600 dark:text-royal-300 border border-royal-500/20 transition-all cursor-pointer" title="Configure Google Doc Link or Text">
-                    <i data-lucide="settings" class="w-3 h-3 text-royal-500"></i>
-                    <span class="hidden sm:inline">Doc Sync (Admin)</span>
+                  <button id="forceSyncAnnounceBtn" type="button" onclick="forcePullAnnouncementsFromGSheet()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition-all cursor-pointer" title="Force pull latest Announcements from Google Sheet">
+                    <i id="forceSyncAnnounceIcon" data-lucide="refresh-cw" class="w-3 h-3 text-emerald-500"></i>
+                    <span>Force Update</span>
                   </button>
+                  <button id="docConfigBtn" type="button" onclick="toggleDocSettings()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-royal-500/10 hover:bg-royal-500/20 text-royal-600 dark:text-royal-300 border border-royal-500/20 transition-all cursor-pointer" title="Manage or Post Announcements (Admin / Sub-Admin)">
+                    <i data-lucide="settings" class="w-3 h-3 text-royal-500"></i>
+                    <span>Manage (Admin)</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Admin / Sub-Admin Announcements Manager & Force Update Drawer -->
+              <div id="docSettingsPanel" class="hidden mt-4 p-5 rounded-xl bg-white dark:bg-royal-950 border border-slate-200 dark:border-royal-800 shadow-lg space-y-4 animate-fade-in">
+                <div class="flex items-center justify-between border-b border-slate-200 dark:border-royal-800 pb-2.5">
+                  <div class="flex items-center space-x-2">
+                    <i data-lucide="settings" class="w-4 h-4 text-royal-500"></i>
+                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                      Announcement Manager &amp; Force Sync (Admin / Sub-Admin)
+                    </h4>
+                  </div>
+                  <button type="button" onclick="toggleDocSettings(false)" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                  </button>
+                </div>
+
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 dark:bg-royal-900/50 p-3.5 rounded-xl border border-slate-200 dark:border-royal-800 text-xs">
+                  <div>
+                    <p class="font-bold text-slate-800 dark:text-white">Google Sheet Announcements Tab</p>
+                    <p class="text-[11px] text-slate-500 dark:text-royal-300/70">
+                      Synced live from <code class="font-mono text-royal-600 dark:text-royal-300">Announcements</code> tab in sheet <code class="font-mono">1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY</code>.
+                    </p>
+                  </div>
+                  <div class="flex items-center space-x-2">
+                    <button type="button" onclick="forcePullAnnouncementsFromGSheet()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer">
+                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                      <span>Force Sync from GSheet</span>
+                    </button>
+                    <a href="https://docs.google.com/spreadsheets/d/1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY/edit" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer">
+                      <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                      <span>Open Sheet</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div class="space-y-3">
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
+                      Announcement Title:
+                    </label>
+                    <input type="text" id="adminAnnounceTitleInput" placeholder="Welcome to APECHOMES Utility Portal" class="w-full px-3 py-2 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-semibold" />
+                  </div>
+                  <div>
+                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
+                      Announcement Body Content:
+                    </label>
+                    <textarea id="adminAnnounceBodyInput" rows="3" placeholder="Enter announcement details here..." class="w-full px-3 py-2 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-mono"></textarea>
+                  </div>
+                </div>
+
+                <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-royal-800">
+                  <button type="button" onclick="forcePullAnnouncementsFromGSheet()" class="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer">
+                    Discard Local Override &amp; Pull GSheet
+                  </button>
+                  <div class="flex items-center space-x-2">
+                    <button type="button" onclick="toggleDocSettings(false)" class="px-3 py-1.5 rounded-lg text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
+                      Cancel
+                    </button>
+                    <button type="button" onclick="saveAdminAnnouncementOverride()" class="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer">
+                      <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                      <span>Save &amp; Push to GSheet</span>
+                    </button>
+                  </div>
                 </div>
               </div>
 
@@ -1774,15 +1843,26 @@ Submit and track your monthly utility payments directly through your account.</p
           </button>
         </div>
         <div class="relative bg-slate-900 text-slate-200 p-3 rounded-xl font-mono text-[11px] overflow-x-auto max-h-60 border border-slate-800">
-          <pre><code id="appsScriptCodeDisplay">function doGet(e) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
+          <pre><code id="appsScriptCodeDisplay">var USER_DATA_SPREADSHEET_ID = '1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY';
+var UTILITY_SPREADSHEET_ID = '1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA';
+
+function getUtilitySpreadsheet() {
+  try { return SpreadsheetApp.openById(UTILITY_SPREADSHEET_ID); } catch (e) { return SpreadsheetApp.getActiveSpreadsheet(); }
+}
+
+function getUserSpreadsheet(customId) {
+  try { return SpreadsheetApp.openById(customId || USER_DATA_SPREADSHEET_ID); } catch (e) { return SpreadsheetApp.getActiveSpreadsheet(); }
+}
+
+function doGet(e) {
+  var ss = getUtilitySpreadsheet();
   var enrollSheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
   ensureEnrollmentHeaders(enrollSheet);
   var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
   ensurePaymentHeaders(paySheet);
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
-    message: 'APEC Homes Automation Webhook is ACTIVE! Headers verified and direct file links ready.',
+    message: 'APEC Homes Automation Webhook (v5) is ACTIVE! Headers, UserData password sync, and Announcements sync ready.',
     enrollmentRows: enrollSheet.getLastRow(),
     paymentRows: paySheet.getLastRow()
   })).setMimeType(ContentService.MimeType.JSON);
@@ -1794,7 +1874,7 @@ function doPost(e) {
   try {
     var raw = e.postData.contents;
     var data = JSON.parse(raw);
-    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var ss = getUtilitySpreadsheet();
 
     // ACTION: Initialize / Check Headers
     if (data.action === 'init_sheet') {
@@ -1806,6 +1886,75 @@ function doPost(e) {
         status: 'success',
         message: 'Headers verified in New Bill Endorsement and Request Bill Payments'
       })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Force Password Update -> Write New Current Password to UserData Sheet
+    if (data.action === 'updatePassword' &amp;&amp; (data.username || data.userId)) {
+      var userSs = getUserSpreadsheet(data.spreadsheetId);
+      var userSheet = userSs.getSheetByName('UserData') || userSs.getSheets()[0];
+      var updatedRow = -1;
+      if (userSheet) {
+        var uVals = userSheet.getDataRange().getValues();
+        var targetUname = String(data.username || '').trim().toLowerCase();
+        var targetUid = String(data.userId || '').trim().toLowerCase();
+        for (var uIdx = 1; uIdx &lt; uVals.length; uIdx++) {
+          var rowUid = String(uVals[uIdx][0] || '').trim().toLowerCase();
+          var rowUname = String(uVals[uIdx][1] || '').trim().toLowerCase();
+          if ((targetUname &amp;&amp; rowUname === targetUname) || (!targetUname &amp;&amp; targetUid &amp;&amp; rowUid === targetUid)) {
+            userSheet.getRange(uIdx + 1, 3).setValue(String(data.newPassword || '').trim());
+            updatedRow = uIdx + 1;
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: updatedRow &gt; 0 ? 'success' : 'not_found',
+        updatedRow: updatedRow
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Admin Reset User Password to Default
+    if (data.action === 'resetPassword' &amp;&amp; (data.username || data.userId)) {
+      var resetSs = getUserSpreadsheet(data.spreadsheetId);
+      var resetSheet = resetSs.getSheetByName('UserData') || resetSs.getSheets()[0];
+      if (resetSheet) {
+        var rVals = resetSheet.getDataRange().getValues();
+        var rUname = String(data.username || '').trim().toLowerCase();
+        var rUid = String(data.userId || '').trim().toLowerCase();
+        for (var rIdx = 1; rIdx &lt; rVals.length; rIdx++) {
+          var cUid = String(rVals[rIdx][0] || '').trim().toLowerCase();
+          var cUname = String(rVals[rIdx][1] || '').trim().toLowerCase();
+          if ((rUname &amp;&amp; cUname === rUname) || (!rUname &amp;&amp; rUid &amp;&amp; cUid === rUid)) {
+            resetSheet.getRange(rIdx + 1, 3).setValue('');
+            resetSheet.getRange(rIdx + 1, 4).setValue(String(data.defaultPassword || '123456').trim());
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Admin Update Announcement in Announcements Sheet
+    if (data.action === 'updateAnnouncement') {
+      var annSs = getUserSpreadsheet(data.spreadsheetId);
+      var annSheet = annSs.getSheetByName('Announcements') || annSs.insertSheet('Announcements');
+      if (annSheet.getLastRow() === 0) {
+        annSheet.appendRow(['Date / ID', 'Title', 'Content', 'Action Link', 'Priority', 'Posted By']);
+      }
+      var rowArr = [
+        data.dateOrTime || new Date().toLocaleString(),
+        data.title || 'Welcome to APECHOMES Utility Portal',
+        data.content || '',
+        data.actionLink || 'Request Bill Payment',
+        data.priority || 'Normal',
+        data.postedBy || 'Administrator'
+      ];
+      if (annSheet.getLastRow() &gt;= 2) {
+        annSheet.getRange(2, 1, 1, 6).setValues([rowArr]);
+      } else {
+        annSheet.appendRow(rowArr);
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
     }
 
     // ACTION: Update Status
@@ -2066,6 +2215,16 @@ function ensurePaymentHeaders(sheet) {
       { userId: "APEC-USR-0017", username: "mgr_site", currentPassword: "site123", defaultPassword: "", firstName: "Site", lastName: "ProjectMgr", accessLevel: "Level 7", status: "Active", email: "mgr_site@apechomes.com", viberNumber: "09171234576", site: "AHC2" }
     ];
 
+    // Persistent password overrides map so newly set permanent passwords survive GViz cache delays
+    let pwOverrides = {};
+    try {
+      const savedOverrides = localStorage.getItem("apechomes_pw_overrides_v1");
+      if (savedOverrides) {
+        const parsedO = JSON.parse(savedOverrides);
+        if (parsedO && typeof parsedO === "object") pwOverrides = parsedO;
+      }
+    } catch(e) {}
+
     try {
       localStorage.removeItem("apechomes_user_db_v3"); // Clear old corrupted cache
       const savedU = localStorage.getItem("apechomes_user_db_v4");
@@ -2073,6 +2232,14 @@ function ensurePaymentHeaders(sheet) {
         const parsed = JSON.parse(savedU);
         if (Array.isArray(parsed) && parsed.length > 0) userDatabase = parsed;
       }
+      // Apply any saved password overrides
+      userDatabase = userDatabase.map(u => {
+        const uKey = (u.username || "").trim().toLowerCase();
+        if (!u.currentPassword && pwOverrides[uKey]) {
+          return { ...u, currentPassword: pwOverrides[uKey] };
+        }
+        return u;
+      });
     } catch(e) {}
 
     // Master Billers Catalog (Col A: Account No, Col B: Site, Col C: Biller)
@@ -2170,8 +2337,9 @@ function ensurePaymentHeaders(sheet) {
     // Access control UI update
     function updateAccessUI() {
       if (!currentUser) return;
-      const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
-      const isAdminOnly = currentUser.accessLevel === "Administrator";
+      const roleNorm = (currentUser.accessLevel || "").trim().toLowerCase();
+      const isAdminOrSub = roleNorm === "administrator" || roleNorm === "sub-administrator" || roleNorm === "admin" || roleNorm === "subadmin";
+      const isAdminOnly = roleNorm === "administrator" || roleNorm === "admin";
 
       // REQUIREMENT 1: DOWNLOAD ZIP IN WEBAPP MUST ONLY BE SEEN IN ADMIN LEVEL
       const zipWrapper = document.getElementById("adminOnlyDownloadZipWrapper");
@@ -2207,6 +2375,8 @@ function ensurePaymentHeaders(sheet) {
       const adminGsheetControls = document.getElementById("adminGsheetControls");
       const roleTesterWrapper = document.getElementById("roleTesterWrapper");
       const docConfigBtn = document.getElementById("docConfigBtn");
+      const forceSyncAnnounceBtn = document.getElementById("forceSyncAnnounceBtn");
+      const announcementViewerTag = document.getElementById("announcementViewerTag");
       const enrollLetterFolderWrapper = document.getElementById("enrollLetterFolderWrapper");
       const enrollSoaFolderWrapper = document.getElementById("enrollSoaFolderWrapper");
       const billPaymentFolderWrapper = document.getElementById("billPaymentFolderWrapper");
@@ -2221,7 +2391,12 @@ function ensurePaymentHeaders(sheet) {
         if (adminGsheetCard) adminGsheetCard.classList.remove("hidden");
         if (adminGsheetControls) { adminGsheetControls.classList.remove("hidden"); adminGsheetControls.classList.add("flex"); }
         if (roleTesterWrapper) { roleTesterWrapper.classList.remove("hidden"); roleTesterWrapper.classList.add("flex"); }
-        if (docConfigBtn) docConfigBtn.classList.remove("hidden");
+        if (docConfigBtn) { docConfigBtn.classList.remove("hidden"); docConfigBtn.classList.add("inline-flex"); }
+        if (forceSyncAnnounceBtn) { forceSyncAnnounceBtn.classList.remove("hidden"); forceSyncAnnounceBtn.classList.add("inline-flex"); }
+        if (announcementViewerTag) {
+          announcementViewerTag.innerText = "Admin Editor";
+          announcementViewerTag.className = "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20";
+        }
         if (enrollLetterFolderWrapper) enrollLetterFolderWrapper.classList.remove("hidden");
         if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.remove("hidden");
         if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.remove("hidden");
@@ -2235,7 +2410,13 @@ function ensurePaymentHeaders(sheet) {
         if (adminGsheetCard) adminGsheetCard.classList.add("hidden");
         if (adminGsheetControls) { adminGsheetControls.classList.add("hidden"); adminGsheetControls.classList.remove("flex"); }
         if (roleTesterWrapper) { roleTesterWrapper.classList.add("hidden"); roleTesterWrapper.classList.remove("flex"); }
-        if (docConfigBtn) docConfigBtn.classList.add("hidden");
+        if (docConfigBtn) { docConfigBtn.classList.add("hidden"); docConfigBtn.classList.remove("inline-flex"); }
+        if (forceSyncAnnounceBtn) { forceSyncAnnounceBtn.classList.add("hidden"); forceSyncAnnounceBtn.classList.remove("inline-flex"); }
+        if (announcementViewerTag) {
+          announcementViewerTag.innerText = "Viewer Only";
+          announcementViewerTag.className = "inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-royal-900 text-slate-500 dark:text-royal-300";
+        }
+        document.getElementById("docSettingsPanel")?.classList.add("hidden");
         if (enrollLetterFolderWrapper) enrollLetterFolderWrapper.classList.add("hidden");
         if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.add("hidden");
         if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.add("hidden");
@@ -3666,8 +3847,9 @@ function ensurePaymentHeaders(sheet) {
       const defaultPw = document.getElementById("userInputDefaultPw").value.trim();
       const status = document.getElementById("userInputStatus").value;
 
+      let savedUserObj = null;
       if (editingId) {
-        const idx = userDatabase.findIndex(u => u.userId === editingId);
+        const idx = userDatabase.findIndex(u => u.userId === editingId || u.username.toLowerCase() === username.toLowerCase());
         if (idx !== -1) {
           userDatabase[idx] = {
             ...userDatabase[idx],
@@ -3681,6 +3863,7 @@ function ensurePaymentHeaders(sheet) {
             defaultPassword: defaultPw,
             status
           };
+          savedUserObj = userDatabase[idx];
         }
       } else {
         const newUser = {
@@ -3697,9 +3880,24 @@ function ensurePaymentHeaders(sheet) {
           status
         };
         userDatabase.push(newUser);
+        savedUserObj = newUser;
       }
 
-      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
+
+      if (savedUserObj && ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+        fetch(ENROLLMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "saveUser",
+            spreadsheetId: SPREADSHEET_ID,
+            user: savedUserObj
+          })
+        }).catch(() => {});
+      }
+
       fetch("/api/users/save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -3715,10 +3913,30 @@ function ensurePaymentHeaders(sheet) {
       if (!u) return;
       const tempPw = prompt(`Enter new temporary password for ${u.username}:`, "123456");
       if (tempPw === null) return;
-      u.defaultPassword = tempPw;
+      u.defaultPassword = tempPw.trim();
       u.currentPassword = "";
-      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
-      alert(`Password for ${u.username} has been reset. On next sign-in, user must enter temporary password "${tempPw}" and set a permanent password.`);
+      if (u.username) {
+        delete pwOverrides[u.username.trim().toLowerCase()];
+        localStorage.setItem("apechomes_pw_overrides_v1", JSON.stringify(pwOverrides));
+      }
+      localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
+
+      if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+        fetch(ENROLLMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "resetPassword",
+            spreadsheetId: SPREADSHEET_ID,
+            userId: u.userId,
+            username: u.username,
+            defaultPassword: u.defaultPassword
+          })
+        }).catch(() => {});
+      }
+
+      alert(`Password for ${u.username} has been reset in UserData. On next sign-in, user must enter temporary password "${tempPw}" and set a permanent password.`);
       renderUserManagementTable();
     }
 
@@ -3726,20 +3944,20 @@ function ensurePaymentHeaders(sheet) {
       const u = userDatabase.find(x => x.userId === uid);
       if (!u) return;
       u.status = u.status === "Inactive" ? "Active" : "Inactive";
-      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
       renderUserManagementTable();
     }
 
     function deleteUser(uid) {
       const u = userDatabase.find(x => x.userId === uid);
       if (!u) return;
-      if (u.username === "admin" || u.username === "LSarmiento") {
+      if (u.username.toLowerCase() === "admin" || u.username.toLowerCase() === "lsarmiento") {
         alert("Primary administrator accounts cannot be deleted.");
         return;
       }
       if (!confirm(`Are you sure you want to delete user ${u.username} (${u.userId})?`)) return;
-      userDatabase = userDatabase.filter(x => x.userId !== uid);
-      localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
+      userDatabase = userDatabase.filter(x => x.username !== u.username);
+      localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
       fetch("/api/users/delete", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -4091,12 +4309,14 @@ function ensurePaymentHeaders(sheet) {
       document.getElementById("loginBtnText").innerText = "Sign In";
     }
 
-    function handlePasswordChangeSubmit(e) {
+    async function handlePasswordChangeSubmit(e) {
       e.preventDefault();
       const newPw = document.getElementById("newPasswordInput").value.trim();
       const confPw = document.getElementById("confirmPasswordInput").value.trim();
       const alert = document.getElementById("pwChangeErrorAlert");
       const alertText = document.getElementById("pwChangeErrorText");
+
+      if (alert) alert.classList.add("hidden");
 
       if (newPw.length < 4) {
         if (alert && alertText) {
@@ -4114,13 +4334,72 @@ function ensurePaymentHeaders(sheet) {
         return;
       }
 
+      if (pendingUserForPwChange && newPw === (pendingUserForPwChange.defaultPassword || "").trim()) {
+        if (alert && alertText) {
+          alertText.innerText = "New permanent password cannot be the same as your temporary default password.";
+          alert.classList.remove("hidden");
+        }
+        return;
+      }
+
       if (pendingUserForPwChange) {
-        const u = userDatabase.find(x => x.userId === pendingUserForPwChange.userId);
+        const targetUsername = (pendingUserForPwChange.username || "").trim();
+        const targetUserId = (pendingUserForPwChange.userId || "").trim();
+
+        // Match by username first (since some UserData rows share a role-based User ID), then fallback to userId
+        const u = userDatabase.find(
+          x => (targetUsername && (x.username || "").trim().toLowerCase() === targetUsername.toLowerCase()) ||
+               (!targetUsername && targetUserId && (x.userId || "").trim().toLowerCase() === targetUserId.toLowerCase())
+        );
+
         if (u) {
           u.currentPassword = newPw;
-          u.defaultPassword = "";
-          localStorage.setItem("apechomes_user_db_v3", JSON.stringify(userDatabase));
         }
+
+        // Save persistent password override and updated userDatabase (v4)
+        if (targetUsername) {
+          pwOverrides[targetUsername.toLowerCase()] = newPw;
+          localStorage.setItem("apechomes_pw_overrides_v1", JSON.stringify(pwOverrides));
+        }
+        localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
+
+        const pwPayload = {
+          action: "updatePassword",
+          spreadsheetId: SPREADSHEET_ID,
+          sheetName: "UserData",
+          userId: targetUserId,
+          username: targetUsername,
+          newPassword: newPw
+        };
+
+        // 1. Write new password directly to UserData Google Sheet via Apps Script Webhook
+        if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+          try {
+            await fetch(ENROLLMENT_SCRIPT_URL, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(pwPayload)
+            });
+          } catch (errCors) {
+            try {
+              await fetch(ENROLLMENT_SCRIPT_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(pwPayload)
+              });
+            } catch (errNoCors) {
+              console.warn("Password webhook sync notice:", errNoCors);
+            }
+          }
+        }
+
+        // 2. Also notify backend proxy if running in full-stack mode
+        fetch("/api/users/update-password", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(pwPayload)
+        }).catch(() => {});
 
         currentUser = {
           userId: pendingUserForPwChange.userId,
@@ -4344,8 +4623,8 @@ function ensurePaymentHeaders(sheet) {
       if (isManual && icon) icon.classList.add("animate-spin");
 
       try {
-        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=UserData`;
-        const res = await fetch(url);
+        const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=UserData&t=${Date.now()}`;
+        const res = await fetch(url, { cache: "no-store" });
         if (res.ok) {
           const raw = await res.text();
           const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
@@ -4358,24 +4637,28 @@ function ensurePaymentHeaders(sheet) {
                 const c = r?.c;
                 if (!c) continue;
                 const uid = c[0]?.v !== undefined && c[0]?.v !== null ? String(c[0].v).trim() : "";
-                if (!uid || uid.toLowerCase() === "user id") continue;
                 const uname = c[1]?.v !== undefined && c[1]?.v !== null ? String(c[1].v).trim() : uid;
-                const curPw = c[2]?.v !== undefined && c[2]?.v !== null ? String(c[2].v).trim() : "";
+                if ((!uid && !uname) || uid.toLowerCase() === "user id" || uname.toLowerCase() === "user name") continue;
+
+                const sheetCurPw = c[2]?.v !== undefined && c[2]?.v !== null ? String(c[2].v).trim() : "";
                 const defPw = c[3]?.v !== undefined && c[3]?.v !== null ? String(c[3].v).trim() : "";
                 const fn = c[4]?.v !== undefined && c[4]?.v !== null ? String(c[4].v).trim() : "";
                 const ln = c[5]?.v !== undefined && c[5]?.v !== null ? String(c[5].v).trim() : "";
-                const access = c[6]?.v !== undefined && c[6]?.v !== null ? String(c[6].v).trim() : "Level 1";
+                const access = c[6]?.v !== undefined && c[6]?.v !== null ? String(c[6].v).trim() : "Level 2";
 
-                const existing = userDatabase.find(x => (x.userId && x.userId.toLowerCase() === uid.toLowerCase()) || (x.username && x.username.toLowerCase() === uname.toLowerCase()));
+                const overridePw = pwOverrides[(uname || "").toLowerCase()] || "";
+                const curPw = sheetCurPw || overridePw;
+
+                const existing = userDatabase.find(x => (x.username && x.username.toLowerCase() === uname.toLowerCase()) || (x.userId && x.userId.toLowerCase() === uid.toLowerCase()));
                 list.push({
-                  userId: uid,
+                  userId: uid || uname,
                   username: uname || uid,
                   currentPassword: curPw,
                   defaultPassword: defPw,
                   firstName: fn || existing?.firstName || "",
                   lastName: ln || existing?.lastName || "",
-                  accessLevel: access || existing?.accessLevel || "Level 1",
-                  status: "Active",
+                  accessLevel: access || existing?.accessLevel || "Level 2",
+                  status: existing?.status || "Active",
                   email: existing?.email || `${(uname || "user").toLowerCase()}@apechomes.com`,
                   viberNumber: existing?.viberNumber || "09171230000",
                   site: existing?.site || "Head Office"
@@ -4397,22 +4680,257 @@ function ensurePaymentHeaders(sheet) {
       if (currentTab === "user-management") renderUserManagementTable();
     }
 
-    // Google Doc Announcements Sync
-    async function syncAnnouncementFromDoc() {
+    // ========================================================
+    // GOOGLE SHEET ANNOUNCEMENTS SYNC & ADMIN FORCE UPDATE
+    // ========================================================
+    function renderAnnouncementItems(items, sourceTime) {
+      if (!Array.isArray(items) || items.length === 0) return;
+      const primary = items[0];
+      const titleEl = document.getElementById("announceTitle");
+      const timeEl = document.getElementById("announceTime");
+      const bodyEl = document.getElementById("announceParagraphs");
+      const syncTimeEl = document.getElementById("announcementSyncTime");
+
+      if (titleEl) titleEl.innerText = primary.title || "Announcements";
+      if (timeEl) timeEl.innerText = primary.dateOrTime || `Updated at ${sourceTime}`;
+      if (syncTimeEl) syncTimeEl.innerText = `Synced: ${sourceTime}`;
+
+      if (bodyEl) {
+        let htmlParts = [];
+        const mainLines = String(primary.content || "").split("\n").filter(Boolean);
+        if (mainLines.length > 0) {
+          htmlParts.push(mainLines.map(l => `<p class="whitespace-pre-wrap">${escapeHtml(l)}</p>`).join(""));
+        }
+        if (items.length > 1) {
+          for (let i = 1; i < items.length; i++) {
+            const extra = items[i];
+            htmlParts.push(`
+              <div class="mt-3 pt-3 border-t border-slate-200/80 dark:border-royal-800/60">
+                <div class="flex flex-wrap items-center justify-between gap-1 mb-1">
+                  <span class="font-bold text-slate-900 dark:text-white text-xs">${escapeHtml(extra.title)}</span>
+                  <span class="text-[11px] text-slate-500 dark:text-royal-300/70">${escapeHtml(extra.dateOrTime)}</span>
+                </div>
+                <p class="whitespace-pre-wrap text-xs text-slate-700 dark:text-slate-200">${escapeHtml(extra.content)}</p>
+              </div>
+            `);
+          }
+        }
+        bodyEl.innerHTML = htmlParts.join("");
+      }
+
+      // Pre-fill Admin drawer inputs if closed
+      const titleInput = document.getElementById("adminAnnounceTitleInput");
+      const bodyInput = document.getElementById("adminAnnounceBodyInput");
+      if (titleInput && !titleInput.value) titleInput.value = primary.title || "";
+      if (bodyInput && !bodyInput.value) bodyInput.value = primary.content || "";
+    }
+
+    async function syncAnnouncementFromDoc(isManual = false) {
+      const icon = document.getElementById("syncAnnounceIcon");
+      const forceIcon = document.getElementById("forceSyncAnnounceIcon");
+      const syncTimeEl = document.getElementById("announcementSyncTime");
+      const noticeEl = document.getElementById("announceSyncNotice");
+
+      if (isManual) {
+        if (icon) icon.classList.add("animate-spin");
+        if (forceIcon) forceIcon.classList.add("animate-spin");
+        if (syncTimeEl) syncTimeEl.innerText = "Syncing GSheet...";
+      }
+
+      const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      let synced = false;
+
+      // 1. Check if Admin saved a local override (unless manual/force refresh was clicked)
+      if (!isManual) {
+        try {
+          const localOverride = localStorage.getItem("apechomes_announcement_override_v1");
+          if (localOverride) {
+            const parsedOverride = JSON.parse(localOverride);
+            if (Array.isArray(parsedOverride) && parsedOverride.length > 0) {
+              renderAnnouncementItems(parsedOverride, nowStr);
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 2. Direct Client-Side GViz Fetch from Google Sheet 'Announcements' tab (Works 100% on GitHub Pages & Netlify!)
       try {
-        const res = await fetch("/api/announcements/sync");
+        const gvizUrl = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("Announcements")}&t=${Date.now()}`;
+        const res = await fetch(gvizUrl, { cache: "no-store" });
         if (res.ok) {
-          const data = await res.json();
-          if (data.text) {
-            const lines = data.text.trim().split("\n").filter(Boolean);
-            if (lines.length > 0) {
-              document.getElementById("announceTitle").innerText = lines[0];
-              document.getElementById("announceParagraphs").innerHTML = lines.slice(1).map(l => `<p class="whitespace-pre-wrap">${escapeHtml(l)}</p>`).join("");
-              document.getElementById("announceTime").innerText = `Updated at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+          const raw = await res.text();
+          const match = raw.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const data = JSON.parse(match[1]);
+            const rows = data.table?.rows;
+            if (Array.isArray(rows) && rows.length > 0) {
+              const items = [];
+              for (let i = 0; i < rows.length; i++) {
+                const c = rows[i]?.c;
+                if (!c) continue;
+                const dateOrTime = c[0]?.v !== undefined && c[0]?.v !== null ? String(c[0].v).trim() : "";
+                const title = c[1]?.v !== undefined && c[1]?.v !== null ? String(c[1].v).trim() : "";
+                const content = c[2]?.v !== undefined && c[2]?.v !== null ? String(c[2].v).trim() : "";
+                const actionLink = c[3]?.v !== undefined && c[3]?.v !== null ? String(c[3].v).trim() : "";
+                const priority = c[4]?.v !== undefined && c[4]?.v !== null ? String(c[4].v).trim() : "";
+                const postedBy = c[5]?.v !== undefined && c[5]?.v !== null ? String(c[5].v).trim() : "";
+
+                if (!dateOrTime && !title && !content) continue;
+                if (dateOrTime.toLowerCase() === "date / id" || title.toLowerCase() === "title") continue;
+
+                items.push({
+                  id: dateOrTime || `ANN-${i + 1}`,
+                  dateOrTime: dateOrTime || `Updated ${nowStr}`,
+                  title: title || "Announcement",
+                  content: content || "",
+                  actionLink,
+                  priority,
+                  postedBy
+                });
+              }
+
+              if (items.length > 0) {
+                localStorage.setItem("apechomes_announcements_cache_v2", JSON.stringify(items));
+                renderAnnouncementItems(items, nowStr);
+                const titleInput = document.getElementById("adminAnnounceTitleInput");
+                const bodyInput = document.getElementById("adminAnnounceBodyInput");
+                if (titleInput) titleInput.value = items[0].title || "";
+                if (bodyInput) bodyInput.value = items[0].content || "";
+                synced = true;
+              }
             }
           }
         }
-      } catch(e) {}
+      } catch (gvizErr) {
+        console.warn("Direct GViz Announcements sync notice:", gvizErr);
+      }
+
+      // 3. Fallback to server proxy if running in full-stack environment
+      if (!synced) {
+        try {
+          const res = await fetch("/api/announcements/sync");
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.items) && data.items.length > 0) {
+              renderAnnouncementItems(data.items, nowStr);
+              synced = true;
+            } else if (data.text) {
+              const lines = data.text.trim().split("\n").filter(Boolean);
+              if (lines.length > 0) {
+                renderAnnouncementItems([{
+                  title: lines[0],
+                  dateOrTime: `Updated at ${nowStr}`,
+                  content: lines.slice(1).join("\n")
+                }], nowStr);
+                synced = true;
+              }
+            }
+          }
+        } catch(e) {}
+      }
+
+      // 4. Fallback to cached announcements
+      if (!synced) {
+        try {
+          const cached = localStorage.getItem("apechomes_announcements_cache_v2");
+          if (cached) {
+            const parsed = JSON.parse(cached);
+            if (Array.isArray(parsed) && parsed.length > 0) {
+              renderAnnouncementItems(parsed, nowStr);
+            }
+          }
+        } catch(e) {}
+      }
+
+      if (isManual) {
+        setTimeout(() => {
+          if (icon) icon.classList.remove("animate-spin");
+          if (forceIcon) forceIcon.classList.remove("animate-spin");
+        }, 400);
+        if (noticeEl) {
+          noticeEl.innerText = "Synced from GSheet!";
+          noticeEl.classList.remove("hidden");
+          setTimeout(() => noticeEl.classList.add("hidden"), 3000);
+        }
+      }
+    }
+
+    function toggleDocSettings(forceState) {
+      const panel = document.getElementById("docSettingsPanel");
+      if (!panel) return;
+      const shouldShow = typeof forceState === "boolean" ? forceState : panel.classList.contains("hidden");
+      if (shouldShow) {
+        const currentTitle = document.getElementById("announceTitle")?.innerText || "";
+        const titleInput = document.getElementById("adminAnnounceTitleInput");
+        if (titleInput && !titleInput.value) titleInput.value = currentTitle;
+        panel.classList.remove("hidden");
+      } else {
+        panel.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    async function forcePullAnnouncementsFromGSheet() {
+      localStorage.removeItem("apechomes_announcement_override_v1");
+      await syncAnnouncementFromDoc(true);
+    }
+
+    async function saveAdminAnnouncementOverride() {
+      const titleInput = document.getElementById("adminAnnounceTitleInput");
+      const bodyInput = document.getElementById("adminAnnounceBodyInput");
+      const noticeEl = document.getElementById("announceSyncNotice");
+
+      const title = (titleInput?.value || "").trim() || "Welcome to APECHOMES Utility Portal";
+      const content = (bodyInput?.value || "").trim();
+      if (!content) {
+        alert("Please enter announcement content.");
+        return;
+      }
+
+      const nowFormatted = new Date().toLocaleString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true
+      });
+      const item = {
+        id: nowFormatted,
+        dateOrTime: nowFormatted,
+        title,
+        content,
+        actionLink: "Request Bill Payment",
+        priority: "Normal",
+        postedBy: currentUser?.accessLevel || "Administrator"
+      };
+
+      localStorage.setItem("apechomes_announcement_override_v1", JSON.stringify([item]));
+      localStorage.setItem("apechomes_announcements_cache_v2", JSON.stringify([item]));
+      renderAnnouncementItems([item], new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
+
+      // Push directly to Google Sheet 'Announcements' tab via Apps Script Webhook
+      if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+        try {
+          await fetch(ENROLLMENT_SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify({
+              action: "updateAnnouncement",
+              spreadsheetId: SPREADSHEET_ID,
+              ...item
+            })
+          });
+        } catch(e) {}
+      }
+
+      toggleDocSettings(false);
+      if (noticeEl) {
+        noticeEl.innerText = "Announcement Saved & Pushed!";
+        noticeEl.classList.remove("hidden");
+        setTimeout(() => noticeEl.classList.add("hidden"), 3500);
+      }
     }
 
     // ==========================================
@@ -4420,13 +4938,14 @@ function ensurePaymentHeaders(sheet) {
     // ==========================================
     initTheme();
     syncDatabaseFromGSheet();
-    syncAnnouncementFromDoc();
+    syncAnnouncementFromDoc(false);
     handleSyncBillersClick();
     syncLivePaymentRequestsFromGSheet(false);
     syncLiveEnrollmentsFromGSheet(false);
 
-    // Auto-polling every 25 seconds: keep statuses perfectly fresh!
+    // Auto-polling every 25 seconds: keep statuses & announcements perfectly fresh!
     setInterval(() => {
+      syncAnnouncementFromDoc(false);
       syncLivePaymentRequestsFromGSheet(false);
       syncLiveEnrollmentsFromGSheet(false);
     }, 25000);
