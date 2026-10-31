@@ -1806,6 +1806,18 @@ Submit and track your monthly utility payments directly through your account.</p
           />
         </div>
 
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-royal-200 mb-1">
+            UserData &amp; Announcements Webhook URL (1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY):
+          </label>
+          <input 
+            type="url" 
+            id="cfgUserScriptUrl" 
+            placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+            class="w-full px-3 py-2 rounded-lg bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 font-mono text-xs text-slate-800 dark:text-neutral-200"
+          />
+        </div>
+
         <div class="pt-1 flex items-center justify-between">
           <span id="webhookSavedNotice" class="text-[11px] text-emerald-600 font-semibold hidden">Settings saved!</span>
           <div class="flex items-center space-x-2 ml-auto">
@@ -2181,9 +2193,10 @@ function ensurePaymentHeaders(sheet) {
     // ========================================================
     // CONFIGURABLE GOOGLE APPS SCRIPT WEB APP URLS (CLIENT-SIDE)
     // ========================================================
-    // Deployed Webhook URL handling both Enrollment and Payment uploads to Google Drive & Google Sheets:
+    // Deployed Webhook URLs for Utility Submissions and UserData/Announcements:
     const DEFAULT_ENROLLMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG-IjcRa3yHDugVan9zOy75ED87I6SEqJozeDaKMw/exec";
     const DEFAULT_PAYMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG-IjcRa3yHDugVan9zOy75ED87I6SEqJozeDaKMw/exec";
+    const DEFAULT_USER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjAB8Ikzqz9HBYYtzQbsjf8q73bcvMjCOosJhSAe4DNxzefJJQotduZFU7Kk5Qnenz/exec";
 
     let storedEnr = localStorage.getItem("apechomes_enrollment_script_url");
     if (!storedEnr || storedEnr.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE") || storedEnr.includes("APEC_ENROLLMENT_WEBHOOK_URL") || storedEnr.includes("AKfycbz_")) {
@@ -2198,6 +2211,13 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_payment_script_url", DEFAULT_PAYMENT_SCRIPT_URL);
     }
     let PAYMENT_SCRIPT_URL = storedPay;
+
+    let storedUserScript = localStorage.getItem("apechomes_user_script_url");
+    if (!storedUserScript || storedUserScript.includes("YOUR_") || storedUserScript.includes("AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG")) {
+      storedUserScript = DEFAULT_USER_SCRIPT_URL;
+      localStorage.setItem("apechomes_user_script_url", DEFAULT_USER_SCRIPT_URL);
+    }
+    let USER_SCRIPT_URL = storedUserScript;
 
     // Primary User Database (Seed defaults synchronized with UserData GSheet)
     let userDatabase = [
@@ -3885,8 +3905,8 @@ function ensurePaymentHeaders(sheet) {
 
       localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
 
-      if (savedUserObj && ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
-        fetch(ENROLLMENT_SCRIPT_URL, {
+      if (savedUserObj && USER_SCRIPT_URL) {
+        fetch(USER_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -3921,8 +3941,8 @@ function ensurePaymentHeaders(sheet) {
       }
       localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
 
-      if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
-        fetch(ENROLLMENT_SCRIPT_URL, {
+      if (USER_SCRIPT_URL) {
+        fetch(USER_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -4372,17 +4392,18 @@ function ensurePaymentHeaders(sheet) {
           newPassword: newPw
         };
 
-        // 1. Write new password directly to UserData Google Sheet via Apps Script Webhook
-        if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+        // 1. Write new password directly to UserData Google Sheet via UserData Apps Script Webhook
+        const targetWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+        if (targetWebhook) {
           try {
-            await fetch(ENROLLMENT_SCRIPT_URL, {
+            await fetch(targetWebhook, {
               method: "POST",
               headers: { "Content-Type": "text/plain;charset=utf-8" },
               body: JSON.stringify(pwPayload)
             });
           } catch (errCors) {
             try {
-              await fetch(ENROLLMENT_SCRIPT_URL, {
+              await fetch(targetWebhook, {
                 method: "POST",
                 mode: "no-cors",
                 headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -4558,8 +4579,10 @@ function ensurePaymentHeaders(sheet) {
     function openWebhookSettingsModal() {
       const enrInput = document.getElementById("cfgEnrollmentScriptUrl");
       const payInput = document.getElementById("cfgPaymentScriptUrl");
+      const usrInput = document.getElementById("cfgUserScriptUrl");
       if (enrInput) enrInput.value = localStorage.getItem("apechomes_enrollment_script_url") || (ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") ? "" : ENROLLMENT_SCRIPT_URL);
       if (payInput) payInput.value = localStorage.getItem("apechomes_payment_script_url") || (PAYMENT_SCRIPT_URL.includes("APEC_PAYMENT_WEBHOOK_URL") ? "" : PAYMENT_SCRIPT_URL);
+      if (usrInput) usrInput.value = localStorage.getItem("apechomes_user_script_url") || USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
       document.getElementById("webhookModal")?.classList.remove("hidden");
       lucide.createIcons();
     }
@@ -4571,6 +4594,7 @@ function ensurePaymentHeaders(sheet) {
     function saveWebhookSettings() {
       const enr = document.getElementById("cfgEnrollmentScriptUrl")?.value.trim() || "";
       const pay = document.getElementById("cfgPaymentScriptUrl")?.value.trim() || "";
+      const usr = document.getElementById("cfgUserScriptUrl")?.value.trim() || "";
       
       if (enr) {
         ENROLLMENT_SCRIPT_URL = enr;
@@ -4579,6 +4603,10 @@ function ensurePaymentHeaders(sheet) {
       if (pay) {
         PAYMENT_SCRIPT_URL = pay;
         localStorage.setItem("apechomes_payment_script_url", pay);
+      }
+      if (usr) {
+        USER_SCRIPT_URL = usr;
+        localStorage.setItem("apechomes_user_script_url", usr);
       }
       
       const notice = document.getElementById("webhookSavedNotice");
@@ -4909,10 +4937,11 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_announcements_cache_v2", JSON.stringify([item]));
       renderAnnouncementItems([item], new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
 
-      // Push directly to Google Sheet 'Announcements' tab via Apps Script Webhook
-      if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL")) {
+      // Push directly to Google Sheet 'Announcements' tab via UserData Apps Script Webhook
+      const targetUserWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+      if (targetUserWebhook) {
         try {
-          await fetch(ENROLLMENT_SCRIPT_URL, {
+          await fetch(targetUserWebhook, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "text/plain;charset=utf-8" },
