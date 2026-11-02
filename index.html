@@ -2174,8 +2174,11 @@ function ensurePaymentHeaders(sheet) {
         <span>&bull;</span>
         <span>Active Role: <strong id="footerRole" class="text-blue-600 dark:text-blue-400">Guest</strong></span>
       </div>
-      <div>
-        <span>Spreadsheet: <code class="font-mono text-[10px]">1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA</code></span>
+      <div class="flex flex-wrap items-center justify-center sm:justify-end gap-1.5">
+        <span>Created By: <strong class="font-semibold text-slate-700 dark:text-neutral-200">Engr Louie Sarmiento</strong> - PWG 2026 -</span>
+        <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+          Disclosure: AI Vibe Coded
+        </span>
       </div>
     </div>
   </footer>
@@ -2295,7 +2298,6 @@ function ensurePaymentHeaders(sheet) {
     let currentUser = null;
     let pendingUserForPwChange = null;
     let currentTab = "overview";
-    let isUploadingFile = null;
 
     // Helper: Escape HTML
     function escapeHtml(str) {
