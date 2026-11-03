@@ -63,6 +63,318 @@
     .animate-fade-in {
       animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
     }
+    /* Hide OS-specific bars by default in standard Light/Dark/Bazzite themes */
+    .macos-traffic-bar {
+      display: none;
+    }
+
+    /* =====================================================================
+       3RD THEME: macOS SEQUOIA / SONOMA VISUAL & STYLE (Aqua + Vibrancy)
+       ===================================================================== */
+    html.theme-macos body,
+    body.theme-macos {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", sans-serif !important;
+      -webkit-font-smoothing: antialiased;
+      background-color: #1e4d92 !important;
+      background-image:
+        radial-gradient(circle at 14% 18%, rgba(90, 200, 250, 0.85) 0%, transparent 45%),
+        radial-gradient(circle at 86% 16%, rgba(255, 100, 130, 0.72) 0%, transparent 48%),
+        radial-gradient(circle at 76% 84%, rgba(191, 90, 242, 0.75) 0%, transparent 52%),
+        radial-gradient(circle at 20% 82%, rgba(255, 159, 10, 0.62) 0%, transparent 48%),
+        radial-gradient(circle at 50% 48%, rgba(0, 122, 255, 0.58) 0%, transparent 60%),
+        linear-gradient(135deg, #0c3b87 0%, #1d6fa5 35%, #6e45b8 72%, #c94b7c 100%) !important;
+      background-attachment: fixed !important;
+      background-size: cover !important;
+      color: #1d1d1f !important;
+    }
+    .theme-macos header {
+      background: rgba(255, 255, 255, 0.66) !important;
+      backdrop-filter: blur(32px) saturate(210%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(210%) !important;
+      border-bottom: 0.5px solid rgba(255, 255, 255, 0.55) !important;
+      box-shadow: 0 1px 12px rgba(0, 0, 0, 0.12) !important;
+    }
+    .theme-macos footer {
+      background: rgba(255, 255, 255, 0.62) !important;
+      backdrop-filter: blur(32px) saturate(200%) !important;
+      -webkit-backdrop-filter: blur(32px) saturate(200%) !important;
+      border-top: 0.5px solid rgba(255, 255, 255, 0.55) !important;
+    }
+    .theme-macos .macos-traffic-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 18px;
+      margin: -24px -24px 22px -24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.88) 0%, rgba(238, 242, 249, 0.72) 100%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.09);
+      border-top-left-radius: 20px;
+      border-top-right-radius: 20px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95);
+      user-select: none;
+    }
+    @media (min-width: 640px) {
+      .theme-macos .macos-traffic-bar-lg {
+        margin: -40px -40px 26px -40px;
+        padding: 13px 22px;
+      }
+      .theme-macos .macos-traffic-bar-login {
+        margin: -32px -32px 24px -32px;
+        padding: 12px 18px;
+      }
+    }
+    .macos-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 9999px;
+      display: inline-block;
+      box-shadow: inset 0 0 0 0.5px rgba(0, 0, 0, 0.22), 0 1px 1px rgba(255, 255, 255, 0.4);
+    }
+    .macos-dot-close { background: linear-gradient(180deg, #ff6b63 0%, #ff5f56 100%); }
+    .macos-dot-min { background: linear-gradient(180deg, #ffca47 0%, #ffbd2e 100%); }
+    .macos-dot-max { background: linear-gradient(180deg, #37d950 0%, #27c93f 100%); }
+    .theme-macos .macos-window-card {
+      background: rgba(247, 249, 253, 0.82) !important;
+      backdrop-filter: blur(44px) saturate(210%) !important;
+      -webkit-backdrop-filter: blur(44px) saturate(210%) !important;
+      border: 1px solid rgba(255, 255, 255, 0.88) !important;
+      box-shadow:
+        0 32px 80px -12px rgba(7, 16, 38, 0.42),
+        0 0 0 0.5px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255, 255, 255, 0.92) !important;
+      border-radius: 20px !important;
+    }
+    .theme-macos .nav-group-pill {
+      background: rgba(241, 245, 249, 0.78) !important;
+      border: 1px solid rgba(148, 163, 184, 0.35) !important;
+      box-shadow: none !important;
+    }
+    .theme-macos .nav-action-btn:not(.nav-action-btn-active) {
+      background: rgba(255, 255, 255, 0.72) !important;
+      border: 1px solid rgba(148, 163, 184, 0.5) !important;
+      box-shadow: none !important;
+      color: #1d1d1f !important;
+    }
+    .theme-macos .nav-action-btn:not(.nav-action-btn-active):hover {
+      background: rgba(255, 255, 255, 0.95) !important;
+      border-color: rgba(0, 122, 255, 0.55) !important;
+    }
+    .theme-macos .macos-window-card .rounded-2xl {
+      background: rgba(255, 255, 255, 0.76) !important;
+      backdrop-filter: blur(20px) !important;
+      -webkit-backdrop-filter: blur(20px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.9) !important;
+      box-shadow:
+        0 8px 24px -4px rgba(15, 23, 42, 0.08),
+        0 0 0 0.5px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+      border-radius: 16px !important;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+    }
+    .theme-macos .macos-window-card .group.rounded-2xl:hover {
+      transform: translateY(-2px) scale(1.008) !important;
+      box-shadow:
+        0 16px 34px -6px rgba(0, 122, 255, 0.18),
+        0 0 0 1px rgba(0, 122, 255, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+    }
+    /* macOS 3D Glossy Squircle App Icons */
+    .theme-macos .w-10.h-10.rounded-xl,
+    .theme-macos .w-9.h-9.rounded-xl,
+    .theme-macos .w-12.h-12.rounded-2xl {
+      border-radius: 26% !important;
+      color: #ffffff !important;
+      box-shadow:
+        0 6px 14px -2px rgba(0, 122, 255, 0.38),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.65),
+        inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
+      border: 0.5px solid rgba(255, 255, 255, 0.45) !important;
+    }
+    .theme-macos .bg-blue-500\/10,
+    .theme-macos .bg-royal-500\/10,
+    .theme-macos .bg-blue-600.w-9.h-9 {
+      background: linear-gradient(180deg, #5ac8fa 0%, #007aff 100%) !important;
+      color: #ffffff !important;
+    }
+    .theme-macos .bg-blue-500\/10 svg,
+    .theme-macos .bg-royal-500\/10 svg { color: #ffffff !important; }
+    .theme-macos .bg-emerald-500\/10.w-10.h-10,
+    .theme-macos .bg-emerald-500.w-10.h-10 {
+      background: linear-gradient(180deg, #5de675 0%, #28cd41 100%) !important;
+      box-shadow: 0 6px 14px -2px rgba(40, 205, 65, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
+      color: #ffffff !important;
+    }
+    .theme-macos .bg-emerald-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-macos .bg-purple-500\/10.w-10.h-10 {
+      background: linear-gradient(180deg, #d982ff 0%, #af52de 100%) !important;
+      box-shadow: 0 6px 14px -2px rgba(175, 82, 222, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
+      color: #ffffff !important;
+    }
+    .theme-macos .bg-purple-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-macos .bg-amber-500\/10.w-10.h-10 {
+      background: linear-gradient(180deg, #ffd60a 0%, #ff9500 100%) !important;
+      box-shadow: 0 6px 14px -2px rgba(255, 149, 0, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
+      color: #ffffff !important;
+    }
+    .theme-macos .bg-amber-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-macos input:not([type="checkbox"]):not([type="file"]),
+    .theme-macos select,
+    .theme-macos textarea {
+      background-color: rgba(255, 255, 255, 0.9) !important;
+      border: 0.5px solid rgba(0, 0, 0, 0.2) !important;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+      border-radius: 10px !important;
+      color: #1d1d1f !important;
+    }
+    .theme-macos input:focus,
+    .theme-macos select:focus,
+    .theme-macos textarea:focus {
+      outline: none !important;
+      border-color: #007aff !important;
+      box-shadow: 0 0 0 3.5px rgba(0, 122, 255, 0.32) !important;
+    }
+    .theme-macos .bg-royal-500,
+    .theme-macos .bg-blue-600 {
+      background: linear-gradient(180deg, #3898ff 0%, #007aff 100%) !important;
+      box-shadow: 0 2px 6px rgba(0, 122, 255, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+    }
+    .theme-macos .bg-royal-500:hover,
+    .theme-macos .bg-blue-600:hover {
+      background: linear-gradient(180deg, #1f87ff 0%, #0062cc 100%) !important;
+    }
+
+    /* =====================================================================
+       4TH THEME: BAZZITE OS VISUAL & STYLE (Cosmic Purple / Cyan Gaming UI)
+       ===================================================================== */
+    html.theme-bazzite body,
+    body.theme-bazzite {
+      font-family: "Plus Jakarta Sans", "Inter", system-ui, sans-serif !important;
+      background-color: #090514 !important;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(124, 58, 237, 0.45) 0%, transparent 45%),
+        radial-gradient(circle at 85% 20%, rgba(236, 72, 153, 0.36) 0%, transparent 46%),
+        radial-gradient(circle at 80% 85%, rgba(6, 182, 212, 0.38) 0%, transparent 50%),
+        radial-gradient(circle at 18% 82%, rgba(99, 102, 241, 0.32) 0%, transparent 48%),
+        linear-gradient(rgba(139, 92, 246, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+        linear-gradient(135deg, #070410 0%, #110926 48%, #0a1529 100%) !important;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 36px 36px, 36px 36px, 100% 100% !important;
+      background-attachment: fixed !important;
+      color: #f5f3ff !important;
+    }
+    .theme-bazzite header {
+      background: rgba(11, 7, 24, 0.86) !important;
+      backdrop-filter: blur(28px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+      border-bottom: 1.5px solid rgba(139, 92, 246, 0.45) !important;
+      box-shadow: 0 4px 25px rgba(124, 58, 237, 0.25), 0 1px 0 rgba(6, 182, 212, 0.3) !important;
+    }
+    .theme-bazzite footer {
+      background: rgba(11, 7, 24, 0.88) !important;
+      backdrop-filter: blur(24px) !important;
+      -webkit-backdrop-filter: blur(24px) !important;
+      border-top: 1px solid rgba(139, 92, 246, 0.35) !important;
+    }
+    .theme-bazzite .macos-window-card {
+      background: rgba(16, 11, 33, 0.86) !important;
+      backdrop-filter: blur(36px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(36px) saturate(190%) !important;
+      border: 1px solid rgba(139, 92, 246, 0.48) !important;
+      box-shadow:
+        0 30px 80px -10px rgba(4, 2, 12, 0.88),
+        0 0 38px -6px rgba(124, 58, 237, 0.28),
+        inset 0 1px 0 rgba(196, 181, 253, 0.22) !important;
+      border-radius: 18px !important;
+    }
+    .theme-bazzite .nav-group-pill {
+      background: rgba(13, 8, 28, 0.85) !important;
+      border: 1px solid rgba(139, 92, 246, 0.28) !important;
+      box-shadow: none !important;
+    }
+    .theme-bazzite .nav-action-btn:not(.nav-action-btn-active) {
+      background: rgba(26, 18, 48, 0.85) !important;
+      border: 1px solid rgba(139, 92, 246, 0.4) !important;
+      box-shadow: none !important;
+      color: #ede9fe !important;
+    }
+    .theme-bazzite .nav-action-btn:not(.nav-action-btn-active):hover {
+      background: rgba(38, 26, 70, 0.95) !important;
+      border-color: rgba(34, 211, 238, 0.55) !important;
+    }
+    .theme-bazzite .macos-window-card .rounded-2xl {
+      background: linear-gradient(145deg, rgba(26, 18, 52, 0.84) 0%, rgba(17, 12, 36, 0.88) 100%) !important;
+      border: 1px solid rgba(139, 92, 246, 0.32) !important;
+      box-shadow: 0 10px 28px -6px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(167, 139, 250, 0.14) !important;
+      border-radius: 16px !important;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    }
+    .theme-bazzite .macos-window-card .group.rounded-2xl:hover {
+      transform: translateY(-3px) !important;
+      border-color: rgba(34, 211, 238, 0.65) !important;
+      box-shadow: 0 14px 36px -6px rgba(6, 182, 212, 0.25), 0 0 20px rgba(139, 92, 246, 0.3) !important;
+    }
+    .theme-bazzite .w-10.h-10.rounded-xl,
+    .theme-bazzite .w-9.h-9.rounded-xl,
+    .theme-bazzite .w-12.h-12.rounded-2xl {
+      border-radius: 14px !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    }
+    .theme-bazzite .bg-blue-500\/10,
+    .theme-bazzite .bg-royal-500\/10,
+    .theme-bazzite .bg-blue-600.w-9.h-9 {
+      background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
+      box-shadow: 0 0 18px rgba(6, 182, 212, 0.42) !important;
+      color: #ffffff !important;
+    }
+    .theme-bazzite .bg-blue-500\/10 svg,
+    .theme-bazzite .bg-royal-500\/10 svg { color: #ffffff !important; }
+    .theme-bazzite .bg-emerald-500\/10.w-10.h-10,
+    .theme-bazzite .bg-emerald-500.w-10.h-10 {
+      background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%) !important;
+      box-shadow: 0 0 18px rgba(16, 185, 129, 0.42) !important;
+      color: #ffffff !important;
+    }
+    .theme-bazzite .bg-emerald-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-bazzite .bg-purple-500\/10.w-10.h-10 {
+      background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%) !important;
+      box-shadow: 0 0 18px rgba(236, 72, 153, 0.45) !important;
+      color: #ffffff !important;
+    }
+    .theme-bazzite .bg-purple-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-bazzite .bg-amber-500\/10.w-10.h-10 {
+      background: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%) !important;
+      box-shadow: 0 0 18px rgba(245, 158, 11, 0.42) !important;
+      color: #ffffff !important;
+    }
+    .theme-bazzite .bg-amber-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-bazzite .bg-royal-500,
+    .theme-bazzite .bg-blue-600 {
+      background: linear-gradient(135deg, #7c3aed 0%, #c026d3 52%, #0891b2 100%) !important;
+      border: 1px solid rgba(196, 181, 253, 0.4) !important;
+      box-shadow: 0 4px 18px rgba(139, 92, 246, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+      color: #ffffff !important;
+    }
+    .theme-bazzite .bg-royal-500:hover,
+    .theme-bazzite .bg-blue-600:hover {
+      background: linear-gradient(135deg, #8b5cf6 0%, #db2777 52%, #06b6d4 100%) !important;
+      box-shadow: 0 6px 24px rgba(236, 72, 153, 0.55), 0 0 14px rgba(6, 182, 212, 0.4) !important;
+    }
+    .theme-bazzite input:not([type="checkbox"]):not([type="file"]),
+    .theme-bazzite select,
+    .theme-bazzite textarea {
+      background-color: rgba(11, 7, 24, 0.88) !important;
+      border: 1px solid rgba(139, 92, 246, 0.38) !important;
+      color: #f5f3ff !important;
+      border-radius: 11px !important;
+    }
+    .theme-bazzite input:focus,
+    .theme-bazzite select:focus,
+    .theme-bazzite textarea:focus {
+      outline: none !important;
+      border-color: #22d3ee !important;
+      box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.28), 0 0 14px rgba(139, 92, 246, 0.35) !important;
+    }
   </style>
 </head>
 <body class="bg-[#f8fafc] text-neutral-800 dark:bg-[#121212] dark:text-[#f3f4f6] min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
@@ -72,8 +384,8 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       
       <!-- Upper Left Logo -->
-      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('overview')">
-        <div class="flex items-center space-x-2 px-2.5 py-1 rounded-xl bg-white/95 dark:bg-[#1a1a1a] border border-neutral-200/80 dark:border-[#2e2e2e] shadow-sm">
+      <div class="flex items-center space-x-3">
+        <div class="flex items-center space-x-2 px-2.5 py-1 rounded-xl bg-white/95 dark:bg-[#1a1a1a] border border-neutral-200/80 dark:border-[#2e2e2e] shadow-sm cursor-pointer" onclick="switchTab('overview')">
           <img 
             id="brandLogoImg"
             src="./apechomes-logo.png" 
@@ -100,17 +412,46 @@
           <span id="sheetStatusText">UserData DB Live</span>
         </div>
 
-        <!-- Download Hosting-Ready ZIP Button (Strictly visible ONLY to Administrator level) -->
-        <div id="adminOnlyDownloadZipWrapper" class="hidden">
-          <a 
-            href="./apechomes-portal-hosting-ready.zip" 
-            download="apechomes-portal-hosting-ready.zip" 
+        <!-- Download Packages Dropdown (Strictly visible ONLY to Administrator level) -->
+        <div id="adminOnlyDownloadZipWrapper" class="hidden relative">
+          <button 
+            type="button"
+            onclick="togglePackagesDropdown(event)"
             class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer" 
-            title="Administrator Only: Download Complete Hosting-Ready Bundle (ZIP)"
+            title="Administrator Only: Download GitHub, Netlify, Hosting Ready, or Google Sites packages"
           >
             <i data-lucide="download" class="w-3.5 h-3.5"></i>
-            <span class="hidden sm:inline">Download ZIP</span>
-          </a>
+            <span class="hidden sm:inline">Packages</span>
+            <i data-lucide="chevron-down" class="w-3 h-3"></i>
+          </button>
+
+          <div id="adminPackagesMenu" class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#2e2e2e] shadow-2xl p-2 z-50 text-left animate-fade-in">
+            <div class="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-100 dark:border-[#262626] mb-1">
+              Static Deployment Packages
+            </div>
+            <a href="./apechomes-portal-github-pages.zip" download="apechomes-portal-github-pages.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+              <span>1. GitHub Pages Package (.zip)</span>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-blue-500"></i>
+            </a>
+            <a href="./apechomes-portal-netlify.zip" download="apechomes-portal-netlify.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-emerald-50 dark:hover:bg-[#242424] transition-colors">
+              <span>2. Netlify Drop Package (.zip)</span>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-500"></i>
+            </a>
+            <a href="./apechomes-portal-hosting-ready.zip" download="apechomes-portal-hosting-ready.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-indigo-50 dark:hover:bg-[#242424] transition-colors">
+              <span>3. Universal Hosting Ready (.zip)</span>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-500"></i>
+            </a>
+            <a href="./apechomes-portal-google-sites.zip" download="apechomes-portal-google-sites.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-amber-50 dark:hover:bg-[#242424] transition-colors">
+              <span>4. Google Sites Package (.zip)</span>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-amber-500"></i>
+            </a>
+            <div class="border-t border-neutral-100 dark:border-[#262626] mt-1 pt-1">
+              <a href="./google-sites-embed.html" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+                <span>Direct Google Sites HTML File</span>
+                <i data-lucide="file-text" class="w-3 h-3"></i>
+              </a>
+            </div>
+          </div>
         </div>
 
         <!-- View As Dropdown (Admin & Sub-Admin ONLY) -->
@@ -125,16 +466,32 @@
           </select>
         </div>
 
-        <!-- Light / Dark Mode Toggle -->
-        <button 
-          id="themeToggleBtn" 
-          onclick="toggleTheme()" 
-          class="flex items-center space-x-2 px-3 py-1.5 rounded-full text-xs font-medium bg-neutral-200/80 dark:bg-[#1e1e1e] text-neutral-700 dark:text-neutral-200 hover:bg-neutral-300 dark:hover:bg-[#282828] transition-all border border-neutral-300/60 dark:border-[#2e2e2e] focus:outline-none cursor-pointer"
-          title="Toggle Light / Dark Mode"
-        >
-          <i id="themeIcon" data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
-          <span id="themeText" class="hidden md:inline">Light Mode</span>
-        </button>
+        <!-- Theme Selector Dropdown (Light Theme, Dark Theme, macOS Style, Bazzite OS) -->
+        <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-neutral-200/80 dark:bg-[#1e1e1e] border border-neutral-300/60 dark:border-[#2e2e2e]">
+          <span id="themeIndicatorMacos" class="hidden items-center space-x-0.5 flex-shrink-0" title="macOS Sequoia Style">
+            <span class="w-2 h-2 rounded-full bg-[#ff5f56]"></span>
+            <span class="w-2 h-2 rounded-full bg-[#ffbd2e]"></span>
+            <span class="w-2 h-2 rounded-full bg-[#27c93f]"></span>
+          </span>
+          <span id="themeIndicatorBazzite" class="hidden w-3.5 h-3.5 rounded-md bg-gradient-to-br from-purple-500 via-fuchsia-500 to-cyan-400 items-center justify-center text-[8px] font-black text-white shadow-xs flex-shrink-0" title="Bazzite OS Theme">
+            B
+          </span>
+          <span id="themeIconWrapper" class="inline-flex items-center">
+            <i id="themeIcon" data-lucide="moon" class="w-3.5 h-3.5 text-blue-400"></i>
+          </span>
+          <select
+            id="themeSelectDropdown"
+            aria-label="Select Portal Theme"
+            onchange="setTheme(this.value)"
+            class="text-xs font-semibold bg-transparent text-neutral-800 dark:text-neutral-200 focus:outline-none cursor-pointer pr-1 py-0.5"
+            title="Select Portal Theme: Light, Dark, macOS Style, or Bazzite OS"
+          >
+            <option value="light" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">Light Theme</option>
+            <option value="dark" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white" selected>Dark Theme</option>
+            <option value="macos" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">macOS Style</option>
+            <option value="bazzite" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">Bazzite OS</option>
+          </select>
+        </div>
 
         <!-- Authenticated Profile Chip -->
         <div id="userHeaderProfile" class="hidden flex items-center space-x-2.5 border-l border-slate-200 dark:border-royal-800 pl-3 animate-fade-in">
@@ -169,7 +526,19 @@
 
     <!-- 1. LOGIN PAGE VIEW -->
     <div id="loginView" class="w-full max-w-md animate-fade-in relative z-10 py-6">
-      <div class="bg-white/90 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/80 glass-card rounded-2xl shadow-2xl p-8 transition-all duration-300">
+      <div class="macos-window-card bg-white/90 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/80 glass-card rounded-2xl shadow-2xl p-8 transition-all duration-300">
+        <div class="macos-traffic-bar macos-traffic-bar-login">
+          <div class="flex items-center space-x-2">
+            <span class="macos-dot macos-dot-close"></span>
+            <span class="macos-dot macos-dot-min"></span>
+            <span class="macos-dot macos-dot-max"></span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <i data-lucide="folder-open" class="w-3.5 h-3.5 text-[#007aff]"></i>
+            <span class="text-[11px] font-semibold text-neutral-700 tracking-tight">APECHOMES — Sign In</span>
+          </div>
+          <div class="w-10"></div>
+        </div>
         
         <div class="text-center mb-7">
           <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -336,7 +705,19 @@
 
     <!-- 2. DASHBOARD VIEW -->
     <div id="dashboardView" class="hidden w-full max-w-6xl animate-fade-in relative z-10 py-6">
-      <div class="bg-white/95 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/60 glass-card rounded-2xl shadow-xl p-6 sm:p-10 transition-all duration-300">
+      <div class="macos-window-card bg-white/95 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/60 glass-card rounded-2xl shadow-xl p-6 sm:p-10 transition-all duration-300">
+        <div class="macos-traffic-bar macos-traffic-bar-lg">
+          <div class="flex items-center space-x-2">
+            <span class="macos-dot macos-dot-close"></span>
+            <span class="macos-dot macos-dot-min"></span>
+            <span class="macos-dot macos-dot-max"></span>
+          </div>
+          <div class="flex items-center space-x-2">
+            <i data-lucide="folder-open" class="w-3.5 h-3.5 text-[#007aff]"></i>
+            <span class="text-[12px] font-semibold text-neutral-700 tracking-tight">APECHOMES — Utility Bills Portal</span>
+          </div>
+          <div class="w-10"></div>
+        </div>
         
         <!-- Welcome Banner Header -->
         <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/80 dark:border-royal-800/60 gap-4">
@@ -371,55 +752,61 @@
           </div>
         </div>
 
-        <!-- TAB NAVIGATION BAR (REORGANIZED INTO STRUCTURED FUNCTIONAL GROUPS) -->
-        <div class="mt-6 flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 text-xs font-medium">
-          <div class="flex flex-wrap items-center gap-2">
-            <!-- Home -->
-            <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
-              <i data-lucide="layers" class="w-3.5 h-3.5"></i>
-              <span>Overview</span>
-            </button>
+        <!-- TAB NAVIGATION BAR (SINGLE ROW FOR OVERVIEW + PAYMENTS + ENDORSE ON PC, SINGLE ROW FOR PAYMENTS + ENDORSE ON TABLET) -->
+        <div class="mt-5 pb-4 border-b border-slate-200/80 dark:border-royal-800/60">
+          <div class="flex flex-wrap xl:flex-nowrap items-center justify-between gap-2 text-[11px] sm:text-xs font-medium">
+            <!-- Primary Navigation Row: Overview + Payments Group + Endorse Group in ONE row on PC, Payments + Endorse in ONE row on Tablet -->
+            <div class="flex flex-wrap md:flex-nowrap items-center gap-1.5 sm:gap-2 w-full xl:w-auto">
+              <!-- Home -->
+              <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex-shrink-0 bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
+                <i data-lucide="layers" class="w-3.5 h-3.5 flex-shrink-0"></i>
+                <span>Overview</span>
+              </button>
 
-            <!-- Payments Operations Group -->
-            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 space-x-1">
-              <span class="hidden sm:inline px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Payments:</span>
-              <button id="tabBtn-request-payment" onclick="switchTab('request-payment')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
-                <i data-lucide="credit-card" class="w-3.5 h-3.5 text-blue-500"></i>
-                <span>Request Payment</span>
-              </button>
-              <button id="tabBtn-payment-status" onclick="switchTab('payment-status')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
-                <i data-lucide="activity" class="w-3.5 h-3.5 text-purple-500"></i>
-                <span>Payment Status</span>
-                <span id="navPaymentCountBadge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
-              </button>
-            </div>
+              <!-- Payments Group + Endorse Group: Always aligned in ONE row together -->
+              <div class="flex flex-nowrap items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full">
+                <!-- Payments Operations Group -->
+                <div class="nav-group-pill inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 gap-1 flex-shrink-0">
+                  <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 select-none">Payments:</span>
+                  <button id="tabBtn-request-payment" onclick="switchTab('request-payment')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-blue-400 dark:hover:border-blue-500/60">
+                    <i data-lucide="credit-card" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-blue-500 flex-shrink-0"></i>
+                    <span>Request Payment</span>
+                  </button>
+                  <button id="tabBtn-payment-status" onclick="switchTab('payment-status')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-blue-400 dark:hover:border-blue-500/60">
+                    <i data-lucide="activity" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-500 flex-shrink-0"></i>
+                    <span>Payment Status</span>
+                    <span id="navPaymentCountBadge" class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
+                  </button>
+                </div>
 
-            <!-- Endorsement Operations Group -->
-            <div class="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 space-x-1">
-              <span class="hidden sm:inline px-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Endorse:</span>
-              <button id="tabBtn-enroll-bill" onclick="switchTab('enroll-bill')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
-                <i data-lucide="file-plus-2" class="w-3.5 h-3.5 text-emerald-500"></i>
-                <span>Enroll Bill</span>
-              </button>
-              <button id="tabBtn-enroll-status" onclick="switchTab('enroll-status')" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg transition-all cursor-pointer text-slate-600 dark:text-royal-200 hover:bg-white dark:hover:bg-royal-800/50">
-                <i data-lucide="file-check-2" class="w-3.5 h-3.5 text-emerald-400"></i>
-                <span>Enrollment Status</span>
-                <span id="navEnrollCountBadge" class="ml-1 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
-              </button>
+                <!-- Endorsement Operations Group -->
+                <div class="nav-group-pill inline-flex items-center p-1 rounded-xl bg-slate-100 dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 gap-1 flex-shrink-0">
+                  <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 select-none">Endorse:</span>
+                  <button id="tabBtn-enroll-bill" onclick="switchTab('enroll-bill')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-emerald-400 dark:hover:border-emerald-500/60">
+                    <i data-lucide="file-plus-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500 flex-shrink-0"></i>
+                    <span>Enroll Bill</span>
+                  </button>
+                  <button id="tabBtn-enroll-status" onclick="switchTab('enroll-status')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-emerald-400 dark:hover:border-emerald-500/60">
+                    <i data-lucide="file-check-2" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-400 flex-shrink-0"></i>
+                    <span>Enrollment Status</span>
+                    <span id="navEnrollCountBadge" class="ml-0.5 px-1.5 py-0.2 rounded-full text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">0</span>
+                  </button>
+                </div>
+              </div>
             </div>
 
             <!-- Administration Group (ADMIN & SUBADMIN ONLY) -->
-            <div id="adminNavGroup" class="hidden items-center p-1 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 space-x-1">
-              <span class="hidden md:inline px-2 text-[10px] font-bold uppercase tracking-wider text-indigo-500">Admin:</span>
-              <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
+            <div id="adminNavGroup" class="hidden items-center p-1 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 gap-1 flex-shrink-0">
+              <span class="hidden lg:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-500 select-none">Admin:</span>
+              <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
                 <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-500"></i>
                 <span>Users</span>
               </button>
-              <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
+              <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60">
                 <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-500"></i>
                 <span>Accounts</span>
               </button>
-              <button id="tabBtn-webhook-setup" onclick="openWebhookSettingsModal()" class="inline-flex items-center space-x-1 px-2 py-1.5 rounded-lg transition-all cursor-pointer text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60" title="Google Sheets Webhook & Apps Script Integration Setup">
+              <button id="tabBtn-webhook-setup" onclick="openWebhookSettingsModal()" class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap text-indigo-800 dark:text-indigo-300 hover:bg-white dark:hover:bg-royal-900/60" title="Google Sheets Webhook & Apps Script Integration Setup">
                 <i data-lucide="settings" class="w-3.5 h-3.5 text-purple-500"></i>
                 <span class="hidden sm:inline">Webhooks</span>
               </button>
@@ -2330,31 +2717,67 @@ function ensurePaymentHeaders(sheet) {
       return isNaN(parsed) ? 0 : parsed;
     }
 
-    // Theme logic
+    // Theme logic (Light, Dark, macOS Style, Bazzite OS)
     function initTheme() {
       const saved = localStorage.getItem("theme") || "dark";
-      setTheme(saved);
+      setTheme(saved === "light" || saved === "dark" || saved === "macos" || saved === "bazzite" ? saved : "dark");
     }
 
-    function toggleTheme() {
-      const isDark = document.documentElement.classList.contains("dark");
-      setTheme(isDark ? "light" : "dark");
+    function togglePackagesDropdown(e) {
+      if (e) e.stopPropagation();
+      const menu = document.getElementById("adminPackagesMenu");
+      if (menu) menu.classList.toggle("hidden");
     }
+
+    document.addEventListener("click", function(e) {
+      const wrapper = document.getElementById("adminOnlyDownloadZipWrapper");
+      const menu = document.getElementById("adminPackagesMenu");
+      if (wrapper && menu && !wrapper.contains(e.target)) {
+        menu.classList.add("hidden");
+      }
+    });
 
     function setTheme(theme) {
-      const icon = document.getElementById("themeIcon");
-      const text = document.getElementById("themeText");
+      const root = document.documentElement;
+      const selectEl = document.getElementById("themeSelectDropdown");
+      const macosDots = document.getElementById("themeIndicatorMacos");
+      const bazziteBadge = document.getElementById("themeIndicatorBazzite");
+      const iconWrapper = document.getElementById("themeIconWrapper");
+
+      root.classList.remove("dark", "theme-macos", "theme-bazzite");
+      document.body.classList.remove("dark", "theme-macos", "theme-bazzite");
+
+      if (macosDots) { macosDots.classList.add("hidden"); macosDots.classList.remove("inline-flex"); }
+      if (bazziteBadge) { bazziteBadge.classList.add("hidden"); bazziteBadge.classList.remove("inline-flex"); }
+
       if (theme === "dark") {
-        document.documentElement.classList.add("dark");
-        if (icon) { icon.setAttribute("data-lucide", "sun"); icon.className = "w-4 h-4 text-amber-400"; }
-        if (text) text.innerText = "Light Mode";
+        root.classList.add("dark");
+        document.body.classList.add("dark");
+        if (iconWrapper) {
+          iconWrapper.classList.remove("hidden");
+          iconWrapper.innerHTML = '<i id="themeIcon" data-lucide="moon" class="w-3.5 h-3.5 text-blue-400"></i>';
+        }
         localStorage.setItem("theme", "dark");
+      } else if (theme === "macos") {
+        root.classList.add("theme-macos");
+        document.body.classList.add("theme-macos");
+        if (macosDots) { macosDots.classList.remove("hidden"); macosDots.classList.add("inline-flex"); }
+        if (iconWrapper) iconWrapper.classList.add("hidden");
+        localStorage.setItem("theme", "macos");
+      } else if (theme === "bazzite") {
+        root.classList.add("dark", "theme-bazzite");
+        document.body.classList.add("dark", "theme-bazzite");
+        if (bazziteBadge) { bazziteBadge.classList.remove("hidden"); bazziteBadge.classList.add("inline-flex"); }
+        if (iconWrapper) iconWrapper.classList.add("hidden");
+        localStorage.setItem("theme", "bazzite");
       } else {
-        document.documentElement.classList.remove("dark");
-        if (icon) { icon.setAttribute("data-lucide", "moon"); icon.className = "w-4 h-4 text-slate-700"; }
-        if (text) text.innerText = "Dark Mode";
+        if (iconWrapper) {
+          iconWrapper.classList.remove("hidden");
+          iconWrapper.innerHTML = '<i id="themeIcon" data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>';
+        }
         localStorage.setItem("theme", "light");
       }
+      if (selectEl) selectEl.value = theme;
       lucide.createIcons();
     }
 
@@ -2500,10 +2923,15 @@ function ensurePaymentHeaders(sheet) {
           else content.classList.add("hidden");
         }
         if (btn) {
+          const isGroupedAction = (t === "request-payment" || t === "payment-status" || t === "enroll-bill" || t === "enroll-status");
           if (t === tabId) {
-            btn.className = "inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20";
+            btn.className = isGroupedAction
+              ? "nav-action-btn nav-action-btn-active inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-royal-500 text-white font-semibold shadow-sm border border-royal-500"
+              : "inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex-shrink-0 bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20";
           } else {
-            btn.className = "inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl transition-all cursor-pointer bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 hover:bg-slate-200 dark:hover:bg-royal-800/50";
+            btn.className = isGroupedAction
+              ? "nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-blue-400 dark:hover:border-blue-500/60"
+              : "inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex-shrink-0 bg-slate-100 dark:bg-royal-950/50 text-slate-600 dark:text-royal-200 border border-slate-200 dark:border-royal-800/60 hover:bg-slate-200 dark:hover:bg-royal-800/50";
           }
         }
       });
