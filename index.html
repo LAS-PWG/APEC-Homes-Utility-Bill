@@ -2214,115 +2214,263 @@ Submit and track your monthly utility payments directly through your account.</p
     </div>
   </div>
 
-  <!-- MODAL: EDIT BILLING DETAILS IN PAYMENT STATUS (PS_EDIT_BILLING) -->
-  <div id="editPaymentBillingModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800">
-        <div>
-          <h4 class="text-base font-bold text-slate-900 dark:text-white">Edit Billing Details</h4>
-          <p id="editPayBillingSubtitle" class="text-[11px] font-mono text-blue-600 dark:text-blue-400">REQ-ID</p>
+  <!-- MODAL: SPLIT-SCREEN PAYMENT REQUEST INSPECTOR & BILLING EDITOR (PLAN-SPLIT-INSPECTOR) -->
+  <div id="editPaymentBillingModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden">
+      <!-- Top Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-200 dark:border-royal-800 bg-slate-50/80 dark:bg-royal-950/60 shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-blue-600/10 text-blue-600 dark:text-blue-400 flex items-center justify-center border border-blue-500/20">
+            <i data-lucide="file-text" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Payment Request Inspector</h4>
+              <span id="editPayReqBadge" class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">REQ-ID</span>
+              <span id="editPayAccessModeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Edit Mode</span>
+            </div>
+            <p id="editPayBillingSubtitle" class="text-[11px] text-slate-500 dark:text-royal-300/70">Submitted by Requestor</p>
+          </div>
         </div>
-        <button type="button" onclick="closeEditPaymentBillingModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+        <button type="button" onclick="closeEditPaymentBillingModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-royal-800 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <form id="editPaymentBillingForm" onsubmit="handleSavePaymentBillingEdit(event)" class="space-y-3">
-        <input type="hidden" id="editPayReqId" value="" />
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (Select from Billers or type)</label>
-          <input type="text" id="editPayAccountNo" list="editPayBillersDatalist" oninput="handleEditPayAccountLookup(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-blue-600 dark:text-blue-400" />
-          <datalist id="editPayBillersDatalist"></datalist>
+
+      <!-- 2-Pane Split Body -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+        <!-- LEFT PANE (5 cols): Request Details & In-Place Editor -->
+        <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-royal-800 p-5 overflow-y-auto flex flex-col justify-between bg-white dark:bg-royal-900">
+          <form id="editPaymentBillingForm" onsubmit="handleSavePaymentBillingEdit(event)" class="space-y-3.5">
+            <input type="hidden" id="editPayReqId" value="" />
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-royal-950/90 border border-slate-200 dark:border-royal-800">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Current Payment Status</div>
+                <div class="text-xs font-bold text-slate-700 dark:text-royal-200 mt-0.5">Live Workflow Stage</div>
+              </div>
+              <div id="editPayStatusContainer"></div>
+            </div>
+            <div id="editPayStatusConfirmBar" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 flex items-center justify-between gap-2">
+              <div class="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                Confirm status change to <span id="editPayPendingStatusLabel" class="underline font-extrabold"></span>?
+              </div>
+              <div class="flex items-center space-x-1.5 shrink-0">
+                <button type="button" onclick="cancelPendingPayStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-royal-900 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-royal-700 cursor-pointer">Cancel</button>
+                <button type="button" onclick="confirmPendingPayStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow cursor-pointer">Confirm Commit</button>
+              </div>
+            </div>
+            <div id="editPaySuccessToast" class="hidden p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center space-x-2">
+              <span>✓</span>
+              <span id="editPaySuccessToastText">Changes committed!</span>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
+              <input type="text" id="editPayAccountNo" list="editPayBillersDatalist" oninput="handleEditPayAccountLookup(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-blue-600 dark:text-blue-400" />
+              <datalist id="editPayBillersDatalist"></datalist>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
+                <input type="text" id="editPaySite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
+                <input type="text" id="editPayBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Month</label>
+                <select id="editPayMonth" class="w-full px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
+                  <option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Type</label>
+                <select id="editPayType" class="w-full px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
+                  <option value="Power">Power</option>
+                  <option value="Water">Water</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Due Date</label>
+                <input type="text" id="editPayDueDate" required class="w-full px-2.5 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor Name</label>
+                <input type="text" id="editPayRequestor" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
+                <input type="text" id="editPayViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+              </div>
+            </div>
+
+            <div id="editPayActionRow" class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
+              <button type="button" onclick="closeEditPaymentBillingModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Close</button>
+              <button type="submit" id="editPaySaveBtn" class="px-5 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer">Review &amp; Save Changes</button>
+            </div>
+
+            <div id="editPayConfirmBanner" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/70 space-y-2">
+              <div class="text-xs font-bold text-amber-900 dark:text-amber-200">Confirm Before Commit</div>
+              <p class="text-[11px] text-amber-800 dark:text-amber-300/90">Are you sure you want to commit these billing detail updates to the live Google Sheet?</p>
+              <div class="flex items-center justify-end space-x-2 pt-1">
+                <button type="button" onclick="cancelEditPayBillingCommit()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-royal-900 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-royal-700 cursor-pointer">Back to Edit</button>
+                <button type="button" onclick="commitPaymentBillingEdit()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Yes, Confirm &amp; Commit</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
-            <input type="text" id="editPaySite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+
+        <!-- RIGHT PANE (7 cols): Interactive Attachment Viewer (Zoom, Pan, Rotate & No-Download Protection) -->
+        <div class="lg:col-span-7 bg-slate-900/95 flex flex-col overflow-hidden select-none" oncontextmenu="event.preventDefault()">
+          <!-- Viewer Toolbar -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-950 border-b border-slate-800 text-slate-200 shrink-0">
+            <div class="flex items-center space-x-1.5">
+              <button type="button" onclick="adjustInspectorZoom(-0.25)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer" title="Zoom Out">−</button>
+              <span id="payInspectorZoomLabel" class="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono font-bold text-blue-400">100%</span>
+              <button type="button" onclick="adjustInspectorZoom(0.25)" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer" title="Zoom In">+</button>
+              <button type="button" onclick="rotateInspectorView()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">↻ 90°</button>
+              <button type="button" onclick="resetInspectorView()" class="px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">Reset</button>
+            </div>
+            <div id="payInspectorLinkBar" class="flex items-center space-x-2"></div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
-            <input type="text" id="editPayBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
-          </div>
-        </div>
-        <div class="grid grid-cols-3 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Month</label>
-            <select id="editPayMonth" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
-              <option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Type</label>
-            <select id="editPayType" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
-              <option value="Power">Power</option>
-              <option value="Water">Water</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Due Date</label>
-            <input type="text" id="editPayDueDate" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+
+          <!-- Interactive Pan/Zoom Stage -->
+          <div id="payInspectorStage" oncontextmenu="event.preventDefault()" onwheel="handleInspectorWheel(event)" onmousedown="startInspectorPan(event)" onmousemove="moveInspectorPan(event)" onmouseup="endInspectorPan()" onmouseleave="endInspectorPan()" class="flex-1 relative overflow-hidden flex items-center justify-center p-6 cursor-grab">
+            <div id="payInspectorTransformBox" class="transition-transform duration-75 ease-out origin-center max-w-full"></div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor Name</label>
-            <input type="text" id="editPayRequestor" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
-            <input type="text" id="editPayViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
-          </div>
-        </div>
-        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
-          <button type="button" onclick="closeEditPaymentBillingModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer">Save Billing Details</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
-  <!-- MODAL: EDIT ENROLLMENT DETAILS IN ENROLLMENT STATUS (ES_EDIT_DETAILS) -->
-  <div id="editEnrollmentDetailsModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800">
-        <div>
-          <h4 class="text-base font-bold text-slate-900 dark:text-white">Edit Enrollment Details</h4>
-          <p id="editEnrollDetailsSubtitle" class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">ENR-ID</p>
+  <!-- MODAL: SPLIT-SCREEN ENROLLMENT REQUEST INSPECTOR & DUAL-ATTACHMENT VIEWER (PLAN-SPLIT-INSPECTOR) -->
+  <div id="editEnrollmentDetailsModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden">
+      <!-- Top Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-200 dark:border-royal-800 bg-slate-50/80 dark:bg-royal-950/60 shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-emerald-600/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center border border-emerald-500/20">
+            <i data-lucide="file-plus" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex items-center space-x-2">
+              <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Endorsement Request Inspector</h4>
+              <span id="editEnrollDetailsSubtitle" class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">ENR-ID</span>
+              <span id="editEnrollAccessModeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Edit Mode</span>
+            </div>
+            <p id="editEnrollSubmittedMeta" class="text-[11px] text-slate-500 dark:text-royal-300/70">Dual-Attachment Utility Endorsement</p>
+          </div>
         </div>
-        <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+        <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-royal-800 cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
-      <form id="editEnrollmentDetailsForm" onsubmit="handleSaveEnrollmentDetailsEdit(event)" class="space-y-3">
-        <input type="hidden" id="editEnrollReqId" value="" />
-        <div>
-          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
-          <input type="text" id="editEnrollAccountNo" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400" />
+
+      <!-- 2-Pane Split Body -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+        <!-- LEFT PANE (5 cols): Enrollment Details & In-Place Editor -->
+        <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-royal-800 p-5 overflow-y-auto flex flex-col justify-between bg-white dark:bg-royal-900">
+          <form id="editEnrollmentDetailsForm" onsubmit="handleSaveEnrollmentDetailsEdit(event)" class="space-y-3.5">
+            <input type="hidden" id="editEnrollReqId" value="" />
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-royal-950/90 border border-slate-200 dark:border-royal-800">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Endorsement Status</div>
+                <div class="text-xs font-bold text-slate-700 dark:text-royal-200 mt-0.5">Live Workflow Stage</div>
+              </div>
+              <div id="editEnrollStatusContainer"></div>
+            </div>
+            <div id="editEnrollStatusConfirmBar" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 flex items-center justify-between gap-2">
+              <div class="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                Confirm status change to <span id="editEnrollPendingStatusLabel" class="underline font-extrabold"></span>?
+              </div>
+              <div class="flex items-center space-x-1.5 shrink-0">
+                <button type="button" onclick="cancelPendingEnrollStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-royal-900 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-royal-700 cursor-pointer">Cancel</button>
+                <button type="button" onclick="confirmPendingEnrollStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow cursor-pointer">Confirm Commit</button>
+              </div>
+            </div>
+            <div id="editEnrollSuccessToast" class="hidden p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center space-x-2">
+              <span>✓</span>
+              <span id="editEnrollSuccessToastText">Changes committed!</span>
+            </div>
+
+            <div>
+              <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
+              <input type="text" id="editEnrollAccountNo" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
+                <input type="text" id="editEnrollSite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
+                <input type="text" id="editEnrollBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
+                <input type="text" id="editEnrollViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+              </div>
+              <div>
+                <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor / Email</label>
+                <input type="text" id="editEnrollEmail" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+              </div>
+            </div>
+
+            <div id="editEnrollActionRow" class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
+              <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Close</button>
+              <button type="submit" id="editEnrollSaveBtn" class="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Review &amp; Save Changes</button>
+            </div>
+
+            <div id="editEnrollConfirmBanner" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/70 space-y-2">
+              <div class="text-xs font-bold text-amber-900 dark:text-amber-200">Confirm Before Commit</div>
+              <p class="text-[11px] text-amber-800 dark:text-amber-300/90">Are you sure you want to commit these endorsement detail updates to the live Google Sheet?</p>
+              <div class="flex items-center justify-end space-x-2 pt-1">
+                <button type="button" onclick="cancelEditEnrollDetailsCommit()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-royal-900 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-royal-700 cursor-pointer">Back to Edit</button>
+                <button type="button" onclick="commitEnrollmentDetailsEdit()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Yes, Confirm &amp; Commit</button>
+              </div>
+            </div>
+          </form>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
-            <input type="text" id="editEnrollSite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+
+        <!-- RIGHT PANE (7 cols): Dual-Attachment Switcher + Zoom/Pan/Rotate Viewer -->
+        <div class="lg:col-span-7 bg-slate-900/95 flex flex-col overflow-hidden select-none" oncontextmenu="event.preventDefault()">
+          <!-- Top Switcher Bar for 2 Attachments -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-950 border-b border-slate-800 text-slate-200 shrink-0">
+            <div class="flex items-center space-x-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+              <button type="button" id="enrollModeBtnLetter" onclick="setEnrollAttachmentMode('letter')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-blue-600 text-white cursor-pointer">1. Approved Letter</button>
+              <button type="button" id="enrollModeBtnSoa" onclick="setEnrollAttachmentMode('soa')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer">2. SOA Statement</button>
+              <button type="button" id="enrollModeBtnSplit" onclick="setEnrollAttachmentMode('split')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer">⊞ Compare Both</button>
+            </div>
+
+            <div class="flex items-center space-x-1.5">
+              <button type="button" onclick="adjustInspectorZoom(-0.25)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">−</button>
+              <span id="enrollInspectorZoomLabel" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono font-bold text-emerald-400">100%</span>
+              <button type="button" onclick="adjustInspectorZoom(0.25)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">+</button>
+              <button type="button" onclick="rotateInspectorView()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">↻ 90°</button>
+              <button type="button" onclick="resetInspectorView()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">Reset</button>
+            </div>
           </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
-            <input type="text" id="editEnrollBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+
+          <div id="enrollInspectorLinkBar" class="flex items-center justify-between px-4 py-1.5 bg-slate-900/90 border-b border-slate-800/80 text-[11px] text-slate-300 shrink-0"></div>
+
+          <!-- Interactive Pan/Zoom Stage -->
+          <div id="enrollInspectorStage" oncontextmenu="event.preventDefault()" onwheel="handleInspectorWheel(event)" onmousedown="startInspectorPan(event)" onmousemove="moveInspectorPan(event)" onmouseup="endInspectorPan()" onmouseleave="endInspectorPan()" class="flex-1 relative overflow-hidden flex items-center justify-center p-6 cursor-grab">
+            <div id="enrollInspectorTransformBox" class="transition-transform duration-75 ease-out origin-center w-full flex items-center justify-center"></div>
           </div>
         </div>
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
-            <input type="text" id="editEnrollViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor / Email</label>
-            <input type="text" id="editEnrollEmail" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
-          </div>
-        </div>
-        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
-          <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Cancel</button>
-          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Save Enrollment Details</button>
-        </div>
-      </form>
+      </div>
     </div>
   </div>
 
@@ -3132,7 +3280,8 @@ function ensurePaymentHeaders(sheet) {
           { id: "PS_VIEW_ALL", label: "View All Requests" },
           { id: "PS_FILTER", label: "Search & Filter Table" },
           { id: "PS_EDIT_BILLING", label: "Edit Billing Details (Acct/Biller/Site)" },
-          { id: "PS_UPDATE_STATUS", label: "Approve / Change Payment Status" }
+          { id: "PS_UPDATE_STATUS", label: "Approve / Change Payment Status" },
+          { id: "PS_ATTACH_LINK", label: "Open External Attachment File Link" }
         ]
       },
       {
@@ -3151,7 +3300,8 @@ function ensurePaymentHeaders(sheet) {
           { id: "ES_VIEW_ALL", label: "View All Endorsements" },
           { id: "ES_FILTER", label: "Search & Filter Endorsements" },
           { id: "ES_EDIT_DETAILS", label: "Edit Enrollment Details" },
-          { id: "ES_UPDATE_STATUS", label: "Approve / Change Enrollment Status" }
+          { id: "ES_UPDATE_STATUS", label: "Approve / Change Enrollment Status" },
+          { id: "ES_ATTACH_LINK", label: "Open External Attachment File Links" }
         ]
       },
       {
@@ -3194,9 +3344,9 @@ function ensurePaymentHeaders(sheet) {
       if (norm === "sub-administrator" || norm === "subadmin" || norm === "sub-admin") {
         return [
           "RBP_SUBMIT",
-          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK",
           "ENROLL_SUBMIT",
-          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS",
+          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK",
           "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
           "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY"
         ];
@@ -3625,13 +3775,15 @@ function ensurePaymentHeaders(sheet) {
         if (adminEnrollCheckSheetBtn) { adminEnrollCheckSheetBtn.classList.add("hidden"); adminEnrollCheckSheetBtn.classList.remove("inline-flex"); }
       }
 
-      // REQUIREMENT 5: Update navigation counter badges strictly per user (not leaking others to non-admin)
+      // REQUIREMENT 5: Update navigation counter badges strictly per user (respecting PS_VIEW_ALL / ES_VIEW_ALL)
+      const canViewAllPay = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_ALL");
+      const canViewAllEnr = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL");
       const userPayments = paymentRequests.filter(r => r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
       const userEnrollments = enrollmentRequests.filter(r => r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
       const payBadge = document.getElementById("navPaymentCountBadge");
       const enrBadge = document.getElementById("navEnrollCountBadge");
-      if (payBadge) payBadge.innerText = isAdminOrSub ? paymentRequests.length : userPayments.length;
-      if (enrBadge) enrBadge.innerText = isAdminOrSub ? enrollmentRequests.length : userEnrollments.length;
+      if (payBadge) payBadge.innerText = canViewAllPay ? paymentRequests.length : userPayments.length;
+      if (enrBadge) enrBadge.innerText = canViewAllEnr ? enrollmentRequests.length : userEnrollments.length;
 
       const displayAccess = document.getElementById("displayAccessLevel");
       if (displayAccess) displayAccess.innerText = currentUser.accessLevel;
@@ -3679,6 +3831,15 @@ function ensurePaymentHeaders(sheet) {
     function handleRoleSwitch(newRole) {
       if (!currentUser) return;
       currentUser.accessLevel = newRole;
+      currentUser.permissions = getDefaultPermissionsForRole(newRole);
+      const payScopeSelect = document.getElementById("adminPaymentScopeSelect");
+      if (payScopeSelect) {
+        payScopeSelect.value = hasUserPermission(currentUser, "PS_VIEW_ALL") ? "all" : (hasUserPermission(currentUser, "PS_VIEW_GROUP") ? "group" : "my");
+      }
+      const enrScopeSelect = document.getElementById("adminEnrollScopeSelect");
+      if (enrScopeSelect) {
+        enrScopeSelect.value = hasUserPermission(currentUser, "ES_VIEW_ALL") ? "all" : (hasUserPermission(currentUser, "ES_VIEW_GROUP") ? "group" : "my");
+      }
       updateAccessUI();
       if ((currentTab === "user-management" || currentTab === "account-management") && newRole !== "Administrator" && newRole !== "Sub-Administrator") {
         switchTab("overview");
@@ -4122,9 +4283,12 @@ function ensurePaymentHeaders(sheet) {
           ? (`${matchedU.firstName || ""} ${matchedU.lastName || ""}`.trim() || matchedU.username)
           : (item.email || "Requestor");
         return `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+          <tr onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="hover:bg-emerald-50/50 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-              ${escapeHtml(item.requestId)}
+              <div class="flex items-center space-x-1.5">
+                <span>${escapeHtml(item.requestId)}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 opacity-80 group-hover:opacity-100">${canEditEnrDetails ? "Inspect / Edit" : "Inspect"}</span>
+              </div>
             </td>
             <td class="py-3 px-4">
               <div class="text-xs font-semibold text-slate-900 dark:text-white">${escapeHtml(requestorName)}</div>
@@ -4133,44 +4297,28 @@ function ensurePaymentHeaders(sheet) {
             <td class="py-3 px-4 font-mono font-extrabold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
               <div class="flex items-center space-x-1.5">
                 <span>${escapeHtml(item.accountNumber)}</span>
-                ${canEditEnrDetails ? `
-                  <button type="button" onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-pointer" title="Edit Enrollment Details">
-                    <i data-lucide="edit-2" class="w-3 h-3"></i>
-                  </button>
-                ` : ""}
+                <button type="button" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-pointer" title="${canEditEnrDetails ? "Inspect & Edit Enrollment Details" : "Inspect Enrollment & Attachments"}">
+                  <i data-lucide="${canEditEnrDetails ? "edit-2" : "eye"}" class="w-3 h-3"></i>
+                </button>
               </div>
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-800 dark:text-neutral-200 text-xs">${escapeHtml(item.site)}</div>
               <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.biller)}</div>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap">
-              ${canViewAllEnr ? `
-                <a href="${item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
-                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "View Letter")}</span>
-                </a>
-              ` : `
-                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300">
-                  <i data-lucide="file-text" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Request Letter")}</span>
-                </span>
-              `}
+            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'letter')">
+              <span class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Preview Letter")}</span>
+              </span>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap">
-              ${canViewAllEnr ? `
-                <a href="${item.driveSoaFolderUrl || DRIVE_SOA_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "View SOA")}</span>
-                </a>
-              ` : `
-                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "SOA Statement")}</span>
-                </span>
-              `}
+            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'soa')">
+              <span class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
+                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "Preview SOA")}</span>
+              </span>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap">
+            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation()">
               ${canUpdateEnrStatus ? `
                 <select 
                   onchange="updateEnrollmentStatus('${escapeHtml(item.requestId)}', this.value)" 
@@ -4917,9 +5065,12 @@ function ensurePaymentHeaders(sheet) {
       tbody.innerHTML = list.map(item => {
         const curStatus = (item.status || "PENDING").toUpperCase();
         return `
-          <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
+          <tr onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="hover:bg-blue-50/50 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-              ${escapeHtml(item.requestId)}
+              <div class="flex items-center space-x-1.5">
+                <span>${escapeHtml(item.requestId)}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 opacity-80 group-hover:opacity-100">${canEditPayBilling ? "Inspect / Edit" : "Inspect"}</span>
+              </div>
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(item.requestorName)}</div>
@@ -4940,28 +5091,19 @@ function ensurePaymentHeaders(sheet) {
             <td class="py-3 px-4">
               <div class="flex items-center space-x-1.5">
                 <div class="font-mono text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 tracking-tight">${escapeHtml(item.accountNumber)}</div>
-                ${canEditPayBilling ? `
-                  <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 cursor-pointer" title="Edit Billing Details (Account, Site, Biller, Due Date)">
-                    <i data-lucide="edit-2" class="w-3 h-3"></i>
-                  </button>
-                ` : ""}
+                <button type="button" onclick="event.stopPropagation(); openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 cursor-pointer" title="${canEditPayBilling ? "Inspect & Edit Billing Details" : "Inspect Request & Attachment"}">
+                  <i data-lucide="${canEditPayBilling ? "edit-2" : "eye"}" class="w-3 h-3"></i>
+                </button>
               </div>
               <div class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5"><span class="font-medium text-slate-700 dark:text-neutral-300">${escapeHtml(item.site)}</span> &bull; <span>${escapeHtml(item.biller)}</span></div>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap">
-              ${canViewAllPay ? `
-                <a href="${item.fileUrl || `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                  <span class="max-w-[130px] truncate" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName || "View Attachment")}</span>
-                </a>
-              ` : `
-                <span class="inline-flex items-center space-x-1 text-[11px] text-slate-700 dark:text-neutral-300" title="${escapeHtml(item.fileName)}">
-                  <i data-lucide="paperclip" class="w-3.5 h-3.5 text-slate-400"></i>
-                  <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Attachment")}</span>
-                </span>
-              `}
+            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditPaymentBillingModal('${escapeHtml(item.requestId)}')">
+              <span class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold" title="${escapeHtml(item.fileName)}">
+                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Preview Statement")}</span>
+              </span>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap">
+            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation()">
               ${canUpdatePayStatus ? `
                 <select 
                   onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
@@ -4990,12 +5132,188 @@ function ensurePaymentHeaders(sheet) {
       lucide.createIcons();
     }
 
+    // ========================================================
+    // PLAN-SPLIT-INSPECTOR: INTERACTIVE ZOOM / PAN / ROTATE ENGINE
+    // ========================================================
+    let inspectorZoom = 1;
+    let inspectorRotation = 0;
+    let inspectorPanX = 0;
+    let inspectorPanY = 0;
+    let isInspectorDragging = false;
+    let inspectorDragStartX = 0;
+    let inspectorDragStartY = 0;
+    let activeEnrollAttachMode = "letter";
+    let activeInspectEnrollItem = null;
+
+    function extractDriveFileIdFromUrl(url) {
+      if (!url) return "";
+      const m1 = String(url).match(/\/file\/d\/([a-zA-Z0-9_-]{15,})/);
+      if (m1 && m1[1]) return m1[1];
+      const m2 = String(url).match(/[?&]id=([a-zA-Z0-9_-]{15,})/);
+      if (m2 && m2[1]) return m2[1];
+      return "";
+    }
+
+    function applyInspectorTransform() {
+      const transformCss = `translate(${inspectorPanX}px, ${inspectorPanY}px) scale(${inspectorZoom}) rotate(${inspectorRotation}deg)`;
+      const payBox = document.getElementById("payInspectorTransformBox");
+      if (payBox) payBox.style.transform = transformCss;
+      const enrBox = document.getElementById("enrollInspectorTransformBox");
+      if (enrBox) enrBox.style.transform = transformCss;
+      const payLbl = document.getElementById("payInspectorZoomLabel");
+      if (payLbl) payLbl.innerText = `${Math.round(inspectorZoom * 100)}%`;
+      const enrLbl = document.getElementById("enrollInspectorZoomLabel");
+      if (enrLbl) enrLbl.innerText = `${Math.round(inspectorZoom * 100)}%`;
+    }
+
+    function adjustInspectorZoom(delta) {
+      inspectorZoom = Math.min(4, Math.max(0.5, +(inspectorZoom + delta).toFixed(2)));
+      applyInspectorTransform();
+    }
+
+    function rotateInspectorView() {
+      inspectorRotation = (inspectorRotation + 90) % 360;
+      applyInspectorTransform();
+    }
+
+    function resetInspectorView() {
+      inspectorZoom = 1;
+      inspectorRotation = 0;
+      inspectorPanX = 0;
+      inspectorPanY = 0;
+      applyInspectorTransform();
+    }
+
+    function handleInspectorWheel(e) {
+      e.preventDefault();
+      adjustInspectorZoom(e.deltaY < 0 ? 0.15 : -0.15);
+    }
+
+    function startInspectorPan(e) {
+      isInspectorDragging = true;
+      inspectorDragStartX = e.clientX - inspectorPanX;
+      inspectorDragStartY = e.clientY - inspectorPanY;
+    }
+
+    function moveInspectorPan(e) {
+      if (!isInspectorDragging) return;
+      inspectorPanX = e.clientX - inspectorDragStartX;
+      inspectorPanY = e.clientY - inspectorDragStartY;
+      applyInspectorTransform();
+    }
+
+    function endInspectorPan() {
+      isInspectorDragging = false;
+    }
+
+    function buildVoucherPreviewCardHtml(title, subtitle, fileName, fileUrl, metaRows, accentColor) {
+      const fid = extractDriveFileIdFromUrl(fileUrl);
+      const thumbUrl = fid ? `https://drive.google.com/thumbnail?id=${fid}&sz=w1600` : "";
+      const borderCls = accentColor === "emerald" ? "border-emerald-500/40" : "border-blue-500/40";
+      const badgeCls = accentColor === "emerald" ? "bg-emerald-600 text-white" : "bg-blue-600 text-white";
+      return `
+        <div class="bg-white text-slate-900 rounded-2xl shadow-2xl border-2 ${borderCls} w-[460px] max-w-full overflow-hidden">
+          <div class="px-5 py-3.5 bg-slate-900 text-white flex items-center justify-between">
+            <div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase ${badgeCls}">${escapeHtml(title)}</span>
+              <h5 class="text-xs font-mono font-bold text-slate-200 mt-1">${escapeHtml(subtitle)}</h5>
+            </div>
+            <div class="text-right text-[10px] text-slate-400 font-mono">APECHOMES PORTAL</div>
+          </div>
+          ${thumbUrl ? `
+            <div class="bg-slate-100 border-b border-slate-200 flex items-center justify-center max-h-[300px] overflow-hidden select-none" oncontextmenu="event.preventDefault()">
+              <img src="${thumbUrl}" alt="${escapeHtml(fileName)}" draggable="false" oncontextmenu="event.preventDefault()" class="max-h-[300px] w-auto object-contain pointer-events-none select-none" onerror="this.parentElement.style.display='none'" />
+            </div>
+          ` : ""}
+          <div class="p-5 space-y-2.5 text-xs">
+            <div class="p-2.5 rounded-xl bg-slate-100 border border-slate-200 font-mono text-[11px] font-bold text-slate-700 break-all">
+              📄 ${escapeHtml(fileName || "Attached Document.pdf")}
+            </div>
+            <div class="grid grid-cols-2 gap-2 pt-1">
+              ${metaRows.map(([k, v]) => `
+                <div class="p-2 rounded-lg bg-slate-50 border border-slate-200/80">
+                  <div class="text-[9px] font-bold uppercase text-slate-400">${escapeHtml(k)}</div>
+                  <div class="text-[11px] font-bold text-slate-800 truncate mt-0.5">${escapeHtml(v || "—")}</div>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    let pendingPayStatusConfirmValue = null;
+    let pendingEnrollStatusConfirmValue = null;
+
+    function stagePayStatusChangeInModal(reqId, newStatus) {
+      const base = paymentRequests.find(r => r.requestId === reqId);
+      const curStatus = ((paymentEditsOverrides[reqId]?.status || base?.status || "PENDING")).toUpperCase();
+      if (String(newStatus).toUpperCase() === curStatus) {
+        cancelPendingPayStatusChange();
+        return;
+      }
+      pendingPayStatusConfirmValue = newStatus;
+      const lbl = document.getElementById("editPayPendingStatusLabel");
+      if (lbl) lbl.innerText = newStatus;
+      document.getElementById("editPayStatusConfirmBar")?.classList.remove("hidden");
+    }
+
+    function cancelPendingPayStatusChange() {
+      pendingPayStatusConfirmValue = null;
+      document.getElementById("editPayStatusConfirmBar")?.classList.add("hidden");
+      const reqId = document.getElementById("editPayReqId")?.value;
+      const base = paymentRequests.find(r => r.requestId === reqId);
+      const curStatus = ((paymentEditsOverrides[reqId]?.status || base?.status || "PENDING")).toUpperCase();
+      const sel = document.getElementById("editPayModalStatusSelect");
+      if (sel) sel.value = curStatus;
+    }
+
+    function confirmPendingPayStatusChange() {
+      const reqId = document.getElementById("editPayReqId")?.value;
+      if (!reqId || !pendingPayStatusConfirmValue) return;
+      const nextSt = pendingPayStatusConfirmValue;
+      pendingPayStatusConfirmValue = null;
+      document.getElementById("editPayStatusConfirmBar")?.classList.add("hidden");
+      updatePaymentStatus(reqId, nextSt);
+      showEditPayToast(`Payment status committed: ${nextSt}`);
+    }
+
+    function showEditPayToast(msg) {
+      const toast = document.getElementById("editPaySuccessToast");
+      const txt = document.getElementById("editPaySuccessToastText");
+      if (txt) txt.innerText = msg;
+      if (toast) {
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 2600);
+      }
+    }
+
     function openEditPaymentBillingModal(reqId) {
       const base = paymentRequests.find(r => r.requestId === reqId);
       if (!base) return;
       const item = paymentEditsOverrides[reqId] ? { ...base, ...paymentEditsOverrides[reqId] } : base;
+      resetInspectorView();
+      pendingPayStatusConfirmValue = null;
+      document.getElementById("editPayStatusConfirmBar")?.classList.add("hidden");
+      document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editPayActionRow")?.classList.remove("hidden");
+      document.getElementById("editPaySuccessToast")?.classList.add("hidden");
+
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canUpdatePayStatus = (isAdminOrSub || hasUserPermission(currentUser, "PS_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+
       document.getElementById("editPayReqId").value = item.requestId;
-      document.getElementById("editPayBillingSubtitle").innerText = `${item.requestId} • Submitted by ${item.requestorName}`;
+      const reqBadge = document.getElementById("editPayReqBadge");
+      if (reqBadge) reqBadge.innerText = item.requestId;
+      const modeBadge = document.getElementById("editPayAccessModeBadge");
+      if (modeBadge) {
+        modeBadge.innerText = canEditPayBilling ? "Editable Details" : "View-Only Details";
+        modeBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${canEditPayBilling ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"}`;
+      }
+      document.getElementById("editPayBillingSubtitle").innerText = `Submitted by ${item.requestorName || "Requestor"} • ${item.submittedAt || ""}`;
+
+      const fields = ["editPayAccountNo", "editPaySite", "editPayBiller", "editPayMonth", "editPayType", "editPayDueDate", "editPayRequestor", "editPayViber"];
       document.getElementById("editPayAccountNo").value = item.accountNumber || "";
       document.getElementById("editPaySite").value = item.site || "";
       document.getElementById("editPayBiller").value = item.biller || "";
@@ -5004,6 +5322,50 @@ function ensurePaymentHeaders(sheet) {
       document.getElementById("editPayDueDate").value = item.dueDate || "";
       document.getElementById("editPayRequestor").value = item.requestorName || "";
       document.getElementById("editPayViber").value = item.viberNumber || "";
+      fields.forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !canEditPayBilling;
+      });
+      const saveBtn = document.getElementById("editPaySaveBtn");
+      if (saveBtn) saveBtn.classList.toggle("hidden", !canEditPayBilling);
+
+      const curStatus = (item.status || "PENDING").toUpperCase();
+      const statusBox = document.getElementById("editPayStatusContainer");
+      if (statusBox) {
+        statusBox.innerHTML = canUpdatePayStatus ? `
+          <select id="editPayModalStatusSelect" onchange="stagePayStatusChangeInModal('${escapeHtml(item.requestId)}', this.value)" class="text-xs font-bold uppercase rounded-xl px-2.5 py-1.5 bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-800 dark:text-white cursor-pointer">
+            ${["PENDING","UNDER REVIEW","APPROVED","WITH RFP","CHEQUE REL","PAID","DUPLICATE","BLURRED","CANCEL","REJECTED"].map(st => `<option value="${st}" ${curStatus === st ? "selected" : ""}>${st}</option>`).join("")}
+          </select>
+        ` : `<span class="inline-block px-2.5 py-1 rounded text-xs font-bold uppercase ${getStatusBadgeStyle(curStatus)}">${escapeHtml(curStatus)}</span>`;
+      }
+
+      const linkBar = document.getElementById("payInspectorLinkBar");
+      if (linkBar) {
+        linkBar.innerHTML = `
+          <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">
+            🔒 Protected View (New Tab &amp; Download Disabled)
+          </span>
+        `;
+      }
+
+      const stageBox = document.getElementById("payInspectorTransformBox");
+      if (stageBox) {
+        stageBox.innerHTML = buildVoucherPreviewCardHtml(
+          "SOA / Billing Statement",
+          item.requestId,
+          item.fileName || "Statement_of_Account.pdf",
+          item.fileUrl || "",
+          [
+            ["Account No", item.accountNumber],
+            ["Site / Biller", `${item.site} • ${item.biller}`],
+            ["Billing Period", `${item.billMonth} (${item.billType})`],
+            ["Due Date", item.dueDate],
+            ["Requestor", item.requestorName],
+            ["Status", curStatus]
+          ],
+          "blue"
+        );
+      }
 
       const dl = document.getElementById("editPayBillersDatalist");
       if (dl) {
@@ -5022,11 +5384,26 @@ function ensurePaymentHeaders(sheet) {
     }
 
     function closeEditPaymentBillingModal() {
+      pendingPayStatusConfirmValue = null;
+      document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editPayActionRow")?.classList.remove("hidden");
       document.getElementById("editPaymentBillingModal")?.classList.add("hidden");
+    }
+
+    function cancelEditPayBillingCommit() {
+      document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editPayActionRow")?.classList.remove("hidden");
     }
 
     function handleSavePaymentBillingEdit(e) {
       e.preventDefault();
+      const reqId = document.getElementById("editPayReqId").value;
+      if (!reqId) return;
+      document.getElementById("editPayActionRow")?.classList.add("hidden");
+      document.getElementById("editPayConfirmBanner")?.classList.remove("hidden");
+    }
+
+    function commitPaymentBillingEdit() {
       const reqId = document.getElementById("editPayReqId").value;
       if (!reqId) return;
       const updates = {
@@ -5065,31 +5442,189 @@ function ensurePaymentHeaders(sheet) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId: reqId, updates })
       }).catch(() => {});
-      closeEditPaymentBillingModal();
+      document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editPayActionRow")?.classList.remove("hidden");
+      showEditPayToast("Billing details committed and synced!");
       renderBillPaymentTable();
     }
 
-    function openEditEnrollmentDetailsModal(reqId) {
+    function setEnrollAttachmentMode(mode) {
+      activeEnrollAttachMode = mode || "letter";
+      resetInspectorView();
+      ["letter", "soa", "split"].forEach(m => {
+        const btn = document.getElementById(m === "letter" ? "enrollModeBtnLetter" : m === "soa" ? "enrollModeBtnSoa" : "enrollModeBtnSplit");
+        if (btn) {
+          btn.className = m === activeEnrollAttachMode
+            ? "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 text-white cursor-pointer"
+            : "px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer";
+        }
+      });
+      renderEnrollInspectorRightPane();
+    }
+
+    function renderEnrollInspectorRightPane() {
+      const item = activeInspectEnrollItem;
+      if (!item) return;
+      const letterUrl = item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER;
+      const soaUrl = item.driveSoaFolderUrl || DRIVE_SOA_FOLDER;
+
+      const linkBar = document.getElementById("enrollInspectorLinkBar");
+      if (linkBar) {
+        linkBar.innerHTML = `
+          <div class="truncate font-mono text-[11px] text-slate-300">
+            ${activeEnrollAttachMode === "letter"
+              ? `Attachment 1 of 2: ${escapeHtml(item.requestLetterFileName || "Approved_Request_Letter.pdf")}`
+              : activeEnrollAttachMode === "soa"
+              ? `Attachment 2 of 2: ${escapeHtml(item.soaFileName || "Statement_of_Account.pdf")}`
+              : `Side-by-Side Comparison: Approved Letter + SOA Statement`}
+          </div>
+          <div class="flex items-center space-x-2 shrink-0">
+            <span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">🔒 Protected View (New Tab &amp; Download Disabled)</span>
+          </div>
+        `;
+      }
+
+      const metaCommon = [
+        ["Account No", item.accountNumber],
+        ["Site / Biller", `${item.site} • ${item.biller}`],
+        ["Viber", item.viberNumber],
+        ["Status", item.status || "Pending"]
+      ];
+      const letterCard = buildVoucherPreviewCardHtml("1. Approved Request Letter", item.requestId, item.requestLetterFileName || "Request_Letter.pdf", letterUrl, metaCommon, "blue");
+      const soaCard = buildVoucherPreviewCardHtml("2. SOA / Billing Statement", item.requestId, item.soaFileName || "SOA_Statement.pdf", soaUrl, metaCommon, "emerald");
+
+      const stageBox = document.getElementById("enrollInspectorTransformBox");
+      if (stageBox) {
+        if (activeEnrollAttachMode === "letter") {
+          stageBox.innerHTML = letterCard;
+        } else if (activeEnrollAttachMode === "soa") {
+          stageBox.innerHTML = soaCard;
+        } else {
+          stageBox.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-start">${letterCard}${soaCard}</div>`;
+        }
+      }
+    }
+
+    function stageEnrollStatusChangeInModal(reqId, newStatus) {
+      const base = enrollmentRequests.find(r => r.requestId === reqId);
+      const curStatus = (enrollmentEditsOverrides[reqId]?.status || base?.status || "Pending");
+      if (String(newStatus).toLowerCase() === String(curStatus).toLowerCase()) {
+        cancelPendingEnrollStatusChange();
+        return;
+      }
+      pendingEnrollStatusConfirmValue = newStatus;
+      const lbl = document.getElementById("editEnrollPendingStatusLabel");
+      if (lbl) lbl.innerText = newStatus;
+      document.getElementById("editEnrollStatusConfirmBar")?.classList.remove("hidden");
+    }
+
+    function cancelPendingEnrollStatusChange() {
+      pendingEnrollStatusConfirmValue = null;
+      document.getElementById("editEnrollStatusConfirmBar")?.classList.add("hidden");
+      const reqId = document.getElementById("editEnrollReqId")?.value;
+      const base = enrollmentRequests.find(r => r.requestId === reqId);
+      const curStatus = (enrollmentEditsOverrides[reqId]?.status || base?.status || "Pending");
+      const sel = document.getElementById("editEnrollModalStatusSelect");
+      if (sel) sel.value = curStatus;
+    }
+
+    function confirmPendingEnrollStatusChange() {
+      const reqId = document.getElementById("editEnrollReqId")?.value;
+      if (!reqId || !pendingEnrollStatusConfirmValue) return;
+      const nextSt = pendingEnrollStatusConfirmValue;
+      pendingEnrollStatusConfirmValue = null;
+      document.getElementById("editEnrollStatusConfirmBar")?.classList.add("hidden");
+      updateEnrollmentStatus(reqId, nextSt);
+      showEditEnrollToast(`Endorsement status committed: ${nextSt}`);
+    }
+
+    function showEditEnrollToast(msg) {
+      const toast = document.getElementById("editEnrollSuccessToast");
+      const txt = document.getElementById("editEnrollSuccessToastText");
+      if (txt) txt.innerText = msg;
+      if (toast) {
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 2600);
+      }
+    }
+
+    function openEditEnrollmentDetailsModal(reqId, initialMode = "letter") {
       const base = enrollmentRequests.find(r => r.requestId === reqId);
       if (!base) return;
       const item = enrollmentEditsOverrides[reqId] ? { ...base, ...enrollmentEditsOverrides[reqId] } : base;
+      activeInspectEnrollItem = item;
+      activeEnrollAttachMode = initialMode || "letter";
+      resetInspectorView();
+      pendingEnrollStatusConfirmValue = null;
+      document.getElementById("editEnrollStatusConfirmBar")?.classList.add("hidden");
+      document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
+      document.getElementById("editEnrollSuccessToast")?.classList.add("hidden");
+
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canUpdateEnrStatus = (isAdminOrSub || hasUserPermission(currentUser, "ES_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+
       document.getElementById("editEnrollReqId").value = item.requestId;
       document.getElementById("editEnrollDetailsSubtitle").innerText = item.requestId;
+      const metaSub = document.getElementById("editEnrollSubmittedMeta");
+      if (metaSub) metaSub.innerText = `Submitted ${item.submittedAt || ""} • Account ${item.accountNumber || ""}`;
+
+      const modeBadge = document.getElementById("editEnrollAccessModeBadge");
+      if (modeBadge) {
+        modeBadge.innerText = canEditEnrDetails ? "Editable Details" : "View-Only Details";
+        modeBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${canEditEnrDetails ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"}`;
+      }
+
+      const fields = ["editEnrollAccountNo", "editEnrollSite", "editEnrollBiller", "editEnrollViber", "editEnrollEmail"];
       document.getElementById("editEnrollAccountNo").value = item.accountNumber || "";
       document.getElementById("editEnrollSite").value = item.site || "";
       document.getElementById("editEnrollBiller").value = item.biller || "";
       document.getElementById("editEnrollViber").value = item.viberNumber || "";
       document.getElementById("editEnrollEmail").value = item.email || "";
+      fields.forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !canEditEnrDetails;
+      });
+      const saveBtn = document.getElementById("editEnrollSaveBtn");
+      if (saveBtn) saveBtn.classList.toggle("hidden", !canEditEnrDetails);
+
+      const curStatus = item.status || "Pending";
+      const statusBox = document.getElementById("editEnrollStatusContainer");
+      if (statusBox) {
+        statusBox.innerHTML = canUpdateEnrStatus ? `
+          <select id="editEnrollModalStatusSelect" onchange="stageEnrollStatusChangeInModal('${escapeHtml(item.requestId)}', this.value)" class="text-xs font-bold uppercase rounded-xl px-2.5 py-1.5 bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-800 dark:text-white cursor-pointer">
+            ${["Pending","Under Review","Approved","Endorsed","Enrolled","Rejected"].map(st => `<option value="${st}" ${curStatus.toLowerCase() === st.toLowerCase() ? "selected" : ""}>${st}</option>`).join("")}
+          </select>
+        ` : `<span class="inline-block px-2.5 py-1 rounded text-xs font-bold uppercase ${getStatusBadgeStyle(curStatus)}">${escapeHtml(curStatus)}</span>`;
+      }
+
+      setEnrollAttachmentMode(activeEnrollAttachMode);
       document.getElementById("editEnrollmentDetailsModal").classList.remove("hidden");
       lucide.createIcons();
     }
 
     function closeEditEnrollmentDetailsModal() {
+      pendingEnrollStatusConfirmValue = null;
+      document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
       document.getElementById("editEnrollmentDetailsModal")?.classList.add("hidden");
+    }
+
+    function cancelEditEnrollDetailsCommit() {
+      document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
     }
 
     function handleSaveEnrollmentDetailsEdit(e) {
       e.preventDefault();
+      const reqId = document.getElementById("editEnrollReqId").value;
+      if (!reqId) return;
+      document.getElementById("editEnrollActionRow")?.classList.add("hidden");
+      document.getElementById("editEnrollConfirmBanner")?.classList.remove("hidden");
+    }
+
+    function commitEnrollmentDetailsEdit() {
       const reqId = document.getElementById("editEnrollReqId").value;
       if (!reqId) return;
       const updates = {
@@ -5125,7 +5660,9 @@ function ensurePaymentHeaders(sheet) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId: reqId, updates })
       }).catch(() => {});
-      closeEditEnrollmentDetailsModal();
+      document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
+      showEditEnrollToast("Endorsement details committed and synced!");
       renderEnrollmentStatusTable();
     }
 
@@ -6289,6 +6826,7 @@ function ensurePaymentHeaders(sheet) {
           lastName: pendingUserForPwChange.lastName,
           fullName: `${pendingUserForPwChange.firstName} ${pendingUserForPwChange.lastName}`.trim() || pendingUserForPwChange.username,
           accessLevel: pendingUserForPwChange.accessLevel,
+          permissions: normalizePermissionsList(pendingUserForPwChange.permissions, pendingUserForPwChange.accessLevel),
           status: normalizeLifecycleStatus(pendingUserForPwChange.status || "ACTIVE"),
           email: pendingUserForPwChange.email,
           viberNumber: pendingUserForPwChange.viberNumber,
@@ -6401,6 +6939,7 @@ function ensurePaymentHeaders(sheet) {
               lastName: matchedUser.lastName,
               fullName: `${matchedUser.firstName} ${matchedUser.lastName}`.trim() || matchedUser.username,
               accessLevel: matchedUser.accessLevel,
+              permissions: normalizePermissionsList(matchedUser.permissions, matchedUser.accessLevel),
               status: acctStatus,
               email: matchedUser.email,
               viberNumber: matchedUser.viberNumber,
@@ -6463,6 +7002,21 @@ function ensurePaymentHeaders(sheet) {
       if (usernameSpan) usernameSpan.innerText = user.username;
       const displayFullName = document.getElementById("displayFullName");
       if (displayFullName) displayFullName.innerText = user.fullName || user.username;
+
+      // Initialize scope dropdowns according to user's module permissions (PS_VIEW_ALL / PS_VIEW_GROUP / ES_VIEW_ALL / ES_VIEW_GROUP)
+      const isAdminOrSub = user.accessLevel === "Administrator" || user.accessLevel === "Sub-Administrator";
+      const payScopeSelect = document.getElementById("adminPaymentScopeSelect");
+      if (payScopeSelect) {
+        payScopeSelect.value = (isAdminOrSub || hasUserPermission(user, "PS_VIEW_ALL"))
+          ? "all"
+          : (hasUserPermission(user, "PS_VIEW_GROUP") ? "group" : "my");
+      }
+      const enrScopeSelect = document.getElementById("adminEnrollScopeSelect");
+      if (enrScopeSelect) {
+        enrScopeSelect.value = (isAdminOrSub || hasUserPermission(user, "ES_VIEW_ALL"))
+          ? "all"
+          : (hasUserPermission(user, "ES_VIEW_GROUP") ? "group" : "my");
+      }
 
       updateAccessUI();
       switchTab("overview");
@@ -6622,7 +7176,7 @@ function ensurePaymentHeaders(sheet) {
                 localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
                 if (statusText) statusText.innerText = "UserData DB Live";
 
-                // Live session enforcement if current user's status changed in Google Sheet
+                // Live session enforcement if current user's status or module permissions changed in Google Sheet
                 if (currentUser) {
                   const syncedSelf = userDatabase.find(
                     u => u.username.toLowerCase() === currentUser.username.toLowerCase() ||
@@ -6636,9 +7190,26 @@ function ensurePaymentHeaders(sheet) {
                         : "Access denied: Your account has been retired and is no longer active.";
                       handleLogout();
                       showLoginError(msg);
-                    } else if (currentUser.status !== liveStatus) {
-                      currentUser.status = liveStatus;
-                      updateAccessUI();
+                    } else {
+                      const nextPerms = normalizePermissionsList(syncedSelf.permissions, syncedSelf.accessLevel);
+                      const permsChanged = JSON.stringify(currentUser.permissions || []) !== JSON.stringify(nextPerms);
+                      if (currentUser.status !== liveStatus || currentUser.accessLevel !== syncedSelf.accessLevel || permsChanged) {
+                        currentUser.status = liveStatus;
+                        currentUser.accessLevel = syncedSelf.accessLevel;
+                        currentUser.permissions = nextPerms;
+                        const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
+                        const payScopeSelect = document.getElementById("adminPaymentScopeSelect");
+                        if (payScopeSelect && (isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_ALL"))) {
+                          payScopeSelect.value = "all";
+                        }
+                        const enrScopeSelect = document.getElementById("adminEnrollScopeSelect");
+                        if (enrScopeSelect && (isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL"))) {
+                          enrScopeSelect.value = "all";
+                        }
+                        updateAccessUI();
+                        if (currentTab === "payment-status") renderBillPaymentTable();
+                        if (currentTab === "enroll-status") renderEnrollmentStatusTable();
+                      }
                     }
                   }
                 }
