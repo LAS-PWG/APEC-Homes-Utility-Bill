@@ -1393,7 +1393,7 @@ Submit and track your monthly utility payments directly through your account.</p
                   </select>
                 </div>
 
-                <!-- Admin Scope Filter -->
+                <!-- Admin / Group Scope Filter -->
                 <div id="adminEnrollScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
                   <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
                   <select 
@@ -1402,6 +1402,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
                   >
                     <option value="all">All Endorsements</option>
+                    <option value="group">Group / Site Endorsements</option>
                     <option value="my">My Endorsements</option>
                   </select>
                 </div>
@@ -1409,6 +1410,16 @@ Submit and track your monthly utility payments directly through your account.</p
                 <span id="enrollmentsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap flex-shrink-0">
                   0 Endorsements
                 </span>
+
+                <button 
+                  type="button" 
+                  onclick="scrollTableToTop('enrollmentScrollContainer')" 
+                  class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer whitespace-nowrap"
+                  title="Scroll back to the top"
+                >
+                  <i data-lucide="arrow-up" class="w-3 h-3"></i>
+                  <span>Top</span>
+                </button>
               </div>
 
               <div class="flex flex-wrap items-center gap-2 ml-auto">
@@ -1426,14 +1437,13 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
 
             <!-- Enrollment Status Table -->
-            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+            <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div id="enrollmentScrollContainer" class="max-h-[65vh] overflow-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
                       <th class="py-3 px-4 whitespace-nowrap">Enrollment ID</th>
-                      <th class="py-3 px-4 whitespace-nowrap">User ID</th>
-                      <th class="py-3 px-4 whitespace-nowrap">Contact (Email &amp; Viber)</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Requestor / Viber</th>
                       <th class="py-3 px-4">Account Number (SOA)</th>
                       <th class="py-3 px-4">Site &amp; Biller</th>
                       <th class="py-3 px-4">Approved Letter</th>
@@ -1444,13 +1454,21 @@ Submit and track your monthly utility payments directly through your account.</p
                   </thead>
                   <tbody id="enrollmentTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50">
                     <tr>
-                      <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+                      <td colspan="8" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
                         Loading utility bill endorsements...
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+              <button 
+                type="button" 
+                onclick="scrollTableToTop('enrollmentScrollContainer')" 
+                class="fixed bottom-6 right-6 z-30 p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center"
+                title="Scroll back to top"
+              >
+                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
 
@@ -1760,7 +1778,7 @@ Submit and track your monthly utility payments directly through your account.</p
                   </select>
                 </div>
 
-                <!-- Admin Scope Filter (All Submissions vs My Submissions) -->
+                <!-- Admin / Group Scope Filter -->
                 <div id="adminPaymentScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
                   <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
                   <select 
@@ -1769,6 +1787,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
                   >
                     <option value="all">All Requests</option>
+                    <option value="group">Group / Site Requests</option>
                     <option value="my">My Submissions</option>
                   </select>
                 </div>
@@ -1782,6 +1801,16 @@ Submit and track your monthly utility payments directly through your account.</p
                 <span id="paymentRequestsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap flex-shrink-0">
                   0 Requests
                 </span>
+
+                <button 
+                  type="button" 
+                  onclick="scrollTableToTop('paymentScrollContainer')" 
+                  class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer whitespace-nowrap"
+                  title="Scroll back to the top"
+                >
+                  <i data-lucide="arrow-up" class="w-3 h-3"></i>
+                  <span>Top</span>
+                </button>
               </div>
 
               <!-- Live Status Sync Trigger & Last Synced Timestamp -->
@@ -1801,10 +1830,10 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
 
             <!-- Payment Requests Table -->
-            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+            <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div id="paymentScrollContainer" class="max-h-[65vh] overflow-auto">
+                <table class="w-full text-left text-xs border-collapse">
+                  <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
                       <th class="py-3 px-4 whitespace-nowrap">Request ID</th>
                       <th class="py-3 px-4 whitespace-nowrap">Requestor</th>
@@ -1812,7 +1841,7 @@ Submit and track your monthly utility payments directly through your account.</p
                       <th class="py-3 px-4 whitespace-nowrap">Viber</th>
                       <th class="py-3 px-4 whitespace-nowrap">Month &amp; Type</th>
                       <th class="py-3 px-4 whitespace-nowrap">Due Date</th>
-                      <th class="py-3 px-4">Account Number / Site</th>
+                      <th class="py-3 px-4">Account / Biller</th>
                       <th class="py-3 px-4">Attachment</th>
                       <th class="py-3 px-4 whitespace-nowrap">Status</th>
                     </tr>
@@ -1826,6 +1855,14 @@ Submit and track your monthly utility payments directly through your account.</p
                   </tbody>
                 </table>
               </div>
+              <button 
+                type="button" 
+                onclick="scrollTableToTop('paymentScrollContainer')" 
+                class="fixed bottom-6 right-6 z-30 p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center"
+                title="Scroll back to top"
+              >
+                <i data-lucide="arrow-up" class="w-4 h-4"></i>
+              </button>
             </div>
           </div>
 
@@ -1945,8 +1982,8 @@ Submit and track your monthly utility payments directly through your account.</p
                   <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
                     <tr>
                       <th class="py-3 px-4 whitespace-nowrap">User ID</th>
-                      <th class="py-3 px-4">User &amp; Full Name</th>
-                      <th class="py-3 px-4">Site / Contact</th>
+                      <th class="py-3 px-4">Username</th>
+                      <th class="py-3 px-4">Full Name</th>
                       <th class="py-3 px-4 whitespace-nowrap">Access Level</th>
                       <th class="py-3 px-4 whitespace-nowrap">Lifecycle Status</th>
                       <th class="py-3 px-4 whitespace-nowrap">Password Security</th>
@@ -2074,7 +2111,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
   <!-- MODAL: ADD / EDIT USER (ADMIN ONLY) -->
   <div id="userModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
-    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 sm:p-7">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-3xl w-full p-6 sm:p-7 max-h-[92vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800 mb-4">
         <h4 id="userModalTitle" class="text-base font-bold text-slate-900 dark:text-white">Add New User</h4>
         <button type="button" onclick="toggleAddUserModal(false)" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
@@ -2107,39 +2144,15 @@ Submit and track your monthly utility payments directly through your account.</p
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Email</label>
-            <input type="email" id="userInputEmail" placeholder="juan@apechomes.com" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber No</label>
-            <input type="text" id="userInputViber" placeholder="09171234567" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Access Level <span class="text-red-500">*</span></label>
-            <select id="userInputAccessLevel" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
-              <option value="Administrator">Administrator</option>
-              <option value="Sub-Administrator">Sub-Administrator</option>
-              <option value="Level 1">Level 1</option>
-              <option value="Level 2">Level 2</option>
-              <option value="Level 3">Level 3</option>
-              <option value="Level 4">Level 4</option>
-              <option value="Level 5">Level 5</option>
-              <option value="Level 6">Level 6</option>
-              <option value="Level 7">Level 7</option>
-              <option value="Level 8">Level 8</option>
-              <option value="Level 9">Level 9</option>
-              <option value="Level 10">Level 10</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Office</label>
-            <input type="text" id="userInputSite" placeholder="e.g. AHC2, Head Office" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
-          </div>
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Access Level Preset <span class="text-red-500">*</span></label>
+          <select id="userInputAccessLevel" onchange="handleUserAccessPresetChange(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
+            <option value="Administrator">Administrator (All 22 Modules)</option>
+            <option value="Sub-Administrator">Sub-Administrator (18 Operational Modules)</option>
+            <option value="Level 1">Level 1 (Requestor — View Own)</option>
+            <option value="Level 2">Level 2 (Requestor / Site Lead — View Group)</option>
+            <option value="Level 3">Level 3 (Supervisor — View All + Edit Details)</option>
+          </select>
         </div>
 
         <div class="grid grid-cols-2 gap-3">
@@ -2163,6 +2176,32 @@ Submit and track your monthly utility payments directly through your account.</p
           <input type="text" id="userInputCurrentPw" placeholder="Leave blank for Default PW setup, or type new password to auto-hash" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
         </div>
 
+        <!-- PLAN-MODULE-RBAC: 7 GROUPED MODULE PERMISSION PANELS -->
+        <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-royal-800">
+            <div>
+              <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+                <i data-lucide="shield" class="w-3.5 h-3.5 text-indigo-500"></i>
+                <span>Module-Based Access Control (PLAN-MODULE-RBAC)</span>
+                <span id="userModalPermCounterBadge" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">0 / 22 Enabled</span>
+              </span>
+              <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-0.5">Use 1-Click Role Presets or toggle individual module groups &amp; permissions. Stored in UserData Col G without adding new columns.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-1">
+              <button type="button" onclick="applyUserRolePreset('Administrator')" class="px-2 py-1 rounded text-[10px] font-bold bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/20 cursor-pointer">Admin</button>
+              <button type="button" onclick="applyUserRolePreset('Sub-Administrator')" class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 cursor-pointer">Sub-Admin</button>
+              <button type="button" onclick="applyUserRolePreset('Level 3')" class="px-2 py-1 rounded text-[10px] font-bold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer">Level 3</button>
+              <button type="button" onclick="applyUserRolePreset('Level 2')" class="px-2 py-1 rounded text-[10px] font-bold bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 cursor-pointer">Level 2</button>
+              <button type="button" onclick="applyUserRolePreset('Level 1')" class="px-2 py-1 rounded text-[10px] font-bold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 cursor-pointer">Level 1</button>
+              <button type="button" onclick="toggleAllUserPermissions()" class="px-2 py-1 rounded text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 cursor-pointer">Toggle All</button>
+            </div>
+          </div>
+
+          <div id="userPermissionsGroupsContainer" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-h-60 overflow-y-auto pr-1">
+            <!-- Populated dynamically via renderUserModalPermissionGroups() -->
+          </div>
+        </div>
+
         <div class="flex items-center justify-end space-x-2 pt-3">
           <button type="button" onclick="toggleAddUserModal(false)" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
             Cancel
@@ -2170,6 +2209,118 @@ Submit and track your monthly utility payments directly through your account.</p
           <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md cursor-pointer">
             Save &amp; Encrypt User
           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT BILLING DETAILS IN PAYMENT STATUS (PS_EDIT_BILLING) -->
+  <div id="editPaymentBillingModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-lg w-full p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800">
+        <div>
+          <h4 class="text-base font-bold text-slate-900 dark:text-white">Edit Billing Details</h4>
+          <p id="editPayBillingSubtitle" class="text-[11px] font-mono text-blue-600 dark:text-blue-400">REQ-ID</p>
+        </div>
+        <button type="button" onclick="closeEditPaymentBillingModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="editPaymentBillingForm" onsubmit="handleSavePaymentBillingEdit(event)" class="space-y-3">
+        <input type="hidden" id="editPayReqId" value="" />
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (Select from Billers or type)</label>
+          <input type="text" id="editPayAccountNo" list="editPayBillersDatalist" oninput="handleEditPayAccountLookup(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-blue-600 dark:text-blue-400" />
+          <datalist id="editPayBillersDatalist"></datalist>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
+            <input type="text" id="editPaySite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
+            <input type="text" id="editPayBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+          </div>
+        </div>
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Month</label>
+            <select id="editPayMonth" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
+              <option value="January">January</option><option value="February">February</option><option value="March">March</option><option value="April">April</option><option value="May">May</option><option value="June">June</option><option value="July">July</option><option value="August">August</option><option value="September">September</option><option value="October">October</option><option value="November">November</option><option value="December">December</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Bill Type</label>
+            <select id="editPayType" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold">
+              <option value="Power">Power</option>
+              <option value="Water">Water</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Due Date</label>
+            <input type="text" id="editPayDueDate" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor Name</label>
+            <input type="text" id="editPayRequestor" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
+            <input type="text" id="editPayViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+        </div>
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
+          <button type="button" onclick="closeEditPaymentBillingModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md cursor-pointer">Save Billing Details</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT ENROLLMENT DETAILS IN ENROLLMENT STATUS (ES_EDIT_DETAILS) -->
+  <div id="editEnrollmentDetailsModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-md w-full p-6 space-y-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-royal-800">
+        <div>
+          <h4 class="text-base font-bold text-slate-900 dark:text-white">Edit Enrollment Details</h4>
+          <p id="editEnrollDetailsSubtitle" class="text-[11px] font-mono text-emerald-600 dark:text-emerald-400">ENR-ID</p>
+        </div>
+        <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <form id="editEnrollmentDetailsForm" onsubmit="handleSaveEnrollmentDetailsEdit(event)" class="space-y-3">
+        <input type="hidden" id="editEnrollReqId" value="" />
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
+          <input type="text" id="editEnrollAccountNo" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400" />
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
+            <input type="text" id="editEnrollSite" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Biller</label>
+            <input type="text" id="editEnrollBiller" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold" />
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
+            <input type="text" id="editEnrollViber" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
+          </div>
+          <div>
+            <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor / Email</label>
+            <input type="text" id="editEnrollEmail" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs" />
+          </div>
+        </div>
+        <div class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
+          <button type="button" onclick="closeEditEnrollmentDetailsModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Cancel</button>
+          <button type="submit" class="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Save Enrollment Details</button>
         </div>
       </form>
     </div>
@@ -2910,9 +3061,169 @@ function ensurePaymentHeaders(sheet) {
       return "ACTIVE";
     }
 
+    // ========================================================
+    // PLAN-MODULE-RBAC: 7 GROUPED MODULE PERMISSION DEFINITIONS
+    // ========================================================
+    const MODULE_PERMISSION_GROUPS = [
+      {
+        groupId: "rbp",
+        groupTitle: "1. Request Bill Payment (RBP)",
+        items: [
+          { id: "RBP_SUBMIT", label: "Submit Bill Payment Request" }
+        ]
+      },
+      {
+        groupId: "payment_status",
+        groupTitle: "2. View Request Bill Payment Status",
+        items: [
+          { id: "PS_VIEW_OWN", label: "View Own Requests" },
+          { id: "PS_VIEW_GROUP", label: "View Group / Site Requests" },
+          { id: "PS_VIEW_ALL", label: "View All Requests" },
+          { id: "PS_FILTER", label: "Search & Filter Table" },
+          { id: "PS_EDIT_BILLING", label: "Edit Billing Details (Acct/Biller/Site)" },
+          { id: "PS_UPDATE_STATUS", label: "Approve / Change Payment Status" }
+        ]
+      },
+      {
+        groupId: "enroll_bill",
+        groupTitle: "3. Enroll New Utility Bill",
+        items: [
+          { id: "ENROLL_SUBMIT", label: "Submit Utility Endorsement" }
+        ]
+      },
+      {
+        groupId: "enrollment_status",
+        groupTitle: "4. View Enrollment Status",
+        items: [
+          { id: "ES_VIEW_OWN", label: "View Own Endorsements" },
+          { id: "ES_VIEW_GROUP", label: "View Group / Site Endorsements" },
+          { id: "ES_VIEW_ALL", label: "View All Endorsements" },
+          { id: "ES_FILTER", label: "Search & Filter Endorsements" },
+          { id: "ES_EDIT_DETAILS", label: "Edit Enrollment Details" },
+          { id: "ES_UPDATE_STATUS", label: "Approve / Change Enrollment Status" }
+        ]
+      },
+      {
+        groupId: "subadmin_ops",
+        groupTitle: "5. Sub-Admin Operations",
+        items: [
+          { id: "SUBADMIN_ACCT_MGMT", label: "Account Numbers (Billers Catalog)" },
+          { id: "SUBADMIN_ANNOUNCEMENTS", label: "Post / Edit Announcements" },
+          { id: "SUBADMIN_SOA_TRACKER", label: "SOA Tracker Access" },
+          { id: "SUBADMIN_BATCH_UPLOAD", label: "Batch Bill Upload" }
+        ]
+      },
+      {
+        groupId: "admin_only",
+        groupTitle: "6. Admin-Only System Modules",
+        items: [
+          { id: "ADMIN_USER_MGMT", label: "User Accounts & Security" },
+          { id: "ADMIN_WEBHOOK_SETUP", label: "Webhook & Apps Script Config" },
+          { id: "ADMIN_DATA_SYNC", label: "Database Sync & Batch Encrypt" },
+          { id: "ADMIN_EXPORT_PKG", label: "Download Deployment Packages" }
+        ]
+      },
+      {
+        groupId: "reports",
+        groupTitle: "7. Report System Access",
+        items: [
+          { id: "REP_USER_ACTIVITY", label: "User Activity Reports" },
+          { id: "REP_ACCOUNT_HISTORY", label: "Account Billing History Reports" }
+        ]
+      }
+    ];
+
+    const ALL_MODULE_PERMISSION_IDS = MODULE_PERMISSION_GROUPS.flatMap(g => g.items.map(i => i.id));
+
+    function getDefaultPermissionsForAccessLevel(accessLevel) {
+      const norm = String(accessLevel || "Level 1").trim().toLowerCase();
+      if (norm === "administrator" || norm === "admin") {
+        return [...ALL_MODULE_PERMISSION_IDS];
+      }
+      if (norm === "sub-administrator" || norm === "subadmin" || norm === "sub-admin") {
+        return [
+          "RBP_SUBMIT",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS",
+          "ENROLL_SUBMIT",
+          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS",
+          "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
+          "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY"
+        ];
+      }
+      if (norm === "level 3" || norm === "level 5" || norm === "level 6" || norm === "level 7") {
+        return [
+          "RBP_SUBMIT",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING",
+          "ENROLL_SUBMIT",
+          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS",
+          "REP_ACCOUNT_HISTORY"
+        ];
+      }
+      if (norm === "level 2" || norm === "level 4") {
+        return [
+          "RBP_SUBMIT",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_FILTER",
+          "ENROLL_SUBMIT",
+          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_FILTER"
+        ];
+      }
+      return [
+        "RBP_SUBMIT",
+        "PS_VIEW_OWN", "PS_FILTER",
+        "ENROLL_SUBMIT",
+        "ES_VIEW_OWN", "ES_FILTER"
+      ];
+    }
+
+    function normalizePermissionsList(perms, fallbackAccessLevel) {
+      if (!Array.isArray(perms) || perms.length === 0) {
+        return getDefaultPermissionsForAccessLevel(fallbackAccessLevel || "Level 1");
+      }
+      const validSet = new Set(ALL_MODULE_PERMISSION_IDS);
+      const filtered = Array.from(new Set(perms.filter(p => validSet.has(p))));
+      return filtered.length > 0 ? filtered : getDefaultPermissionsForAccessLevel(fallbackAccessLevel || "Level 1");
+    }
+
+    function arePermissionsEqualToDefault(perms, accessLevel) {
+      const def = getDefaultPermissionsForAccessLevel(accessLevel);
+      const norm = normalizePermissionsList(perms, accessLevel);
+      if (def.length !== norm.length) return false;
+      const setA = new Set(def);
+      return norm.every(p => setA.has(p));
+    }
+
+    function hasUserPermission(user, perm) {
+      if (!user) return false;
+      if (isPrimaryAdminAccount(user.userId, user.username)) return true;
+      const perms = Array.isArray(user.permissions) && user.permissions.length > 0
+        ? user.permissions
+        : getDefaultPermissionsForAccessLevel(user.accessLevel);
+      return perms.includes(perm);
+    }
+
+    let permOverrides = {};
+    try {
+      const savedPO = localStorage.getItem("apechomes_perm_overrides_v1");
+      if (savedPO) {
+        const parsedPO = JSON.parse(savedPO);
+        if (parsedPO && typeof parsedPO === "object") permOverrides = parsedPO;
+      }
+    } catch(e) {}
+
     function parseAccessAndStatus(rawAccess, rawCurrentPw, fallbackStatus) {
       let text = String(rawAccess || "Level 1").trim();
       let status = normalizeLifecycleStatus(fallbackStatus || "ACTIVE");
+      let customMods = null;
+
+      const modsMatch = text.match(/\|\s*MODS:([A-Z0-9_,]+)/i);
+      if (modsMatch && modsMatch[1]) {
+        const tokens = modsMatch[1].split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
+        const validSet = new Set(ALL_MODULE_PERMISSION_IDS);
+        const validTokens = tokens.filter(t => validSet.has(t));
+        if (validTokens.length > 0) customMods = validTokens;
+        text = text.replace(/\s*\|\s*MODS:[A-Z0-9_,]+/i, "").trim();
+      }
+
       const bracketMatch = text.match(/\[(ACTIVE|SUSPENDED|BANNED|RETIRED)\]\s*$/i);
       if (bracketMatch) {
         status = normalizeLifecycleStatus(bracketMatch[1]);
@@ -2921,14 +3232,23 @@ function ensurePaymentHeaders(sheet) {
       if (isRetiredPasswordMarker(rawCurrentPw)) {
         status = "RETIRED";
       }
-      return { accessLevel: text || "Level 1", status };
+      const cleanAccess = text || "Level 1";
+      const permissions = customMods || getDefaultPermissionsForAccessLevel(cleanAccess);
+      return { accessLevel: cleanAccess, status, permissions };
     }
 
-    function formatAccessWithStatus(accessLevel, status) {
-      const cleanAccess = String(accessLevel || "Level 1").replace(/\s*\[(ACTIVE|SUSPENDED|BANNED|RETIRED)\]\s*$/i, "").trim();
+    function formatAccessWithStatus(accessLevel, status, permissions) {
+      const cleanAccess = String(accessLevel || "Level 1")
+        .replace(/\s*\|\s*MODS:[A-Z0-9_,]+/i, "")
+        .replace(/\s*\[(ACTIVE|SUSPENDED|BANNED|RETIRED)\]\s*$/i, "")
+        .trim() || "Level 1";
       const st = normalizeLifecycleStatus(status);
-      if (!st || st === "ACTIVE") return cleanAccess;
-      return `${cleanAccess} [${st}]`;
+      const statusSuffix = (!st || st === "ACTIVE") ? "" : ` [${st}]`;
+      if (permissions && Array.isArray(permissions) && !arePermissionsEqualToDefault(permissions, cleanAccess)) {
+        const normPerms = normalizePermissionsList(permissions, cleanAccess);
+        return `${cleanAccess}${statusSuffix} | MODS:${normPerms.join(",")}`;
+      }
+      return `${cleanAccess}${statusSuffix}`;
     }
 
     function isPrimaryAdminAccount(userId, username) {
@@ -2990,13 +3310,29 @@ function ensurePaymentHeaders(sheet) {
         const parsedState = parseAccessAndStatus(u.accessLevel, u.currentPassword, u.status);
         const finalStatus = isPrimaryAdminAccount(u.userId, u.username) ? "ACTIVE" : parsedState.status;
         const overridePw = pwOverrides[uKey] ? encryptPassword(pwOverrides[uKey]) : "";
+        const finalPerms = isPrimaryAdminAccount(u.userId, u.username)
+          ? [...ALL_MODULE_PERMISSION_IDS]
+          : normalizePermissionsList(permOverrides[uKey] || u.permissions || parsedState.permissions, parsedState.accessLevel);
         return {
           ...u,
           accessLevel: parsedState.accessLevel,
           status: finalStatus,
+          permissions: finalPerms,
           currentPassword: overridePw || u.currentPassword || ""
         };
       });
+    } catch(e) {}
+
+    let paymentEditsOverrides = {};
+    try {
+      const savedPE = localStorage.getItem("apechomes_payment_edits_v1");
+      if (savedPE) paymentEditsOverrides = JSON.parse(savedPE) || {};
+    } catch(e) {}
+
+    let enrollmentEditsOverrides = {};
+    try {
+      const savedEE = localStorage.getItem("apechomes_enrollment_edits_v1");
+      if (savedEE) enrollmentEditsOverrides = JSON.parse(savedEE) || {};
     } catch(e) {}
 
     // Master Billers Catalog (Col A: Account No, Col B: Site, Col C: Biller)
@@ -3174,11 +3510,36 @@ function ensurePaymentHeaders(sheet) {
       const billPaymentFolderWrapper = document.getElementById("billPaymentFolderWrapper");
       const adminEnrollCheckSheetBtn = document.getElementById("adminEnrollCheckSheetBtn");
 
-      if (isAdminOrSub) {
-        if (tabBtnUserMgmt) tabBtnUserMgmt.classList.remove("hidden");
-        if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.remove("hidden");
-        if (adminPaymentScopeWrapper) { adminPaymentScopeWrapper.classList.remove("hidden"); adminPaymentScopeWrapper.classList.add("flex"); }
-        if (adminEnrollScopeWrapper) { adminEnrollScopeWrapper.classList.remove("hidden"); adminEnrollScopeWrapper.classList.add("flex"); }
+      const canViewAllOrGroupPay = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_ALL") || hasUserPermission(currentUser, "PS_VIEW_GROUP");
+      const canViewAllOrGroupEnr = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL") || hasUserPermission(currentUser, "ES_VIEW_GROUP");
+      const canManageUsers = isAdminOrSub || hasUserPermission(currentUser, "ADMIN_USER_MGMT");
+      const canManageAccounts = isAdminOrSub || hasUserPermission(currentUser, "SUBADMIN_ACCT_MGMT");
+
+      if (canViewAllOrGroupPay && adminPaymentScopeWrapper) {
+        adminPaymentScopeWrapper.classList.remove("hidden");
+        adminPaymentScopeWrapper.classList.add("flex");
+      } else if (adminPaymentScopeWrapper) {
+        adminPaymentScopeWrapper.classList.add("hidden");
+        adminPaymentScopeWrapper.classList.remove("flex");
+      }
+
+      if (canViewAllOrGroupEnr && adminEnrollScopeWrapper) {
+        adminEnrollScopeWrapper.classList.remove("hidden");
+        adminEnrollScopeWrapper.classList.add("flex");
+      } else if (adminEnrollScopeWrapper) {
+        adminEnrollScopeWrapper.classList.add("hidden");
+        adminEnrollScopeWrapper.classList.remove("flex");
+      }
+
+      if (isAdminOrSub || canManageUsers || canManageAccounts) {
+        if (tabBtnUserMgmt) {
+          if (canManageUsers) tabBtnUserMgmt.classList.remove("hidden");
+          else tabBtnUserMgmt.classList.add("hidden");
+        }
+        if (tabBtnAccountMgmt) {
+          if (canManageAccounts) tabBtnAccountMgmt.classList.remove("hidden");
+          else tabBtnAccountMgmt.classList.add("hidden");
+        }
         if (adminAccountSyncBtn) { adminAccountSyncBtn.classList.remove("hidden"); adminAccountSyncBtn.classList.add("inline-flex"); }
         if (adminGsheetCard) adminGsheetCard.classList.remove("hidden");
         if (adminGsheetControls) { adminGsheetControls.classList.remove("hidden"); adminGsheetControls.classList.add("flex"); }
@@ -3196,8 +3557,6 @@ function ensurePaymentHeaders(sheet) {
       } else {
         if (tabBtnUserMgmt) tabBtnUserMgmt.classList.add("hidden");
         if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.add("hidden");
-        if (adminPaymentScopeWrapper) { adminPaymentScopeWrapper.classList.add("hidden"); adminPaymentScopeWrapper.classList.remove("flex"); }
-        if (adminEnrollScopeWrapper) { adminEnrollScopeWrapper.classList.add("hidden"); adminEnrollScopeWrapper.classList.remove("flex"); }
         if (adminAccountSyncBtn) { adminAccountSyncBtn.classList.add("hidden"); adminAccountSyncBtn.classList.remove("inline-flex"); }
         if (adminGsheetCard) adminGsheetCard.classList.add("hidden");
         if (adminGsheetControls) { adminGsheetControls.classList.add("hidden"); adminGsheetControls.classList.remove("flex"); }
@@ -3641,11 +4000,31 @@ function ensurePaymentHeaders(sheet) {
       const scope = scopeSelect ? scopeSelect.value : "all";
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
 
-      let list = [...enrollmentRequests];
+      const canViewAllEnr = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL");
+      const canViewGroupEnr = canViewAllEnr || hasUserPermission(currentUser, "ES_VIEW_GROUP");
+      const canUpdateEnrStatus = (isAdminOrSub || hasUserPermission(currentUser, "ES_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
 
-      // Access control: Non-admins strictly view only their own records by userId
-      if (!isAdminOrSub || scope === "my") {
+      let list = enrollmentRequests.map(r => enrollmentEditsOverrides[r.requestId] ? { ...r, ...enrollmentEditsOverrides[r.requestId] } : r);
+
+      const effectiveScope = canViewAllEnr ? scope : (canViewGroupEnr ? (scope === "all" ? "group" : scope) : "my");
+      if (effectiveScope === "my") {
         list = list.filter(r => (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()));
+      } else if (effectiveScope === "group") {
+        const mySites = new Set();
+        const myAccounts = new Set();
+        if (currentUser?.site) mySites.add(currentUser.site.trim().toLowerCase());
+        enrollmentRequests.forEach(r => {
+          if (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) {
+            if (r.site) mySites.add(r.site.trim().toLowerCase());
+            if (r.accountNumber) myAccounts.add(r.accountNumber.trim().toLowerCase());
+          }
+        });
+        list = list.filter(r =>
+          (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) ||
+          (r.site && mySites.has(r.site.trim().toLowerCase())) ||
+          (r.accountNumber && myAccounts.has(r.accountNumber.trim().toLowerCase()))
+        );
       }
 
       if (statusFilter && statusFilter !== "All") {
@@ -3674,8 +4053,8 @@ function ensurePaymentHeaders(sheet) {
       if (list.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
-              ${query || (statusFilter && statusFilter !== "All") ? "No endorsements match your search filter." : (isAdminOrSub ? "No utility bill endorsements submitted yet." : "You have not submitted any utility endorsements under user ID " + (currentUser?.userId || "") + ".")}
+            <td colspan="8" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+              ${query || (statusFilter && statusFilter !== "All") ? "No endorsements match your search filter." : (canViewAllEnr ? "No utility bill endorsements submitted yet." : "You have not submitted any utility endorsements yet.")}
             </td>
           </tr>
         `;
@@ -3684,27 +4063,38 @@ function ensurePaymentHeaders(sheet) {
 
       tbody.innerHTML = list.map(item => {
         const curStatus = item.status || "Pending";
+        const matchedU = userDatabase.find(u =>
+          (u.userId && item.userId && u.userId.trim().toLowerCase() === item.userId.trim().toLowerCase()) ||
+          (u.username && item.userId && u.username.trim().toLowerCase() === item.userId.trim().toLowerCase())
+        );
+        const requestorName = matchedU
+          ? (`${matchedU.firstName || ""} ${matchedU.lastName || ""}`.trim() || matchedU.username)
+          : (item.email || "Requestor");
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
               ${escapeHtml(item.requestId)}
             </td>
-            <td class="py-3 px-4 font-mono text-[11px] font-semibold text-slate-700 dark:text-neutral-200 whitespace-nowrap">
-              ${escapeHtml(item.userId)}
-            </td>
             <td class="py-3 px-4">
-              <div class="text-xs font-medium text-slate-900 dark:text-white">${escapeHtml(item.email)}</div>
-              <div class="font-mono text-[11px] text-slate-500 dark:text-neutral-400">${escapeHtml(item.viberNumber)}</div>
+              <div class="text-xs font-semibold text-slate-900 dark:text-white">${escapeHtml(requestorName)}</div>
+              <div class="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 mt-0.5 tracking-tight">${escapeHtml(item.viberNumber || "—")}</div>
             </td>
-            <td class="py-3 px-4 font-mono font-bold text-xs text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-              ${escapeHtml(item.accountNumber)}
+            <td class="py-3 px-4 font-mono font-extrabold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
+              <div class="flex items-center space-x-1.5">
+                <span>${escapeHtml(item.accountNumber)}</span>
+                ${canEditEnrDetails ? `
+                  <button type="button" onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-pointer" title="Edit Enrollment Details">
+                    <i data-lucide="edit-2" class="w-3 h-3"></i>
+                  </button>
+                ` : ""}
+              </div>
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-800 dark:text-neutral-200 text-xs">${escapeHtml(item.site)}</div>
               <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.biller)}</div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${isAdminOrSub ? `
+              ${canViewAllEnr ? `
                 <a href="${item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
                   <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
                   <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "View Letter")}</span>
@@ -3717,7 +4107,7 @@ function ensurePaymentHeaders(sheet) {
               `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${isAdminOrSub ? `
+              ${canViewAllEnr ? `
                 <a href="${item.driveSoaFolderUrl || DRIVE_SOA_FOLDER}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline">
                   <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
                   <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "View SOA")}</span>
@@ -3730,7 +4120,7 @@ function ensurePaymentHeaders(sheet) {
               `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${isAdminOrSub ? `
+              ${canUpdateEnrStatus ? `
                 <select 
                   onchange="updateEnrollmentStatus('${escapeHtml(item.requestId)}', this.value)" 
                   class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-emerald-500"
@@ -4378,14 +4768,34 @@ function ensurePaymentHeaders(sheet) {
       const scope = scopeSelect ? scopeSelect.value : "all";
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
 
-      let list = [...paymentRequests];
+      const canViewAllPay = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_ALL");
+      const canViewGroupPay = canViewAllPay || hasUserPermission(currentUser, "PS_VIEW_GROUP");
+      const canUpdatePayStatus = (isAdminOrSub || hasUserPermission(currentUser, "PS_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
 
-      // REQUIREMENT 5: STRICTLY RESTRICT BY USER ID ONLY (NOT REQUESTOR NAME)
-      if (!isAdminOrSub || scope === "my") {
+      let list = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
+
+      const effectiveScope = canViewAllPay ? scope : (canViewGroupPay ? (scope === "all" ? "group" : scope) : "my");
+      if (effectiveScope === "my") {
         list = list.filter(r => (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()));
+      } else if (effectiveScope === "group") {
+        const mySites = new Set();
+        const myAccounts = new Set();
+        if (currentUser?.site) mySites.add(currentUser.site.trim().toLowerCase());
+        paymentRequests.forEach(r => {
+          if (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) {
+            if (r.site) mySites.add(r.site.trim().toLowerCase());
+            if (r.accountNumber) myAccounts.add(r.accountNumber.trim().toLowerCase());
+          }
+        });
+        list = list.filter(r =>
+          (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) ||
+          (r.site && mySites.has(r.site.trim().toLowerCase())) ||
+          (r.accountNumber && myAccounts.has(r.accountNumber.trim().toLowerCase()))
+        );
       }
 
-      // Dynamic Status Dropdown population (always includes all standard statuses + any custom sheet statuses in ALL CAPS)
+      // Dynamic Status Dropdown population
       const standardPaymentStatuses = [
         "PENDING",
         "UNDER REVIEW",
@@ -4420,7 +4830,6 @@ function ensurePaymentHeaders(sheet) {
         list = list.filter(r => (r.status || "").toLowerCase().trim() === statusFilter.toLowerCase().trim());
       }
 
-      // Requirement 4: Search filter across all columns
       if (query) {
         list = list.filter(r => 
           (r.requestId || "").toLowerCase().includes(query) ||
@@ -4437,7 +4846,6 @@ function ensurePaymentHeaders(sheet) {
         );
       }
 
-      // Requirement: Sort by Date Submitted descending (newest first)
       list.sort((a, b) => parseSubmittedTime(b.submittedAt) - parseSubmittedTime(a.submittedAt));
 
       if (countBadge) {
@@ -4448,7 +4856,7 @@ function ensurePaymentHeaders(sheet) {
         tbody.innerHTML = `
           <tr>
             <td colspan="9" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
-              ${query || (statusFilter && statusFilter !== "All") ? "No payment requests match your search and filter criteria." : (isAdminOrSub ? "No payment requests found." : "No payment requests found for your User ID (" + (currentUser?.userId || "") + ").")}
+              ${query || (statusFilter && statusFilter !== "All") ? "No payment requests match your search and filter criteria." : (canViewAllPay ? "No payment requests found." : "No payment requests found for your User ID (" + (currentUser?.userId || "") + ").")}
             </td>
           </tr>
         `;
@@ -4464,12 +4872,11 @@ function ensurePaymentHeaders(sheet) {
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(item.requestorName)}</div>
-              <div class="font-mono text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.userId)}</div>
             </td>
             <td class="py-3 px-4 text-slate-500 dark:text-neutral-400 whitespace-nowrap text-[11px]">
               ${escapeHtml(item.submittedAt)}
             </td>
-            <td class="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-slate-600 dark:text-neutral-300">
+            <td class="py-3 px-4 whitespace-nowrap font-mono text-xs font-semibold text-slate-700 dark:text-neutral-200">
               ${escapeHtml(item.viberNumber)}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
@@ -4480,11 +4887,18 @@ function ensurePaymentHeaders(sheet) {
               ${escapeHtml(item.dueDate)}
             </td>
             <td class="py-3 px-4">
-              <div class="font-mono text-xs font-semibold text-slate-800 dark:text-neutral-200">${escapeHtml(item.accountNumber)}</div>
-              <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.site)} &bull; ${escapeHtml(item.biller)}</div>
+              <div class="flex items-center space-x-1.5">
+                <div class="font-mono text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 tracking-tight">${escapeHtml(item.accountNumber)}</div>
+                ${canEditPayBilling ? `
+                  <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 cursor-pointer" title="Edit Billing Details (Account, Site, Biller, Due Date)">
+                    <i data-lucide="edit-2" class="w-3 h-3"></i>
+                  </button>
+                ` : ""}
+              </div>
+              <div class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5"><span class="font-medium text-slate-700 dark:text-neutral-300">${escapeHtml(item.site)}</span> &bull; <span>${escapeHtml(item.biller)}</span></div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${isAdminOrSub ? `
+              ${canViewAllPay ? `
                 <a href="${item.fileUrl || `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline">
                   <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
                   <span class="max-w-[130px] truncate" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName || "View Attachment")}</span>
@@ -4497,7 +4911,7 @@ function ensurePaymentHeaders(sheet) {
               `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${isAdminOrSub ? `
+              ${canUpdatePayStatus ? `
                 <select 
                   onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
                   class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-blue-500"
@@ -4523,6 +4937,111 @@ function ensurePaymentHeaders(sheet) {
         `;
       }).join("");
       lucide.createIcons();
+    }
+
+    function openEditPaymentBillingModal(reqId) {
+      const base = paymentRequests.find(r => r.requestId === reqId);
+      if (!base) return;
+      const item = paymentEditsOverrides[reqId] ? { ...base, ...paymentEditsOverrides[reqId] } : base;
+      document.getElementById("editPayReqId").value = item.requestId;
+      document.getElementById("editPayBillingSubtitle").innerText = `${item.requestId} • Submitted by ${item.requestorName}`;
+      document.getElementById("editPayAccountNo").value = item.accountNumber || "";
+      document.getElementById("editPaySite").value = item.site || "";
+      document.getElementById("editPayBiller").value = item.biller || "";
+      document.getElementById("editPayMonth").value = item.billMonth || "October";
+      document.getElementById("editPayType").value = item.billType === "Water" ? "Water" : "Power";
+      document.getElementById("editPayDueDate").value = item.dueDate || "";
+      document.getElementById("editPayRequestor").value = item.requestorName || "";
+      document.getElementById("editPayViber").value = item.viberNumber || "";
+
+      const dl = document.getElementById("editPayBillersDatalist");
+      if (dl) {
+        dl.innerHTML = billers.map(b => `<option value="${escapeHtml(b.accountNumber)}">${escapeHtml(b.site)} — ${escapeHtml(b.biller)}</option>`).join("");
+      }
+      document.getElementById("editPaymentBillingModal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function handleEditPayAccountLookup(val) {
+      const match = billers.find(b => b.accountNumber && b.accountNumber.trim().toLowerCase() === String(val || "").trim().toLowerCase());
+      if (match) {
+        document.getElementById("editPaySite").value = match.site || "";
+        document.getElementById("editPayBiller").value = match.biller || "";
+      }
+    }
+
+    function closeEditPaymentBillingModal() {
+      document.getElementById("editPaymentBillingModal")?.classList.add("hidden");
+    }
+
+    function handleSavePaymentBillingEdit(e) {
+      e.preventDefault();
+      const reqId = document.getElementById("editPayReqId").value;
+      if (!reqId) return;
+      const updates = {
+        accountNumber: document.getElementById("editPayAccountNo").value.trim(),
+        site: document.getElementById("editPaySite").value.trim(),
+        biller: document.getElementById("editPayBiller").value.trim(),
+        billMonth: document.getElementById("editPayMonth").value,
+        billType: document.getElementById("editPayType").value,
+        dueDate: document.getElementById("editPayDueDate").value.trim(),
+        requestorName: document.getElementById("editPayRequestor").value.trim(),
+        viberNumber: document.getElementById("editPayViber").value.trim()
+      };
+      paymentEditsOverrides[reqId] = { ...(paymentEditsOverrides[reqId] || {}), ...updates };
+      localStorage.setItem("apechomes_payment_edits_v1", JSON.stringify(paymentEditsOverrides));
+      paymentRequests = paymentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
+      localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+      fetch("/api/bill-payment/update-details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId: reqId, updates })
+      }).catch(() => {});
+      closeEditPaymentBillingModal();
+      renderBillPaymentTable();
+    }
+
+    function openEditEnrollmentDetailsModal(reqId) {
+      const base = enrollmentRequests.find(r => r.requestId === reqId);
+      if (!base) return;
+      const item = enrollmentEditsOverrides[reqId] ? { ...base, ...enrollmentEditsOverrides[reqId] } : base;
+      document.getElementById("editEnrollReqId").value = item.requestId;
+      document.getElementById("editEnrollDetailsSubtitle").innerText = item.requestId;
+      document.getElementById("editEnrollAccountNo").value = item.accountNumber || "";
+      document.getElementById("editEnrollSite").value = item.site || "";
+      document.getElementById("editEnrollBiller").value = item.biller || "";
+      document.getElementById("editEnrollViber").value = item.viberNumber || "";
+      document.getElementById("editEnrollEmail").value = item.email || "";
+      document.getElementById("editEnrollmentDetailsModal").classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeEditEnrollmentDetailsModal() {
+      document.getElementById("editEnrollmentDetailsModal")?.classList.add("hidden");
+    }
+
+    function handleSaveEnrollmentDetailsEdit(e) {
+      e.preventDefault();
+      const reqId = document.getElementById("editEnrollReqId").value;
+      if (!reqId) return;
+      const updates = {
+        accountNumber: document.getElementById("editEnrollAccountNo").value.trim(),
+        site: document.getElementById("editEnrollSite").value.trim(),
+        biller: document.getElementById("editEnrollBiller").value.trim(),
+        viberNumber: document.getElementById("editEnrollViber").value.trim(),
+        email: document.getElementById("editEnrollEmail").value.trim()
+      };
+      enrollmentEditsOverrides[reqId] = { ...(enrollmentEditsOverrides[reqId] || {}), ...updates };
+      localStorage.setItem("apechomes_enrollment_edits_v1", JSON.stringify(enrollmentEditsOverrides));
+      enrollmentRequests = enrollmentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
+      localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+      fetch("/api/enrollments/update-details", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ requestId: reqId, updates })
+      }).catch(() => {});
+      closeEditEnrollmentDetailsModal();
+      renderEnrollmentStatusTable();
     }
 
     // REQUIREMENT 3: AUTHORITATIVE LIVE GOOGLE SHEET SYNC (DELETED ENTRIES ARE REMOVED)
@@ -4704,22 +5223,26 @@ function ensurePaymentHeaders(sheet) {
             <td class="py-3 px-4 font-mono font-bold text-xs text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
               ${escapeHtml(u.userId)}
             </td>
-            <td class="py-3 px-4">
-              <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}</div>
-              <div class="font-mono text-[10px] text-slate-400 dark:text-neutral-500">@${escapeHtml(u.username)}</div>
+            <td class="py-3 px-4 font-mono text-xs text-slate-800 dark:text-neutral-200">
+              ${escapeHtml(u.username)}
             </td>
-            <td class="py-3 px-4">
-              <div class="text-xs font-medium text-slate-700 dark:text-neutral-200">${escapeHtml(u.site || "General Site")}</div>
-              <div class="font-mono text-[10px] text-slate-400">${escapeHtml(u.email || "-")}</div>
+            <td class="py-3 px-4 font-semibold text-slate-900 dark:text-white text-xs">
+              ${escapeHtml(u.firstName)} ${escapeHtml(u.lastName)}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${
-                u.accessLevel === "Administrator" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" :
-                u.accessLevel === "Sub-Administrator" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20" :
-                "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
-              }">
-                ${escapeHtml(u.accessLevel)}
-              </span>
+              <div class="flex flex-col space-y-1">
+                <span class="inline-block w-fit px-2 py-0.5 rounded text-[10px] font-bold ${
+                  u.accessLevel === "Administrator" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" :
+                  u.accessLevel === "Sub-Administrator" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20" :
+                  "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                }">
+                  ${escapeHtml(u.accessLevel)}
+                </span>
+                <span class="inline-flex items-center space-x-1 text-[10px] font-mono text-slate-500 dark:text-neutral-400">
+                  <i data-lucide="shield" class="w-2.5 h-2.5 text-indigo-500"></i>
+                  <span>${(Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions : getDefaultPermissionsForAccessLevel(u.accessLevel)).length}/${ALL_MODULE_PERMISSION_IDS.length} Mods</span>
+                </span>
+              </div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
               ${statusControlHtml}
@@ -4741,7 +5264,7 @@ function ensurePaymentHeaders(sheet) {
                   type="button" 
                   onclick="openEditUserModal('${escapeHtml(u.userId)}')" 
                   class="p-1 rounded text-slate-600 dark:text-neutral-300 hover:bg-slate-200 dark:hover:bg-neutral-800 cursor-pointer" 
-                  title="Edit User"
+                  title="Edit User & Module Permissions"
                 >
                   <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                 </button>
@@ -4763,6 +5286,92 @@ function ensurePaymentHeaders(sheet) {
       lucide.createIcons();
     }
 
+    function scrollTableToTop(containerId) {
+      const el = document.getElementById(containerId);
+      if (el) el.scrollTo({ top: 0, behavior: "smooth" });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    let userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 1")];
+
+    function renderUserModalPermissionGroups() {
+      const container = document.getElementById("userPermissionsGroupsContainer");
+      const counter = document.getElementById("userModalPermCounterBadge");
+      if (counter) {
+        counter.innerText = `${userModalSelectedPerms.length} / ${ALL_MODULE_PERMISSION_IDS.length} Enabled`;
+      }
+      if (!container) return;
+
+      container.innerHTML = MODULE_PERMISSION_GROUPS.map(group => {
+        const groupIds = group.items.map(i => i.id);
+        const enabledCount = groupIds.filter(id => userModalSelectedPerms.includes(id)).length;
+        const allChecked = enabledCount === groupIds.length;
+        return `
+          <div class="p-2.5 rounded-xl bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 space-y-1.5">
+            <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-royal-800/60">
+              <span class="text-[11px] font-bold text-slate-800 dark:text-royal-200">${escapeHtml(group.groupTitle)}</span>
+              <label class="inline-flex items-center space-x-1 text-[10px] font-bold text-indigo-600 dark:text-indigo-400 cursor-pointer">
+                <input type="checkbox" ${allChecked ? "checked" : ""} onchange="toggleUserPermGroup('${group.groupId}', this.checked)" class="rounded text-indigo-600 focus:ring-indigo-500" />
+                <span>Toggle Group (${enabledCount}/${groupIds.length})</span>
+              </label>
+            </div>
+            <div class="space-y-1">
+              ${group.items.map(item => {
+                const checked = userModalSelectedPerms.includes(item.id);
+                return `
+                  <label class="flex items-center space-x-2 text-[11px] text-slate-700 dark:text-neutral-200 cursor-pointer hover:bg-slate-50 dark:hover:bg-royal-950/50 px-1.5 py-1 rounded">
+                    <input type="checkbox" ${checked ? "checked" : ""} onchange="toggleSingleUserPermission('${item.id}', this.checked)" class="rounded text-indigo-600 focus:ring-indigo-500" />
+                    <span>${escapeHtml(item.label)}</span>
+                  </label>
+                `;
+              }).join("")}
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function toggleSingleUserPermission(permId, isChecked) {
+      const set = new Set(userModalSelectedPerms);
+      if (isChecked) set.add(permId);
+      else set.delete(permId);
+      userModalSelectedPerms = Array.from(set);
+      renderUserModalPermissionGroups();
+    }
+
+    function toggleUserPermGroup(groupId, checkAll) {
+      const grp = MODULE_PERMISSION_GROUPS.find(g => g.groupId === groupId);
+      if (!grp) return;
+      const set = new Set(userModalSelectedPerms);
+      grp.items.forEach(i => {
+        if (checkAll) set.add(i.id);
+        else set.delete(i.id);
+      });
+      userModalSelectedPerms = Array.from(set);
+      renderUserModalPermissionGroups();
+    }
+
+    function toggleAllUserPermissions() {
+      if (userModalSelectedPerms.length === ALL_MODULE_PERMISSION_IDS.length) {
+        userModalSelectedPerms = ["RBP_SUBMIT", "PS_VIEW_OWN", "ENROLL_SUBMIT", "ES_VIEW_OWN"];
+      } else {
+        userModalSelectedPerms = [...ALL_MODULE_PERMISSION_IDS];
+      }
+      renderUserModalPermissionGroups();
+    }
+
+    function applyUserRolePreset(roleLabel) {
+      const sel = document.getElementById("userInputAccessLevel");
+      if (sel && !sel.disabled) sel.value = roleLabel;
+      userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel(roleLabel)];
+      renderUserModalPermissionGroups();
+    }
+
+    function handleUserAccessPresetChange(roleLabel) {
+      userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel(roleLabel)];
+      renderUserModalPermissionGroups();
+    }
+
     function toggleAddUserModal(open) {
       const modal = document.getElementById("userModal");
       const title = document.getElementById("userModalTitle");
@@ -4777,8 +5386,11 @@ function ensurePaymentHeaders(sheet) {
         document.getElementById("userInputId").disabled = false;
         document.getElementById("userInputStatus").value = "ACTIVE";
         document.getElementById("userInputStatus").disabled = false;
+        document.getElementById("userInputAccessLevel").value = "Level 1";
         document.getElementById("userInputAccessLevel").disabled = false;
         if (document.getElementById("userInputCurrentPw")) document.getElementById("userInputCurrentPw").value = "";
+        userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 1")];
+        renderUserModalPermissionGroups();
         if (title) title.innerText = "Add New User";
       } else {
         modal.classList.add("hidden");
@@ -4799,23 +5411,25 @@ function ensurePaymentHeaders(sheet) {
       document.getElementById("userInputUsername").value = u.username;
       document.getElementById("userInputFirstName").value = u.firstName || "";
       document.getElementById("userInputLastName").value = u.lastName || "";
-      document.getElementById("userInputEmail").value = u.email || "";
-      document.getElementById("userInputViber").value = u.viberNumber || "";
       document.getElementById("userInputAccessLevel").value = u.accessLevel || "Level 1";
       document.getElementById("userInputAccessLevel").disabled = isProtected;
-      document.getElementById("userInputSite").value = u.site || "";
       document.getElementById("userInputDefaultPw").value = u.defaultPassword || "";
       document.getElementById("userInputStatus").value = isProtected ? "ACTIVE" : normalizeLifecycleStatus(u.status);
       document.getElementById("userInputStatus").disabled = isProtected;
       if (document.getElementById("userInputCurrentPw")) {
         document.getElementById("userInputCurrentPw").value = u.currentPassword || "";
       }
+      userModalSelectedPerms = isProtected
+        ? [...ALL_MODULE_PERMISSION_IDS]
+        : normalizePermissionsList(u.permissions, u.accessLevel);
+      renderUserModalPermissionGroups();
     }
 
     function syncUserObjectToGSheetAndBackend(userObj) {
       localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
       const targetWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
       if (userObj && targetWebhook) {
+        const encodedColG = formatAccessWithStatus(userObj.accessLevel, userObj.status, userObj.permissions);
         fetch(targetWebhook, {
           method: "POST",
           mode: "no-cors",
@@ -4823,7 +5437,7 @@ function ensurePaymentHeaders(sheet) {
           body: JSON.stringify({
             action: "saveUser",
             spreadsheetId: SPREADSHEET_ID,
-            user: userObj
+            user: { ...userObj, accessLevel: encodedColG }
           })
         }).catch(() => {});
       }
@@ -4841,17 +5455,20 @@ function ensurePaymentHeaders(sheet) {
       const username = document.getElementById("userInputUsername").value.trim();
       const firstName = document.getElementById("userInputFirstName").value.trim();
       const lastName = document.getElementById("userInputLastName").value.trim();
-      const email = document.getElementById("userInputEmail").value.trim();
-      const viber = document.getElementById("userInputViber").value.trim();
       const accessLevel = document.getElementById("userInputAccessLevel").value;
-      const site = document.getElementById("userInputSite").value.trim();
       const defaultPw = document.getElementById("userInputDefaultPw").value.trim();
       const rawCurPw = (document.getElementById("userInputCurrentPw")?.value || "").trim();
       let status = normalizeLifecycleStatus(document.getElementById("userInputStatus").value);
 
-      if (isPrimaryAdminAccount(uid, username)) {
+      const isProtected = isPrimaryAdminAccount(uid, username);
+      if (isProtected) {
         status = "ACTIVE";
       }
+
+      const finalAccessLevel = isProtected ? "Administrator" : accessLevel;
+      const finalPermissions = isProtected
+        ? [...ALL_MODULE_PERMISSION_IDS]
+        : normalizePermissionsList(userModalSelectedPerms, finalAccessLevel);
 
       let finalCurPw = rawCurPw ? encryptPassword(rawCurPw) : "";
       let finalDefPw = defaultPw;
@@ -4869,10 +5486,8 @@ function ensurePaymentHeaders(sheet) {
             username,
             firstName,
             lastName,
-            email,
-            viberNumber: viber,
-            accessLevel: isPrimaryAdminAccount(uid, username) ? "Administrator" : accessLevel,
-            site,
+            accessLevel: finalAccessLevel,
+            permissions: finalPermissions,
             currentPassword: finalCurPw,
             defaultPassword: finalDefPw,
             status
@@ -4887,25 +5502,32 @@ function ensurePaymentHeaders(sheet) {
           defaultPassword: finalCurPw ? "" : (finalDefPw || "123456"),
           firstName,
           lastName,
-          email,
-          viberNumber: viber,
-          accessLevel,
-          site: site || "General Site",
+          accessLevel: finalAccessLevel,
+          permissions: finalPermissions,
           status
         };
         userDatabase.push(newUser);
         savedUserObj = newUser;
       }
 
-      if (savedUserObj && savedUserObj.username && savedUserObj.currentPassword && !isRetiredPasswordMarker(savedUserObj.currentPassword)) {
-        pwOverrides[savedUserObj.username.toLowerCase()] = savedUserObj.currentPassword;
-        localStorage.setItem("apechomes_pw_overrides_v1", JSON.stringify(pwOverrides));
+      if (savedUserObj && savedUserObj.username) {
+        permOverrides[savedUserObj.username.toLowerCase()] = finalPermissions;
+        localStorage.setItem("apechomes_perm_overrides_v1", JSON.stringify(permOverrides));
+        if (savedUserObj.currentPassword && !isRetiredPasswordMarker(savedUserObj.currentPassword)) {
+          pwOverrides[savedUserObj.username.toLowerCase()] = savedUserObj.currentPassword;
+          localStorage.setItem("apechomes_pw_overrides_v1", JSON.stringify(pwOverrides));
+        }
       }
 
       syncUserObjectToGSheetAndBackend(savedUserObj);
       toggleAddUserModal(false);
       renderUserManagementTable();
-      showUserMgmtNotice(`Saved user ${username} (${savedUserObj?.userId || uid}) with lifecycle status ${status}.`);
+      if (currentUser && savedUserObj && currentUser.username.toLowerCase() === savedUserObj.username.toLowerCase()) {
+        currentUser.permissions = finalPermissions;
+        currentUser.accessLevel = finalAccessLevel;
+        updateAccessUI();
+      }
+      showUserMgmtNotice(`Saved user ${username} (${savedUserObj?.userId || uid}) with ${finalPermissions.length}/${ALL_MODULE_PERMISSION_IDS.length} module permissions & status ${status}.`);
     }
 
     function resetUserPassword(uid) {
@@ -5881,8 +6503,16 @@ function ensurePaymentHeaders(sheet) {
                 const existing = userDatabase.find(x => (x.username && x.username.toLowerCase() === uname.toLowerCase()) || (x.userId && x.userId.toLowerCase() === uid.toLowerCase()));
                 const parsedState = parseAccessAndStatus(rawAccess, sheetCurPw, existing?.status || "ACTIVE");
                 const finalStatus = isPrimaryAdminAccount(uid, uname) ? "ACTIVE" : parsedState.status;
+                const uKey = (uname || "").toLowerCase();
+                const hasSheetCustomMods = /\|\s*MODS:/i.test(rawAccess);
+                const finalPerms = isPrimaryAdminAccount(uid, uname)
+                  ? [...ALL_MODULE_PERMISSION_IDS]
+                  : normalizePermissionsList(
+                      hasSheetCustomMods ? parsedState.permissions : (permOverrides[uKey] || existing?.permissions || parsedState.permissions),
+                      parsedState.accessLevel || existing?.accessLevel || "Level 2"
+                    );
 
-                const overridePw = pwOverrides[(uname || "").toLowerCase()] ? encryptPassword(pwOverrides[(uname || "").toLowerCase()]) : "";
+                const overridePw = pwOverrides[uKey] ? encryptPassword(pwOverrides[uKey]) : "";
                 const curPw = isEncryptedPassword(sheetCurPw) || isRetiredPasswordMarker(sheetCurPw)
                   ? sheetCurPw
                   : (overridePw || sheetCurPw);
@@ -5895,6 +6525,7 @@ function ensurePaymentHeaders(sheet) {
                   firstName: fn || existing?.firstName || "",
                   lastName: ln || existing?.lastName || "",
                   accessLevel: parsedState.accessLevel || existing?.accessLevel || "Level 2",
+                  permissions: finalPerms,
                   status: finalStatus,
                   email: existing?.email || `${(uname || "user").toLowerCase()}@apechomes.com`,
                   viberNumber: existing?.viberNumber || "09171230000",
