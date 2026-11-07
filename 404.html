@@ -1695,19 +1695,18 @@ Submit and track your monthly utility payments directly through your account.</p
                   <select 
                     id="paymentStatusFilter" 
                     onchange="renderBillPaymentTable()" 
-                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-bold uppercase cursor-pointer"
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
                   >
-                    <option value="All">ALL STATUSES</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="UNDER REVIEW">UNDER REVIEW</option>
-                    <option value="APPROVED">APPROVED</option>
+                    <option value="All">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Under Review">Under Review</option>
+                    <option value="Approved">Approved</option>
                     <option value="WITH RFP">WITH RFP</option>
                     <option value="CHEQUE REL">CHEQUE REL</option>
-                    <option value="PAID">PAID</option>
+                    <option value="Paid">Paid</option>
                     <option value="DUPLICATE">DUPLICATE</option>
-                    <option value="BLURRED">BLURRED</option>
                     <option value="CANCEL">CANCEL</option>
-                    <option value="REJECTED">REJECTED</option>
+                    <option value="Rejected">Rejected</option>
                   </select>
                 </div>
 
@@ -2981,7 +2980,7 @@ function ensurePaymentHeaders(sheet) {
       if (s.includes("approv") || s.includes("verif") || s.includes("ready") || s.includes("accepted")) {
         return "bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30";
       }
-      if (s.includes("duplicate") || s.includes("blurred")) {
+      if (s.includes("duplicate")) {
         return "bg-orange-500/15 text-orange-700 dark:text-orange-300 border border-orange-500/30";
       }
       if (s.includes("reject") || s.includes("cancel") || s.includes("disapprov") || s.includes("deni") || s.includes("failed")) {
@@ -3599,10 +3598,9 @@ function ensurePaymentHeaders(sheet) {
     }
 
     function updatePaymentStatus(requestId, newStatus) {
-      const normalizedStatus = (newStatus || "PENDING").toUpperCase();
       const item = paymentRequests.find(x => x.requestId === requestId);
       if (!item) return;
-      item.status = normalizedStatus;
+      item.status = newStatus;
       localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
 
       // 1. Post to client-side Google Apps Script Web App (Webhook URL)
@@ -3611,7 +3609,7 @@ function ensurePaymentHeaders(sheet) {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "updateStatus", requestId, status: normalizedStatus })
+          body: JSON.stringify({ action: "updateStatus", requestId, status: newStatus })
         }).catch(e => console.warn("Payment Apps Script update notice:", e));
       }
 
@@ -3620,7 +3618,7 @@ function ensurePaymentHeaders(sheet) {
         fetch("/api/bill-payment/update-status", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ requestId, status: normalizedStatus })
+          body: JSON.stringify({ requestId, status: newStatus })
         }).catch(() => {});
       } catch (e) {}
 
@@ -3887,7 +3885,7 @@ function ensurePaymentHeaders(sheet) {
             type: fileObj.type || "application/pdf",
             base64: fileBase64
           },
-          status: "PENDING",
+          status: "Pending",
           submittedAt: nowStr,
           webhookAlreadyUploaded: false
         };
@@ -4006,31 +4004,30 @@ function ensurePaymentHeaders(sheet) {
         list = list.filter(r => (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()));
       }
 
-      // Dynamic Status Dropdown population (always includes all standard statuses + any custom sheet statuses in ALL CAPS)
+      // Dynamic Status Dropdown population (always includes all standard statuses + any custom sheet statuses)
       const standardPaymentStatuses = [
-        "PENDING",
-        "UNDER REVIEW",
-        "APPROVED",
+        "Pending",
+        "Under Review",
+        "Approved",
         "WITH RFP",
         "CHEQUE REL",
-        "PAID",
+        "Paid",
         "DUPLICATE",
-        "BLURRED",
         "CANCEL",
-        "REJECTED"
+        "Rejected"
       ];
       if (statusSelect) {
         const currentSelected = statusSelect.value || "All";
         const seenLower = new Set(standardPaymentStatuses.map(s => s.toLowerCase()));
         const mergedStatuses = [...standardPaymentStatuses];
         for (const r of paymentRequests) {
-          const st = (r.status || "PENDING").trim().toUpperCase();
+          const st = (r.status || "Pending").trim();
           if (st && !seenLower.has(st.toLowerCase())) {
             seenLower.add(st.toLowerCase());
             mergedStatuses.push(st);
           }
         }
-        let optionsHtml = `<option value="All">ALL STATUSES</option>`;
+        let optionsHtml = `<option value="All">All Statuses</option>`;
         for (const st of mergedStatuses) {
           optionsHtml += `<option value="${escapeHtml(st)}" ${st.toLowerCase() === currentSelected.toLowerCase() ? "selected" : ""}>${escapeHtml(st)}</option>`;
         }
@@ -4077,7 +4074,7 @@ function ensurePaymentHeaders(sheet) {
       }
 
       tbody.innerHTML = list.map(item => {
-        const curStatus = (item.status || "PENDING").toUpperCase();
+        const curStatus = item.status || "Pending";
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
@@ -4123,16 +4120,15 @@ function ensurePaymentHeaders(sheet) {
                   onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
                   class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-blue-500"
                 >
-                  <option value="PENDING" ${curStatus === "PENDING" ? "selected" : ""}>PENDING</option>
-                  <option value="UNDER REVIEW" ${curStatus === "UNDER REVIEW" ? "selected" : ""}>UNDER REVIEW</option>
-                  <option value="APPROVED" ${curStatus === "APPROVED" ? "selected" : ""}>APPROVED</option>
-                  <option value="WITH RFP" ${curStatus === "WITH RFP" ? "selected" : ""}>WITH RFP</option>
-                  <option value="CHEQUE REL" ${curStatus === "CHEQUE REL" ? "selected" : ""}>CHEQUE REL</option>
-                  <option value="PAID" ${curStatus === "PAID" ? "selected" : ""}>PAID</option>
-                  <option value="DUPLICATE" ${curStatus === "DUPLICATE" ? "selected" : ""}>DUPLICATE</option>
-                  <option value="BLURRED" ${curStatus === "BLURRED" ? "selected" : ""}>BLURRED</option>
-                  <option value="CANCEL" ${curStatus === "CANCEL" ? "selected" : ""}>CANCEL</option>
-                  <option value="REJECTED" ${curStatus === "REJECTED" ? "selected" : ""}>REJECTED</option>
+                  <option value="Pending" ${curStatus.toLowerCase() === "pending" ? "selected" : ""}>Pending</option>
+                  <option value="Under Review" ${curStatus.toLowerCase() === "under review" ? "selected" : ""}>Under Review</option>
+                  <option value="Approved" ${curStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
+                  <option value="WITH RFP" ${curStatus.toLowerCase() === "with rfp" ? "selected" : ""}>WITH RFP</option>
+                  <option value="CHEQUE REL" ${curStatus.toLowerCase() === "cheque rel" ? "selected" : ""}>CHEQUE REL</option>
+                  <option value="Paid" ${curStatus.toLowerCase() === "paid" ? "selected" : ""}>Paid</option>
+                  <option value="DUPLICATE" ${curStatus.toLowerCase() === "duplicate" ? "selected" : ""}>DUPLICATE</option>
+                  <option value="CANCEL" ${curStatus.toLowerCase() === "cancel" ? "selected" : ""}>CANCEL</option>
+                  <option value="Rejected" ${curStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
                 </select>
               ` : `
                 <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
@@ -4190,7 +4186,7 @@ function ensurePaymentHeaders(sheet) {
                     : ((c[10]?.v && String(c[10].v).trim().startsWith("http"))
                         ? String(c[10].v).trim()
                         : `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`),
-                  status: (c[12]?.v ? String(c[12].v).trim() : "PENDING").toUpperCase(),
+                  status: c[12]?.v ? String(c[12].v).trim() : "Pending",
                   submittedAt: c[13]?.f || (c[13]?.v ? String(c[13].v).trim() : new Date().toISOString())
                 });
               }
