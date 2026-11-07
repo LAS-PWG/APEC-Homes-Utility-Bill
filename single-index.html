@@ -2642,8 +2642,16 @@ function doPost(e) {
         var sUname = String(uObj.username || '').trim().toLowerCase();
         var sUid = String(uObj.userId || '').trim().toLowerCase();
         var stNorm = String(uObj.status || 'ACTIVE').trim().toUpperCase();
-        var baseAccess = String(uObj.accessLevel || 'Level 1').replace(/\s*\[(ACTIVE|SUSPENDED|BANNED|RETIRED)\]\s*$/i, '').trim();
-        var encodedAccess = (stNorm === 'SUSPENDED' || stNorm === 'BANNED' || stNorm === 'RETIRED') ? (baseAccess + ' [' + stNorm + ']') : baseAccess;
+        var rawAcc = String(uObj.accessLevel || 'Level 1').trim();
+        var modsPart = '';
+        var modsM = rawAcc.match(/\|\s*MODS:[A-Z0-9_,]+/i);
+        if (modsM) {
+          modsPart = ' ' + modsM[0].trim();
+          rawAcc = rawAcc.replace(/\s*\|\s*MODS:[A-Z0-9_,]+/i, '').trim();
+        }
+        var baseAccess = rawAcc.replace(/\s*\[(ACTIVE|SUSPENDED|BANNED|RETIRED)\]\s*$/i, '').trim() || 'Level 1';
+        var statusTag = (stNorm === 'SUSPENDED' || stNorm === 'BANNED' || stNorm === 'RETIRED') ? (' [' + stNorm + ']') : '';
+        var encodedAccess = baseAccess + statusTag + modsPart;
         var rowData = [
           uObj.userId || '',
           uObj.username || '',
@@ -2725,6 +2733,49 @@ function doPost(e) {
         for (var i = 1; i &lt; vals.length; i++) {
           if (String(vals[i][0]).trim() === String(data.requestId).trim()) {
             targetSheet.getRange(i + 1, statusCol).setValue(data.status);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Edit Billing Details in Request Bill Payments (PS_EDIT_BILLING)
+    if (data.action === 'updateBillingDetails' &amp;&amp; data.requestId) {
+      var payEditSheet = ss.getSheetByName('Request Bill Payments');
+      if (payEditSheet) {
+        var pVals = payEditSheet.getDataRange().getValues();
+        for (var pIdx = 1; pIdx &lt; pVals.length; pIdx++) {
+          if (String(pVals[pIdx][0]).trim() === String(data.requestId).trim()) {
+            var rNum = pIdx + 1;
+            if (data.requestorName !== undefined) payEditSheet.getRange(rNum, 3).setValue(data.requestorName);
+            if (data.viberNumber !== undefined) payEditSheet.getRange(rNum, 4).setValue(data.viberNumber);
+            if (data.billMonth !== undefined) payEditSheet.getRange(rNum, 5).setValue(data.billMonth);
+            if (data.billType !== undefined) payEditSheet.getRange(rNum, 6).setValue(data.billType);
+            if (data.dueDate !== undefined) payEditSheet.getRange(rNum, 7).setValue(data.dueDate);
+            if (data.site !== undefined) payEditSheet.getRange(rNum, 8).setValue(data.site);
+            if (data.biller !== undefined) payEditSheet.getRange(rNum, 9).setValue(data.biller);
+            if (data.accountNumber !== undefined) payEditSheet.getRange(rNum, 10).setValue(data.accountNumber);
+            break;
+          }
+        }
+      }
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // ACTION: Edit Enrollment Details in New Bill Endorsement (ES_EDIT_DETAILS)
+    if (data.action === 'updateEnrollmentDetails' &amp;&amp; data.requestId) {
+      var enrEditSheet = ss.getSheetByName('New Bill Endorsement');
+      if (enrEditSheet) {
+        var eVals = enrEditSheet.getDataRange().getValues();
+        for (var eIdx = 1; eIdx &lt; eVals.length; eIdx++) {
+          if (String(eVals[eIdx][0]).trim() === String(data.requestId).trim()) {
+            var erNum = eIdx + 1;
+            if (data.email !== undefined) enrEditSheet.getRange(erNum, 3).setValue(data.email);
+            if (data.viberNumber !== undefined) enrEditSheet.getRange(erNum, 4).setValue(data.viberNumber);
+            if (data.accountNumber !== undefined) enrEditSheet.getRange(erNum, 5).setValue(data.accountNumber);
+            if (data.site !== undefined) enrEditSheet.getRange(erNum, 6).setValue(data.site);
+            if (data.biller !== undefined) enrEditSheet.getRange(erNum, 7).setValue(data.biller);
             break;
           }
         }
@@ -4992,6 +5043,23 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_payment_edits_v1", JSON.stringify(paymentEditsOverrides));
       paymentRequests = paymentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
       localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+      const targetUserWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+      if (targetUserWebhook) {
+        fetch(targetUserWebhook, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateBillingDetails", requestId: reqId, ...updates })
+        }).catch(() => {});
+      }
+      if (PAYMENT_SCRIPT_URL && PAYMENT_SCRIPT_URL !== targetUserWebhook) {
+        fetch(PAYMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateBillingDetails", requestId: reqId, ...updates })
+        }).catch(() => {});
+      }
       fetch("/api/bill-payment/update-details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -5035,6 +5103,23 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_enrollment_edits_v1", JSON.stringify(enrollmentEditsOverrides));
       enrollmentRequests = enrollmentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
       localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+      const targetUserWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+      if (targetUserWebhook) {
+        fetch(targetUserWebhook, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateEnrollmentDetails", requestId: reqId, ...updates })
+        }).catch(() => {});
+      }
+      if (ENROLLMENT_SCRIPT_URL && ENROLLMENT_SCRIPT_URL !== targetUserWebhook) {
+        fetch(ENROLLMENT_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({ action: "updateEnrollmentDetails", requestId: reqId, ...updates })
+        }).catch(() => {});
+      }
       fetch("/api/enrollments/update-details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
