@@ -55,6 +55,11 @@ Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release
    - All updates operate seamlessly with the existing deployed Google Apps
      Script Web App endpoints.
 
+8. Custom Browser Tab Icon (Favicon):
+   - Applied the official APEC Homes Bill Submission icon (`Favicon_Bill_Sub`)
+     across `index.html`, `single-index.html` (embedded self-contained PNG data
+     URI + `favicon.png`), and all 5 deployment `.zip` packages.
+
 --------------------------------------------------------------------------------
 [v2.5.0] - Split-Screen Request Inspector & Interactive Attachment Viewer
 --------------------------------------------------------------------------------
