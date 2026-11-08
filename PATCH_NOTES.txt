@@ -1,0 +1,67 @@
+================================================================================
+APEC HOMES — UTILITY BILL & ENROLLMENT PORTAL
+OFFICIAL PATCH NOTES & RELEASE HISTORY
+================================================================================
+Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
+Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
+
+--------------------------------------------------------------------------------
+[v2.6.0] - 2026-11-07 — Request Inspector UX, Safety Locks & Layout Refinements
+--------------------------------------------------------------------------------
+1. Request ID Popup Trigger (No Row-Click Interference):
+   - Removed full-row click triggers on Payment Status and Enrollment Status
+     tables so Administrators and authorized users can freely click attachment
+     links or change status dropdowns without accidentally opening the modal.
+   - Retained the Request ID / Enrollment ID badge ("Inspect / Edit" or
+     "Inspect") as the dedicated trigger to open the Split-Screen Request
+     Inspector modal.
+
+2. 2-Stage Edit Protection ("Edit Details" Unlock + Confirm Before Commit):
+   - In the Split-Screen Request Inspector modal, users with edit permissions
+     (Admin, Sub-Admin, PS_EDIT_BILLING, or ES_EDIT_DETAILS) now start with all
+     form fields locked by default to prevent accidental edits.
+   - Added an explicit "Edit Details" / "Cancel Edit" unlock bar in the left
+     pane, followed by the "Confirm Before Commit" verification step before
+     changes are written to Google Sheets.
+
+3. Role-Gated "Open in New Tab" Attachment Access:
+   - In both the Request Inspector attachment toolbar and table attachment
+     columns, the "Open in New Tab" external link is now displayed ONLY for
+     users with link access (Administrator, Sub-Administrator, PS_ATTACH_LINK,
+     or ES_ATTACH_LINK).
+   - Regular users without link permissions see "View-Only (No New Tab)" with
+     right-click and drag-download disabled.
+
+4. 10-Row Max Table Viewport & Bottom-Center "Move to Top" Button:
+   - Updated both View Request Bill Payment Status and View Enrollment Status
+     tables to display up to ~10 rows (`max-h-[450px]`) inside a themed scroll
+     container.
+   - Moved the circular "Move to Top" (`ArrowUp`) button outside the table
+     frame at the bottom center of both status views.
+
+5. Sync-Access-Only Technical Subtitles & GSheet Indicators:
+   - "Real-time status updates synced live from Google Sheet (Request Bill
+     Payments)" and "Live ledger of new utility endorsements (synced with New
+     Bill Endorsement sheet)" along with live GSheet polling badges are now
+     shown strictly to users with sync/management access.
+
+6. Reorganized Filter & Search Control Bar + Custom Scrollbar Theming:
+   - Consolidated Search, Status filter, Scope selector, count badges, and
+     Refresh controls into a space-optimized single control bar.
+   - Added custom theme-aware scrollbar styling (`::-webkit-scrollbar` and
+     `scrollbar-color`) across Light, Dark, macOS, and Bazzite themes.
+
+7. Zero Google Apps Script (`Code.gs`) Changes Required:
+   - All updates operate seamlessly with the existing deployed Google Apps
+     Script Web App endpoints.
+
+--------------------------------------------------------------------------------
+[v2.5.0] - Split-Screen Request Inspector & Interactive Attachment Viewer
+--------------------------------------------------------------------------------
+- Added 2-pane Split-Screen Request Inspector for Payment Requests and Utility
+  Endorsements (Left Pane: details & status; Right Pane: interactive Zoom, Pan,
+  Rotate attachment viewer with Dual-Attachment switcher for Endorsements).
+- Added 2-step Confirm-Before-Commit safeguard for status and detail edits.
+- Synchronized full RBAC module permission matrix (`[MODS:...]`) across React
+  preview and standalone HTML packages.
+================================================================================

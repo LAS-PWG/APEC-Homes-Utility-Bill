@@ -375,6 +375,68 @@
       border-color: #22d3ee !important;
       box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.28), 0 0 14px rgba(139, 92, 246, 0.35) !important;
     }
+
+    /* Theme-aware Custom Scrollbars (Light, Dark, macOS, Bazzite) */
+    * {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.55) rgba(241, 245, 249, 0.6);
+    }
+    html.dark * {
+      scrollbar-color: rgba(59, 130, 246, 0.45) rgba(18, 18, 18, 0.85);
+    }
+    html.theme-macos * {
+      scrollbar-color: rgba(0, 122, 255, 0.45) rgba(235, 240, 247, 0.65);
+    }
+    html.theme-bazzite * {
+      scrollbar-color: rgba(168, 85, 247, 0.65) rgba(13, 9, 26, 0.9);
+    }
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    *::-webkit-scrollbar-track {
+      background: rgba(241, 245, 249, 0.7);
+      border-radius: 9999px;
+    }
+    *::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.65);
+      border-radius: 9999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    *::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.85);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    html.dark *::-webkit-scrollbar-track {
+      background: rgba(18, 18, 18, 0.85);
+    }
+    html.dark *::-webkit-scrollbar-thumb {
+      background: rgba(59, 130, 246, 0.45);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    html.dark *::-webkit-scrollbar-thumb:hover {
+      background: rgba(96, 165, 250, 0.75);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    html.theme-macos *::-webkit-scrollbar-track {
+      background: rgba(235, 240, 247, 0.65);
+    }
+    html.theme-macos *::-webkit-scrollbar-thumb {
+      background: rgba(0, 122, 255, 0.45);
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    html.theme-bazzite *::-webkit-scrollbar-track {
+      background: rgba(13, 9, 26, 0.92);
+    }
+    html.theme-bazzite *::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(139, 92, 246, 0.75), rgba(6, 182, 212, 0.75));
+      border-radius: 9999px;
+    }
   </style>
 </head>
 <body class="bg-[#f8fafc] text-neutral-800 dark:bg-[#121212] dark:text-[#f3f4f6] min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
@@ -1325,7 +1387,7 @@ Submit and track your monthly utility payments directly through your account.</p
                 </button>
                 <div>
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white">View Enrollment Status</h3>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Live ledger of new utility endorsements (synced with New Bill Endorsement sheet)</p>
+                  <p id="enrollStatusSubtitle" class="text-xs text-slate-500 dark:text-royal-300/60">Track verification and approval progress for your utility account endorsements</p>
                 </div>
               </div>
 
@@ -1362,83 +1424,74 @@ Submit and track your monthly utility payments directly through your account.</p
               </button>
             </div>
 
-            <!-- Enrollment Filter & Search Bar -->
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full max-w-full overflow-hidden">
-              <div class="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-                <!-- Search Input -->
-                <div class="w-full sm:w-56 md:w-60 relative flex-shrink-0">
-                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
-                  <input 
-                    type="text" 
-                    id="enrollSearchInput" 
-                    oninput="renderEnrollmentStatusTable()" 
-                    placeholder="Search by ID, account, site, email, status..." 
-                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
+            <!-- Enrollment Filter & Search Bar (Compact Space-Optimized Control Panel) -->
+            <div class="mb-3 p-3 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full">
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
+                  <!-- Search Input -->
+                  <div class="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                    <input 
+                      type="text" 
+                      id="enrollSearchInput" 
+                      oninput="renderEnrollmentStatusTable()" 
+                      placeholder="Search ID, account, site, email, status..." 
+                      class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <!-- Status Filter Dropdown -->
+                  <div class="flex items-center space-x-1.5 flex-shrink-0">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-400 whitespace-nowrap">Status</label>
+                    <select 
+                      id="enrollStatusFilter" 
+                      onchange="renderEnrollmentStatusTable()" 
+                      class="px-2.5 py-1.5 rounded-xl text-xs bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                    >
+                      <option value="All">All Statuses</option>
+                      <option value="Pending">Pending</option>
+                      <option value="Under Review">Under Review</option>
+                      <option value="Approved">Approved</option>
+                      <option value="Rejected">Rejected</option>
+                    </select>
+                  </div>
+
+                  <!-- Admin / Group Scope Filter -->
+                  <div id="adminEnrollScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-400 whitespace-nowrap">Scope</label>
+                    <select 
+                      id="adminEnrollScopeSelect" 
+                      onchange="renderEnrollmentStatusTable()" 
+                      class="px-2.5 py-1.5 rounded-xl text-xs bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                    >
+                      <option value="all">All Endorsements</option>
+                      <option value="group">Group / Site</option>
+                      <option value="my">My Endorsements</option>
+                    </select>
+                  </div>
                 </div>
 
-                <!-- Status Filter Dropdown -->
-                <div class="flex items-center space-x-1.5 flex-shrink-0">
-                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Status:</label>
-                  <select 
-                    id="enrollStatusFilter" 
-                    onchange="renderEnrollmentStatusTable()" 
-                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-royal-800/40 shrink-0">
+                  <span id="enrollmentsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">
+                    0 Endorsements
+                  </span>
+                  <span id="enrollStatusLastSyncTime" class="hidden text-[10px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">GSheet: Live</span>
+                  <button 
+                    type="button" 
+                    onclick="syncLiveEnrollmentsFromGSheet(true)" 
+                    class="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-200 dark:border-[#2e2e2e] shadow-sm cursor-pointer whitespace-nowrap"
+                    title="Fetch live endorsements from Google Sheet"
                   >
-                    <option value="All">All Statuses</option>
-                    <option value="Pending">Pending</option>
-                    <option value="Under Review">Under Review</option>
-                    <option value="Approved">Approved</option>
-                    <option value="Rejected">Rejected</option>
-                  </select>
+                    <i id="refreshEnrollIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
+                    <span>Refresh</span>
+                  </button>
                 </div>
-
-                <!-- Admin / Group Scope Filter -->
-                <div id="adminEnrollScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
-                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
-                  <select 
-                    id="adminEnrollScopeSelect" 
-                    onchange="renderEnrollmentStatusTable()" 
-                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
-                  >
-                    <option value="all">All Endorsements</option>
-                    <option value="group">Group / Site Endorsements</option>
-                    <option value="my">My Endorsements</option>
-                  </select>
-                </div>
-
-                <span id="enrollmentsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap flex-shrink-0">
-                  0 Endorsements
-                </span>
-
-                <button 
-                  type="button" 
-                  onclick="scrollTableToTop('enrollmentScrollContainer')" 
-                  class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer whitespace-nowrap"
-                  title="Scroll back to the top"
-                >
-                  <i data-lucide="arrow-up" class="w-3 h-3"></i>
-                  <span>Top</span>
-                </button>
-              </div>
-
-              <div class="flex flex-wrap items-center gap-2 ml-auto">
-                <span id="enrollStatusLastSyncTime" class="text-[11px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">GSheet: Live</span>
-                <button 
-                  type="button" 
-                  onclick="syncLiveEnrollmentsFromGSheet(true)" 
-                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-300 dark:border-[#2e2e2e] shadow-sm cursor-pointer whitespace-nowrap"
-                  title="Fetch live endorsements from Google Sheet"
-                >
-                  <i id="refreshEnrollIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
-                  <span>Refresh</span>
-                </button>
               </div>
             </div>
 
-            <!-- Enrollment Status Table -->
+            <!-- Enrollment Status Table (10-Row Max View) -->
             <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div id="enrollmentScrollContainer" class="max-h-[65vh] overflow-auto">
+              <div id="enrollmentScrollContainer" class="max-h-[450px] overflow-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
@@ -1461,11 +1514,15 @@ Submit and track your monthly utility payments directly through your account.</p
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <!-- Move to Top Circle Outside Table Frame (Bottom Center) -->
+            <div class="mt-3 flex justify-center">
               <button 
                 type="button" 
                 onclick="scrollTableToTop('enrollmentScrollContainer')" 
-                class="fixed bottom-6 right-6 z-30 p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center"
-                title="Scroll back to top"
+                class="w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/25 hover:scale-105 transition-all cursor-pointer flex items-center justify-center border border-blue-400/30"
+                title="Move to top of Enrollment Status table"
               >
                 <i data-lucide="arrow-up" class="w-4 h-4"></i>
               </button>
@@ -1725,7 +1782,7 @@ Submit and track your monthly utility payments directly through your account.</p
                 </button>
                 <div>
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white">View Request Bill Payment Status</h3>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Real-time status updates synced live from Google Sheet (Request Bill Payments)</p>
+                  <p id="paymentStatusSubtitle" class="text-xs text-slate-500 dark:text-royal-300/60">Monitor the status and reconciliation of your personal payment requests</p>
                 </div>
               </div>
 
@@ -1741,97 +1798,88 @@ Submit and track your monthly utility payments directly through your account.</p
               </div>
             </div>
 
-            <!-- Payment Filter & Search Bar -->
-            <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full max-w-full overflow-hidden">
-              <div class="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-                <!-- Search Input -->
-                <div class="w-full sm:w-56 md:w-60 relative flex-shrink-0">
-                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
-                  <input 
-                    type="text" 
-                    id="paymentSearchInput" 
-                    oninput="renderBillPaymentTable()" 
-                    placeholder="Search by ID, account, site, status, viber..." 
-                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
+            <!-- Payment Filter & Search Bar (Compact Space-Optimized Control Panel) -->
+            <div class="mb-3 p-3 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full">
+              <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2.5">
+                <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
+                  <!-- Search Input -->
+                  <div class="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs relative">
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                    <input 
+                      type="text" 
+                      id="paymentSearchInput" 
+                      oninput="renderBillPaymentTable()" 
+                      placeholder="Search ID, account, site, status, viber..." 
+                      class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    />
+                  </div>
+
+                  <!-- Status Filter Dropdown -->
+                  <div class="flex items-center space-x-1.5 flex-shrink-0">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-400 whitespace-nowrap">Status</label>
+                    <select 
+                      id="paymentStatusFilter" 
+                      onchange="renderBillPaymentTable()" 
+                      class="px-2.5 py-1.5 rounded-xl text-xs bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-bold uppercase cursor-pointer"
+                    >
+                      <option value="All">ALL STATUSES</option>
+                      <option value="PENDING">PENDING</option>
+                      <option value="UNDER REVIEW">UNDER REVIEW</option>
+                      <option value="APPROVED">APPROVED</option>
+                      <option value="WITH RFP">WITH RFP</option>
+                      <option value="CHEQUE REL">CHEQUE REL</option>
+                      <option value="PAID">PAID</option>
+                      <option value="DUPLICATE">DUPLICATE</option>
+                      <option value="BLURRED">BLURRED</option>
+                      <option value="CANCEL">CANCEL</option>
+                      <option value="REJECTED">REJECTED</option>
+                    </select>
+                  </div>
+
+                  <!-- Admin / Group Scope Filter -->
+                  <div id="adminPaymentScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
+                    <label class="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-neutral-400 whitespace-nowrap">Scope</label>
+                    <select 
+                      id="adminPaymentScopeSelect" 
+                      onchange="renderBillPaymentTable()" 
+                      class="px-2.5 py-1.5 rounded-xl text-xs bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                    >
+                      <option value="all">All Requests</option>
+                      <option value="group">Group / Site</option>
+                      <option value="my">My Submissions</option>
+                    </select>
+                  </div>
                 </div>
 
-                <!-- Status Filter Dropdown -->
-                <div class="flex items-center space-x-1.5 flex-shrink-0">
-                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Status:</label>
-                  <select 
-                    id="paymentStatusFilter" 
-                    onchange="renderBillPaymentTable()" 
-                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-bold uppercase cursor-pointer"
+                <!-- Right Metadata & Refresh Controls -->
+                <div class="flex flex-wrap items-center justify-between lg:justify-end gap-2 pt-2 lg:pt-0 border-t lg:border-t-0 border-slate-100 dark:border-royal-800/40 shrink-0">
+                  <span class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg text-[10px] font-medium bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-[#2e2e2e] whitespace-nowrap">
+                    <i data-lucide="arrow-down-up" class="w-3 h-3 text-blue-500"></i>
+                    <span>Newest First</span>
+                  </span>
+                  
+                  <span id="paymentRequestsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap">
+                    0 Requests
+                  </span>
+
+                  <span id="paymentStatusLastSyncTime" class="hidden text-[10px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">Live GSheet: Auto-polled</span>
+                  <button 
+                    type="button" 
+                    id="refreshLiveStatusBtn" 
+                    onclick="handleRefreshLiveStatusClick()" 
+                    class="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-50 dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-200 dark:border-[#2e2e2e] shadow-sm transition-all cursor-pointer whitespace-nowrap"
+                    title="Fetch latest statuses from Google Sheet immediately"
                   >
-                    <option value="All">ALL STATUSES</option>
-                    <option value="PENDING">PENDING</option>
-                    <option value="UNDER REVIEW">UNDER REVIEW</option>
-                    <option value="APPROVED">APPROVED</option>
-                    <option value="WITH RFP">WITH RFP</option>
-                    <option value="CHEQUE REL">CHEQUE REL</option>
-                    <option value="PAID">PAID</option>
-                    <option value="DUPLICATE">DUPLICATE</option>
-                    <option value="BLURRED">BLURRED</option>
-                    <option value="CANCEL">CANCEL</option>
-                    <option value="REJECTED">REJECTED</option>
-                  </select>
+                    <i id="refreshLiveStatusIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
+                    <span>Refresh</span>
+                  </button>
                 </div>
-
-                <!-- Admin / Group Scope Filter -->
-                <div id="adminPaymentScopeWrapper" class="hidden items-center space-x-1.5 flex-shrink-0">
-                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Scope:</label>
-                  <select 
-                    id="adminPaymentScopeSelect" 
-                    onchange="renderBillPaymentTable()" 
-                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
-                  >
-                    <option value="all">All Requests</option>
-                    <option value="group">Group / Site Requests</option>
-                    <option value="my">My Submissions</option>
-                  </select>
-                </div>
-
-                <!-- Sort Indicator -->
-                <span class="inline-flex items-center space-x-1 px-2.5 py-1.5 rounded-xl text-[10px] font-medium bg-slate-100 dark:bg-[#1a1a1a] text-slate-600 dark:text-neutral-300 border border-slate-200 dark:border-[#2e2e2e] whitespace-nowrap flex-shrink-0">
-                  <i data-lucide="arrow-down-up" class="w-3 h-3 text-blue-500"></i>
-                  <span>Sorted by Date (Newest first)</span>
-                </span>
-                
-                <span id="paymentRequestsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20 whitespace-nowrap flex-shrink-0">
-                  0 Requests
-                </span>
-
-                <button 
-                  type="button" 
-                  onclick="scrollTableToTop('paymentScrollContainer')" 
-                  class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer whitespace-nowrap"
-                  title="Scroll back to the top"
-                >
-                  <i data-lucide="arrow-up" class="w-3 h-3"></i>
-                  <span>Top</span>
-                </button>
-              </div>
-
-              <!-- Live Status Sync Trigger & Last Synced Timestamp -->
-              <div class="flex flex-wrap items-center gap-2 ml-auto">
-                <span id="paymentStatusLastSyncTime" class="text-[11px] text-slate-400 dark:text-neutral-500 whitespace-nowrap">Live GSheet: Auto-polled</span>
-                <button 
-                  type="button" 
-                  id="refreshLiveStatusBtn" 
-                  onclick="handleRefreshLiveStatusClick()" 
-                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 border border-slate-300 dark:border-[#2e2e2e] shadow-sm transition-all cursor-pointer whitespace-nowrap"
-                  title="Fetch latest statuses from Google Sheet immediately"
-                >
-                  <i id="refreshLiveStatusIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-500"></i>
-                  <span>Refresh</span>
-                </button>
               </div>
             </div>
 
-            <!-- Payment Requests Table -->
+            <!-- Payment Requests Table (10-Row Max View) -->
             <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div id="paymentScrollContainer" class="max-h-[65vh] overflow-auto">
+              <div id="paymentScrollContainer" class="max-h-[450px] overflow-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
@@ -1855,11 +1903,15 @@ Submit and track your monthly utility payments directly through your account.</p
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            <!-- Move to Top Circle Outside Table Frame (Bottom Center) -->
+            <div class="mt-3 flex justify-center">
               <button 
                 type="button" 
                 onclick="scrollTableToTop('paymentScrollContainer')" 
-                class="fixed bottom-6 right-6 z-30 p-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-600/30 transition-all cursor-pointer flex items-center justify-center"
-                title="Scroll back to top"
+                class="w-9 h-9 rounded-full bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-600/25 hover:scale-105 transition-all cursor-pointer flex items-center justify-center border border-blue-400/30"
+                title="Move to top of Payment Status table"
               >
                 <i data-lucide="arrow-up" class="w-4 h-4"></i>
               </button>
@@ -2264,6 +2316,17 @@ Submit and track your monthly utility payments directly through your account.</p
               <span id="editPaySuccessToastText">Changes committed!</span>
             </div>
 
+            <!-- Edit Unlock Safety Bar (Prevents accidental edits) -->
+            <div id="editPayUnlockBar" class="hidden items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800">
+              <div class="flex items-center space-x-2">
+                <span id="editPayUnlockStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="editPayUnlockStatusText" class="text-[11px] font-semibold text-slate-600 dark:text-royal-200">Fields locked to prevent accidental edits</span>
+              </div>
+              <button type="button" id="editPayUnlockToggleBtn" onclick="togglePayEditUnlock()" class="px-3 py-1 rounded-lg text-[11px] font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer">
+                Edit Details
+              </button>
+            </div>
+
             <div>
               <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
               <input type="text" id="editPayAccountNo" list="editPayBillersDatalist" oninput="handleEditPayAccountLookup(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-blue-600 dark:text-blue-400" />
@@ -2399,6 +2462,17 @@ Submit and track your monthly utility payments directly through your account.</p
             <div id="editEnrollSuccessToast" class="hidden p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center space-x-2">
               <span>✓</span>
               <span id="editEnrollSuccessToastText">Changes committed!</span>
+            </div>
+
+            <!-- Edit Unlock Safety Bar (Prevents accidental edits) -->
+            <div id="editEnrollUnlockBar" class="hidden items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800">
+              <div class="flex items-center space-x-2">
+                <span id="editEnrollUnlockStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                <span id="editEnrollUnlockStatusText" class="text-[11px] font-semibold text-slate-600 dark:text-royal-200">Fields locked to prevent accidental edits</span>
+              </div>
+              <button type="button" id="editEnrollUnlockToggleBtn" onclick="toggleEnrollEditUnlock()" class="px-3 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer">
+                Edit Details
+              </button>
             </div>
 
             <div>
@@ -3755,6 +3829,12 @@ function ensurePaymentHeaders(sheet) {
         if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.remove("hidden");
         if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.remove("hidden");
         if (adminEnrollCheckSheetBtn) { adminEnrollCheckSheetBtn.classList.remove("hidden"); adminEnrollCheckSheetBtn.classList.add("inline-flex"); }
+        const paySub = document.getElementById("paymentStatusSubtitle");
+        if (paySub) paySub.innerText = "Real-time status updates synced live from Google Sheet (Request Bill Payments)";
+        const enrSub = document.getElementById("enrollStatusSubtitle");
+        if (enrSub) enrSub.innerText = "Live ledger of new utility endorsements (synced with New Bill Endorsement sheet)";
+        document.getElementById("paymentStatusLastSyncTime")?.classList.remove("hidden");
+        document.getElementById("enrollStatusLastSyncTime")?.classList.remove("hidden");
       } else {
         if (tabBtnUserMgmt) tabBtnUserMgmt.classList.add("hidden");
         if (tabBtnAccountMgmt) tabBtnAccountMgmt.classList.add("hidden");
@@ -3773,6 +3853,12 @@ function ensurePaymentHeaders(sheet) {
         if (enrollSoaFolderWrapper) enrollSoaFolderWrapper.classList.add("hidden");
         if (billPaymentFolderWrapper) billPaymentFolderWrapper.classList.add("hidden");
         if (adminEnrollCheckSheetBtn) { adminEnrollCheckSheetBtn.classList.add("hidden"); adminEnrollCheckSheetBtn.classList.remove("inline-flex"); }
+        const paySub = document.getElementById("paymentStatusSubtitle");
+        if (paySub) paySub.innerText = "Monitor the status and reconciliation of your personal payment requests";
+        const enrSub = document.getElementById("enrollStatusSubtitle");
+        if (enrSub) enrSub.innerText = "Track verification and approval progress for your utility account endorsements";
+        document.getElementById("paymentStatusLastSyncTime")?.classList.add("hidden");
+        document.getElementById("enrollStatusLastSyncTime")?.classList.add("hidden");
       }
 
       // REQUIREMENT 5: Update navigation counter badges strictly per user (respecting PS_VIEW_ALL / ES_VIEW_ALL)
@@ -4216,6 +4302,7 @@ function ensurePaymentHeaders(sheet) {
       const canViewGroupEnr = canViewAllEnr || hasUserPermission(currentUser, "ES_VIEW_GROUP");
       const canUpdateEnrStatus = (isAdminOrSub || hasUserPermission(currentUser, "ES_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canOpenEnrollLink = isAdminOrSub || hasUserPermission(currentUser, "ES_ATTACH_LINK");
 
       let list = enrollmentRequests.map(r => enrollmentEditsOverrides[r.requestId] ? { ...r, ...enrollmentEditsOverrides[r.requestId] } : r);
 
@@ -4282,43 +4369,54 @@ function ensurePaymentHeaders(sheet) {
         const requestorName = matchedU
           ? (`${matchedU.firstName || ""} ${matchedU.lastName || ""}`.trim() || matchedU.username)
           : (item.email || "Requestor");
+        const letterHref = item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER;
+        const soaHref = item.driveSoaFolderUrl || DRIVE_SOA_FOLDER;
         return `
-          <tr onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="hover:bg-emerald-50/50 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
+          <tr class="hover:bg-emerald-50/40 dark:hover:bg-[#1a1a1a] transition-colors">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-              <div class="flex items-center space-x-1.5">
+              <button type="button" onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="inline-flex items-center space-x-1.5 text-left hover:underline cursor-pointer group" title="Click to open Endorsement Inspector">
                 <span>${escapeHtml(item.requestId)}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 opacity-80 group-hover:opacity-100">${canEditEnrDetails ? "Inspect / Edit" : "Inspect"}</span>
-              </div>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-500/20 transition-colors">${canEditEnrDetails ? "Inspect / Edit" : "Inspect"}</span>
+              </button>
             </td>
             <td class="py-3 px-4">
               <div class="text-xs font-semibold text-slate-900 dark:text-white">${escapeHtml(requestorName)}</div>
               <div class="font-mono text-xs sm:text-sm font-bold text-blue-600 dark:text-blue-400 mt-0.5 tracking-tight">${escapeHtml(item.viberNumber || "—")}</div>
             </td>
             <td class="py-3 px-4 font-mono font-extrabold text-xs sm:text-sm text-emerald-600 dark:text-emerald-400 whitespace-nowrap">
-              <div class="flex items-center space-x-1.5">
-                <span>${escapeHtml(item.accountNumber)}</span>
-                <button type="button" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 cursor-pointer" title="${canEditEnrDetails ? "Inspect & Edit Enrollment Details" : "Inspect Enrollment & Attachments"}">
-                  <i data-lucide="${canEditEnrDetails ? "edit-2" : "eye"}" class="w-3 h-3"></i>
-                </button>
-              </div>
+              <span>${escapeHtml(item.accountNumber)}</span>
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-800 dark:text-neutral-200 text-xs">${escapeHtml(item.site)}</div>
               <div class="text-[10px] text-slate-400 dark:text-neutral-500">${escapeHtml(item.biller)}</div>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'letter')">
-              <span class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold">
-                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Preview Letter")}</span>
-              </span>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${canOpenEnrollLink && letterHref ? `
+                <a href="${escapeHtml(letterHref)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold" title="Open Approved Letter in New Tab">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Open Letter")}</span>
+                </a>
+              ` : `
+                <button type="button" onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'letter')" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold cursor-pointer">
+                  <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.requestLetterFileName || "Preview Letter")}</span>
+                </button>
+              `}
             </td>
-            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'soa')">
-              <span class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold">
-                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "Preview SOA")}</span>
-              </span>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${canOpenEnrollLink && soaHref ? `
+                <a href="${escapeHtml(soaHref)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold" title="Open SOA Statement in New Tab">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "Open SOA")}</span>
+                </a>
+              ` : `
+                <button type="button" onclick="openEditEnrollmentDetailsModal('${escapeHtml(item.requestId)}', 'soa')" class="inline-flex items-center space-x-1 text-[11px] text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[120px] truncate">${escapeHtml(item.soaFileName || "Preview SOA")}</span>
+                </button>
+              `}
             </td>
-            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation()">
+            <td class="py-3 px-4 whitespace-nowrap">
               ${canUpdateEnrStatus ? `
                 <select 
                   onchange="updateEnrollmentStatus('${escapeHtml(item.requestId)}', this.value)" 
@@ -4971,6 +5069,7 @@ function ensurePaymentHeaders(sheet) {
       const canViewGroupPay = canViewAllPay || hasUserPermission(currentUser, "PS_VIEW_GROUP");
       const canUpdatePayStatus = (isAdminOrSub || hasUserPermission(currentUser, "PS_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canOpenPayLink = isAdminOrSub || hasUserPermission(currentUser, "PS_ATTACH_LINK");
 
       let list = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
 
@@ -5064,13 +5163,14 @@ function ensurePaymentHeaders(sheet) {
 
       tbody.innerHTML = list.map(item => {
         const curStatus = (item.status || "PENDING").toUpperCase();
+        const payHref = item.fileUrl || DRIVE_BILL_PAYMENT_FOLDER;
         return `
-          <tr onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="hover:bg-blue-50/50 dark:hover:bg-[#1a1a1a] transition-colors cursor-pointer group">
+          <tr class="hover:bg-blue-50/40 dark:hover:bg-[#1a1a1a] transition-colors">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-              <div class="flex items-center space-x-1.5">
+              <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="inline-flex items-center space-x-1.5 text-left hover:underline cursor-pointer group" title="Click to open Request Inspector">
                 <span>${escapeHtml(item.requestId)}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 opacity-80 group-hover:opacity-100">${canEditPayBilling ? "Inspect / Edit" : "Inspect"}</span>
-              </div>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500/20 transition-colors">${canEditPayBilling ? "Inspect / Edit" : "Inspect"}</span>
+              </button>
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(item.requestorName)}</div>
@@ -5089,21 +5189,23 @@ function ensurePaymentHeaders(sheet) {
               ${escapeHtml(item.dueDate)}
             </td>
             <td class="py-3 px-4">
-              <div class="flex items-center space-x-1.5">
-                <div class="font-mono text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 tracking-tight">${escapeHtml(item.accountNumber)}</div>
-                <button type="button" onclick="event.stopPropagation(); openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="p-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 cursor-pointer" title="${canEditPayBilling ? "Inspect & Edit Billing Details" : "Inspect Request & Attachment"}">
-                  <i data-lucide="${canEditPayBilling ? "edit-2" : "eye"}" class="w-3 h-3"></i>
-                </button>
-              </div>
+              <div class="font-mono text-xs sm:text-sm font-extrabold text-blue-600 dark:text-blue-400 tracking-tight">${escapeHtml(item.accountNumber)}</div>
               <div class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5"><span class="font-medium text-slate-700 dark:text-neutral-300">${escapeHtml(item.site)}</span> &bull; <span>${escapeHtml(item.biller)}</span></div>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation(); openEditPaymentBillingModal('${escapeHtml(item.requestId)}')">
-              <span class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold" title="${escapeHtml(item.fileName)}">
-                <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
-                <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Preview Statement")}</span>
-              </span>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${canOpenPayLink && payHref ? `
+                <a href="${escapeHtml(payHref)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold" title="Open Statement in New Tab">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Open Statement")}</span>
+                </a>
+              ` : `
+                <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="inline-flex items-center space-x-1 text-[11px] text-blue-600 dark:text-blue-400 hover:underline font-semibold cursor-pointer" title="${escapeHtml(item.fileName)}">
+                  <i data-lucide="paperclip" class="w-3.5 h-3.5"></i>
+                  <span class="max-w-[130px] truncate">${escapeHtml(item.fileName || "Preview Statement")}</span>
+                </button>
+              `}
             </td>
-            <td class="py-3 px-4 whitespace-nowrap" onclick="event.stopPropagation()">
+            <td class="py-3 px-4 whitespace-nowrap">
               ${canUpdatePayStatus ? `
                 <select 
                   onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
@@ -5288,12 +5390,125 @@ function ensurePaymentHeaders(sheet) {
       }
     }
 
+    let isPayEditUnlocked = false;
+    let isEnrollEditUnlocked = false;
+
+    function updatePayEditLockUI(canEditPayBilling) {
+      const fields = ["editPayAccountNo", "editPaySite", "editPayBiller", "editPayMonth", "editPayType", "editPayDueDate", "editPayRequestor", "editPayViber"];
+      fields.forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !(canEditPayBilling && isPayEditUnlocked);
+      });
+      const unlockBar = document.getElementById("editPayUnlockBar");
+      if (unlockBar) {
+        if (canEditPayBilling) {
+          unlockBar.classList.remove("hidden");
+          unlockBar.classList.add("flex");
+        } else {
+          unlockBar.classList.add("hidden");
+          unlockBar.classList.remove("flex");
+        }
+      }
+      const dot = document.getElementById("editPayUnlockStatusDot");
+      const txt = document.getElementById("editPayUnlockStatusText");
+      const btn = document.getElementById("editPayUnlockToggleBtn");
+      if (dot) dot.className = `w-2 h-2 rounded-full ${isPayEditUnlocked ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`;
+      if (txt) txt.innerText = isPayEditUnlocked ? "Editing unlocked — review changes before saving" : "Fields locked to prevent accidental edits";
+      if (btn) {
+        btn.innerText = isPayEditUnlocked ? "Cancel Edit" : "Edit Details";
+        btn.className = isPayEditUnlocked
+          ? "px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer"
+          : "px-3 py-1 rounded-lg text-[11px] font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm cursor-pointer";
+      }
+      const saveBtn = document.getElementById("editPaySaveBtn");
+      if (saveBtn) saveBtn.classList.toggle("hidden", !(canEditPayBilling && isPayEditUnlocked));
+    }
+
+    function togglePayEditUnlock() {
+      const reqId = document.getElementById("editPayReqId")?.value;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      if (!canEditPayBilling) return;
+      isPayEditUnlocked = !isPayEditUnlocked;
+      if (!isPayEditUnlocked && reqId) {
+        const base = paymentRequests.find(r => r.requestId === reqId);
+        const item = base ? (paymentEditsOverrides[reqId] ? { ...base, ...paymentEditsOverrides[reqId] } : base) : null;
+        if (item) {
+          document.getElementById("editPayAccountNo").value = item.accountNumber || "";
+          document.getElementById("editPaySite").value = item.site || "";
+          document.getElementById("editPayBiller").value = item.biller || "";
+          document.getElementById("editPayMonth").value = item.billMonth || "October";
+          document.getElementById("editPayType").value = item.billType === "Water" ? "Water" : "Power";
+          document.getElementById("editPayDueDate").value = item.dueDate || "";
+          document.getElementById("editPayRequestor").value = item.requestorName || "";
+          document.getElementById("editPayViber").value = item.viberNumber || "";
+        }
+        document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
+        document.getElementById("editPayActionRow")?.classList.remove("hidden");
+      }
+      updatePayEditLockUI(canEditPayBilling);
+    }
+
+    function updateEnrollEditLockUI(canEditEnrDetails) {
+      const fields = ["editEnrollAccountNo", "editEnrollSite", "editEnrollBiller", "editEnrollViber", "editEnrollEmail"];
+      fields.forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !(canEditEnrDetails && isEnrollEditUnlocked);
+      });
+      const unlockBar = document.getElementById("editEnrollUnlockBar");
+      if (unlockBar) {
+        if (canEditEnrDetails) {
+          unlockBar.classList.remove("hidden");
+          unlockBar.classList.add("flex");
+        } else {
+          unlockBar.classList.add("hidden");
+          unlockBar.classList.remove("flex");
+        }
+      }
+      const dot = document.getElementById("editEnrollUnlockStatusDot");
+      const txt = document.getElementById("editEnrollUnlockStatusText");
+      const btn = document.getElementById("editEnrollUnlockToggleBtn");
+      if (dot) dot.className = `w-2 h-2 rounded-full ${isEnrollEditUnlocked ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`;
+      if (txt) txt.innerText = isEnrollEditUnlocked ? "Editing unlocked — review changes before saving" : "Fields locked to prevent accidental edits";
+      if (btn) {
+        btn.innerText = isEnrollEditUnlocked ? "Cancel Edit" : "Edit Details";
+        btn.className = isEnrollEditUnlocked
+          ? "px-3 py-1 rounded-lg text-[11px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer"
+          : "px-3 py-1 rounded-lg text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer";
+      }
+      const saveBtn = document.getElementById("editEnrollSaveBtn");
+      if (saveBtn) saveBtn.classList.toggle("hidden", !(canEditEnrDetails && isEnrollEditUnlocked));
+    }
+
+    function toggleEnrollEditUnlock() {
+      const reqId = document.getElementById("editEnrollReqId")?.value;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      if (!canEditEnrDetails) return;
+      isEnrollEditUnlocked = !isEnrollEditUnlocked;
+      if (!isEnrollEditUnlocked && reqId) {
+        const base = enrollmentRequests.find(r => r.requestId === reqId);
+        const item = base ? (enrollmentEditsOverrides[reqId] ? { ...base, ...enrollmentEditsOverrides[reqId] } : base) : null;
+        if (item) {
+          document.getElementById("editEnrollAccountNo").value = item.accountNumber || "";
+          document.getElementById("editEnrollSite").value = item.site || "";
+          document.getElementById("editEnrollBiller").value = item.biller || "";
+          document.getElementById("editEnrollViber").value = item.viberNumber || "";
+          document.getElementById("editEnrollEmail").value = item.email || "";
+        }
+        document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
+        document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
+      }
+      updateEnrollEditLockUI(canEditEnrDetails);
+    }
+
     function openEditPaymentBillingModal(reqId) {
       const base = paymentRequests.find(r => r.requestId === reqId);
       if (!base) return;
       const item = paymentEditsOverrides[reqId] ? { ...base, ...paymentEditsOverrides[reqId] } : base;
       resetInspectorView();
       pendingPayStatusConfirmValue = null;
+      isPayEditUnlocked = false;
       document.getElementById("editPayStatusConfirmBar")?.classList.add("hidden");
       document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
       document.getElementById("editPayActionRow")?.classList.remove("hidden");
@@ -5302,18 +5517,18 @@ function ensurePaymentHeaders(sheet) {
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
       const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canUpdatePayStatus = (isAdminOrSub || hasUserPermission(currentUser, "PS_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canOpenPayLink = isAdminOrSub || hasUserPermission(currentUser, "PS_ATTACH_LINK");
 
       document.getElementById("editPayReqId").value = item.requestId;
       const reqBadge = document.getElementById("editPayReqBadge");
       if (reqBadge) reqBadge.innerText = item.requestId;
       const modeBadge = document.getElementById("editPayAccessModeBadge");
       if (modeBadge) {
-        modeBadge.innerText = canEditPayBilling ? "Editable Details" : "View-Only Details";
+        modeBadge.innerText = canEditPayBilling ? "Edit Access" : "View-Only Details";
         modeBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${canEditPayBilling ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"}`;
       }
       document.getElementById("editPayBillingSubtitle").innerText = `Submitted by ${item.requestorName || "Requestor"} • ${item.submittedAt || ""}`;
 
-      const fields = ["editPayAccountNo", "editPaySite", "editPayBiller", "editPayMonth", "editPayType", "editPayDueDate", "editPayRequestor", "editPayViber"];
       document.getElementById("editPayAccountNo").value = item.accountNumber || "";
       document.getElementById("editPaySite").value = item.site || "";
       document.getElementById("editPayBiller").value = item.biller || "";
@@ -5322,12 +5537,7 @@ function ensurePaymentHeaders(sheet) {
       document.getElementById("editPayDueDate").value = item.dueDate || "";
       document.getElementById("editPayRequestor").value = item.requestorName || "";
       document.getElementById("editPayViber").value = item.viberNumber || "";
-      fields.forEach(fid => {
-        const el = document.getElementById(fid);
-        if (el) el.disabled = !canEditPayBilling;
-      });
-      const saveBtn = document.getElementById("editPaySaveBtn");
-      if (saveBtn) saveBtn.classList.toggle("hidden", !canEditPayBilling);
+      updatePayEditLockUI(canEditPayBilling);
 
       const curStatus = (item.status || "PENDING").toUpperCase();
       const statusBox = document.getElementById("editPayStatusContainer");
@@ -5340,10 +5550,16 @@ function ensurePaymentHeaders(sheet) {
       }
 
       const linkBar = document.getElementById("payInspectorLinkBar");
+      const payHref = item.fileUrl || DRIVE_BILL_PAYMENT_FOLDER;
       if (linkBar) {
-        linkBar.innerHTML = `
+        linkBar.innerHTML = canOpenPayLink && payHref ? `
+          <a href="${escapeHtml(payHref)}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[11px] font-bold shadow cursor-pointer">
+            <span>Open in New Tab</span>
+            <span>↗</span>
+          </a>
+        ` : `
           <span class="px-2.5 py-1 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">
-            🔒 Protected View (New Tab &amp; Download Disabled)
+            🔒 View-Only (No New Tab)
           </span>
         `;
       }
@@ -5385,6 +5601,7 @@ function ensurePaymentHeaders(sheet) {
 
     function closeEditPaymentBillingModal() {
       pendingPayStatusConfirmValue = null;
+      isPayEditUnlocked = false;
       document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
       document.getElementById("editPayActionRow")?.classList.remove("hidden");
       document.getElementById("editPaymentBillingModal")?.classList.add("hidden");
@@ -5397,6 +5614,7 @@ function ensurePaymentHeaders(sheet) {
 
     function handleSavePaymentBillingEdit(e) {
       e.preventDefault();
+      if (!isPayEditUnlocked) return;
       const reqId = document.getElementById("editPayReqId").value;
       if (!reqId) return;
       document.getElementById("editPayActionRow")?.classList.add("hidden");
@@ -5442,6 +5660,10 @@ function ensurePaymentHeaders(sheet) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId: reqId, updates })
       }).catch(() => {});
+      isPayEditUnlocked = false;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      updatePayEditLockUI(canEditPayBilling);
       document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
       document.getElementById("editPayActionRow")?.classList.remove("hidden");
       showEditPayToast("Billing details committed and synced!");
@@ -5465,11 +5687,24 @@ function ensurePaymentHeaders(sheet) {
     function renderEnrollInspectorRightPane() {
       const item = activeInspectEnrollItem;
       if (!item) return;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canOpenEnrollLink = isAdminOrSub || hasUserPermission(currentUser, "ES_ATTACH_LINK");
       const letterUrl = item.driveLetterFolderUrl || DRIVE_LETTER_FOLDER;
       const soaUrl = item.driveSoaFolderUrl || DRIVE_SOA_FOLDER;
 
       const linkBar = document.getElementById("enrollInspectorLinkBar");
       if (linkBar) {
+        const actionLinksHtml = canOpenEnrollLink ? (
+          activeEnrollAttachMode === "letter" && letterUrl
+            ? `<a href="${escapeHtml(letterUrl)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-0.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold">Open Letter in New Tab ↗</a>`
+            : activeEnrollAttachMode === "soa" && soaUrl
+            ? `<a href="${escapeHtml(soaUrl)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold">Open SOA in New Tab ↗</a>`
+            : `<div class="flex items-center space-x-1.5">
+                ${letterUrl ? `<a href="${escapeHtml(letterUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold">Open Letter ↗</a>` : ""}
+                ${soaUrl ? `<a href="${escapeHtml(soaUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold">Open SOA ↗</a>` : ""}
+              </div>`
+        ) : `<span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">🔒 View-Only (No New Tab)</span>`;
+
         linkBar.innerHTML = `
           <div class="truncate font-mono text-[11px] text-slate-300">
             ${activeEnrollAttachMode === "letter"
@@ -5479,7 +5714,7 @@ function ensurePaymentHeaders(sheet) {
               : `Side-by-Side Comparison: Approved Letter + SOA Statement`}
           </div>
           <div class="flex items-center space-x-2 shrink-0">
-            <span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">🔒 Protected View (New Tab &amp; Download Disabled)</span>
+            ${actionLinksHtml}
           </div>
         `;
       }
@@ -5556,6 +5791,7 @@ function ensurePaymentHeaders(sheet) {
       activeEnrollAttachMode = initialMode || "letter";
       resetInspectorView();
       pendingEnrollStatusConfirmValue = null;
+      isEnrollEditUnlocked = false;
       document.getElementById("editEnrollStatusConfirmBar")?.classList.add("hidden");
       document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
       document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
@@ -5572,22 +5808,16 @@ function ensurePaymentHeaders(sheet) {
 
       const modeBadge = document.getElementById("editEnrollAccessModeBadge");
       if (modeBadge) {
-        modeBadge.innerText = canEditEnrDetails ? "Editable Details" : "View-Only Details";
+        modeBadge.innerText = canEditEnrDetails ? "Edit Access" : "View-Only Details";
         modeBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${canEditEnrDetails ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"}`;
       }
 
-      const fields = ["editEnrollAccountNo", "editEnrollSite", "editEnrollBiller", "editEnrollViber", "editEnrollEmail"];
       document.getElementById("editEnrollAccountNo").value = item.accountNumber || "";
       document.getElementById("editEnrollSite").value = item.site || "";
       document.getElementById("editEnrollBiller").value = item.biller || "";
       document.getElementById("editEnrollViber").value = item.viberNumber || "";
       document.getElementById("editEnrollEmail").value = item.email || "";
-      fields.forEach(fid => {
-        const el = document.getElementById(fid);
-        if (el) el.disabled = !canEditEnrDetails;
-      });
-      const saveBtn = document.getElementById("editEnrollSaveBtn");
-      if (saveBtn) saveBtn.classList.toggle("hidden", !canEditEnrDetails);
+      updateEnrollEditLockUI(canEditEnrDetails);
 
       const curStatus = item.status || "Pending";
       const statusBox = document.getElementById("editEnrollStatusContainer");
@@ -5606,6 +5836,7 @@ function ensurePaymentHeaders(sheet) {
 
     function closeEditEnrollmentDetailsModal() {
       pendingEnrollStatusConfirmValue = null;
+      isEnrollEditUnlocked = false;
       document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
       document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
       document.getElementById("editEnrollmentDetailsModal")?.classList.add("hidden");
@@ -5618,6 +5849,7 @@ function ensurePaymentHeaders(sheet) {
 
     function handleSaveEnrollmentDetailsEdit(e) {
       e.preventDefault();
+      if (!isEnrollEditUnlocked) return;
       const reqId = document.getElementById("editEnrollReqId").value;
       if (!reqId) return;
       document.getElementById("editEnrollActionRow")?.classList.add("hidden");
@@ -5660,6 +5892,10 @@ function ensurePaymentHeaders(sheet) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ requestId: reqId, updates })
       }).catch(() => {});
+      isEnrollEditUnlocked = false;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      updateEnrollEditLockUI(canEditEnrDetails);
       document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
       document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
       showEditEnrollToast("Endorsement details committed and synced!");
