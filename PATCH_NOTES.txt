@@ -6,6 +6,22 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.8.2] - 2026-11-09 — Standalone / GitHub Pages Report Rendering Fix & Live Sync Refresh
+--------------------------------------------------------------------------------
+1. Fixed Empty Reports in Standalone / GitHub Pages Builds:
+   - Resolved a missing `normalizeAccountKey()` alias (bridging to
+     `normalizeRawAccountKey()`) in `single-index.html` that prevented
+     `computeUserActivityReportRows()` and `computeAccountHistoryReportRows()`
+     from rendering rows in standalone HTML deployments.
+2. Automatic Catalog Enrichment & Live Sheet Re-Rendering:
+   - Added `enrichBillersCatalog()` so `User Performance` and `Account History`
+     automatically enrich `FILEDBY` mappings and include any accounts present in
+     `Request Bill Payments` even before visiting the Account Numbers tab.
+   - Connected all Google Sheet sync callbacks (`UserData`, `Billers`,
+     `Request Bill Payments`, and `New Bill Endorsement`) to immediately
+     re-render the active report tab upon sync completion.
+
+--------------------------------------------------------------------------------
 [v2.8.1] - 2026-11-09 — Search Clear (×) Buttons, Interactive Account History Sorter/Filter Headers & 12-Month Account History Modal
 --------------------------------------------------------------------------------
 1. Universal Clear (`×`) Button on All Search Bars:

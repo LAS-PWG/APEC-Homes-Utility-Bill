@@ -3698,6 +3698,7 @@ function ensurePaymentHeaders(sheet) {
     const SPREADSHEET_ID = "1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY";
     const BILL_PAYMENT_SPREADSHEET_ID = "1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA";
     const GDRIVE_FOLDER_ID = "1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13";
+    const DRIVE_BILL_PAYMENT_FOLDER = "https://drive.google.com/drive/folders/" + GDRIVE_FOLDER_ID;
     const DRIVE_LETTER_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd?usp=sharing";
     const DRIVE_SOA_FOLDER = "https://drive.google.com/drive/folders/1K9UZYO99WwleEltWmdiX9rouL4rHa3jd";
 
@@ -4509,8 +4510,13 @@ function ensurePaymentHeaders(sheet) {
         renderAccountsManagementTable();
       } else if (tabId === "report-user-activity") {
         renderUserActivityReport();
+        syncDatabaseFromGSheet(false);
+        syncLivePaymentRequestsFromGSheet(false);
+        syncLiveEnrollmentsFromGSheet(false);
       } else if (tabId === "report-account-history") {
         renderAccountHistoryReport();
+        if (billers.length === 0) handleSyncBillersClick();
+        syncLivePaymentRequestsFromGSheet(false);
       }
 
       updateAccessUI();
@@ -5085,6 +5091,8 @@ function ensurePaymentHeaders(sheet) {
       }
 
       renderEnrollmentStatusTable();
+      if (currentTab === "report-user-activity") renderUserActivityReport();
+      if (currentTab === "report-account-history") renderAccountHistoryReport();
       if (timeElem) timeElem.innerText = `Synced: ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
       if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
     }
@@ -6681,7 +6689,7 @@ function ensurePaymentHeaders(sheet) {
                   dueDate: c[6]?.f || (c[6]?.v ? String(c[6].v).trim() : ""),
                   site: c[7]?.v ? String(c[7].v).trim() : "",
                   biller: c[8]?.v ? String(c[8].v).trim() : "",
-                  accountNumber: c[9]?.v ? String(c[9].v).trim() : "",
+                  accountNumber: (c[9]?.f || (c[9]?.v !== undefined && c[9]?.v !== null ? String(c[9].v) : "")).trim(),
                   fileName: (col10 && !col10.startsWith("http")) ? col10 : (existing?.fileName || "View Uploaded Bill"),
                   fileUrl: (col11 && col11.startsWith("http"))
                     ? col11
@@ -6726,6 +6734,8 @@ function ensurePaymentHeaders(sheet) {
 
       renderBillPaymentTable();
       if (currentTab === "account-management") renderAccountsManagementTable();
+      if (currentTab === "report-user-activity") renderUserActivityReport();
+      if (currentTab === "report-account-history") renderAccountHistoryReport();
       const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       if (timeElem) timeElem.innerText = `Live GSheet: Synced at ${timeStr}`;
       if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
@@ -7266,6 +7276,10 @@ function ensurePaymentHeaders(sheet) {
       return String(acc || "").replace(/^ACC[-_:\s]*/i, "").replace(/[\s-]/g, "").trim().toLowerCase();
     }
 
+    function normalizeAccountKey(acc) {
+      return normalizeRawAccountKey(acc);
+    }
+
     function getBillerFiledByOverrides() {
       try {
         const raw = localStorage.getItem(BILLER_FILEDBY_OVERRIDES_KEY);
@@ -7356,6 +7370,44 @@ function ensurePaymentHeaders(sheet) {
         }
       }
       return map;
+    }
+
+    function enrichBillersCatalog() {
+      const overrides = getBillerFiledByOverrides();
+      const allRbpMap = buildLutRbpLookupMap("All");
+      const today = new Date().toISOString().slice(0, 10);
+      const existingKeys = new Set();
+
+      billers = billers.map(b => {
+        const key = normalizeRawAccountKey(b.accountNumber);
+        if (key) existingKeys.add(key);
+        let filedBy = overrides[key] !== undefined ? overrides[key] : (b.filedBy || "");
+        if (!filedBy) {
+          const latestRbp = allRbpMap.get(key);
+          if (latestRbp?.userId) filedBy = latestRbp.userId;
+        }
+        if (!filedBy) {
+          const enr = enrollmentRequests.find(e => normalizeRawAccountKey(e.accountNumber) === key && e.userId);
+          if (enr?.userId) filedBy = enr.userId;
+        }
+        return { ...b, filedBy };
+      });
+
+      for (const [key, rbp] of allRbpMap.entries()) {
+        if (!key || existingKeys.has(key)) continue;
+        existingKeys.add(key);
+        const isWater = /water|sinukuan|district|laguna/i.test(rbp.biller || rbp.billType || "");
+        billers.push({
+          billerId: `BIL-${String(billers.length + 1).padStart(3, "0")}`,
+          site: rbp.site || "General Site",
+          billerName: rbp.biller || "Utility Provider",
+          accountNumber: rbp.accountNumber,
+          utilityType: isWater ? "Water" : "Power",
+          status: "Active",
+          lastUpdated: today,
+          filedBy: overrides[key] !== undefined ? overrides[key] : (rbp.userId || "")
+        });
+      }
     }
 
     function assignAccountFiledByInline(accNo, newFiledBy) {
@@ -7758,10 +7810,10 @@ function ensurePaymentHeaders(sheet) {
               for (let i = 0; i < rows.length; i++) {
                 const c = rows[i]?.c;
                 if (!c) continue;
-                const accNo = c[0]?.v ? String(c[0].v).trim() : "";
-                const site = c[1]?.v ? String(c[1].v).trim() : "";
-                const biller = c[2]?.v ? String(c[2].v).trim() : "";
-                const colFiledBy = c[3]?.v ? String(c[3].v).trim() : "";
+                const accNo = (c[0]?.f || (c[0]?.v !== undefined && c[0]?.v !== null ? String(c[0].v) : "")).trim();
+                const site = (c[1]?.f || (c[1]?.v !== undefined && c[1]?.v !== null ? String(c[1].v) : "")).trim();
+                const biller = (c[2]?.f || (c[2]?.v !== undefined && c[2]?.v !== null ? String(c[2].v) : "")).trim();
+                const colFiledBy = (c[3]?.f || (c[3]?.v !== undefined && c[3]?.v !== null ? String(c[3].v) : "")).trim();
                 if (!accNo || accNo.toLowerCase() === "account no" || accNo.toLowerCase() === "account number") continue;
 
                 const key = normalizeRawAccountKey(accNo);
@@ -7813,6 +7865,8 @@ function ensurePaymentHeaders(sheet) {
 
       renderAccountDropdown();
       if (currentTab === "account-management") renderAccountsManagementTable();
+      if (currentTab === "report-user-activity") renderUserActivityReport();
+      if (currentTab === "report-account-history") renderAccountHistoryReport();
 
       setTimeout(() => {
         if (btn) btn.disabled = false;
@@ -8479,6 +8533,8 @@ function ensurePaymentHeaders(sheet) {
 
       if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
       if (currentTab === "user-management") renderUserManagementTable();
+      if (currentTab === "report-user-activity") renderUserActivityReport();
+      if (currentTab === "report-account-history") renderAccountHistoryReport();
     }
 
     // ========================================================
@@ -8758,6 +8814,7 @@ function ensurePaymentHeaders(sheet) {
     }
 
     function computeUserActivityReportRows() {
+      enrichBillersCatalog();
       const nowMs = Date.now();
       const monthFilter = document.getElementById("repUserMonthFilter")?.value || "All";
       const roleFilter = document.getElementById("repUserRoleFilter")?.value || "All";
@@ -9056,6 +9113,7 @@ function ensurePaymentHeaders(sheet) {
     }
 
     function computeAccountHistoryReportRows() {
+      enrichBillersCatalog();
       const nowMs = Date.now();
       const targetId = (currentUser?.userId || "").trim().toLowerCase();
       const targetUname = (currentUser?.username || "").trim().toLowerCase();
@@ -9309,7 +9367,7 @@ function ensurePaymentHeaders(sheet) {
           switchTab("request-payment");
           const searchInput = document.getElementById("billReqAccountDisplay");
           if (searchInput) searchInput.value = b.accountNumber;
-          selectAccountItem(b.accountNumber);
+          selectAccountItem(b.accountNumber, b.site, b.billerName);
           if (optMonth) {
             const mSel = document.getElementById("billReqMonth");
             if (mSel) {
