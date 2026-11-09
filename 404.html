@@ -509,6 +509,10 @@
               <span>4. Google Sites Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-amber-500"></i>
             </a>
+            <a href="./apechomes-utility-portal-source.zip" download="apechomes-utility-portal-source.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-purple-50 dark:hover:bg-[#242424] transition-colors">
+              <span>5. Full Source Package (.zip)</span>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-purple-500"></i>
+            </a>
             <div class="border-t border-neutral-100 dark:border-[#262626] mt-1 pt-1">
               <a href="./google-sites-embed.html" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
                 <span>Direct Google Sites HTML File</span>
@@ -907,21 +911,36 @@
                 </div>
               </div>
 
-              <!-- Row 2: Administration Group (Moved down inline with Payments) -->
-              <div id="adminNavGroup" class="nav-group-pill hidden flex-wrap items-center p-1 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 gap-1 max-w-full">
-                <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-500 select-none">Admin:</span>
-                <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-indigo-400 dark:hover:border-indigo-500/60">
-                  <i data-lucide="users" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 flex-shrink-0"></i>
-                  <span>Users</span>
-                </button>
-                <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-emerald-400 dark:hover:border-emerald-500/60">
-                  <i data-lucide="database" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500 flex-shrink-0"></i>
-                  <span>Accounts</span>
-                </button>
-                <button id="tabBtn-webhook-setup" onclick="openWebhookSettingsModal()" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-purple-400 dark:hover:border-purple-500/60" title="Google Sheets Webhook & Apps Script Integration Setup">
-                  <i data-lucide="settings" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-500 flex-shrink-0"></i>
-                  <span>Webhooks</span>
-                </button>
+              <!-- Row 2: Administration Group & Separated Reports Group -->
+              <div class="flex flex-wrap items-center gap-1.5 sm:gap-2 max-w-full">
+                <div id="adminNavGroup" class="nav-group-pill hidden flex-wrap items-center p-1 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/30 border border-indigo-200 dark:border-indigo-900/50 gap-1 max-w-full">
+                  <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-indigo-500 select-none">Admin:</span>
+                  <button id="tabBtn-user-management" onclick="switchTab('user-management')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-indigo-400 dark:hover:border-indigo-500/60">
+                    <i data-lucide="users" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-indigo-500 flex-shrink-0"></i>
+                    <span>Users</span>
+                  </button>
+                  <button id="tabBtn-account-management" onclick="switchTab('account-management')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-emerald-400 dark:hover:border-emerald-500/60">
+                    <i data-lucide="database" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500 flex-shrink-0"></i>
+                    <span>Accounts</span>
+                  </button>
+                  <button id="tabBtn-webhook-setup" onclick="openWebhookSettingsModal()" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-purple-400 dark:hover:border-purple-500/60" title="Google Sheets Webhook & Apps Script Integration Setup">
+                    <i data-lucide="settings" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-purple-500 flex-shrink-0"></i>
+                    <span>Webhooks</span>
+                  </button>
+                </div>
+
+                <!-- Separated Reports Group (Plan 5: REP_USER_ACTIVITY & REP_ACCOUNT_HISTORY) -->
+                <div id="reportsNavGroup" class="nav-group-pill hidden flex-wrap items-center p-1 rounded-xl bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-900/50 gap-1 max-w-full">
+                  <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 select-none">Reports:</span>
+                  <button id="tabBtn-report-user-activity" onclick="switchTab('report-user-activity')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-amber-400 dark:hover:border-amber-500/60" title="User Activity, Dormancy & FILEDBY Audit Report (REP_USER_ACTIVITY)">
+                    <i data-lucide="activity" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-500 flex-shrink-0"></i>
+                    <span>User Activity</span>
+                  </button>
+                  <button id="tabBtn-report-account-history" onclick="switchTab('report-account-history')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-teal-400 dark:hover:border-teal-500/60" title="Per-Account Payment History, 12-Month Matrix & Delay Report (REP_ACCOUNT_HISTORY)">
+                    <i data-lucide="file-text" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-500 flex-shrink-0"></i>
+                    <span>Account History</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -1432,14 +1451,15 @@ Submit and track your monthly utility payments directly through your account.</p
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
                   <!-- Search Input -->
                   <div class="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs relative">
-                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400 pointer-events-none"></i>
                     <input 
                       type="text" 
                       id="enrollSearchInput" 
-                      oninput="renderEnrollmentStatusTable()" 
+                      oninput="toggleSearchClearBtn('enrollSearchInput','enrollSearchClearBtn'); renderEnrollmentStatusTable()" 
                       placeholder="Search ID, account, site, email, status..." 
-                      class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      class="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
+                    <button type="button" id="enrollSearchClearBtn" onclick="clearSearchInput('enrollSearchInput','enrollSearchClearBtn','renderEnrollmentStatusTable')" class="hidden absolute inset-y-0 right-2 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
                   </div>
 
                   <!-- Status Filter Dropdown -->
@@ -1681,10 +1701,11 @@ Submit and track your monthly utility payments directly through your account.</p
                       autocomplete="off"
                       placeholder="Type or click to search account number..." 
                       onfocus="openAccountDropdown()" 
-                      oninput="filterAccountDropdown(this.value)"
+                      oninput="toggleSearchClearBtn('billReqAccountDisplay','billReqAccountClearBtn'); filterAccountDropdown(this.value)"
                       onblur="validateAccountLookup()"
-                      class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono font-bold"
+                      class="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-300 dark:border-royal-800 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-royal-500 focus:outline-none font-mono font-bold"
                     />
+                    <button type="button" id="billReqAccountClearBtn" onmousedown="event.preventDefault(); clearAccountComboboxInput()" class="hidden absolute inset-y-0 right-2.5 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear account">&times;</button>
                     <input type="hidden" id="billReqSelectedAccountVal" value="" />
                     <input type="hidden" id="billReqSelectedSiteVal" value="" />
                     <input type="hidden" id="billReqSelectedBillerVal" value="" />
@@ -1806,14 +1827,15 @@ Submit and track your monthly utility payments directly through your account.</p
                 <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 flex-1 min-w-0">
                   <!-- Search Input -->
                   <div class="w-full sm:flex-1 sm:min-w-[200px] sm:max-w-xs relative">
-                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                    <i data-lucide="search" class="w-3.5 h-3.5 absolute inset-y-0 left-3 my-auto text-slate-400 pointer-events-none"></i>
                     <input 
                       type="text" 
                       id="paymentSearchInput" 
-                      oninput="renderBillPaymentTable()" 
+                      oninput="toggleSearchClearBtn('paymentSearchInput','paymentSearchClearBtn'); renderBillPaymentTable()" 
                       placeholder="Search ID, account, site, status, viber..." 
-                      class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      class="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-50/70 dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                     />
+                    <button type="button" id="paymentSearchClearBtn" onclick="clearSearchInput('paymentSearchInput','paymentSearchClearBtn','renderBillPaymentTable')" class="hidden absolute inset-y-0 right-2 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
                   </div>
 
                   <!-- Status Filter Dropdown -->
@@ -1978,14 +2000,15 @@ Submit and track your monthly utility payments directly through your account.</p
             <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full max-w-full overflow-hidden">
               <div class="flex flex-wrap items-center gap-2 flex-1 min-w-0">
                 <div class="w-full sm:w-56 md:w-64 relative flex-shrink-0">
-                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400 pointer-events-none"></i>
                   <input 
                     type="text" 
                     id="userSearchInput" 
-                    oninput="renderUserManagementTable()" 
+                    oninput="toggleSearchClearBtn('userSearchInput','userSearchClearBtn'); renderUserManagementTable()" 
                     placeholder="Search by ID, username, name, role..." 
-                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
+                    class="w-full pl-9 pr-8 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
+                  <button type="button" id="userSearchClearBtn" onclick="clearSearchInput('userSearchInput','userSearchClearBtn','renderUserManagementTable')" class="hidden absolute inset-y-0 right-2.5 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
                 </div>
 
                 <div class="flex items-center space-x-1.5 flex-shrink-0">
@@ -2054,14 +2077,14 @@ Submit and track your monthly utility payments directly through your account.</p
 
           <!-- TAB 7: ACCOUNT NUMBER MANAGEMENT (ADMIN & SUBADMIN ONLY) -->
           <div id="tabContent-account-management" class="hidden animate-fade-in py-2">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-6 gap-3">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-200/80 dark:border-royal-800/60 mb-5 gap-3">
               <div class="flex items-center space-x-3">
                 <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
                   <i data-lucide="arrow-left" class="w-4 h-4"></i>
                 </button>
                 <div>
-                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">Account Number Management</h3>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Manage master billers accounts list (Google Sheet tab: Billers, Col A: Account No, Col B: Site, Col C: Biller)</p>
+                  <h3 class="text-lg font-bold text-slate-900 dark:text-white">Account Number Management (LUT)</h3>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Live Utility Tracker &bull; Google Sheet tab: Billers (Col A: Account No, Col B: Site, Col C: Biller, Col D: FILEDBY)</p>
                 </div>
               </div>
 
@@ -2087,18 +2110,51 @@ Submit and track your monthly utility payments directly through your account.</p
               </div>
             </div>
 
+            <!-- PLAN 4: LUT <-> RBP Live Reconciliation Summary Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+              <div class="p-3 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">Total LUT Accounts</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="lutTotalCount" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white">0</span>
+                  <span id="lutActiveSubCount" class="text-[10px] font-semibold text-emerald-600 dark:text-emerald-400">0 Active</span>
+                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-blue-500/5 border border-blue-500/20 shadow-sm">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">Filed in RBP</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="lutFiledCount" class="text-lg font-extrabold font-mono text-blue-600 dark:text-blue-400">0</span>
+                  <span id="lutFiledScopeLabel" class="text-[10px] font-semibold text-slate-500 dark:text-neutral-400">All Months</span>
+                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-amber-500/5 border border-amber-500/20 shadow-sm">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400">Unfiled / Missing SOA</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="lutUnfiledCount" class="text-lg font-extrabold font-mono text-amber-600 dark:text-amber-400">0</span>
+                  <span class="text-[10px] font-semibold text-amber-600/80 dark:text-amber-400/80">Needs RBP</span>
+                </div>
+              </div>
+              <div class="p-3 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 shadow-sm">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Paid / Cheque Rel</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="lutPaidCount" class="text-lg font-extrabold font-mono text-emerald-600 dark:text-emerald-400">0</span>
+                  <span class="text-[10px] font-semibold text-emerald-600/80 dark:text-emerald-400/80">Settled</span>
+                </div>
+              </div>
+            </div>
+
             <!-- Account Filter & Search Bar -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full max-w-full overflow-hidden">
               <div class="flex flex-wrap items-center gap-2 flex-1 min-w-0">
-                <div class="w-full sm:w-56 md:w-64 relative flex-shrink-0">
-                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400"></i>
+                <div class="w-full sm:w-52 md:w-60 relative flex-shrink-0">
+                  <i data-lucide="search" class="w-4 h-4 absolute inset-y-0 left-3 my-auto text-slate-400 pointer-events-none"></i>
                   <input 
                     type="text" 
                     id="accountSearchInput" 
-                    oninput="renderAccountsManagementTable()" 
-                    placeholder="Search account no, site, biller..." 
-                    class="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
+                    oninput="toggleSearchClearBtn('accountSearchInput','accountSearchClearBtn'); renderAccountsManagementTable()" 
+                    placeholder="Search account, site, biller, FILEDBY..." 
+                    class="w-full pl-9 pr-8 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500 font-mono"
                   />
+                  <button type="button" id="accountSearchClearBtn" onclick="clearSearchInput('accountSearchInput','accountSearchClearBtn','renderAccountsManagementTable')" class="hidden absolute inset-y-0 right-2.5 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
                 </div>
 
                 <div class="flex items-center space-x-1.5 flex-shrink-0">
@@ -2127,6 +2183,44 @@ Submit and track your monthly utility payments directly through your account.</p
                   </select>
                 </div>
 
+                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">RBP Month:</label>
+                  <select 
+                    id="accountRbpMonthFilter" 
+                    onchange="renderAccountsManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Months</option>
+                    <option value="January">January</option>
+                    <option value="February">February</option>
+                    <option value="March">March</option>
+                    <option value="April">April</option>
+                    <option value="May">May</option>
+                    <option value="June">June</option>
+                    <option value="July">July</option>
+                    <option value="August">August</option>
+                    <option value="September">September</option>
+                    <option value="October">October</option>
+                    <option value="November">November</option>
+                    <option value="December">December</option>
+                  </select>
+                </div>
+
+                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Coverage:</label>
+                  <select 
+                    id="accountRbpCoverageFilter" 
+                    onchange="renderAccountsManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Coverage</option>
+                    <option value="Filed">Filed in RBP</option>
+                    <option value="Unfiled">Unfiled / Missing SOA</option>
+                    <option value="Pending">RBP In-Progress</option>
+                    <option value="Paid">Paid / Cheque Rel</option>
+                  </select>
+                </div>
+
                 <span id="accountsCountBadge" class="inline-flex items-center px-2.5 py-1 rounded-xl text-[10px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 whitespace-nowrap flex-shrink-0">
                   0 Accounts
                 </span>
@@ -2135,16 +2229,17 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- Accounts Table -->
             <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto">
+              <div class="overflow-x-auto max-h-[450px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left text-xs">
-                  <thead class="bg-slate-100/80 dark:bg-royal-900/60 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
+                  <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
                     <tr>
                       <th class="py-3 px-4 whitespace-nowrap">Account Number (Col A)</th>
                       <th class="py-3 px-4">Site / Project (Col B)</th>
                       <th class="py-3 px-4">Biller Name (Col C)</th>
+                      <th class="py-3 px-4 whitespace-nowrap">FILEDBY (Col D)</th>
+                      <th class="py-3 px-4 whitespace-nowrap">RBP Sync Status</th>
                       <th class="py-3 px-4 whitespace-nowrap">Type</th>
                       <th class="py-3 px-4 whitespace-nowrap">Status</th>
-                      <th class="py-3 px-4 whitespace-nowrap">Last Updated</th>
                       <th class="py-3 px-4 text-right">Actions</th>
                     </tr>
                   </thead>
@@ -2156,12 +2251,394 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
           </div>
 
+          <!-- TAB 7: USER ACTIVITY & DORMANCY REPORT (REP_USER_ACTIVITY) -->
+          <div id="tabContent-report-user-activity" class="hidden space-y-6 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-royal-800/60">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">User Activity, Dormancy &amp; FILEDBY Audit Report</h3>
+                    <span class="text-[11px] font-mono text-amber-600 dark:text-amber-400">REP_USER_ACTIVITY</span>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-royal-300">Per-user filing velocity, inactivity days, LUT account coverage, and FILEDBY reassignment audit.</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="exportUserActivityReportCsv()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer whitespace-nowrap">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span>Export CSV</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4-Card Summary Strip -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800">
+                <div class="text-[11px] font-medium text-slate-500 dark:text-royal-300">Total Portal Users</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repUserTotalCard" class="text-xl font-extrabold font-mono text-slate-900 dark:text-white">0</span>
+                  <span class="text-[11px] text-slate-400">UserData Registry</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                <div class="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">Active Filers (&le; 30 Days)</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repUserActiveCard" class="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">0</span>
+                  <span id="repUserActivePct" class="text-[11px] font-mono text-emerald-600/80 dark:text-emerald-400/80">0% active</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                <div class="text-[11px] font-medium text-amber-600 dark:text-amber-400">Dormant / Inactive (&gt; 30d)</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repUserDormantCard" class="text-xl font-extrabold font-mono text-amber-600 dark:text-amber-400">0</span>
+                  <span class="text-[11px] text-amber-600/80 dark:text-amber-400/80">Review FILEDBY</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                <div class="text-[11px] font-medium text-blue-600 dark:text-blue-400">LUT Accounts Assigned</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repUserAssignedCard" class="text-xl font-extrabold font-mono text-blue-600 dark:text-blue-400">0</span>
+                  <span id="repUserAssignedTotalLut" class="text-[11px] font-mono text-blue-600/80 dark:text-blue-400/80">of 0 LUT</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filters Bar -->
+            <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-2.5 bg-slate-50 dark:bg-royal-950/60 p-3 rounded-xl border border-slate-200 dark:border-royal-800">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input type="text" id="repUserSearchInput" oninput="toggleSearchClearBtn('repUserSearchInput','repUserSearchClearBtn'); renderUserActivityReport()" placeholder="Search user ID, username, name, site, or assigned LUT account..." class="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500/40" />
+                <button type="button" id="repUserSearchClearBtn" onclick="clearSearchInput('repUserSearchInput','repUserSearchClearBtn','renderUserActivityReport')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <select id="repUserActivityFilter" onchange="renderUserActivityReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-700 dark:text-neutral-200 cursor-pointer">
+                  <option value="All">All Activity States</option>
+                  <option value="Active">Active Filers (&le; 30d)</option>
+                  <option value="Dormant">Dormant (&gt; 30d / No Activity)</option>
+                  <option value="UnfiledLUT">Has Unfiled LUT Accounts</option>
+                  <option value="Suspended">Suspended / Locked Accounts</option>
+                </select>
+                <select id="repUserRoleFilter" onchange="renderUserActivityReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-700 dark:text-neutral-200 cursor-pointer">
+                  <option value="All">All Access Levels</option>
+                  <option value="Administrator">Administrator</option>
+                  <option value="Sub-Administrator">Sub-Administrator</option>
+                  <option value="Level 1">Level 1</option>
+                  <option value="Level 2">Level 2</option>
+                  <option value="Level 3">Level 3</option>
+                  <option value="Level 4">Level 4</option>
+                  <option value="Level 5">Level 5</option>
+                  <option value="Level 6">Level 6</option>
+                  <option value="Level 7">Level 7</option>
+                  <option value="Level 8">Level 8</option>
+                </select>
+                <select id="repUserMonthFilter" onchange="renderUserActivityReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-700 dark:text-neutral-200 cursor-pointer">
+                  <option value="All">RBP Period: All Months</option>
+                  <option value="January">RBP Month: January</option>
+                  <option value="February">RBP Month: February</option>
+                  <option value="March">RBP Month: March</option>
+                  <option value="April">RBP Month: April</option>
+                  <option value="May">RBP Month: May</option>
+                  <option value="June">RBP Month: June</option>
+                  <option value="July">RBP Month: July</option>
+                  <option value="August">RBP Month: August</option>
+                  <option value="September">RBP Month: September</option>
+                  <option value="October">RBP Month: October</option>
+                  <option value="November">RBP Month: November</option>
+                  <option value="December">RBP Month: December</option>
+                </select>
+                <span id="repUserCountBadge" class="text-xs font-mono text-slate-500 dark:text-neutral-400 px-1.5">0 users</span>
+              </div>
+            </div>
+
+            <!-- User Activity Table -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                  <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] font-semibold text-slate-600 dark:text-royal-300">
+                    <tr>
+                      <th class="py-3 px-4">User ID &amp; Name</th>
+                      <th class="py-3 px-4">Role &amp; Lifecycle</th>
+                      <th class="py-3 px-4">Assigned LUT (FILEDBY)</th>
+                      <th class="py-3 px-4 text-right">RBP Filings (Total · Paid · Pending)</th>
+                      <th class="py-3 px-4 text-right">Endorsements</th>
+                      <th class="py-3 px-4">Last Activity &amp; Dormancy</th>
+                      <th class="py-3 px-4 text-right">Audit Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="repUserTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 8: ACCOUNT PAYMENT HISTORY & DELAY REPORT (REP_ACCOUNT_HISTORY) -->
+          <div id="tabContent-report-account-history" class="hidden space-y-5 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/80 dark:border-royal-800/60">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-950/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Per-Account Payment History, 12-Month Matrix &amp; Delay Report</h3>
+                    <span class="text-[11px] font-mono text-teal-600 dark:text-teal-400">REP_ACCOUNT_HISTORY</span>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-royal-300">Click any Account Number to open its full 12-Month Payment History popup with Prev / Next account navigation &amp; individual CSV export.</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" id="repAcctSelectAllBtn" onclick="selectAllRepAcct()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-royal-900/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-700 dark:text-neutral-200 text-xs font-semibold transition-colors cursor-pointer">
+                  Select All
+                </button>
+                <button type="button" id="repAcctDeselectAllBtn" onclick="deselectAllRepAcct()" class="px-2.5 py-1.5 rounded-xl bg-slate-100 dark:bg-royal-900/60 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-700 dark:text-neutral-200 text-xs font-semibold transition-colors cursor-pointer">
+                  Deselect All
+                </button>
+                <button type="button" id="repAcctExportCsvBtn" onclick="exportAccountHistoryReportCsv()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold shadow-sm transition-colors cursor-pointer whitespace-nowrap">
+                  <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  <span id="repAcctExportBtnLabel">Export CSV Ledger</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- 4-Card Summary Strip -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800">
+                <div class="text-[11px] font-medium text-slate-500 dark:text-royal-300">Scoped Utility Accounts</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repAcctTotalCard" class="text-xl font-extrabold font-mono text-slate-900 dark:text-white">0</span>
+                  <span id="repAcctPeriodLabel" class="text-[11px] text-slate-400">Latest Period</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                <div class="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">Paid / Cheque Released</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repAcctPaidCard" class="text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">0</span>
+                  <span class="text-[11px] font-mono text-emerald-600/80 dark:text-emerald-400/80">Settled</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                <div class="text-[11px] font-medium text-blue-600 dark:text-blue-400">In-Progress Clearance</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repAcctInProgressCard" class="text-xl font-extrabold font-mono text-blue-600 dark:text-blue-400">0</span>
+                  <span class="text-[11px] text-blue-600/80 dark:text-blue-400/80">Pending / With RFP</span>
+                </div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                <div class="text-[11px] font-medium text-amber-600 dark:text-amber-400">Delayed / Unfiled Accounts</div>
+                <div class="mt-1 flex items-baseline justify-between">
+                  <span id="repAcctDelayedCard" class="text-xl font-extrabold font-mono text-amber-600 dark:text-amber-400">0</span>
+                  <span class="text-[11px] text-amber-600/80 dark:text-amber-400/80">Needs Attention</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Search & Active Status Bar -->
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 bg-slate-50 dark:bg-royal-950/60 p-3 rounded-xl border border-slate-200 dark:border-royal-800">
+              <div class="relative flex-1">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
+                <input type="text" id="repAcctSearchInput" oninput="toggleSearchClearBtn('repAcctSearchInput','repAcctSearchClearBtn'); renderAccountHistoryReport()" placeholder="Search account number, site, payee, filer name, REQ ID, RFP #, or CV #..." class="w-full pl-8 pr-7 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-teal-500/40" />
+                <button type="button" id="repAcctSearchClearBtn" onclick="clearSearchInput('repAcctSearchInput','repAcctSearchClearBtn','renderAccountHistoryReport')" class="hidden absolute right-2 top-1/2 -translate-y-1/2 px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" id="repAcctResetFiltersBtn" onclick="resetAccountHistoryFilters()" class="hidden px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-semibold cursor-pointer">
+                  Reset All Filters
+                </button>
+                <span id="repAcctCountBadge" class="text-xs font-mono text-slate-500 dark:text-neutral-400 px-1.5">0 accounts</span>
+              </div>
+            </div>
+
+            <!-- Per-Account History Table with Sorter & Filter Header -->
+            <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto max-h-[560px] overflow-y-auto custom-scrollbar">
+                <table class="w-full text-left text-xs">
+                  <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] font-semibold text-slate-600 dark:text-royal-300">
+                    <tr class="align-top">
+                      <th class="p-3 w-10 text-center">
+                        <input type="checkbox" id="repAcctMasterCheckbox" onchange="toggleSelectAllRepAcct(this.checked)" class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" title="Select All / Deselect All visible accounts" />
+                      </th>
+                      <th class="p-3 min-w-[165px]">
+                        <button type="button" onclick="toggleRepAcctSort('accountNumber')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer mb-1.5">
+                          <span>Account Number</span>
+                          <span id="repAcctSortIcon-accountNumber" class="ml-1 text-[10px] text-teal-600 dark:text-teal-400">▲</span>
+                        </button>
+                        <select id="repAcctUtilityFilter" onchange="renderAccountHistoryReport()" class="w-full px-2 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                          <option value="All">All Utilities</option>
+                          <option value="Power">Power</option>
+                          <option value="Water">Water</option>
+                        </select>
+                      </th>
+                      <th class="p-3 min-w-[205px]">
+                        <div class="flex items-center space-x-2 mb-1.5">
+                          <button type="button" onclick="toggleRepAcctSort('site')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer">
+                            <span>Site</span>
+                            <span id="repAcctSortIcon-site" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                          </button>
+                          <span class="text-slate-400">/</span>
+                          <button type="button" onclick="toggleRepAcctSort('payee')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer">
+                            <span>Payee</span>
+                            <span id="repAcctSortIcon-payee" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                          </button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-1">
+                          <select id="repAcctSiteFilter" onchange="renderAccountHistoryReport()" class="w-full px-1.5 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                            <option value="All">All Sites</option>
+                          </select>
+                          <select id="repAcctPayeeFilter" onchange="renderAccountHistoryReport()" class="w-full px-1.5 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                            <option value="All">All Payees</option>
+                          </select>
+                        </div>
+                      </th>
+                      <th class="p-3 min-w-[155px]">
+                        <button type="button" onclick="toggleRepAcctSort('filer')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer mb-1.5">
+                          <span>Assigned Filer</span>
+                          <span id="repAcctSortIcon-filer" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                        </button>
+                        <select id="repAcctFilerFilter" onchange="renderAccountHistoryReport()" class="w-full px-2 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                          <option value="All">All Filers</option>
+                        </select>
+                      </th>
+                      <th class="p-3 min-w-[245px]">
+                        <button type="button" onclick="toggleRepAcctSort('filingsCount')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer mb-1.5">
+                          <span>12-Month Matrix (Jan–Dec)</span>
+                          <span id="repAcctSortIcon-filingsCount" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                        </button>
+                        <select id="repAcctMonthFilter" onchange="renderAccountHistoryReport()" class="w-full px-2 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                          <option value="All">Focus Month: Latest Filing</option>
+                          <option value="January">Month: January</option>
+                          <option value="February">Month: February</option>
+                          <option value="March">Month: March</option>
+                          <option value="April">Month: April</option>
+                          <option value="May">Month: May</option>
+                          <option value="June">Month: June</option>
+                          <option value="July">Month: July</option>
+                          <option value="August">Month: August</option>
+                          <option value="September">Month: September</option>
+                          <option value="October">Month: October</option>
+                          <option value="November">Month: November</option>
+                          <option value="December">Month: December</option>
+                        </select>
+                      </th>
+                      <th class="p-3 min-w-[190px]">
+                        <button type="button" onclick="toggleRepAcctSort('status')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer mb-1.5">
+                          <span>Filing &amp; Voucher (RFP/CV)</span>
+                          <span id="repAcctSortIcon-status" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                        </button>
+                        <select id="repAcctDelayFilter" onchange="renderAccountHistoryReport()" class="w-full px-2 py-1 rounded-md bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-[11px] font-normal text-slate-700 dark:text-neutral-200 cursor-pointer">
+                          <option value="All">All Clearance States</option>
+                          <option value="Paid">Paid / Cheque Released</option>
+                          <option value="InProgress">In-Progress (Pending / RFP)</option>
+                          <option value="Delayed">Delayed / Past Due Date</option>
+                          <option value="Unfiled">Unfiled / Missing SOA</option>
+                        </select>
+                      </th>
+                      <th class="p-3 whitespace-nowrap">
+                        <button type="button" onclick="toggleRepAcctSort('delay')" class="inline-flex items-center font-bold text-slate-800 dark:text-neutral-100 hover:text-teal-600 dark:hover:text-teal-400 cursor-pointer">
+                          <span>Movement / Delay</span>
+                          <span id="repAcctSortIcon-delay" class="ml-1 text-[10px] text-slate-400">⇅</span>
+                        </button>
+                        <div class="text-[10px] font-normal text-slate-400 mt-1">Sort by Overdue</div>
+                      </th>
+                      <th class="p-3 text-right whitespace-nowrap">
+                        <span class="font-bold text-slate-800 dark:text-neutral-100">Action</span>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody id="repAcctTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
         </div>
 
       </div>
     </div>
 
   </main>
+
+  <!-- MODAL: ACCOUNT 12-MONTH PAYMENT HISTORY INSPECTOR (WITH PREV / NEXT ACCOUNT & CSV EXPORT) -->
+  <div id="accountMonthlyHistoryModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+    <div class="w-full max-w-5xl max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-[#161616] border border-slate-200 dark:border-[#2e2e2e] shadow-2xl overflow-hidden">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 px-5 py-4 bg-slate-50 dark:bg-[#1c1c1c] border-b border-slate-200 dark:border-[#262626]">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span id="acctHistModalAccNo" class="text-base sm:text-lg font-extrabold font-mono text-blue-600 dark:text-blue-400"></span>
+            <span id="acctHistModalUtilityBadge" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-teal-500/10 text-teal-600 dark:text-teal-400 border border-teal-500/20"></span>
+            <span id="acctHistModalSite" class="text-xs font-semibold text-slate-800 dark:text-neutral-200"></span>
+            <span class="text-slate-400">&middot;</span>
+            <span class="text-xs text-slate-600 dark:text-neutral-300">Payee: <strong id="acctHistModalPayee"></strong></span>
+          </div>
+          <p class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+            Assigned Filer: <strong id="acctHistModalFiler" class="text-slate-800 dark:text-neutral-200"></strong> &bull; <span id="acctHistModalTotalFilings">0 total historical filings</span>
+          </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="inline-flex items-center rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] p-0.5">
+            <button type="button" id="acctHistPrevBtn" onclick="navigateAccountHistoryModal(-1)" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 dark:text-neutral-200 hover:bg-slate-100 dark:hover:bg-[#222222] disabled:opacity-40 cursor-pointer" title="Previous Account in List">
+              <span>&larr; Prev</span>
+            </button>
+            <span id="acctHistNavCounter" class="px-2.5 text-[11px] font-mono text-slate-500 dark:text-neutral-400">1 / 1</span>
+            <button type="button" id="acctHistNextBtn" onclick="navigateAccountHistoryModal(1)" class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 dark:text-neutral-200 hover:bg-slate-100 dark:hover:bg-[#222222] disabled:opacity-40 cursor-pointer" title="Next Account in List">
+              <span>Next &rarr;</span>
+            </button>
+          </div>
+
+          <button type="button" onclick="exportSingleAccountMonthlyHistoryCsv()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white text-xs font-semibold shadow-xs cursor-pointer">
+            <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            <span>Export Account CSV</span>
+          </button>
+
+          <button type="button" onclick="closeAccountMonthlyHistoryModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-[#262626] cursor-pointer" title="Close Monthly History">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 px-5 pt-4">
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#262626]">
+          <div class="text-[11px] text-slate-500 dark:text-neutral-400">Months Filed (Jan–Dec)</div>
+          <div id="acctHistCardFiled" class="text-lg font-extrabold font-mono text-slate-900 dark:text-white mt-0.5">0 / 12</div>
+        </div>
+        <div class="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+          <div class="text-[11px] text-emerald-600 dark:text-emerald-400">Paid / Cheque Rel</div>
+          <div id="acctHistCardPaid" class="text-lg font-extrabold font-mono text-emerald-600 dark:text-emerald-400 mt-0.5">0 Settled</div>
+        </div>
+        <div class="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20">
+          <div class="text-[11px] text-blue-600 dark:text-blue-400">In-Progress</div>
+          <div id="acctHistCardInProg" class="text-lg font-extrabold font-mono text-blue-600 dark:text-blue-400 mt-0.5">0 Open</div>
+        </div>
+        <div class="p-3 rounded-xl bg-amber-500/5 border border-amber-500/20">
+          <div class="text-[11px] text-amber-600 dark:text-amber-400">Unfiled Months</div>
+          <div id="acctHistCardUnfiled" class="text-lg font-extrabold font-mono text-amber-600 dark:text-amber-400 mt-0.5">12 Unfiled</div>
+        </div>
+      </div>
+
+      <div class="flex-1 overflow-auto p-5">
+        <div class="rounded-xl border border-slate-200 dark:border-[#262626] overflow-hidden">
+          <table class="w-full text-left border-collapse text-xs">
+            <thead class="bg-slate-100 dark:bg-[#1c1c1c] border-b border-slate-200 dark:border-[#262626] text-slate-500 dark:text-neutral-400 font-semibold text-[11px]">
+              <tr>
+                <th class="p-3">Billing Month</th>
+                <th class="p-3">Status</th>
+                <th class="p-3">Request ID</th>
+                <th class="p-3">Payee</th>
+                <th class="p-3">Filed By</th>
+                <th class="p-3">Due Date</th>
+                <th class="p-3">Date Submitted</th>
+                <th class="p-3">Voucher (RFP / CV / Paid)</th>
+                <th class="p-3 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody id="acctHistModalTableBody" class="divide-y divide-slate-200 dark:divide-[#262626]"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: ADD / EDIT USER (ADMIN ONLY) -->
   <div id="userModal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
@@ -2680,6 +3157,15 @@ Submit and track your monthly utility payments directly through your account.</p
           </div>
         </div>
 
+        <div>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">
+            FILEDBY — Assigned Filer User ID (Col D)
+          </label>
+          <select id="accountInputFiledBy" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-semibold cursor-pointer">
+            <option value="">— Unassigned (Auto-detect on next RBP) —</option>
+          </select>
+        </div>
+
         <div class="flex items-center justify-end space-x-2 pt-3">
           <button type="button" onclick="toggleAddAccountModal(false)" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
             Cancel
@@ -2947,7 +3433,8 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // ACTION: Update Status
+    // ACTION: Update Status (Writes ONLY to Request Bill Payments Col M or New Bill Endorsement Col J;
+    // NEVER overwrites LUT_RBP_Status Col H because Col H uses a conditional IMPORTRANGE formula)
     if (data.action === 'updateStatus' &amp;&amp; data.requestId) {
       var isEnroll = String(data.requestId).indexOf('ENR-') === 0;
       var targetSheet = ss.getSheetByName(isEnroll ? 'New Bill Endorsement' : 'Request Bill Payments');
@@ -3008,7 +3495,7 @@ function doPost(e) {
     }
 
     // 1. SUBMISSION: Enroll New Utility Bill (ENR-...)
-    if (data.requestId &amp;&amp; String(data.requestId).indexOf('ENR-') === 0) {
+    if (!data.action &amp;&amp; data.requestId &amp;&amp; String(data.requestId).indexOf('ENR-') === 0) {
       var sheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(sheet);
 
@@ -3054,7 +3541,7 @@ function doPost(e) {
     }
 
     // 2. SUBMISSION: Request Bill Payment (REQ-...)
-    if (data.requestId &amp;&amp; String(data.requestId).indexOf('REQ-') === 0) {
+    if (!data.action &amp;&amp; data.requestId &amp;&amp; String(data.requestId).indexOf('REQ-') === 0) {
       var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
       ensurePaymentHeaders(paySheet);
 
@@ -3791,6 +4278,29 @@ function ensurePaymentHeaders(sheet) {
       const canViewAllOrGroupEnr = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL") || hasUserPermission(currentUser, "ES_VIEW_GROUP");
       const canManageUsers = isAdminOrSub || hasUserPermission(currentUser, "ADMIN_USER_MGMT");
       const canManageAccounts = isAdminOrSub || hasUserPermission(currentUser, "SUBADMIN_ACCT_MGMT");
+      const canViewUserActivityRep = isAdminOrSub || hasUserPermission(currentUser, "REP_USER_ACTIVITY");
+      const canViewAccountHistoryRep = isAdminOrSub || hasUserPermission(currentUser, "REP_ACCOUNT_HISTORY");
+
+      const reportsNavGroup = document.getElementById("reportsNavGroup");
+      const tabBtnRepUser = document.getElementById("tabBtn-report-user-activity");
+      const tabBtnRepAcct = document.getElementById("tabBtn-report-account-history");
+      if (reportsNavGroup) {
+        if (canViewUserActivityRep || canViewAccountHistoryRep) {
+          reportsNavGroup.classList.remove("hidden");
+          reportsNavGroup.classList.add("inline-flex");
+        } else {
+          reportsNavGroup.classList.add("hidden");
+          reportsNavGroup.classList.remove("inline-flex");
+        }
+      }
+      if (tabBtnRepUser) {
+        if (canViewUserActivityRep) tabBtnRepUser.classList.remove("hidden");
+        else tabBtnRepUser.classList.add("hidden");
+      }
+      if (tabBtnRepAcct) {
+        if (canViewAccountHistoryRep) tabBtnRepAcct.classList.remove("hidden");
+        else tabBtnRepAcct.classList.add("hidden");
+      }
 
       if (canViewAllOrGroupPay && adminPaymentScopeWrapper) {
         adminPaymentScopeWrapper.classList.remove("hidden");
@@ -3931,10 +4441,18 @@ function ensurePaymentHeaders(sheet) {
       updateAccessUI();
       if ((currentTab === "user-management" || currentTab === "account-management") && newRole !== "Administrator" && newRole !== "Sub-Administrator") {
         switchTab("overview");
+      } else if (currentTab === "report-user-activity" && !hasUserPermission(currentUser, "REP_USER_ACTIVITY") && newRole !== "Administrator" && newRole !== "Sub-Administrator") {
+        switchTab("overview");
+      } else if (currentTab === "report-account-history" && !hasUserPermission(currentUser, "REP_ACCOUNT_HISTORY") && newRole !== "Administrator" && newRole !== "Sub-Administrator") {
+        switchTab("overview");
       } else if (currentTab === "payment-status") {
         renderBillPaymentTable();
       } else if (currentTab === "enroll-status") {
         renderEnrollmentStatusTable();
+      } else if (currentTab === "report-user-activity") {
+        renderUserActivityReport();
+      } else if (currentTab === "report-account-history") {
+        renderAccountHistoryReport();
       }
     }
 
@@ -3944,8 +4462,14 @@ function ensurePaymentHeaders(sheet) {
       if ((tabId === "user-management" || tabId === "account-management") && !isAdminOrSub) {
         tabId = "overview";
       }
+      if (tabId === "report-user-activity" && !isAdminOrSub && !hasUserPermission(currentUser, "REP_USER_ACTIVITY")) {
+        tabId = "overview";
+      }
+      if (tabId === "report-account-history" && !isAdminOrSub && !hasUserPermission(currentUser, "REP_ACCOUNT_HISTORY")) {
+        tabId = "overview";
+      }
       currentTab = tabId;
-      const tabs = ["overview", "enroll-bill", "enroll-status", "request-payment", "payment-status", "user-management", "account-management"];
+      const tabs = ["overview", "enroll-bill", "enroll-status", "request-payment", "payment-status", "user-management", "account-management", "report-user-activity", "report-account-history"];
       
       tabs.forEach(t => {
         const content = document.getElementById("tabContent-" + t);
@@ -3955,7 +4479,7 @@ function ensurePaymentHeaders(sheet) {
           else content.classList.add("hidden");
         }
         if (btn) {
-          const isGroupedAction = (t === "request-payment" || t === "payment-status" || t === "enroll-bill" || t === "enroll-status" || t === "user-management" || t === "account-management");
+          const isGroupedAction = (t !== "overview");
           if (t === tabId) {
             btn.className = isGroupedAction
               ? "nav-action-btn nav-action-btn-active inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-royal-500 text-white font-semibold shadow-sm border border-royal-500"
@@ -3983,6 +4507,10 @@ function ensurePaymentHeaders(sheet) {
         renderUserManagementTable();
       } else if (tabId === "account-management") {
         renderAccountsManagementTable();
+      } else if (tabId === "report-user-activity") {
+        renderUserActivityReport();
+      } else if (tabId === "report-account-history") {
+        renderAccountHistoryReport();
       }
 
       updateAccessUI();
@@ -4321,6 +4849,15 @@ function ensurePaymentHeaders(sheet) {
             if (r.accountNumber) myAccounts.add(r.accountNumber.trim().toLowerCase());
           }
         });
+        billers.forEach(b => {
+          if (b.filedBy && currentUser && (
+            b.filedBy.trim().toLowerCase() === currentUser.userId.trim().toLowerCase() ||
+            b.filedBy.trim().toLowerCase() === currentUser.username.trim().toLowerCase()
+          )) {
+            if (b.site) mySites.add(b.site.trim().toLowerCase());
+            if (b.accountNumber) myAccounts.add(b.accountNumber.trim().toLowerCase());
+          }
+        });
         list = list.filter(r =>
           (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) ||
           (r.site && mySites.has(r.site.trim().toLowerCase())) ||
@@ -4419,19 +4956,31 @@ function ensurePaymentHeaders(sheet) {
               `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${canUpdateEnrStatus ? `
-                <select 
-                  onchange="updateEnrollmentStatus('${escapeHtml(item.requestId)}', this.value)" 
-                  class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-emerald-500"
-                >
-                  <option value="Pending" ${curStatus.toLowerCase() === "pending" ? "selected" : ""}>Pending</option>
-                  <option value="Under Review" ${curStatus.toLowerCase() === "under review" ? "selected" : ""}>Under Review</option>
-                  <option value="Approved" ${curStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
-                  <option value="Endorsed" ${curStatus.toLowerCase() === "endorsed" ? "selected" : ""}>Endorsed</option>
-                  <option value="Enrolled" ${curStatus.toLowerCase() === "enrolled" ? "selected" : ""}>Enrolled</option>
-                  <option value="Rejected" ${curStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
-                </select>
-              ` : `
+              ${canUpdateEnrStatus ? (() => {
+                const stagedEnrStatus = pendingTableEnrollStatusMap[item.requestId];
+                const displayEnrStatus = stagedEnrStatus !== undefined ? stagedEnrStatus : curStatus;
+                return `
+                  <div class="flex flex-col space-y-1">
+                    <select 
+                      onchange="stageTableEnrollStatusChange('${escapeHtml(item.requestId)}', this.value)" 
+                      class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border ${stagedEnrStatus !== undefined ? 'border-amber-500 ring-1 ring-amber-500' : 'border-slate-300 dark:border-[#2e2e2e]'} text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-emerald-500"
+                    >
+                      <option value="Pending" ${displayEnrStatus.toLowerCase() === "pending" ? "selected" : ""}>Pending</option>
+                      <option value="Under Review" ${displayEnrStatus.toLowerCase() === "under review" ? "selected" : ""}>Under Review</option>
+                      <option value="Approved" ${displayEnrStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
+                      <option value="Endorsed" ${displayEnrStatus.toLowerCase() === "endorsed" ? "selected" : ""}>Endorsed</option>
+                      <option value="Enrolled" ${displayEnrStatus.toLowerCase() === "enrolled" ? "selected" : ""}>Enrolled</option>
+                      <option value="Rejected" ${displayEnrStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
+                    </select>
+                    ${stagedEnrStatus !== undefined ? `
+                      <div class="flex items-center space-x-1">
+                        <button type="button" onclick="confirmTableEnrollStatusChange('${escapeHtml(item.requestId)}')" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[9px] font-bold uppercase cursor-pointer">Confirm</button>
+                        <button type="button" onclick="cancelTableEnrollStatusChange('${escapeHtml(item.requestId)}')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 text-[9px] font-bold uppercase cursor-pointer">Cancel</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              })() : `
                 <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
                   ${escapeHtml(curStatus)}
                 </span>
@@ -4625,6 +5174,55 @@ function ensurePaymentHeaders(sheet) {
       }
     }
 
+    let pendingTablePayStatusMap = {};
+    let pendingTableEnrollStatusMap = {};
+
+    function stageTableEnrollStatusChange(requestId, newStatus) {
+      const item = enrollmentRequests.find(x => x.requestId === requestId);
+      if (!item) return;
+      if ((item.status || "Pending").toLowerCase() === (newStatus || "").toLowerCase()) {
+        delete pendingTableEnrollStatusMap[requestId];
+      } else {
+        pendingTableEnrollStatusMap[requestId] = newStatus;
+      }
+      renderEnrollmentStatusTable();
+    }
+
+    function confirmTableEnrollStatusChange(requestId) {
+      const staged = pendingTableEnrollStatusMap[requestId];
+      if (!staged) return;
+      delete pendingTableEnrollStatusMap[requestId];
+      updateEnrollmentStatus(requestId, staged);
+    }
+
+    function cancelTableEnrollStatusChange(requestId) {
+      delete pendingTableEnrollStatusMap[requestId];
+      renderEnrollmentStatusTable();
+    }
+
+    function stageTablePayStatusChange(requestId, newStatus) {
+      const item = paymentRequests.find(x => x.requestId === requestId);
+      if (!item) return;
+      if ((item.status || "PENDING").toUpperCase() === (newStatus || "").toUpperCase()) {
+        delete pendingTablePayStatusMap[requestId];
+      } else {
+        pendingTablePayStatusMap[requestId] = newStatus;
+      }
+      renderBillPaymentTable();
+    }
+
+    function confirmTablePayStatusChange(requestId) {
+      const staged = pendingTablePayStatusMap[requestId];
+      if (!staged) return;
+      delete pendingTablePayStatusMap[requestId];
+      updatePaymentStatus(requestId, staged);
+    }
+
+    function cancelTablePayStatusChange(requestId) {
+      delete pendingTablePayStatusMap[requestId];
+      renderBillPaymentTable();
+    }
+
     // REQUIREMENT 4: PATTERN ENROLLMENT STATUS UPDATING TO BILL PAYMENT STATUS UPDATING
     function updateEnrollmentStatus(requestId, newStatus) {
       if (currentUser && normalizeLifecycleStatus(currentUser.status) === "SUSPENDED") {
@@ -4635,6 +5233,17 @@ function ensurePaymentHeaders(sheet) {
       if (!item) return;
       item.status = newStatus;
       localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+
+      // PLAN 4: Auto-promote Endorsed / Approved / Enrolled utility accounts into LUT (Billers)
+      const normSt = (newStatus || "").trim().toLowerCase();
+      if (normSt === "approved" || normSt === "endorsed" || normSt === "enrolled") {
+        upsertBillerFromActivity({
+          accountNumber: item.accountNumber,
+          site: item.site,
+          billerName: item.biller,
+          filedBy: item.userId
+        });
+      }
 
       // 1. Post to client-side Google Apps Script Web App (Webhook URL)
       if (ENROLLMENT_SCRIPT_URL && !ENROLLMENT_SCRIPT_URL.includes("APEC_ENROLLMENT_WEBHOOK_URL") && !ENROLLMENT_SCRIPT_URL.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE")) {
@@ -4656,6 +5265,7 @@ function ensurePaymentHeaders(sheet) {
       } catch (e) {}
 
       renderEnrollmentStatusTable();
+      if (currentTab === "account-management") renderAccountsManagementTable();
     }
 
     function updatePaymentStatus(requestId, newStatus) {
@@ -4689,6 +5299,7 @@ function ensurePaymentHeaders(sheet) {
       } catch (e) {}
 
       renderBillPaymentTable();
+      if (currentTab === "account-management") renderAccountsManagementTable();
     }
 
     // ========================================================
@@ -5013,6 +5624,15 @@ function ensurePaymentHeaders(sheet) {
         paymentRequests = [storedRecord, ...paymentRequests.filter(p => p.requestId !== reqId)];
         localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
 
+        // PLAN 4: Automatically link FILEDBY in LUT (Billers) to the submitting user
+        upsertBillerFromActivity({
+          accountNumber: rawAccount,
+          site: siteVal,
+          billerName: billerVal,
+          utilityType: billType,
+          filedBy: userId
+        });
+
         if (alertBox) {
           document.getElementById("billPaymentSuccessText").innerText = `Payment request registered with Request ID: ${reqId}. Formatted account: ${formattedAcc}.`;
           alertBox.classList.remove("hidden");
@@ -5086,6 +5706,15 @@ function ensurePaymentHeaders(sheet) {
           if (r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase()) {
             if (r.site) mySites.add(r.site.trim().toLowerCase());
             if (r.accountNumber) myAccounts.add(r.accountNumber.trim().toLowerCase());
+          }
+        });
+        billers.forEach(b => {
+          if (b.filedBy && currentUser && (
+            b.filedBy.trim().toLowerCase() === currentUser.userId.trim().toLowerCase() ||
+            b.filedBy.trim().toLowerCase() === currentUser.username.trim().toLowerCase()
+          )) {
+            if (b.site) mySites.add(b.site.trim().toLowerCase());
+            if (b.accountNumber) myAccounts.add(b.accountNumber.trim().toLowerCase());
           }
         });
         list = list.filter(r =>
@@ -5208,27 +5837,47 @@ function ensurePaymentHeaders(sheet) {
               `}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
-              ${canUpdatePayStatus ? `
-                <select 
-                  onchange="updatePaymentStatus('${escapeHtml(item.requestId)}', this.value)" 
-                  class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border border-slate-300 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-blue-500"
-                >
-                  <option value="PENDING" ${curStatus === "PENDING" ? "selected" : ""}>PENDING</option>
-                  <option value="UNDER REVIEW" ${curStatus === "UNDER REVIEW" ? "selected" : ""}>UNDER REVIEW</option>
-                  <option value="APPROVED" ${curStatus === "APPROVED" ? "selected" : ""}>APPROVED</option>
-                  <option value="WITH RFP" ${curStatus === "WITH RFP" ? "selected" : ""}>WITH RFP</option>
-                  <option value="CHEQUE REL" ${curStatus === "CHEQUE REL" ? "selected" : ""}>CHEQUE REL</option>
-                  <option value="PAID" ${curStatus === "PAID" ? "selected" : ""}>PAID</option>
-                  <option value="DUPLICATE" ${curStatus === "DUPLICATE" ? "selected" : ""}>DUPLICATE</option>
-                  <option value="BLURRED" ${curStatus === "BLURRED" ? "selected" : ""}>BLURRED</option>
-                  <option value="CANCEL" ${curStatus === "CANCEL" ? "selected" : ""}>CANCEL</option>
-                  <option value="REJECTED" ${curStatus === "REJECTED" ? "selected" : ""}>REJECTED</option>
-                </select>
-              ` : `
+              ${canUpdatePayStatus ? (() => {
+                const stagedPayStatus = pendingTablePayStatusMap[item.requestId];
+                const displayPayStatus = (stagedPayStatus !== undefined ? stagedPayStatus : curStatus).toUpperCase();
+                return `
+                  <div class="flex flex-col space-y-1">
+                    <select 
+                      onchange="stageTablePayStatusChange('${escapeHtml(item.requestId)}', this.value)" 
+                      class="text-[11px] font-bold uppercase rounded-lg px-2 py-1 bg-white dark:bg-[#161616] border ${stagedPayStatus !== undefined ? 'border-amber-500 ring-1 ring-amber-500' : 'border-slate-300 dark:border-[#2e2e2e]'} text-slate-800 dark:text-neutral-200 cursor-pointer focus:ring-1 focus:ring-blue-500"
+                    >
+                      <option value="PENDING" ${displayPayStatus === "PENDING" ? "selected" : ""}>PENDING</option>
+                      <option value="UNDER REVIEW" ${displayPayStatus === "UNDER REVIEW" ? "selected" : ""}>UNDER REVIEW</option>
+                      <option value="APPROVED" ${displayPayStatus === "APPROVED" ? "selected" : ""}>APPROVED</option>
+                      <option value="WITH RFP" ${displayPayStatus === "WITH RFP" ? "selected" : ""}>WITH RFP</option>
+                      <option value="CHEQUE REL" ${displayPayStatus === "CHEQUE REL" ? "selected" : ""}>CHEQUE REL</option>
+                      <option value="PAID" ${displayPayStatus === "PAID" ? "selected" : ""}>PAID</option>
+                      <option value="DUPLICATE" ${displayPayStatus === "DUPLICATE" ? "selected" : ""}>DUPLICATE</option>
+                      <option value="BLURRED" ${displayPayStatus === "BLURRED" ? "selected" : ""}>BLURRED</option>
+                      <option value="CANCEL" ${displayPayStatus === "CANCEL" ? "selected" : ""}>CANCEL</option>
+                      <option value="REJECTED" ${displayPayStatus === "REJECTED" ? "selected" : ""}>REJECTED</option>
+                    </select>
+                    ${stagedPayStatus !== undefined ? `
+                      <div class="flex items-center space-x-1">
+                        <button type="button" onclick="confirmTablePayStatusChange('${escapeHtml(item.requestId)}')" class="px-2 py-0.5 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-[9px] font-bold uppercase cursor-pointer">Confirm</button>
+                        <button type="button" onclick="cancelTablePayStatusChange('${escapeHtml(item.requestId)}')" class="px-2 py-0.5 rounded bg-slate-200 dark:bg-neutral-800 text-slate-700 dark:text-neutral-300 text-[9px] font-bold uppercase cursor-pointer">Cancel</button>
+                      </div>
+                    ` : ''}
+                  </div>
+                `;
+              })() : `
                 <span class="inline-block px-2.5 py-1 rounded text-[11px] font-bold uppercase tracking-wider ${getStatusBadgeStyle(curStatus)}">
                   ${escapeHtml(curStatus)}
                 </span>
               `}
+              ${(item.lutStatusSynced || item.rfp || item.cv || item.payDate) ? `
+                <div class="mt-1 flex flex-wrap items-center gap-1">
+                  ${item.lutStatusSynced ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" title="Synced from LUT_RBP_Status Col H">LUT Synced</span>` : ''}
+                  ${item.rfp ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">RFP: ${escapeHtml(item.rfp)}</span>` : ''}
+                  ${item.cv ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">CV: ${escapeHtml(item.cv)}</span>` : ''}
+                  ${item.payDate ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400">Paid: ${escapeHtml(item.payDate)}</span>` : ''}
+                </div>
+              ` : ''}
             </td>
           </tr>
         `;
@@ -5626,10 +6275,17 @@ function ensurePaymentHeaders(sheet) {
     function commitPaymentBillingEdit() {
       const reqId = document.getElementById("editPayReqId").value;
       if (!reqId) return;
+      const rawAccInput = document.getElementById("editPayAccountNo").value.trim();
+      const siteVal = document.getElementById("editPaySite").value.trim();
+      const billerVal = document.getElementById("editPayBiller").value.trim();
+      const rawAcc = rawAccInput.split("_")[0].trim();
+      const formattedAccountNo = (rawAcc && siteVal && billerVal)
+        ? `${rawAcc}_${siteVal}_${billerVal}`
+        : rawAccInput;
       const updates = {
-        accountNumber: document.getElementById("editPayAccountNo").value.trim(),
-        site: document.getElementById("editPaySite").value.trim(),
-        biller: document.getElementById("editPayBiller").value.trim(),
+        accountNumber: formattedAccountNo,
+        site: siteVal,
+        biller: billerVal,
         billMonth: document.getElementById("editPayMonth").value,
         billType: document.getElementById("editPayType").value,
         dueDate: document.getElementById("editPayDueDate").value.trim(),
@@ -5640,17 +6296,14 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_payment_edits_v1", JSON.stringify(paymentEditsOverrides));
       paymentRequests = paymentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
       localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
+      // CRITICAL: Dispatch ONLY to USER_SCRIPT_URL (which handles `updateBillingDetails` in place).
+      // NEVER dispatch `updateBillingDetails` to PAYMENT_SCRIPT_URL (Approver's script), because the Approver's
+      // un-redeployed script does not recognize `updateBillingDetails` and falls through to `appendRow`!
       const targetUserWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+      let webhookDispatched = false;
       if (targetUserWebhook) {
+        webhookDispatched = true;
         fetch(targetUserWebhook, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "updateBillingDetails", requestId: reqId, ...updates })
-        }).catch(() => {});
-      }
-      if (PAYMENT_SCRIPT_URL && PAYMENT_SCRIPT_URL !== targetUserWebhook) {
-        fetch(PAYMENT_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -5660,7 +6313,7 @@ function ensurePaymentHeaders(sheet) {
       fetch("/api/bill-payment/update-details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId: reqId, updates })
+        body: JSON.stringify({ requestId: reqId, webhookDispatched, ...updates })
       }).catch(() => {});
       isPayEditUnlocked = false;
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
@@ -5668,7 +6321,7 @@ function ensurePaymentHeaders(sheet) {
       updatePayEditLockUI(canEditPayBilling);
       document.getElementById("editPayConfirmBanner")?.classList.add("hidden");
       document.getElementById("editPayActionRow")?.classList.remove("hidden");
-      showEditPayToast("Billing details committed and synced!");
+      showEditPayToast("Billing details updated in place and synced!");
       renderBillPaymentTable();
     }
 
@@ -5872,17 +6525,14 @@ function ensurePaymentHeaders(sheet) {
       localStorage.setItem("apechomes_enrollment_edits_v1", JSON.stringify(enrollmentEditsOverrides));
       enrollmentRequests = enrollmentRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
       localStorage.setItem("apechomes_enrollments_requests", JSON.stringify(enrollmentRequests));
+      // CRITICAL: Dispatch ONLY to USER_SCRIPT_URL (which handles `updateEnrollmentDetails` in place).
+      // NEVER dispatch `updateEnrollmentDetails` to ENROLLMENT_SCRIPT_URL (Approver's script), because the Approver's
+      // un-redeployed script does not recognize `updateEnrollmentDetails` and falls through to `appendRow`!
       const targetUserWebhook = USER_SCRIPT_URL || DEFAULT_USER_SCRIPT_URL;
+      let webhookDispatched = false;
       if (targetUserWebhook) {
+        webhookDispatched = true;
         fetch(targetUserWebhook, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: "updateEnrollmentDetails", requestId: reqId, ...updates })
-        }).catch(() => {});
-      }
-      if (ENROLLMENT_SCRIPT_URL && ENROLLMENT_SCRIPT_URL !== targetUserWebhook) {
-        fetch(ENROLLMENT_SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "text/plain;charset=utf-8" },
@@ -5892,7 +6542,7 @@ function ensurePaymentHeaders(sheet) {
       fetch("/api/enrollments/update-details", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ requestId: reqId, updates })
+        body: JSON.stringify({ requestId: reqId, webhookDispatched, ...updates })
       }).catch(() => {});
       isEnrollEditUnlocked = false;
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
@@ -5900,11 +6550,12 @@ function ensurePaymentHeaders(sheet) {
       updateEnrollEditLockUI(canEditEnrDetails);
       document.getElementById("editEnrollConfirmBanner")?.classList.add("hidden");
       document.getElementById("editEnrollActionRow")?.classList.remove("hidden");
-      showEditEnrollToast("Endorsement details committed and synced!");
+      showEditEnrollToast("Endorsement details updated in place and synced!");
       renderEnrollmentStatusTable();
     }
 
-    // REQUIREMENT 3: AUTHORITATIVE LIVE GOOGLE SHEET SYNC (DELETED ENTRIES ARE REMOVED)
+    // REQUIREMENT 3 & PLAN-LUT-RBP-SYNC: AUTHORITATIVE LIVE GOOGLE SHEET SYNC
+    // Fetches 'Request Bill Payments' AND 'LUT_RBP_Status' (Col H Status, Col I RFP, Col J CV, Col K Pay Date)
     async function syncLivePaymentRequestsFromGSheet(isManual = false) {
       const btn = document.getElementById("refreshLiveStatusBtn");
       const icon = document.getElementById("refreshLiveStatusIcon");
@@ -5914,10 +6565,54 @@ function ensurePaymentHeaders(sheet) {
 
       let synced = false;
 
-      // 1. Direct GViz query
+      // 1. Direct GViz query ('Request Bill Payments' + 'LUT_RBP_Status' in parallel)
       try {
         const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("Request Bill Payments")}`;
-        const res = await fetch(gvizUrl);
+        const lutUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&headers=1&sheet=${encodeURIComponent("LUT_RBP_Status")}`;
+        const [res, lutRes] = await Promise.all([
+          fetch(gvizUrl),
+          fetch(lutUrl).catch(() => null)
+        ]);
+
+        const lutMap = {};
+        if (lutRes && lutRes.ok) {
+          try {
+            const lutText = await lutRes.text();
+            const lutMatch = lutText.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+            if (lutMatch && lutMatch[1]) {
+              const lutData = JSON.parse(lutMatch[1]);
+              const lutRows = lutData.table?.rows;
+              if (Array.isArray(lutRows)) {
+                for (const lr of lutRows) {
+                  const lc = lr?.c;
+                  if (!lc) continue;
+                  const lReqId = lc[0]?.v ? String(lc[0].v).trim() : "";
+                  if (!lReqId || !lReqId.toUpperCase().startsWith("REQ-")) continue;
+                  const rawLutSt = lc[7]?.f || (lc[7]?.v ? String(lc[7].v) : "");
+                  const cleanSt = String(rawLutSt).trim().toUpperCase();
+                  const lStatus = (
+                    !cleanSt ||
+                    cleanSt.startsWith("#") ||
+                    cleanSt === "-" ||
+                    cleanSt === "—" ||
+                    cleanSt === "N/A" ||
+                    cleanSt === "NONE" ||
+                    cleanSt === "NULL" ||
+                    cleanSt === "LOADING..." ||
+                    cleanSt === "STATUS"
+                  ) ? "" : cleanSt;
+                  const lRfp = lc[8]?.f || (lc[8]?.v ? String(lc[8].v).trim() : "");
+                  const lCv = lc[9]?.f || (lc[9]?.v ? String(lc[9].v).trim() : "");
+                  const lPayDate = lc[10]?.f || (lc[10]?.v ? String(lc[10].v).trim() : "");
+                  if (lStatus || lRfp || lCv || lPayDate) {
+                    lutMap[lReqId] = { status: lStatus, rfp: lRfp, cv: lCv, payDate: lPayDate };
+                  }
+                }
+              }
+            }
+          } catch (lutErr) {}
+        }
+
         if (res.ok) {
           const text = await res.text();
           const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
@@ -5925,15 +6620,60 @@ function ensurePaymentHeaders(sheet) {
             const data = JSON.parse(match[1]);
             const rows = data.table?.rows;
             if (Array.isArray(rows)) {
-              const remoteList = [];
+              const byId = new Map();
               for (const r of rows) {
                 const c = r?.c;
                 if (!c) continue;
                 const reqId = c[0]?.v ? String(c[0].v).trim() : "";
                 if (!reqId || reqId.toLowerCase() === "request id") continue;
-                remoteList.push({
+                const col10 = c[10]?.v ? String(c[10].v).trim() : "";
+                const col11 = c[11]?.v ? String(c[11].v).trim() : "";
+                const isNoFileDuplicate = col10.toLowerCase() === "no file attached" && col11.toLowerCase() === "no file attached";
+                const rbpStatus = (c[12]?.v ? String(c[12].v).trim() : "PENDING").toUpperCase();
+                const lutEntry = lutMap[reqId];
+                const effectiveStatus = (lutEntry && lutEntry.status) ? lutEntry.status : rbpStatus;
+
+                // Auto-writeback: if LUT_RBP_Status Col H has a newer/different status than Request Bill Payments Col M,
+                // sync it back to Request Bill Payments Col M automatically
+                if (lutEntry && lutEntry.status && lutEntry.status !== rbpStatus) {
+                  const syncKey = `lut_rbp_synced_${reqId}_${lutEntry.status}`;
+                  if (!sessionStorage.getItem(syncKey)) {
+                    sessionStorage.setItem(syncKey, "1");
+                    if (PAYMENT_SCRIPT_URL && !PAYMENT_SCRIPT_URL.includes("YOUR_PAYMENT_SCRIPT_URL_HERE")) {
+                      fetch(PAYMENT_SCRIPT_URL, {
+                        method: "POST",
+                        mode: "no-cors",
+                        headers: { "Content-Type": "text/plain;charset=utf-8" },
+                        body: JSON.stringify({ action: "updateStatus", requestId: reqId, status: lutEntry.status })
+                      }).catch(() => {});
+                    }
+                    fetch("/api/bill-payment/update-status", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ requestId: reqId, status: lutEntry.status })
+                    }).catch(() => {});
+                  }
+                }
+
+                const existing = byId.get(reqId);
+                if (existing && isNoFileDuplicate) {
+                  byId.set(reqId, {
+                    ...existing,
+                    requestorName: (c[2]?.v ? String(c[2].v).trim() : "") || existing.requestorName,
+                    viberNumber: (c[3]?.v ? String(c[3].v).trim() : "") || existing.viberNumber,
+                    billMonth: (c[4]?.v ? String(c[4].v).trim() : "") || existing.billMonth,
+                    billType: (c[5]?.v ? String(c[5].v).trim() : "") || existing.billType,
+                    dueDate: c[6]?.f || (c[6]?.v ? String(c[6].v).trim() : "") || existing.dueDate,
+                    site: (c[7]?.v ? String(c[7].v).trim() : "") || existing.site,
+                    biller: (c[8]?.v ? String(c[8].v).trim() : "") || existing.biller,
+                    accountNumber: (c[9]?.v ? String(c[9].v).trim() : "") || existing.accountNumber
+                  });
+                  continue;
+                }
+
+                byId.set(reqId, {
                   requestId: reqId,
-                  userId: c[1]?.v ? String(c[1].v).trim() : "",
+                  userId: (c[1]?.v ? String(c[1].v).trim() : "") || existing?.userId || "",
                   requestorName: c[2]?.v ? String(c[2].v).trim() : "",
                   viberNumber: c[3]?.v ? String(c[3].v).trim() : "",
                   billMonth: c[4]?.v ? String(c[4].v).trim() : "",
@@ -5942,20 +6682,24 @@ function ensurePaymentHeaders(sheet) {
                   site: c[7]?.v ? String(c[7].v).trim() : "",
                   biller: c[8]?.v ? String(c[8].v).trim() : "",
                   accountNumber: c[9]?.v ? String(c[9].v).trim() : "",
-                  fileName: (c[10]?.v && !String(c[10].v).trim().startsWith("http")) ? String(c[10].v).trim() : "View Uploaded Bill",
-                  fileUrl: (c[11]?.v && String(c[11].v).trim().startsWith("http"))
-                    ? String(c[11].v).trim()
-                    : ((c[10]?.v && String(c[10].v).trim().startsWith("http"))
-                        ? String(c[10].v).trim()
+                  fileName: (col10 && !col10.startsWith("http")) ? col10 : (existing?.fileName || "View Uploaded Bill"),
+                  fileUrl: (col11 && col11.startsWith("http"))
+                    ? col11
+                    : ((col10 && col10.startsWith("http"))
+                        ? col10
                         : `https://drive.google.com/drive/folders/${GDRIVE_FOLDER_ID}`),
-                  status: (c[12]?.v ? String(c[12].v).trim() : "PENDING").toUpperCase(),
-                  submittedAt: c[13]?.f || (c[13]?.v ? String(c[13].v).trim() : new Date().toISOString())
+                  status: effectiveStatus,
+                  submittedAt: c[13]?.f || (c[13]?.v ? String(c[13].v).trim() : new Date().toISOString()),
+                  rfp: lutEntry?.rfp || "",
+                  cv: lutEntry?.cv || "",
+                  payDate: lutEntry?.payDate || "",
+                  lutStatusSynced: Boolean(lutEntry?.status)
                 });
               }
 
               // AUTHORITATIVE OVERWRITE: Google Sheet rows replace local state!
               // Deleted entries in Google Sheet are purged immediately!
-              paymentRequests = remoteList;
+              paymentRequests = Array.from(byId.values());
               localStorage.setItem("apechomes_bill_payment_requests", JSON.stringify(paymentRequests));
               synced = true;
             }
@@ -5981,6 +6725,7 @@ function ensurePaymentHeaders(sheet) {
       }
 
       renderBillPaymentTable();
+      if (currentTab === "account-management") renderAccountsManagementTable();
       const timeStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
       if (timeElem) timeElem.innerText = `Live GSheet: Synced at ${timeStr}`;
       if (isManual && icon) setTimeout(() => icon.classList.remove("animate-spin"), 400);
@@ -6513,20 +7258,186 @@ function ensurePaymentHeaders(sheet) {
     }
 
     // ========================================================
-    // TAB 7: ACCOUNT NUMBER MANAGEMENT (BILLERS CATALOG)
+    // TAB 7: ACCOUNT NUMBER MANAGEMENT (LUT / BILLERS CATALOG)
     // ========================================================
+    const BILLER_FILEDBY_OVERRIDES_KEY = "apechomes_biller_filedby_v1";
+
+    function normalizeRawAccountKey(acc) {
+      return String(acc || "").replace(/^ACC[-_:\s]*/i, "").replace(/[\s-]/g, "").trim().toLowerCase();
+    }
+
+    function getBillerFiledByOverrides() {
+      try {
+        const raw = localStorage.getItem(BILLER_FILEDBY_OVERRIDES_KEY);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function saveBillerFiledByOverride(accountNumber, filedBy) {
+      const key = normalizeRawAccountKey(accountNumber);
+      if (!key) return;
+      const map = getBillerFiledByOverrides();
+      map[key] = (filedBy || "").trim();
+      localStorage.setItem(BILLER_FILEDBY_OVERRIDES_KEY, JSON.stringify(map));
+
+      const idx = billers.findIndex(b => normalizeRawAccountKey(b.accountNumber) === key);
+      if (idx !== -1) {
+        billers[idx].filedBy = (filedBy || "").trim();
+        billers[idx].lastUpdated = new Date().toISOString().slice(0, 10);
+        localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      }
+      fetch("/api/billers/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ billers })
+      }).catch(() => {});
+    }
+
+    function upsertBillerFromActivity(params) {
+      const rawAcc = String(params.accountNumber || "").replace(/^ACC[-_:\s]*/i, "").trim();
+      const key = normalizeRawAccountKey(rawAcc);
+      if (!key) return;
+
+      const today = new Date().toISOString().slice(0, 10);
+      const isWater = /water|sinukuan|district|laguna/i.test(params.billerName || "");
+      const inferredType = params.utilityType || (isWater ? "Water" : "Power");
+      const filedByClean = (params.filedBy || "").trim();
+
+      if (filedByClean) {
+        const map = getBillerFiledByOverrides();
+        map[key] = filedByClean;
+        localStorage.setItem(BILLER_FILEDBY_OVERRIDES_KEY, JSON.stringify(map));
+      }
+
+      const idx = billers.findIndex(b => normalizeRawAccountKey(b.accountNumber) === key);
+      if (idx >= 0) {
+        billers[idx] = {
+          ...billers[idx],
+          site: params.site || billers[idx].site,
+          billerName: params.billerName || billers[idx].billerName,
+          utilityType: inferredType,
+          filedBy: filedByClean || billers[idx].filedBy || "",
+          lastUpdated: today
+        };
+      } else {
+        billers.unshift({
+          billerId: `BIL-${String(billers.length + 1).padStart(3, "0")}`,
+          accountNumber: rawAcc,
+          site: params.site || "General Site",
+          billerName: params.billerName || "Utility Provider",
+          utilityType: inferredType,
+          status: "Active",
+          lastUpdated: today,
+          filedBy: filedByClean
+        });
+      }
+
+      localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      fetch("/api/billers/save", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ billers })
+      }).catch(() => {});
+      renderAccountDropdown();
+    }
+
+    function buildLutRbpLookupMap(monthFilter) {
+      const map = new Map();
+      const mf = (monthFilter || "All").trim().toLowerCase();
+      for (const req of paymentRequests) {
+        const merged = paymentEditsOverrides[req.requestId] ? { ...req, ...paymentEditsOverrides[req.requestId] } : req;
+        if (mf !== "all" && (merged.billMonth || "").trim().toLowerCase() !== mf) continue;
+        const key = normalizeRawAccountKey(merged.accountNumber);
+        if (!key) continue;
+        if (!map.has(key)) {
+          map.set(key, merged);
+        }
+      }
+      return map;
+    }
+
+    function assignAccountFiledByInline(accNo, newFiledBy) {
+      saveBillerFiledByOverride(accNo, newFiledBy);
+      renderAccountsManagementTable();
+    }
+
+    function quickFileRbpForAccount(accNo, site, biller, utilityType) {
+      switchTab("request-payment");
+      setTimeout(() => {
+        const typeSelect = document.getElementById("billReqType");
+        if (typeSelect && utilityType) typeSelect.value = utilityType;
+        selectAccountItem(accNo, site, biller);
+      }, 60);
+    }
+
     function renderAccountsManagementTable() {
       const tbody = document.getElementById("accountsTableBody");
       const countBadge = document.getElementById("accountsCountBadge");
       const searchInput = document.getElementById("accountSearchInput");
       const typeFilter = document.getElementById("accountTypeFilter");
       const statusFilter = document.getElementById("accountStatusFilter");
+      const monthFilterEl = document.getElementById("accountRbpMonthFilter");
+      const coverageFilterEl = document.getElementById("accountRbpCoverageFilter");
 
       if (!tbody) return;
 
       const q = (searchInput?.value || "").toLowerCase().trim();
       const type = typeFilter ? typeFilter.value : "All";
       const status = statusFilter ? statusFilter.value : "All";
+      const rbpMonth = monthFilterEl ? monthFilterEl.value : "All";
+      const rbpCoverage = coverageFilterEl ? coverageFilterEl.value : "All";
+
+      const overrides = getBillerFiledByOverrides();
+      const rbpMap = buildLutRbpLookupMap(rbpMonth);
+      const allRbpMap = buildLutRbpLookupMap("All");
+
+      // Enrich billers with FILEDBY overrides or inferred filer from RBP / Endorsements
+      billers = billers.map(b => {
+        const key = normalizeRawAccountKey(b.accountNumber);
+        let filedBy = overrides[key] !== undefined ? overrides[key] : (b.filedBy || "");
+        if (!filedBy) {
+          const latestRbp = allRbpMap.get(key);
+          if (latestRbp?.userId) filedBy = latestRbp.userId;
+        }
+        if (!filedBy) {
+          const enr = enrollmentRequests.find(e => normalizeRawAccountKey(e.accountNumber) === key && e.userId);
+          if (enr?.userId) filedBy = enr.userId;
+        }
+        return { ...b, filedBy };
+      });
+
+      // Compute LUT <-> RBP Reconciliation Summary Counts
+      let activeCount = 0;
+      let filedCount = 0;
+      let unfiledCount = 0;
+      let paidCount = 0;
+      for (const b of billers) {
+        if (b.status !== "Inactive") activeCount++;
+        const rbp = rbpMap.get(normalizeRawAccountKey(b.accountNumber));
+        if (rbp) {
+          filedCount++;
+          const st = (rbp.status || "PENDING").toUpperCase();
+          if (st === "PAID" || st === "CHEQUE REL") paidCount++;
+        } else {
+          unfiledCount++;
+        }
+      }
+
+      const totalEl = document.getElementById("lutTotalCount");
+      const activeSubEl = document.getElementById("lutActiveSubCount");
+      const filedEl = document.getElementById("lutFiledCount");
+      const filedScopeEl = document.getElementById("lutFiledScopeLabel");
+      const unfiledEl = document.getElementById("lutUnfiledCount");
+      const paidEl = document.getElementById("lutPaidCount");
+
+      if (totalEl) totalEl.innerText = String(billers.length);
+      if (activeSubEl) activeSubEl.innerText = `${activeCount} Active`;
+      if (filedEl) filedEl.innerText = String(filedCount);
+      if (filedScopeEl) filedScopeEl.innerText = rbpMonth === "All" ? "All Months" : rbpMonth;
+      if (unfiledEl) unfiledEl.innerText = String(unfiledCount);
+      if (paidEl) paidEl.innerText = String(paidCount);
 
       let list = [...billers];
 
@@ -6536,11 +7447,29 @@ function ensurePaymentHeaders(sheet) {
       if (status && status !== "All") {
         list = list.filter(b => (b.status || "").toLowerCase() === status.toLowerCase());
       }
+      if (rbpCoverage && rbpCoverage !== "All") {
+        list = list.filter(b => {
+          const rbp = rbpMap.get(normalizeRawAccountKey(b.accountNumber));
+          if (rbpCoverage === "Filed") return Boolean(rbp);
+          if (rbpCoverage === "Unfiled") return !rbp;
+          if (rbpCoverage === "Paid") {
+            const st = (rbp?.status || "").toUpperCase();
+            return st === "PAID" || st === "CHEQUE REL";
+          }
+          if (rbpCoverage === "Pending") {
+            if (!rbp) return false;
+            const st = (rbp.status || "PENDING").toUpperCase();
+            return st !== "PAID" && st !== "CHEQUE REL";
+          }
+          return true;
+        });
+      }
       if (q) {
         list = list.filter(b => 
           (b.accountNumber || "").toLowerCase().includes(q) ||
           (b.site || "").toLowerCase().includes(q) ||
-          (b.billerName || "").toLowerCase().includes(q)
+          (b.billerName || "").toLowerCase().includes(q) ||
+          (b.filedBy || "").toLowerCase().includes(q)
         );
       }
 
@@ -6551,16 +7480,38 @@ function ensurePaymentHeaders(sheet) {
       if (list.length === 0) {
         tbody.innerHTML = `
           <tr>
-            <td colspan="7" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
-              No account records match your search criteria.
+            <td colspan="8" class="py-10 text-center text-slate-400 dark:text-neutral-500 italic">
+              No LUT account records match your search and RBP reconciliation criteria.
             </td>
           </tr>
         `;
         return;
       }
 
+      const canManageAcc = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator" || hasUserPermission(currentUser, "ACC_MANAGE")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+
       tbody.innerHTML = list.slice(0, 200).map(b => {
         const isActive = b.status !== "Inactive";
+        const key = normalizeRawAccountKey(b.accountNumber);
+        const rbp = rbpMap.get(key);
+        const filedByVal = b.filedBy || "";
+        const matchedFiler = userDatabase.find(u =>
+          (u.userId && u.userId.toLowerCase() === filedByVal.toLowerCase()) ||
+          (u.username && u.username.toLowerCase() === filedByVal.toLowerCase())
+        );
+        const filerDisplay = matchedFiler
+          ? `${matchedFiler.userId} (${matchedFiler.firstName || matchedFiler.username})`
+          : (filedByVal || "Unassigned");
+
+        const userOptionsHtml = [
+          `<option value="">— Unassigned —</option>`,
+          ...userDatabase.map(u => {
+            const label = `${u.userId} — ${u.firstName || ""} ${u.lastName || ""}`.trim();
+            const isSel = filedByVal && (u.userId.toLowerCase() === filedByVal.toLowerCase() || u.username.toLowerCase() === filedByVal.toLowerCase());
+            return `<option value="${escapeHtml(u.userId)}" ${isSel ? "selected" : ""}>${escapeHtml(label)}</option>`;
+          })
+        ].join("");
+
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
             <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
@@ -6573,6 +7524,50 @@ function ensurePaymentHeaders(sheet) {
               ${escapeHtml(b.billerName)}
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
+              ${canManageAcc ? `
+                <select
+                  onchange="assignAccountFiledByInline('${escapeHtml(b.accountNumber)}', this.value)"
+                  class="px-2 py-1 rounded-lg text-[11px] font-mono font-semibold bg-white dark:bg-[#161616] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 cursor-pointer max-w-[165px]"
+                  title="Assign FILEDBY User ID (Col D)"
+                >
+                  ${userOptionsHtml}
+                </select>
+              ` : `
+                <span class="font-mono text-[11px] font-semibold ${filedByVal ? 'text-slate-800 dark:text-neutral-200' : 'text-slate-400 italic'}">${escapeHtml(filerDisplay)}</span>
+              `}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${rbp ? `
+                <div class="flex items-center space-x-1.5">
+                  <button
+                    type="button"
+                    onclick="openEditPaymentBillingModal('${escapeHtml(rbp.requestId)}')"
+                    class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 font-mono text-[10px] font-bold cursor-pointer"
+                    title="Inspect latest RBP submission (${escapeHtml(rbp.billMonth || '')})"
+                  >
+                    <span>${escapeHtml(rbp.requestId)}</span>
+                  </button>
+                  <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase ${getStatusBadgeStyle(rbp.status || 'PENDING')}">
+                    ${escapeHtml((rbp.status || "PENDING").toUpperCase())}
+                  </span>
+                </div>
+              ` : `
+                <div class="flex items-center space-x-1.5">
+                  <span class="inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
+                    UNFILED
+                  </span>
+                  <button
+                    type="button"
+                    onclick="quickFileRbpForAccount('${escapeHtml(b.accountNumber)}', '${escapeHtml(b.site)}', '${escapeHtml(b.billerName)}', '${escapeHtml(b.utilityType || 'Power')}')"
+                    class="px-2 py-0.5 rounded bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold cursor-pointer"
+                    title="File Request Bill Payment for this account"
+                  >
+                    + File RBP
+                  </button>
+                </div>
+              `}
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
               <span class="inline-block px-2 py-0.5 rounded text-[10px] font-bold ${b.utilityType === "Water" ? "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400" : "bg-amber-500/10 text-amber-600 dark:text-amber-400"}">
                 ${escapeHtml(b.utilityType || "Power")}
               </span>
@@ -6582,15 +7577,12 @@ function ensurePaymentHeaders(sheet) {
                 ${isActive ? "Active" : "Inactive"}
               </span>
             </td>
-            <td class="py-3 px-4 whitespace-nowrap text-slate-400 text-[11px] font-mono">
-              ${escapeHtml(b.lastUpdated || "-")}
-            </td>
             <td class="py-3 px-4 text-right whitespace-nowrap">
               <div class="inline-flex items-center space-x-1.5">
                 <button 
                   type="button" 
                   onclick="openEditAccountModal('${escapeHtml(b.accountNumber)}')" 
-                  class="p-1 rounded text-slate-600 dark:text-neutral-300 hover:bg-slate-200 dark:hover:bg-neutral-800" 
+                  class="p-1 rounded text-slate-600 dark:text-neutral-300 hover:bg-slate-200 dark:hover:bg-neutral-800 cursor-pointer" 
                   title="Edit Account"
                 >
                   <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
@@ -6598,7 +7590,7 @@ function ensurePaymentHeaders(sheet) {
                 <button 
                   type="button" 
                   onclick="toggleAccountStatus('${escapeHtml(b.accountNumber)}')" 
-                  class="p-1 rounded ${isActive ? 'text-slate-400 hover:text-amber-500' : 'text-emerald-500'}" 
+                  class="p-1 rounded ${isActive ? 'text-slate-400 hover:text-amber-500' : 'text-emerald-500'} cursor-pointer" 
                   title="${isActive ? 'Deactivate' : 'Activate'}"
                 >
                   <i data-lucide="${isActive ? 'power-off' : 'check'}" class="w-3.5 h-3.5"></i>
@@ -6606,7 +7598,7 @@ function ensurePaymentHeaders(sheet) {
                 <button 
                   type="button" 
                   onclick="deleteAccount('${escapeHtml(b.accountNumber)}')" 
-                  class="p-1 rounded text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30" 
+                  class="p-1 rounded text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 cursor-pointer" 
                   title="Delete Account"
                 >
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
@@ -6619,6 +7611,20 @@ function ensurePaymentHeaders(sheet) {
       lucide.createIcons();
     }
 
+    function populateAccountModalFiledBySelect(selectedVal = "") {
+      const sel = document.getElementById("accountInputFiledBy");
+      if (!sel) return;
+      const opts = [
+        `<option value="">— Unassigned (Auto-detect on next RBP) —</option>`,
+        ...userDatabase.map(u => {
+          const label = `${u.userId} — ${u.firstName || ""} ${u.lastName || ""} (${u.username})`.trim();
+          const isSel = selectedVal && (u.userId.toLowerCase() === selectedVal.toLowerCase() || u.username.toLowerCase() === selectedVal.toLowerCase());
+          return `<option value="${escapeHtml(u.userId)}" ${isSel ? "selected" : ""}>${escapeHtml(label)}</option>`;
+        })
+      ];
+      sel.innerHTML = opts.join("");
+    }
+
     function toggleAddAccountModal(open) {
       const modal = document.getElementById("accountModal");
       const title = document.getElementById("accountModalTitle");
@@ -6629,6 +7635,7 @@ function ensurePaymentHeaders(sheet) {
         form.reset();
         document.getElementById("accountFormEditingAcc").value = "";
         document.getElementById("accountInputAccNo").disabled = false;
+        populateAccountModalFiledBySelect("");
         if (title) title.innerText = "Add Account Number";
       } else {
         modal.classList.add("hidden");
@@ -6649,6 +7656,7 @@ function ensurePaymentHeaders(sheet) {
       document.getElementById("accountInputBiller").value = b.billerName || "";
       document.getElementById("accountInputType").value = b.utilityType || "Power";
       document.getElementById("accountInputStatus").value = b.status || "Active";
+      populateAccountModalFiledBySelect(b.filedBy || "");
     }
 
     function handleAccountModalSubmit(e) {
@@ -6659,7 +7667,10 @@ function ensurePaymentHeaders(sheet) {
       const biller = document.getElementById("accountInputBiller").value.trim();
       const type = document.getElementById("accountInputType").value;
       const status = document.getElementById("accountInputStatus").value;
+      const filedBy = (document.getElementById("accountInputFiledBy")?.value || "").trim();
       const today = new Date().toISOString().slice(0, 10);
+
+      saveBillerFiledByOverride(editingAcc || accNo, filedBy);
 
       if (editingAcc) {
         const idx = billers.findIndex(x => x.accountNumber === editingAcc);
@@ -6670,6 +7681,7 @@ function ensurePaymentHeaders(sheet) {
             billerName: biller,
             utilityType: type,
             status,
+            filedBy,
             lastUpdated: today
           };
         }
@@ -6681,6 +7693,7 @@ function ensurePaymentHeaders(sheet) {
           billerName: biller,
           utilityType: type,
           status,
+          filedBy,
           lastUpdated: today
         };
         billers.push(newBiller);
@@ -6716,7 +7729,7 @@ function ensurePaymentHeaders(sheet) {
       renderAccountDropdown();
     }
 
-    // Direct GViz Sync from Billers sheet (Col A: Account No, Col B: Site, Col C: Biller)
+    // Direct GViz Sync from Billers sheet (Col A: Account No, Col B: Site, Col C: Biller, Col D: FILEDBY)
     async function handleSyncBillersClick() {
       const btn = document.getElementById("syncBillersBtn");
       const icon = document.getElementById("syncBillersIcon");
@@ -6727,6 +7740,7 @@ function ensurePaymentHeaders(sheet) {
       if (text) text.innerText = "Syncing Sheet...";
 
       let synced = false;
+      const overrides = getBillerFiledByOverrides();
 
       // 1. Direct GViz query
       try {
@@ -6747,8 +7761,11 @@ function ensurePaymentHeaders(sheet) {
                 const accNo = c[0]?.v ? String(c[0].v).trim() : "";
                 const site = c[1]?.v ? String(c[1].v).trim() : "";
                 const biller = c[2]?.v ? String(c[2].v).trim() : "";
+                const colFiledBy = c[3]?.v ? String(c[3].v).trim() : "";
                 if (!accNo || accNo.toLowerCase() === "account no" || accNo.toLowerCase() === "account number") continue;
 
+                const key = normalizeRawAccountKey(accNo);
+                const resolvedFiledBy = overrides[key] !== undefined ? overrides[key] : (colFiledBy.toLowerCase() === "filedby" ? "" : colFiledBy);
                 const isWater = /water|sinukuan|district|laguna/i.test(biller);
                 list.push({
                   billerId: `BIL-${String(i + 1).padStart(3, "0")}`,
@@ -6757,7 +7774,8 @@ function ensurePaymentHeaders(sheet) {
                   accountNumber: accNo,
                   utilityType: isWater ? "Water" : "Power",
                   status: "Active",
-                  lastUpdated: today
+                  lastUpdated: today,
+                  filedBy: resolvedFiledBy
                 });
               }
 
@@ -7716,6 +8734,915 @@ function ensurePaymentHeaders(sheet) {
         setTimeout(() => noticeEl.classList.add("hidden"), 3500);
       }
     }
+
+    // ========================================================
+    // PLAN-REPORT-SYSTEM: SEPARATED REPORT TABS (TABS 7 & 8)
+    // ========================================================
+    const REPORT_MONTHS = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    function downloadCsvReport(filename, headers, rows) {
+      const esc = (v) => {
+        const s = String(v ?? "");
+        return (s.includes(",") || s.includes('"') || s.includes("\n")) ? `"${s.replace(/"/g, '""')}"` : s;
+      };
+      const csv = [headers.map(esc).join(","), ...rows.map(r => r.map(esc).join(","))].join("\n");
+      const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function computeUserActivityReportRows() {
+      const nowMs = Date.now();
+      const monthFilter = document.getElementById("repUserMonthFilter")?.value || "All";
+      const roleFilter = document.getElementById("repUserRoleFilter")?.value || "All";
+      const actFilter = document.getElementById("repUserActivityFilter")?.value || "All";
+      const q = (document.getElementById("repUserSearchInput")?.value || "").trim().toLowerCase();
+
+      const rows = userDatabase.map(u => {
+        const uidLower = (u.userId || "").trim().toLowerCase();
+        const unameLower = (u.username || "").trim().toLowerCase();
+        const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.username;
+
+        const assignedBillers = billers.filter(b => {
+          const fb = (b.filedBy || "").trim().toLowerCase();
+          return fb && (fb === uidLower || fb === unameLower);
+        });
+
+        const userRbpAll = paymentRequests.filter(r => {
+          const rUid = (r.userId || "").trim().toLowerCase();
+          return rUid === uidLower || rUid === unameLower;
+        });
+        const userRbpScoped = monthFilter === "All"
+          ? userRbpAll
+          : userRbpAll.filter(r => (r.billMonth || "").toLowerCase() === monthFilter.toLowerCase());
+
+        let assignedFiledCount = 0;
+        assignedBillers.forEach(b => {
+          const normAcc = normalizeAccountKey(b.accountNumber);
+          const hasFiling = paymentRequests.some(r => {
+            if (normalizeAccountKey(r.accountNumber) !== normAcc) return false;
+            if (monthFilter !== "All" && (r.billMonth || "").toLowerCase() !== monthFilter.toLowerCase()) return false;
+            return true;
+          });
+          if (hasFiling) assignedFiledCount++;
+        });
+        const assignedUnfiledCount = Math.max(0, assignedBillers.length - assignedFiledCount);
+
+        const paidCount = userRbpScoped.filter(r => {
+          const st = (r.status || "").toUpperCase();
+          return st === "PAID" || st === "CHEQUE REL";
+        }).length;
+        const rejectedCount = userRbpScoped.filter(r => {
+          const st = (r.status || "").toUpperCase();
+          return st === "REJECTED" || st === "CANCEL" || st === "DUPLICATE" || st === "BLURRED";
+        }).length;
+        const inProgressCount = Math.max(0, userRbpScoped.length - paidCount - rejectedCount);
+
+        const userEnrollments = enrollmentRequests.filter(e => {
+          const eUid = (e.userId || "").trim().toLowerCase();
+          return eUid === uidLower || eUid === unameLower;
+        });
+
+        let latestMs = 0;
+        let latestDateStr = "";
+        let latestReqId = "";
+        userRbpAll.forEach(r => {
+          const t = parseSubmittedTime(r.submittedAt);
+          if (t > latestMs) { latestMs = t; latestDateStr = r.submittedAt; latestReqId = r.requestId; }
+        });
+        userEnrollments.forEach(e => {
+          const t = parseSubmittedTime(e.submittedAt);
+          if (t > latestMs) { latestMs = t; latestDateStr = e.submittedAt; latestReqId = e.requestId; }
+        });
+
+        const daysInactive = latestMs > 0 ? Math.max(0, Math.floor((nowMs - latestMs) / (1000 * 60 * 60 * 24))) : null;
+        const isDormant = daysInactive === null || daysInactive > 30;
+
+        return {
+          user: u,
+          fullName,
+          assignedBillers,
+          assignedCount: assignedBillers.length,
+          assignedFiledCount,
+          assignedUnfiledCount,
+          totalRbp: userRbpScoped.length,
+          paidCount,
+          inProgressCount,
+          rejectedCount,
+          totalEnrollments: userEnrollments.length,
+          latestDateStr,
+          latestReqId,
+          daysInactive,
+          isDormant
+        };
+      });
+
+      const activeFilersCount = rows.filter(r => !r.isDormant).length;
+      const dormantUsersCount = rows.filter(r => r.isDormant).length;
+      const totalAssignedAccounts = rows.reduce((acc, r) => acc + r.assignedCount, 0);
+
+      let filtered = rows;
+      if (roleFilter !== "All") {
+        filtered = filtered.filter(r => (r.user.accessLevel || "").toLowerCase() === roleFilter.toLowerCase());
+      }
+      if (actFilter === "Active") {
+        filtered = filtered.filter(r => !r.isDormant);
+      } else if (actFilter === "Dormant") {
+        filtered = filtered.filter(r => r.isDormant);
+      } else if (actFilter === "UnfiledLUT") {
+        filtered = filtered.filter(r => r.assignedUnfiledCount > 0);
+      } else if (actFilter === "Suspended") {
+        filtered = filtered.filter(r => normalizeLifecycleStatus(r.user.status) !== "ACTIVE");
+      }
+      if (q) {
+        filtered = filtered.filter(r =>
+          (r.user.userId || "").toLowerCase().includes(q) ||
+          (r.user.username || "").toLowerCase().includes(q) ||
+          r.fullName.toLowerCase().includes(q) ||
+          (r.user.site || "").toLowerCase().includes(q) ||
+          (r.user.accessLevel || "").toLowerCase().includes(q) ||
+          r.assignedBillers.some(b => (b.accountNumber || "").toLowerCase().includes(q) || (b.site || "").toLowerCase().includes(q))
+        );
+      }
+
+      return { rows, filtered, activeFilersCount, dormantUsersCount, totalAssignedAccounts };
+    }
+
+    function auditUserFiledByAccounts(userId) {
+      const searchEl = document.getElementById("accountSearchInput");
+      if (searchEl) searchEl.value = userId || "";
+      switchTab("account-management");
+    }
+
+    function renderUserActivityReport() {
+      const tbody = document.getElementById("repUserTableBody");
+      if (!tbody) return;
+      const data = computeUserActivityReportRows();
+      const totalEl = document.getElementById("repUserTotalCard");
+      const actEl = document.getElementById("repUserActiveCard");
+      const pctEl = document.getElementById("repUserActivePct");
+      const dormEl = document.getElementById("repUserDormantCard");
+      const assEl = document.getElementById("repUserAssignedCard");
+      const assTotEl = document.getElementById("repUserAssignedTotalLut");
+      const badgeEl = document.getElementById("repUserCountBadge");
+
+      if (totalEl) totalEl.innerText = data.rows.length;
+      if (actEl) actEl.innerText = data.activeFilersCount;
+      if (pctEl) pctEl.innerText = data.rows.length > 0 ? `${Math.round((data.activeFilersCount / data.rows.length) * 100)}% active` : "0% active";
+      if (dormEl) dormEl.innerText = data.dormantUsersCount;
+      if (assEl) assEl.innerText = data.totalAssignedAccounts;
+      if (assTotEl) assTotEl.innerText = `of ${billers.length} LUT`;
+      if (badgeEl) badgeEl.innerText = `${data.filtered.length} of ${data.rows.length} users`;
+
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canManageAccounts = isAdminOrSub || hasUserPermission(currentUser, "SUBADMIN_ACCT_MGMT");
+
+      if (data.filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="py-8 text-center text-slate-400">No users match the selected report filters.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = data.filtered.map(row => {
+        const st = normalizeLifecycleStatus(row.user.status);
+        const stColor = st === "ACTIVE" ? "text-emerald-600 dark:text-emerald-400" : st === "SUSPENDED" ? "text-amber-600 dark:text-amber-400" : "text-red-600 dark:text-red-400";
+        return `
+          <tr class="hover:bg-slate-50/80 dark:hover:bg-royal-900/30 transition-colors">
+            <td class="py-3 px-4 whitespace-nowrap">
+              <div class="font-semibold text-slate-900 dark:text-white">${escapeHtml(row.fullName)}</div>
+              <div class="text-[11px] font-mono text-slate-500 dark:text-royal-300">${escapeHtml(row.user.userId)} · @${escapeHtml(row.user.username)}${row.user.site ? ` · ${escapeHtml(row.user.site)}` : ""}</div>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <div class="font-medium text-slate-800 dark:text-neutral-200">${escapeHtml(row.user.accessLevel)}</div>
+              <div class="text-[11px] font-mono ${stColor}">${escapeHtml(st)}</div>
+            </td>
+            <td class="py-3 px-4">
+              ${row.assignedCount > 0 ? `
+                <div>
+                  <div class="font-mono font-semibold text-slate-900 dark:text-white">
+                    ${row.assignedCount} acct${row.assignedCount === 1 ? "" : "s"} · <span class="text-emerald-600 dark:text-emerald-400">${row.assignedFiledCount} filed</span> / <span class="${row.assignedUnfiledCount > 0 ? "text-amber-600 dark:text-amber-400 font-bold" : "text-slate-400"}">${row.assignedUnfiledCount} unfiled</span>
+                  </div>
+                  <div class="text-[10px] font-mono text-slate-400 truncate max-w-[210px]">${escapeHtml(row.assignedBillers.map(b => b.accountNumber).join(", "))}</div>
+                </div>
+              ` : `<span class="text-slate-400">0 assigned</span>`}
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap font-mono">
+              <span class="font-bold text-slate-900 dark:text-white">${row.totalRbp}</span>
+              <span class="text-slate-400"> · </span>
+              <span class="text-emerald-600 dark:text-emerald-400">${row.paidCount} paid</span>
+              <span class="text-slate-400"> · </span>
+              <span class="text-amber-600 dark:text-amber-400">${row.inProgressCount} open</span>
+              ${row.rejectedCount > 0 ? `<span class="text-slate-400"> · </span><span class="text-red-500">${row.rejectedCount} rej</span>` : ""}
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap font-mono text-slate-700 dark:text-neutral-300">${row.totalEnrollments}</td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              ${row.daysInactive !== null ? `
+                <div>
+                  <div class="font-mono font-semibold ${row.isDormant ? "text-amber-600 dark:text-amber-400" : "text-emerald-600 dark:text-emerald-400"}">
+                    ${row.daysInactive === 0 ? "Active today" : row.isDormant ? `Dormant · ${row.daysInactive}d inactive` : `Active · ${row.daysInactive}d ago`}
+                  </div>
+                  <div class="text-[10px] font-mono text-slate-400">${escapeHtml(row.latestDateStr)} (${escapeHtml(row.latestReqId)})</div>
+                </div>
+              ` : `<span class="font-mono text-amber-600 dark:text-amber-400">Dormant · Never filed</span>`}
+            </td>
+            <td class="py-3 px-4 text-right whitespace-nowrap">
+              ${canManageAccounts ? `
+                <button type="button" onclick="auditUserFiledByAccounts('${escapeHtml(row.user.userId)}')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#222222] hover:bg-amber-600 hover:text-white text-slate-700 dark:text-neutral-200 text-[11px] font-semibold transition-colors cursor-pointer">
+                  Audit FILEDBY (${row.assignedCount})
+                </button>
+              ` : `<span class="text-[11px] font-mono text-slate-400">${row.assignedCount} LUT</span>`}
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function exportUserActivityReportCsv() {
+      const data = computeUserActivityReportRows();
+      const dateStr = new Date().toISOString().slice(0, 10);
+      downloadCsvReport(
+        `APEC_User_Activity_Dormancy_Report_${dateStr}.csv`,
+        ["User ID","Username","Full Name","Access Level","Lifecycle Status","Assigned LUT Accounts (FILEDBY)","LUT Filed Count","LUT Unfiled Count","Total RBP Filings","Paid / Cheque Rel","In-Progress","Rejected / Cancelled","Total Endorsements","Last Activity Date","Latest Request ID","Days Inactive","Activity Classification"],
+        data.filtered.map(r => [
+          r.user.userId,
+          r.user.username,
+          r.fullName,
+          r.user.accessLevel,
+          normalizeLifecycleStatus(r.user.status),
+          r.assignedCount,
+          r.assignedFiledCount,
+          r.assignedUnfiledCount,
+          r.totalRbp,
+          r.paidCount,
+          r.inProgressCount,
+          r.rejectedCount,
+          r.totalEnrollments,
+          r.latestDateStr || "Never",
+          r.latestReqId || "-",
+          r.daysInactive !== null ? r.daysInactive : "Never",
+          r.isDormant ? "DORMANT (>30d / No Activity)" : "ACTIVE FILER"
+        ])
+      );
+    }
+
+    let repAcctSortField = "accountNumber";
+    let repAcctSortDir = "asc";
+    let repAcctSelectedSet = new Set();
+    let inspectHistoryAcctKey = null;
+
+    function toggleSearchClearBtn(inputId, btnId) {
+      const inp = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (!inp || !btn) return;
+      if ((inp.value || "").length > 0) {
+        btn.classList.remove("hidden");
+      } else {
+        btn.classList.add("hidden");
+      }
+    }
+
+    function clearSearchInput(inputId, btnId, callbackName) {
+      const inp = document.getElementById(inputId);
+      const btn = document.getElementById(btnId);
+      if (inp) inp.value = "";
+      if (btn) btn.classList.add("hidden");
+      if (callbackName && typeof window[callbackName] === "function") {
+        window[callbackName]();
+      }
+    }
+
+    function clearAccountComboboxInput() {
+      const disp = document.getElementById("billReqAccountDisplay");
+      const val = document.getElementById("billReqSelectedAccountVal");
+      const site = document.getElementById("billReqSelectedSiteVal");
+      const bil = document.getElementById("billReqSelectedBillerVal");
+      const warn = document.getElementById("accountLookupWarning");
+      const det = document.getElementById("accountSelectedDetails");
+      const btn = document.getElementById("billReqAccountClearBtn");
+      if (disp) disp.value = "";
+      if (val) val.value = "";
+      if (site) site.value = "";
+      if (bil) bil.value = "";
+      if (warn) warn.classList.add("hidden");
+      if (det) det.classList.add("hidden");
+      if (btn) btn.classList.add("hidden");
+      openAccountDropdown();
+      filterAccountDropdown("");
+    }
+
+    function resolveFilerNameOnlyJs(rawVal, fallbackName) {
+      const clean = String(rawVal || "").trim();
+      if (clean) {
+        const matched = userDatabase.find(u =>
+          (u.userId && u.userId.toLowerCase() === clean.toLowerCase()) ||
+          (u.username && u.username.toLowerCase() === clean.toLowerCase())
+        );
+        if (matched) {
+          return (`${matched.firstName || ""} ${matched.lastName || ""}`.trim() || matched.username);
+        }
+      }
+      if (fallbackName && String(fallbackName).trim()) {
+        return String(fallbackName).replace(/\s*\([A-Z0-9_-]+\)\s*$/i, "").trim();
+      }
+      if (clean && !/^(APEC-)?USR-\d+$/i.test(clean)) {
+        return clean.replace(/\s*\([A-Z0-9_-]+\)\s*$/i, "").trim();
+      }
+      return "Unassigned";
+    }
+
+    function computeAccountHistoryReportRows() {
+      const nowMs = Date.now();
+      const targetId = (currentUser?.userId || "").trim().toLowerCase();
+      const targetUname = (currentUser?.username || "").trim().toLowerCase();
+      const isAdm = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canViewAllPay = isAdm || hasUserPermission(currentUser, "PS_VIEW_ALL");
+      const canViewGroupPay = canViewAllPay || hasUserPermission(currentUser, "PS_VIEW_GROUP");
+
+      let scopedBillers = [...billers];
+        if (!canViewAllPay && currentUser) {
+          const mySites = new Set();
+          const myAccounts = new Set();
+          billers.forEach(b => {
+            const fb = (b.filedBy || "").trim().toLowerCase();
+            if (fb && (fb === targetId || fb === targetUname)) {
+              if (b.site) mySites.add(b.site.trim().toLowerCase());
+              if (b.accountNumber) myAccounts.add(normalizeAccountKey(b.accountNumber));
+            }
+          });
+          paymentRequests.forEach(r => {
+            if ((r.userId || "").trim().toLowerCase() === targetId) {
+              if (r.site) mySites.add(r.site.trim().toLowerCase());
+              if (r.accountNumber) myAccounts.add(normalizeAccountKey(r.accountNumber));
+            }
+          });
+          scopedBillers = billers.filter(b => {
+            const normAcc = normalizeAccountKey(b.accountNumber);
+            const fb = (b.filedBy || "").trim().toLowerCase();
+            if (fb === targetId || fb === targetUname || myAccounts.has(normAcc)) return true;
+            if (canViewGroupPay && b.site && mySites.has(b.site.trim().toLowerCase())) return true;
+            return false;
+          });
+        }
+
+        const monthFilter = document.getElementById("repAcctMonthFilter")?.value || "All";
+        const delayFilter = document.getElementById("repAcctDelayFilter")?.value || "All";
+        const utilFilter = document.getElementById("repAcctUtilityFilter")?.value || "All";
+        const siteFilter = document.getElementById("repAcctSiteFilter")?.value || "All";
+        const payeeFilter = document.getElementById("repAcctPayeeFilter")?.value || "All";
+        const filerFilter = document.getElementById("repAcctFilerFilter")?.value || "All";
+        const q = (document.getElementById("repAcctSearchInput")?.value || "").trim().toLowerCase();
+
+        const rows = scopedBillers.map(b => {
+          const normKey = normalizeAccountKey(b.accountNumber);
+          const acctReqs = paymentRequests
+            .filter(r => normalizeAccountKey(r.accountNumber) === normKey)
+            .sort((x, y) => parseSubmittedTime(y.submittedAt) - parseSubmittedTime(x.submittedAt));
+
+          const monthMap = {};
+          REPORT_MONTHS.forEach(m => {
+            monthMap[m] = acctReqs.find(r => (r.billMonth || "").toLowerCase() === m.toLowerCase());
+          });
+
+          const targetReq = monthFilter === "All"
+            ? acctReqs[0]
+            : acctReqs.find(r => (r.billMonth || "").toLowerCase() === monthFilter.toLowerCase());
+
+          const statusUpper = (targetReq?.status || "").toUpperCase();
+          const isPaid = statusUpper === "PAID" || statusUpper === "CHEQUE REL";
+          const isRejected = statusUpper === "REJECTED" || statusUpper === "CANCEL" || statusUpper === "DUPLICATE" || statusUpper === "BLURRED";
+          const isFiled = Boolean(targetReq);
+          const isInProgress = isFiled && !isPaid && !isRejected;
+
+          let delayDays = 0;
+          let isDelayed = false;
+          if (isInProgress && targetReq) {
+            const dueMs = targetReq.dueDate ? new Date(targetReq.dueDate).getTime() : 0;
+            const subMs = parseSubmittedTime(targetReq.submittedAt);
+            if (dueMs > 0 && nowMs > dueMs) {
+              delayDays = Math.floor((nowMs - dueMs) / (1000 * 60 * 60 * 24));
+              if (delayDays > 0) isDelayed = true;
+            } else if (subMs > 0 && (nowMs - subMs) > 14 * 24 * 60 * 60 * 1000) {
+              delayDays = Math.floor((nowMs - subMs) / (1000 * 60 * 60 * 24));
+              isDelayed = true;
+            }
+          }
+
+          const rawFiledBy = (b.filedBy || targetReq?.userId || acctReqs[0]?.userId || "").trim();
+          const filerNameOnly = resolveFilerNameOnlyJs(rawFiledBy, targetReq?.requestorName || acctReqs[0]?.requestorName);
+          const payeeName = (targetReq?.biller || b.billerName || "Unspecified").trim();
+
+          return {
+            biller: b,
+            normKey,
+            payeeName,
+            filerNameOnly,
+            resolvedFiledByDisplay: filerNameOnly,
+            acctReqs,
+            monthMap,
+            targetReq,
+            statusUpper: statusUpper || "UNFILED",
+            isPaid,
+            isFiled,
+            isInProgress,
+            isDelayed,
+            delayDays
+          };
+        });
+
+        const uniqueSites = Array.from(new Set(rows.map(r => r.biller.site).filter(Boolean))).sort();
+        const uniquePayees = Array.from(new Set(rows.map(r => r.payeeName).filter(Boolean))).sort();
+        const uniqueFilers = Array.from(new Set(rows.map(r => r.filerNameOnly).filter(Boolean))).sort();
+
+        const siteSelect = document.getElementById("repAcctSiteFilter");
+        if (siteSelect) {
+          const curSite = siteSelect.value || "All";
+          siteSelect.innerHTML = `<option value="All">All Sites</option>` + uniqueSites.map(s => `<option value="${escapeHtml(s)}" ${s === curSite ? "selected" : ""}>${escapeHtml(s)}</option>`).join("");
+        }
+        const payeeSelect = document.getElementById("repAcctPayeeFilter");
+        if (payeeSelect) {
+          const curPayee = payeeSelect.value || "All";
+          payeeSelect.innerHTML = `<option value="All">All Payees</option>` + uniquePayees.map(p => `<option value="${escapeHtml(p)}" ${p === curPayee ? "selected" : ""}>${escapeHtml(p)}</option>`).join("");
+        }
+        const filerSelect = document.getElementById("repAcctFilerFilter");
+        if (filerSelect) {
+          const curFiler = filerSelect.value || "All";
+          filerSelect.innerHTML = `<option value="All">All Filers</option>` + uniqueFilers.map(f => `<option value="${escapeHtml(f)}" ${f === curFiler ? "selected" : ""}>${escapeHtml(f)}</option>`).join("");
+        }
+
+        const paidAccountsCount = rows.filter(r => r.isPaid).length;
+        const inProgressAccountsCount = rows.filter(r => r.isInProgress).length;
+        const delayedOrUnfiledCount = rows.filter(r => r.isDelayed || !r.isFiled).length;
+
+        let filtered = rows;
+        if (utilFilter !== "All") {
+          filtered = filtered.filter(r => r.biller.utilityType === utilFilter);
+        }
+        if (siteFilter !== "All") {
+          filtered = filtered.filter(r => r.biller.site === siteFilter);
+        }
+        if (payeeFilter !== "All") {
+          filtered = filtered.filter(r => r.payeeName.toLowerCase() === payeeFilter.toLowerCase());
+        }
+        if (filerFilter !== "All") {
+          filtered = filtered.filter(r => r.filerNameOnly.toLowerCase() === filerFilter.toLowerCase());
+        }
+        if (delayFilter === "Paid") {
+          filtered = filtered.filter(r => r.isPaid);
+        } else if (delayFilter === "InProgress") {
+          filtered = filtered.filter(r => r.isInProgress);
+        } else if (delayFilter === "Delayed") {
+          filtered = filtered.filter(r => r.isDelayed);
+        } else if (delayFilter === "Unfiled") {
+          filtered = filtered.filter(r => !r.isFiled);
+        }
+        if (q) {
+          filtered = filtered.filter(r =>
+            (r.biller.accountNumber || "").toLowerCase().includes(q) ||
+            (r.biller.site || "").toLowerCase().includes(q) ||
+            r.payeeName.toLowerCase().includes(q) ||
+            r.filerNameOnly.toLowerCase().includes(q) ||
+            (r.targetReq?.requestId || "").toLowerCase().includes(q) ||
+            (r.targetReq?.rfp || "").toLowerCase().includes(q) ||
+            (r.targetReq?.cv || "").toLowerCase().includes(q)
+          );
+        }
+
+        const dirMul = repAcctSortDir === "asc" ? 1 : -1;
+        filtered = [...filtered].sort((a, b) => {
+          if (repAcctSortField === "accountNumber") {
+            return (a.biller.accountNumber || "").localeCompare(b.biller.accountNumber || "", undefined, { numeric: true }) * dirMul;
+          }
+          if (repAcctSortField === "site") {
+            return (a.biller.site || "").localeCompare(b.biller.site || "") * dirMul;
+          }
+          if (repAcctSortField === "payee") {
+            return (a.payeeName || "").localeCompare(b.payeeName || "") * dirMul;
+          }
+          if (repAcctSortField === "filer") {
+            return (a.filerNameOnly || "").localeCompare(b.filerNameOnly || "") * dirMul;
+          }
+          if (repAcctSortField === "filingsCount") {
+            return (a.acctReqs.length - b.acctReqs.length) * dirMul;
+          }
+          if (repAcctSortField === "status") {
+            return (a.statusUpper || "").localeCompare(b.statusUpper || "") * dirMul;
+          }
+          if (repAcctSortField === "delay") {
+            const scoreA = a.isDelayed ? 1000 + a.delayDays : (!a.isFiled ? 500 : (a.isInProgress ? 100 : 0));
+            const scoreB = b.isDelayed ? 1000 + b.delayDays : (!b.isFiled ? 500 : (b.isInProgress ? 100 : 0));
+            return (scoreA - scoreB) * dirMul;
+          }
+          return 0;
+        });
+
+        return { rows, filtered, paidAccountsCount, inProgressAccountsCount, delayedOrUnfiledCount, monthFilter };
+      }
+
+      function toggleRepAcctSort(field) {
+        if (repAcctSortField === field) {
+          repAcctSortDir = repAcctSortDir === "asc" ? "desc" : "asc";
+        } else {
+          repAcctSortField = field;
+          repAcctSortDir = "asc";
+        }
+        ["accountNumber", "site", "payee", "filer", "filingsCount", "status", "delay"].forEach(f => {
+          const el = document.getElementById(`repAcctSortIcon-${f}`);
+          if (!el) return;
+          if (f === repAcctSortField) {
+            el.innerText = repAcctSortDir === "asc" ? "▲" : "▼";
+            el.className = "ml-1 text-[10px] text-teal-600 dark:text-teal-400 font-bold";
+          } else {
+            el.innerText = "⇅";
+            el.className = "ml-1 text-[10px] text-slate-400";
+          }
+        });
+        renderAccountHistoryReport();
+      }
+
+      function resetAccountHistoryFilters() {
+        const s = document.getElementById("repAcctSearchInput");
+        const sb = document.getElementById("repAcctSearchClearBtn");
+        if (s) s.value = "";
+        if (sb) sb.classList.add("hidden");
+        ["repAcctMonthFilter", "repAcctDelayFilter", "repAcctUtilityFilter", "repAcctSiteFilter", "repAcctPayeeFilter", "repAcctFilerFilter"].forEach(id => {
+          const el = document.getElementById(id);
+          if (el) el.value = "All";
+        });
+        renderAccountHistoryReport();
+      }
+
+      function toggleSelectAllRepAcct(checked) {
+        const data = computeAccountHistoryReportRows();
+        data.filtered.forEach(r => {
+          if (checked) repAcctSelectedSet.add(r.normKey);
+          else repAcctSelectedSet.delete(r.normKey);
+        });
+        renderAccountHistoryReport();
+      }
+
+      function selectAllRepAcct() {
+        const data = computeAccountHistoryReportRows();
+        data.filtered.forEach(r => repAcctSelectedSet.add(r.normKey));
+        renderAccountHistoryReport();
+      }
+
+      function deselectAllRepAcct() {
+        repAcctSelectedSet.clear();
+        renderAccountHistoryReport();
+      }
+
+      function toggleRepAcctRowCheckbox(normKey) {
+        if (repAcctSelectedSet.has(normKey)) repAcctSelectedSet.delete(normKey);
+        else repAcctSelectedSet.add(normKey);
+        renderAccountHistoryReport();
+      }
+
+      function fileRbpForAccountFromReport(accountNumber, optMonth) {
+        closeAccountMonthlyHistoryModal();
+        const b = billers.find(x => x.accountNumber === accountNumber);
+        if (b) {
+          switchTab("request-payment");
+          const searchInput = document.getElementById("billReqAccountDisplay");
+          if (searchInput) searchInput.value = b.accountNumber;
+          selectAccountItem(b.accountNumber);
+          if (optMonth) {
+            const mSel = document.getElementById("billReqMonth");
+            if (mSel) {
+              mSel.value = optMonth;
+              updateFormattedFileName();
+            }
+          }
+        }
+      }
+
+      function renderAccountHistoryReport() {
+        const tbody = document.getElementById("repAcctTableBody");
+        if (!tbody) return;
+        const data = computeAccountHistoryReportRows();
+        const totEl = document.getElementById("repAcctTotalCard");
+        const perEl = document.getElementById("repAcctPeriodLabel");
+        const paidEl = document.getElementById("repAcctPaidCard");
+        const progEl = document.getElementById("repAcctInProgressCard");
+        const delEl = document.getElementById("repAcctDelayedCard");
+        const badgeEl = document.getElementById("repAcctCountBadge");
+        const masterCb = document.getElementById("repAcctMasterCheckbox");
+        const selAllBtn = document.getElementById("repAcctSelectAllBtn");
+        const exportLbl = document.getElementById("repAcctExportBtnLabel");
+        const resetBtn = document.getElementById("repAcctResetFiltersBtn");
+
+        const visibleKeys = data.filtered.map(r => r.normKey);
+        const selectedVisible = data.filtered.filter(r => repAcctSelectedSet.has(r.normKey));
+        const allVisibleChecked = visibleKeys.length > 0 && visibleKeys.every(k => repAcctSelectedSet.has(k));
+
+        if (masterCb) masterCb.checked = allVisibleChecked;
+        if (selAllBtn) selAllBtn.innerText = `Select All (${visibleKeys.length})`;
+        if (exportLbl) {
+          exportLbl.innerText = selectedVisible.length > 0
+            ? `Export Selected (${selectedVisible.length}) CSV`
+            : `Export All (${data.filtered.length}) CSV`;
+        }
+
+        const hasFilters =
+          (document.getElementById("repAcctSearchInput")?.value || "").trim() !== "" ||
+          (document.getElementById("repAcctMonthFilter")?.value || "All") !== "All" ||
+          (document.getElementById("repAcctDelayFilter")?.value || "All") !== "All" ||
+          (document.getElementById("repAcctUtilityFilter")?.value || "All") !== "All" ||
+          (document.getElementById("repAcctSiteFilter")?.value || "All") !== "All" ||
+          (document.getElementById("repAcctPayeeFilter")?.value || "All") !== "All" ||
+          (document.getElementById("repAcctFilerFilter")?.value || "All") !== "All";
+        if (resetBtn) {
+          if (hasFilters) resetBtn.classList.remove("hidden");
+          else resetBtn.classList.add("hidden");
+        }
+
+        if (totEl) totEl.innerText = data.rows.length;
+        if (perEl) perEl.innerText = data.monthFilter === "All" ? "Latest Period" : data.monthFilter;
+        if (paidEl) paidEl.innerText = data.paidAccountsCount;
+        if (progEl) progEl.innerText = data.inProgressAccountsCount;
+        if (delEl) delEl.innerText = data.delayedOrUnfiledCount;
+        if (badgeEl) {
+          badgeEl.innerText = `${selectedVisible.length > 0 ? selectedVisible.length + " selected · " : ""}${data.filtered.length} of ${data.rows.length} accounts`;
+        }
+
+        if (data.filtered.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="py-8 text-center text-slate-400">No utility accounts match the selected report filters.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = data.filtered.map(row => {
+          const req = row.targetReq;
+          const isChecked = repAcctSelectedSet.has(row.normKey);
+          const matrixHtml = REPORT_MONTHS.map(m => {
+            const mReq = row.monthMap[m];
+            const st = (mReq?.status || "").toUpperCase();
+            const isMSettled = st === "PAID" || st === "CHEQUE REL";
+            const isMRej = st === "REJECTED" || st === "CANCEL" || st === "DUPLICATE" || st === "BLURRED";
+            const cellStyle = !mReq
+              ? "bg-slate-100 dark:bg-[#222222] text-slate-400 border-slate-200 dark:border-[#333333]"
+              : isMSettled
+              ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 font-bold cursor-pointer"
+              : isMRej
+              ? "bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30 font-bold cursor-pointer"
+              : "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30 font-bold cursor-pointer";
+            const clickAttr = mReq ? `onclick="openEditPaymentDetailsModal('${escapeHtml(mReq.requestId)}')"` : "disabled";
+            const titleText = mReq ? `${m}: ${st} (${mReq.requestId}) — Click to inspect` : `${m}: Unfiled`;
+            return `<button type="button" ${clickAttr} title="${escapeHtml(titleText)}" class="w-5 h-5 rounded text-[9px] font-mono border flex items-center justify-center transition-colors ${cellStyle}">${m.slice(0, 1)}</button>`;
+          }).join("");
+
+          return `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-royal-900/30 transition-colors ${isChecked ? "bg-teal-500/5 dark:bg-teal-500/10" : ""}">
+              <td class="p-3 text-center">
+                <input type="checkbox" ${isChecked ? "checked" : ""} onchange="toggleRepAcctRowCheckbox('${escapeHtml(row.normKey)}')" class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" />
+              </td>
+              <td class="p-3 whitespace-nowrap">
+                <button type="button" onclick="openAccountMonthlyHistoryModal('${escapeHtml(row.normKey)}')" class="font-mono font-bold text-blue-600 dark:text-blue-400 hover:text-teal-600 dark:hover:text-teal-400 hover:underline cursor-pointer text-left block" title="Click to view 12-Month Payment History popup for this account">${escapeHtml(row.biller.accountNumber)}</button>
+                <div class="text-[10px] font-mono text-slate-400 flex items-center space-x-1.5 mt-0.5">
+                  <span>${escapeHtml(row.biller.utilityType)}</span>
+                  <span>&middot;</span>
+                  <button type="button" onclick="openAccountMonthlyHistoryModal('${escapeHtml(row.normKey)}')" class="text-teal-600 dark:text-teal-400 hover:underline cursor-pointer">12-Mo History</button>
+                </div>
+              </td>
+              <td class="p-3">
+                <div class="font-semibold text-slate-900 dark:text-white">${escapeHtml(row.biller.site)}</div>
+                <div class="text-[11px] text-slate-500 dark:text-royal-300">${escapeHtml(row.payeeName)}</div>
+              </td>
+              <td class="p-3 whitespace-nowrap">
+                <div class="font-medium text-slate-800 dark:text-neutral-200">${escapeHtml(row.filerNameOnly)}</div>
+                <div class="text-[10px] font-mono text-slate-400">${row.acctReqs.length} total filing${row.acctReqs.length === 1 ? "" : "s"}</div>
+              </td>
+              <td class="p-3 whitespace-nowrap">
+                <div class="inline-flex items-center gap-1">${matrixHtml}</div>
+              </td>
+              <td class="p-3 whitespace-nowrap">
+                ${req ? `
+                  <div>
+                    <div class="flex items-center space-x-1.5">
+                      <button type="button" onclick="openEditPaymentDetailsModal('${escapeHtml(req.requestId)}')" class="font-mono font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">${escapeHtml(req.requestId)}</button>
+                      <span class="text-slate-400">&middot;</span>
+                      <span class="font-mono text-[11px] text-slate-700 dark:text-neutral-300">${escapeHtml(req.billMonth)}</span>
+                      <span class="text-slate-400">&middot;</span>
+                      <span class="font-mono text-[11px] font-semibold ${row.isPaid ? "text-emerald-600 dark:text-emerald-400" : "text-blue-600 dark:text-blue-400"}">${escapeHtml(row.statusUpper)}</span>
+                    </div>
+                    <div class="text-[10px] font-mono text-slate-400">
+                      Due: ${escapeHtml(req.dueDate || "—")}${req.rfp ? ` · RFP: ${escapeHtml(req.rfp)}` : ""}${req.cv ? ` · CV: ${escapeHtml(req.cv)}` : ""}${req.payDate ? ` · Paid: ${escapeHtml(req.payDate)}` : ""}
+                    </div>
+                  </div>
+                ` : `<span class="font-mono text-amber-600 dark:text-amber-400">UNFILED (${escapeHtml(data.monthFilter === "All" ? "No RBP history" : data.monthFilter)})</span>`}
+              </td>
+              <td class="p-3 whitespace-nowrap font-mono">
+                ${row.isPaid
+                  ? `<span class="text-emerald-600 dark:text-emerald-400 font-semibold">Settled</span>`
+                  : row.isDelayed
+                  ? `<span class="text-red-600 dark:text-red-400 font-semibold">Delayed · ${row.delayDays}d overdue</span>`
+                  : row.isFiled
+                  ? `<span class="text-blue-600 dark:text-blue-400">In Progress</span>`
+                  : `<span class="text-amber-600 dark:text-amber-400">Missing SOA</span>`}
+              </td>
+              <td class="p-3 text-right whitespace-nowrap">
+                <div class="inline-flex items-center space-x-1">
+                  <button type="button" onclick="openAccountMonthlyHistoryModal('${escapeHtml(row.normKey)}')" class="px-2 py-1 rounded-lg bg-teal-500/10 hover:bg-teal-600 text-teal-700 dark:text-teal-300 hover:text-white text-[11px] font-semibold transition-colors cursor-pointer">
+                    History
+                  </button>
+                  ${req ? `
+                    <button type="button" onclick="openEditPaymentDetailsModal('${escapeHtml(req.requestId)}')" class="px-2 py-1 rounded-lg bg-slate-100 dark:bg-[#222222] hover:bg-blue-600 hover:text-white text-slate-700 dark:text-neutral-200 text-[11px] font-semibold transition-colors cursor-pointer">
+                      Inspect
+                    </button>
+                  ` : `
+                    <button type="button" onclick="fileRbpForAccountFromReport('${escapeHtml(row.biller.accountNumber)}')" class="px-2 py-1 rounded-lg bg-blue-600/10 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white text-[11px] font-semibold transition-colors cursor-pointer">
+                      + File RBP
+                    </button>
+                  `}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function openAccountMonthlyHistoryModal(normKey) {
+        inspectHistoryAcctKey = normKey;
+        const modal = document.getElementById("accountMonthlyHistoryModal");
+        if (modal) modal.classList.remove("hidden");
+        renderAccountMonthlyHistoryModal();
+      }
+
+      function closeAccountMonthlyHistoryModal() {
+        inspectHistoryAcctKey = null;
+        const modal = document.getElementById("accountMonthlyHistoryModal");
+        if (modal) modal.classList.add("hidden");
+      }
+
+      function navigateAccountHistoryModal(delta) {
+        const data = computeAccountHistoryReportRows();
+        const navList = data.filtered.length > 0 ? data.filtered : data.rows;
+        const idx = navList.findIndex(r => r.normKey === inspectHistoryAcctKey);
+        if (idx < 0) return;
+        const nextIdx = idx + delta;
+        if (nextIdx >= 0 && nextIdx < navList.length) {
+          inspectHistoryAcctKey = navList[nextIdx].normKey;
+          renderAccountMonthlyHistoryModal();
+        }
+      }
+
+      function renderAccountMonthlyHistoryModal() {
+        if (!inspectHistoryAcctKey) return;
+        const data = computeAccountHistoryReportRows();
+        const navList = data.filtered.length > 0 ? data.filtered : data.rows;
+        const currentIdx = navList.findIndex(r => r.normKey === inspectHistoryAcctKey);
+        const activeRow = (currentIdx >= 0 ? navList[currentIdx] : null) || data.rows.find(r => r.normKey === inspectHistoryAcctKey);
+        if (!activeRow) return;
+
+        const accEl = document.getElementById("acctHistModalAccNo");
+        const utilEl = document.getElementById("acctHistModalUtilityBadge");
+        const siteEl = document.getElementById("acctHistModalSite");
+        const payeeEl = document.getElementById("acctHistModalPayee");
+        const filerEl = document.getElementById("acctHistModalFiler");
+        const totFilEl = document.getElementById("acctHistModalTotalFilings");
+        const prevBtn = document.getElementById("acctHistPrevBtn");
+        const nextBtn = document.getElementById("acctHistNextBtn");
+        const navCnt = document.getElementById("acctHistNavCounter");
+
+        if (accEl) accEl.innerText = activeRow.biller.accountNumber;
+        if (utilEl) utilEl.innerText = activeRow.biller.utilityType;
+        if (siteEl) siteEl.innerText = activeRow.biller.site;
+        if (payeeEl) payeeEl.innerText = activeRow.payeeName;
+        if (filerEl) filerEl.innerText = activeRow.filerNameOnly;
+        if (totFilEl) totFilEl.innerText = `${activeRow.acctReqs.length} total historical filing${activeRow.acctReqs.length === 1 ? "" : "s"}`;
+        if (prevBtn) prevBtn.disabled = !(currentIdx > 0);
+        if (nextBtn) nextBtn.disabled = !(currentIdx >= 0 && currentIdx < navList.length - 1);
+        if (navCnt) navCnt.innerText = currentIdx >= 0 ? `${currentIdx + 1} / ${navList.length}` : "1 / 1";
+
+        const filedCnt = REPORT_MONTHS.filter(m => Boolean(activeRow.monthMap[m])).length;
+        const paidCnt = REPORT_MONTHS.filter(m => {
+          const st = (activeRow.monthMap[m]?.status || "").toUpperCase();
+          return st === "PAID" || st === "CHEQUE REL";
+        }).length;
+        const inProgCnt = REPORT_MONTHS.filter(m => {
+          const req = activeRow.monthMap[m];
+          if (!req) return false;
+          const st = (req.status || "").toUpperCase();
+          return st !== "PAID" && st !== "CHEQUE REL" && st !== "REJECTED" && st !== "CANCEL" && st !== "DUPLICATE" && st !== "BLURRED";
+        }).length;
+        const unfiledCnt = 12 - filedCnt;
+
+        const cFiled = document.getElementById("acctHistCardFiled");
+        const cPaid = document.getElementById("acctHistCardPaid");
+        const cInProg = document.getElementById("acctHistCardInProg");
+        const cUnfiled = document.getElementById("acctHistCardUnfiled");
+        if (cFiled) cFiled.innerText = `${filedCnt} / 12`;
+        if (cPaid) cPaid.innerText = `${paidCnt} Settled`;
+        if (cInProg) cInProg.innerText = `${inProgCnt} Open`;
+        if (cUnfiled) cUnfiled.innerText = `${unfiledCnt} Unfiled`;
+
+        const tbody = document.getElementById("acctHistModalTableBody");
+        if (!tbody) return;
+        tbody.innerHTML = REPORT_MONTHS.map(m => {
+          const mReq = activeRow.monthMap[m];
+          const st = (mReq?.status || "UNFILED").toUpperCase();
+          const isMSettled = st === "PAID" || st === "CHEQUE REL";
+          const isMRej = st === "REJECTED" || st === "CANCEL" || st === "DUPLICATE" || st === "BLURRED";
+          const stClass = !mReq
+            ? "text-slate-400"
+            : isMSettled
+            ? "text-emerald-600 dark:text-emerald-400 font-bold"
+            : isMRej
+            ? "text-red-600 dark:text-red-400 font-bold"
+            : "text-blue-600 dark:text-blue-400 font-bold";
+          const voucherStr = mReq && (mReq.rfp || mReq.cv || mReq.payDate)
+            ? [
+                mReq.rfp ? `RFP: ${escapeHtml(mReq.rfp)}` : "",
+                mReq.cv ? `CV: ${escapeHtml(mReq.cv)}` : "",
+                mReq.payDate ? `Paid: ${escapeHtml(mReq.payDate)}` : ""
+              ].filter(Boolean).join(" · ")
+            : "—";
+          return `
+            <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1f1f1f] transition-colors">
+              <td class="p-3 font-semibold text-slate-900 dark:text-white whitespace-nowrap">${m}</td>
+              <td class="p-3 whitespace-nowrap font-mono text-[11px] ${stClass}">${escapeHtml(st)}</td>
+              <td class="p-3 whitespace-nowrap font-mono">
+                ${mReq
+                  ? `<button type="button" onclick="openEditPaymentDetailsModal('${escapeHtml(mReq.requestId)}')" class="font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer">${escapeHtml(mReq.requestId)}</button>`
+                  : `<span class="text-slate-400">—</span>`}
+              </td>
+              <td class="p-3 text-slate-700 dark:text-neutral-300">${escapeHtml(mReq?.biller || activeRow.payeeName)}</td>
+              <td class="p-3 text-slate-700 dark:text-neutral-300 whitespace-nowrap">${escapeHtml(mReq?.requestorName || (mReq ? activeRow.filerNameOnly : "—"))}</td>
+              <td class="p-3 font-mono text-slate-600 dark:text-neutral-400 whitespace-nowrap">${escapeHtml(mReq?.dueDate || "—")}</td>
+              <td class="p-3 font-mono text-slate-500 dark:text-neutral-400 whitespace-nowrap">${escapeHtml(mReq?.submittedAt || "—")}</td>
+              <td class="p-3 font-mono text-[11px] text-slate-600 dark:text-neutral-300 whitespace-nowrap">${voucherStr}</td>
+              <td class="p-3 text-right whitespace-nowrap">
+                ${mReq
+                  ? `<button type="button" onclick="openEditPaymentDetailsModal('${escapeHtml(mReq.requestId)}')" class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-[#242424] hover:bg-blue-600 hover:text-white text-slate-700 dark:text-neutral-200 text-[11px] font-semibold transition-colors cursor-pointer">Inspect SOA</button>`
+                  : `<button type="button" onclick="fileRbpForAccountFromReport('${escapeHtml(activeRow.biller.accountNumber)}','${m}')" class="px-2.5 py-1 rounded-lg bg-blue-600/10 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white text-[11px] font-semibold transition-colors cursor-pointer">+ File ${m.slice(0, 3)}</button>`}
+              </td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      function exportSingleAccountMonthlyHistoryCsv() {
+        if (!inspectHistoryAcctKey) return;
+        const data = computeAccountHistoryReportRows();
+        const activeRow = data.rows.find(r => r.normKey === inspectHistoryAcctKey);
+        if (!activeRow) return;
+        const dateStr = new Date().toISOString().slice(0, 10);
+        const safeAcc = (activeRow.biller.accountNumber || "Account").replace(/[^a-zA-Z0-9_-]/g, "_");
+        downloadCsvReport(
+          `APEC_Account_Monthly_History_${safeAcc}_${dateStr}.csv`,
+          ["Account Number","Site","Payee","Utility Type","Assigned Filer","Billing Month","Status","Request ID","Filed By (Requestor)","Due Date","Date Submitted","RFP Number","CV Number","Pay Date"],
+          REPORT_MONTHS.map(m => {
+            const mReq = activeRow.monthMap[m];
+            return [
+              activeRow.biller.accountNumber,
+              activeRow.biller.site,
+              mReq?.biller || activeRow.payeeName,
+              activeRow.biller.utilityType,
+              activeRow.filerNameOnly,
+              m,
+              mReq ? (mReq.status || "PENDING").toUpperCase() : "UNFILED",
+              mReq?.requestId || "-",
+              mReq?.requestorName || (mReq ? activeRow.filerNameOnly : "-"),
+              mReq?.dueDate || "-",
+              mReq?.submittedAt || "-",
+              mReq?.rfp || "-",
+              mReq?.cv || "-",
+              mReq?.payDate || "-"
+            ];
+          })
+        );
+      }
+
+      function exportAccountHistoryReportCsv() {
+        const data = computeAccountHistoryReportRows();
+        const selectedVisible = data.filtered.filter(r => repAcctSelectedSet.has(r.normKey));
+        const rowsToExport = selectedVisible.length > 0 ? selectedVisible : data.filtered;
+        const dateStr = new Date().toISOString().slice(0, 10);
+        downloadCsvReport(
+          `APEC_Account_Payment_History_Report_${dateStr}.csv`,
+          ["Account Number","Site","Payee / Biller","Utility Type","Assigned Filer","Total Historical Filings","Selected Period Status","Latest Request ID","Latest Bill Month","Due Date","RFP Number","CV Number","Pay Date","Delay / Overdue Status", ...REPORT_MONTHS],
+          rowsToExport.map(r => [
+            r.biller.accountNumber,
+            r.biller.site,
+            r.payeeName,
+            r.biller.utilityType,
+            r.filerNameOnly,
+            r.acctReqs.length,
+            r.statusUpper,
+            r.targetReq?.requestId || "UNFILED",
+            r.targetReq?.billMonth || "-",
+            r.targetReq?.dueDate || "-",
+            r.targetReq?.rfp || "-",
+            r.targetReq?.cv || "-",
+            r.targetReq?.payDate || "-",
+            r.isDelayed ? `DELAYED (${r.delayDays}d)` : r.isPaid ? "SETTLED" : r.isFiled ? "IN PROGRESS" : "UNFILED",
+            ...REPORT_MONTHS.map(m => r.monthMap[m]?.status || "UNFILED")
+          ])
+        );
+      }
 
     // ==========================================
     // INITIALIZATION & PERIODIC AUTO-POLLING

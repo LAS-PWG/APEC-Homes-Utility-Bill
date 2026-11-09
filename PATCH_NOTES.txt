@@ -6,6 +6,149 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.8.1] - 2026-11-09 — Search Clear (×) Buttons, Interactive Account History Sorter/Filter Headers & 12-Month Account History Modal
+--------------------------------------------------------------------------------
+1. Universal Clear (`×`) Button on All Search Bars:
+   - Added an instant `×` clear button inside every search input across the
+     entire portal:
+     * Utility Endorsements (`enrollSearchQuery`)
+     * Request Bill Payment Account Combobox (`accountSearchQuery`)
+     * Bill Payment Status (`paymentSearchQuery`)
+     * User Management (`userSearchQuery`)
+     * Account Number Management (`billerSearchQuery`)
+     * User Activity Report (`repUserSearch`)
+     * Account History Report (`repAcctSearch`)
+
+2. Account History Table Header Sorter & Inline Column Filters:
+   - Upgraded the `Account History` (`REP_ACCOUNT_HISTORY`) table header (`<thead>`)
+     to serve as both an interactive multi-column Sorter (`▲` / `▼`) and inline
+     Column Filter bar:
+     * Sort & filter by `Account Number` & `Utility Type` (`Power` / `Water`)
+     * Sort & filter by `Site` and `Payee` (`Meralco`, `Maynilad`, `PrimeWater`, etc.)
+     * Sort & filter by `Assigned Filer` (displaying Filer Name only)
+     * Sort by `Total Filings` & filter by `Focus Month` (`January`–`December`)
+     * Sort by `Status` & filter by `Clearance State` (`Paid`, `In-Progress`,
+       `Delayed`, `Unfiled`)
+     * Sort by `Movement / Delay` (overdue days)
+
+3. Select Accounts to Export (`Select All` / `Deselect All` + Row Checkboxes):
+   - Added a master checkbox in the table header, individual row checkboxes, and
+     dedicated `Select All (N)` and `Deselect All` buttons in the toolbar.
+   - `Export Selected (N) CSV` exports only the checked accounts when any are
+     selected, or `Export All (N) CSV` when none are checked.
+
+4. Clean Display (Filer Name Only & No Internal Account Code):
+   - Removed `USR-...` / `APEC-USR-...` user ID codes from Account History so only
+     the Assigned Filer's full name is shown.
+   - Removed internal `BIL-...` account codes from Account History table, modal,
+     and CSV exports.
+
+5. Clickable Account Number -> 12-Month Payment History Popup (`Prev / Next` & CSV Export):
+   - Clicking any Account Number in Account History opens a dedicated 12-Month
+     Payment History modal for that account.
+   - Includes `← Prev` and `Next →` navigation buttons to step through accounts
+     without closing the modal, a 4-card annual summary strip, a full January–
+     December ledger table with clickable `REQ-...` inspector links and `+ File`
+     shortcuts, and a dedicated `Export Account CSV` button.
+
+--------------------------------------------------------------------------------
+[v2.8.0] - 2026-11-09 — PLAN-REPORT-SYSTEM: Separated Audit & Analytical Report Tabs
+--------------------------------------------------------------------------------
+1. Dedicated `Reports:` Navigation Bar Group & Two Separated Report Tabs:
+   - Added a standalone `Reports:` pill group in the top navigation bar (separate
+     from `Admin:`) so any role granted `REP_USER_ACTIVITY` or
+     `REP_ACCOUNT_HISTORY` in the Access Control Matrix can access their
+     authorized report tab directly.
+   - Separated the reporting engine into two distinct top-level tabs:
+     * `User Activity` (`report-user-activity` — gated by `REP_USER_ACTIVITY`)
+     * `Account History` (`report-account-history` — gated by `REP_ACCOUNT_HISTORY`)
+
+2. `User Activity` Report (`REP_USER_ACTIVITY` — Filer Activity, Dormancy & FILEDBY Audit):
+   - 4-Card KPI Summary Strip: `Active Filers (<=30d)`, `Inactive / Dormant (>30d)`,
+     `Accounts Unfiled This Cycle`, and `Total Tracked Users & Vol`.
+   - Filter Bar + 1-Click CSV Export: Search by user ID/name/email/dept, filter by
+     Activity Status (`Active <=30d`, `Dormant >30d`, `Never Filed`, `Has Unfiled
+     LUT Accounts`), filter by Role, and select Target Billing Month.
+   - Per-User Audit Table: Displays User ID, Name, Email, Role, Account Status,
+     Last Filing Date + days-ago badge, `RBP` & `ENR` volume + PHP amount, and
+     `FILEDBY` Account Coverage (`Filed / Total Assigned LUT Accounts`).
+   - Direct `Audit FILEDBY` shortcut button on each user row to jump straight to
+     `Account Number Management` filtered by that user's assigned accounts.
+
+3. `Account History` Report (`REP_ACCOUNT_HISTORY` — 12-Month Matrix & Payment Delay Tracker):
+   - 4-Card KPI Summary Strip: `Cleared / Paid (Cycle)`, `In-Progress / Pending`,
+     `Overdue / Unfiled Alerts`, and `Total Disbursed / Billed`.
+   - Filter Bar + 1-Click CSV Ledger Export: Search by Account No / Site / Filer /
+     RFP / CV, select Target Billing Month (`All Months` or `January`–`December`),
+     filter by Clearance Status (`Cleared / Paid`, `Pending / In-Progress`,
+     `Delayed / Overdue`, `Unfiled / Missing SOA`, `Has Voucher (RFP/CV)`),
+     Utility Type, and Site.
+   - Interactive 12-Month (`J F M A M J J A S O N D`) Filing Matrix per Account:
+     Color-coded monthly cells (Emerald = Paid/Cheque Rel, Amber = Under Review /
+     Approved / With RFP, Rose = Blurred / On-Hold / Rejected, Slate = Unfiled).
+     Clicking any filed month cell opens the 2-Column Split Request Inspector.
+   - Voucher & Delay Tracking: Displays `LUT_RBP_Status` Col I (`RFP`), Col J
+     (`CV`), and Col K (`Pay Date`), plus automatic overdue/turnaround days
+     calculation and a 1-click `+ File RBP` button for unfiled accounts.
+
+--------------------------------------------------------------------------------
+[v2.7.2] - 2026-11-09 — Fix In-Place Bill/Enrollment Detail Editing (No Duplicate Rows)
+--------------------------------------------------------------------------------
+1. Fixed Duplicate Row Appended When Editing Bill or Enrollment Details:
+   - Root Cause: Saving billing edits (`updateBillingDetails`) or enrollment
+     edits (`updateEnrollmentDetails`) previously dispatched the payload to BOTH
+     the Bill Sub WebApp script (`USER_SCRIPT_URL`, which edits the row in place)
+     AND the Approver's legacy Drive upload script (`PAYMENT_SCRIPT_URL` /
+     `DEFAULT_APPS_SCRIPT_URL`), which lacked the `updateBillingDetails` handler
+     and fell through to its `REQ-` / `ENR-` new-submission `appendRow` block.
+   - Fix: Routed `updateBillingDetails` and `updateEnrollmentDetails` exclusively
+     to `USER_SCRIPT_URL` (`DEFAULT_USER_SCRIPT_URL`) across React, Express
+     server routes, and Standalone HTML so edits strictly update the existing
+     row in place and never append a duplicate row copy.
+   - Added automatic `requestId` deduplication during live Google Sheet GViz
+     sync so any previously created `"No File Attached"` duplicate row is
+     automatically collapsed into the original entry.
+
+--------------------------------------------------------------------------------
+[v2.7.1] - 2026-11-08 — PLAN-LUT-RBP-SYNC: LUT_RBP_Status Formula-Safe Sync
+--------------------------------------------------------------------------------
+1. `LUT_RBP_Status` (Col H) <-> `Request Bill Payments` (Col M) Live Sync:
+   - Fetches both `Request Bill Payments` and `LUT_RBP_Status` in parallel via
+     Google Sheets GViz and matches rows by `Request ID` (Col A).
+   - Evaluates the live result of conditional formulas / `IMPORTRANGE` in
+     `LUT_RBP_Status` Col H (`Status`), plus Col I (`RFP`), Col J (`CV`), and
+     Col K (`Pay Date`).
+   - Ignores formula placeholders/errors (`#N/A`, `#REF!`, `Loading...`, `-`,
+     `N/A`, blank) so Admin statuses in `Request Bill Payments` Col M (such as
+     `UNDER REVIEW`, `APPROVED`, `BLURRED`, `REJECTED`) are never overwritten by
+     unmatched formulas.
+   - Strictly Read-Only on `LUT_RBP_Status` Col H: Portal status updates write
+     ONLY to `Request Bill Payments` Col M and never overwrite the formulas in
+     `LUT_RBP_Status` Col H.
+   - Automatically writes resolved `LUT_RBP_Status` Col H statuses (`WITH RFP`,
+     `CHEQUE REL`, `PAID`, etc.) into `Request Bill Payments` Col M.
+
+2. Live Utility Tracker (LUT / Billers) & RBP Cross-Reconciliation:
+   - Added 4-Card Live LUT <-> RBP Reconciliation Summary in Account Number
+     Management (`Total LUT Accounts`, `Filed in RBP`, `Unfiled / Missing SOA`,
+     and `Paid / Cheque Rel`).
+   - Added `RBP Month` (`All Months` or `January`–`December`) and `Coverage`
+     (`Filed in RBP`, `Unfiled / Missing SOA`, `RBP In-Progress`, `Paid / Cheque Rel`)
+     filters to immediately spot utility accounts with missing monthly filings.
+   - Added live `RBP Sync Status` column in Account Number Management showing
+     either the clickable `REQ-...` Request Inspector badge + live payment
+     status or an `UNFILED` badge with a 1-click `+ File RBP` shortcut.
+
+3. `FILEDBY` Account Ownership & Reassignment (Billers Col D):
+   - Extended `Billers` (`LUT`) schema to support `Col D: FILEDBY` (Assigned
+     Filer User ID) and auto-links `FILEDBY` when an `RBP` or Endorsement is filed.
+
+4. Table-Level Status Confirm-Before-Commit:
+   - Changing a status dropdown directly inside the Payment Status or
+     Enrollment Status table stages the new status with inline `Confirm` /
+     `Cancel` buttons before committing to Google Sheets.
+
+--------------------------------------------------------------------------------
 [v2.6.0] - 2026-11-07 — Request Inspector UX, Safety Locks & Layout Refinements
 --------------------------------------------------------------------------------
 1. Request ID Popup Trigger (No Row-Click Interference):
