@@ -6,6 +6,25 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.8.3] - 2026-11-10 — Restricted CANCEL / REJECTED View (Admin, Sub-Admin & Mod Access Only)
+--------------------------------------------------------------------------------
+1. Payment Status (`Request Bill Payments`) — CANCEL / REJECTED View Restriction:
+   - Entries tagged as `CANCEL` or `REJECTED` are now automatically hidden from
+     regular users and visible only to `Administrator`, `Sub-Administrator`, or
+     users explicitly granted the new **`PS_VIEW_CANCEL_REJECTED`** (`View
+     Cancelled / Rejected Requests`) module permission in User Management.
+   - The `CANCEL` and `REJECTED` options in the Payment Status filter dropdown
+     are also restricted to authorized users.
+2. Enrollment Status (`New Bill Endorsement`) — CANCEL / REJECTED View Restriction:
+   - Entries tagged as `Cancel` or `Rejected` are now automatically hidden from
+     regular users and visible only to `Administrator`, `Sub-Administrator`, or
+     users explicitly granted the new **`ES_VIEW_CANCEL_REJECTED`** (`View
+     Cancelled / Rejected Enrollments`) module permission in User Management.
+   - Added `Cancel` alongside `Rejected` in the Enrollment Status update
+     controls, and restricted `Cancel` / `Rejected` filter options to authorized
+     users.
+
+--------------------------------------------------------------------------------
 [v2.8.2] - 2026-11-09 — Standalone / GitHub Pages Report Rendering Fix & Live Sync Refresh
 --------------------------------------------------------------------------------
 1. Fixed Empty Reports in Standalone / GitHub Pages Builds:

@@ -3845,7 +3845,8 @@ function ensurePaymentHeaders(sheet) {
           { id: "PS_FILTER", label: "Search & Filter Table" },
           { id: "PS_EDIT_BILLING", label: "Edit Billing Details (Acct/Biller/Site)" },
           { id: "PS_UPDATE_STATUS", label: "Approve / Change Payment Status" },
-          { id: "PS_ATTACH_LINK", label: "Open External Attachment File Link" }
+          { id: "PS_ATTACH_LINK", label: "Open External Attachment File Link" },
+          { id: "PS_VIEW_CANCEL_REJECTED", label: "View Cancelled / Rejected Requests" }
         ]
       },
       {
@@ -3865,7 +3866,8 @@ function ensurePaymentHeaders(sheet) {
           { id: "ES_FILTER", label: "Search & Filter Endorsements" },
           { id: "ES_EDIT_DETAILS", label: "Edit Enrollment Details" },
           { id: "ES_UPDATE_STATUS", label: "Approve / Change Enrollment Status" },
-          { id: "ES_ATTACH_LINK", label: "Open External Attachment File Links" }
+          { id: "ES_ATTACH_LINK", label: "Open External Attachment File Links" },
+          { id: "ES_VIEW_CANCEL_REJECTED", label: "View Cancelled / Rejected Enrollments" }
         ]
       },
       {
@@ -3908,9 +3910,9 @@ function ensurePaymentHeaders(sheet) {
       if (norm === "sub-administrator" || norm === "subadmin" || norm === "sub-admin") {
         return [
           "RBP_SUBMIT",
-          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK", "PS_VIEW_CANCEL_REJECTED",
           "ENROLL_SUBMIT",
-          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK",
+          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK", "ES_VIEW_CANCEL_REJECTED",
           "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
           "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY"
         ];
@@ -3964,6 +3966,11 @@ function ensurePaymentHeaders(sheet) {
         ? user.permissions
         : getDefaultPermissionsForAccessLevel(user.accessLevel);
       return perms.includes(perm);
+    }
+
+    function isCancelledOrRejectedStatus(status) {
+      const s = String(status || "").trim().toUpperCase();
+      return s === "CANCEL" || s === "CANCELLED" || s === "CANCELED" || s === "REJECT" || s === "REJECTED" || s.includes("CANCEL") || s.includes("REJECT");
     }
 
     let permOverrides = {};
@@ -4430,7 +4437,7 @@ function ensurePaymentHeaders(sheet) {
     function handleRoleSwitch(newRole) {
       if (!currentUser) return;
       currentUser.accessLevel = newRole;
-      currentUser.permissions = getDefaultPermissionsForRole(newRole);
+      currentUser.permissions = getDefaultPermissionsForAccessLevel(newRole);
       const payScopeSelect = document.getElementById("adminPaymentScopeSelect");
       if (payScopeSelect) {
         payScopeSelect.value = hasUserPermission(currentUser, "PS_VIEW_ALL") ? "all" : (hasUserPermission(currentUser, "PS_VIEW_GROUP") ? "group" : "my");
@@ -4839,6 +4846,7 @@ function ensurePaymentHeaders(sheet) {
       const canUpdateEnrStatus = (isAdminOrSub || hasUserPermission(currentUser, "ES_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canEditEnrDetails = (isAdminOrSub || hasUserPermission(currentUser, "ES_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canOpenEnrollLink = isAdminOrSub || hasUserPermission(currentUser, "ES_ATTACH_LINK");
+      const canViewEnrCancelRejected = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_CANCEL_REJECTED");
 
       let list = enrollmentRequests.map(r => enrollmentEditsOverrides[r.requestId] ? { ...r, ...enrollmentEditsOverrides[r.requestId] } : r);
 
@@ -4871,8 +4879,27 @@ function ensurePaymentHeaders(sheet) {
         );
       }
 
-      if (statusFilter && statusFilter !== "All") {
-        list = list.filter(r => (r.status || "").toLowerCase().trim() === statusFilter.toLowerCase().trim());
+      if (!canViewEnrCancelRejected) {
+        list = list.filter(r => !isCancelledOrRejectedStatus(r.status));
+      }
+
+      if (statusSelect) {
+        let curEnrSel = statusSelect.value || "All";
+        if (!canViewEnrCancelRejected && isCancelledOrRejectedStatus(curEnrSel)) {
+          curEnrSel = "All";
+        }
+        const enrStatuses = ["Pending", "Under Review", "Approved", "Endorsed", "Enrolled"];
+        if (canViewEnrCancelRejected) {
+          enrStatuses.push("Cancel", "Rejected");
+        }
+        statusSelect.innerHTML = `<option value="All">All Statuses</option>` + enrStatuses.map(st =>
+          `<option value="${escapeHtml(st)}" ${st.toLowerCase() === curEnrSel.toLowerCase() ? "selected" : ""}>${escapeHtml(st)}</option>`
+        ).join("");
+      }
+
+      const activeEnrStatusFilter = statusSelect ? statusSelect.value : statusFilter;
+      if (activeEnrStatusFilter && activeEnrStatusFilter !== "All") {
+        list = list.filter(r => (r.status || "").toLowerCase().trim() === activeEnrStatusFilter.toLowerCase().trim());
       }
 
       if (query) {
@@ -4976,6 +5003,7 @@ function ensurePaymentHeaders(sheet) {
                       <option value="Approved" ${displayEnrStatus.toLowerCase() === "approved" ? "selected" : ""}>Approved</option>
                       <option value="Endorsed" ${displayEnrStatus.toLowerCase() === "endorsed" ? "selected" : ""}>Endorsed</option>
                       <option value="Enrolled" ${displayEnrStatus.toLowerCase() === "enrolled" ? "selected" : ""}>Enrolled</option>
+                      <option value="Cancel" ${displayEnrStatus.toLowerCase() === "cancel" ? "selected" : ""}>Cancel</option>
                       <option value="Rejected" ${displayEnrStatus.toLowerCase() === "rejected" ? "selected" : ""}>Rejected</option>
                     </select>
                     ${stagedEnrStatus !== undefined ? `
@@ -5700,6 +5728,7 @@ function ensurePaymentHeaders(sheet) {
       const canUpdatePayStatus = (isAdminOrSub || hasUserPermission(currentUser, "PS_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canEditPayBilling = (isAdminOrSub || hasUserPermission(currentUser, "PS_EDIT_BILLING")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
       const canOpenPayLink = isAdminOrSub || hasUserPermission(currentUser, "PS_ATTACH_LINK");
+      const canViewPayCancelRejected = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_CANCEL_REJECTED");
 
       let list = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
 
@@ -5732,6 +5761,10 @@ function ensurePaymentHeaders(sheet) {
         );
       }
 
+      if (!canViewPayCancelRejected) {
+        list = list.filter(r => !isCancelledOrRejectedStatus(r.status));
+      }
+
       // Dynamic Status Dropdown population
       const standardPaymentStatuses = [
         "PENDING",
@@ -5742,15 +5775,18 @@ function ensurePaymentHeaders(sheet) {
         "PAID",
         "DUPLICATE",
         "BLURRED",
-        "CANCEL",
-        "REJECTED"
+        ...(canViewPayCancelRejected ? ["CANCEL", "REJECTED"] : [])
       ];
       if (statusSelect) {
-        const currentSelected = statusSelect.value || "All";
+        let currentSelected = statusSelect.value || "All";
+        if (!canViewPayCancelRejected && isCancelledOrRejectedStatus(currentSelected)) {
+          currentSelected = "All";
+        }
         const seenLower = new Set(standardPaymentStatuses.map(s => s.toLowerCase()));
         const mergedStatuses = [...standardPaymentStatuses];
         for (const r of paymentRequests) {
           const st = (r.status || "PENDING").trim().toUpperCase();
+          if (!canViewPayCancelRejected && isCancelledOrRejectedStatus(st)) continue;
           if (st && !seenLower.has(st.toLowerCase())) {
             seenLower.add(st.toLowerCase());
             mergedStatuses.push(st);
@@ -5763,8 +5799,9 @@ function ensurePaymentHeaders(sheet) {
         statusSelect.innerHTML = optionsHtml;
       }
 
-      if (statusFilter && statusFilter !== "All") {
-        list = list.filter(r => (r.status || "").toLowerCase().trim() === statusFilter.toLowerCase().trim());
+      const activePayStatusFilter = statusSelect ? statusSelect.value : statusFilter;
+      if (activePayStatusFilter && activePayStatusFilter !== "All") {
+        list = list.filter(r => (r.status || "").toLowerCase().trim() === activePayStatusFilter.toLowerCase().trim());
       }
 
       if (query) {
@@ -6487,7 +6524,7 @@ function ensurePaymentHeaders(sheet) {
       if (statusBox) {
         statusBox.innerHTML = canUpdateEnrStatus ? `
           <select id="editEnrollModalStatusSelect" onchange="stageEnrollStatusChangeInModal('${escapeHtml(item.requestId)}', this.value)" class="text-xs font-bold uppercase rounded-xl px-2.5 py-1.5 bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-800 dark:text-white cursor-pointer">
-            ${["Pending","Under Review","Approved","Endorsed","Enrolled","Rejected"].map(st => `<option value="${st}" ${curStatus.toLowerCase() === st.toLowerCase() ? "selected" : ""}>${st}</option>`).join("")}
+            ${["Pending","Under Review","Approved","Endorsed","Enrolled","Cancel","Rejected"].map(st => `<option value="${st}" ${curStatus.toLowerCase() === st.toLowerCase() ? "selected" : ""}>${st}</option>`).join("")}
           </select>
         ` : `<span class="inline-block px-2.5 py-1 rounded text-xs font-bold uppercase ${getStatusBadgeStyle(curStatus)}">${escapeHtml(curStatus)}</span>`;
       }
