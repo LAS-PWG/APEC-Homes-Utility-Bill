@@ -6,6 +6,51 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.8.8] - 2026-11-11 — Full 13-File Package Restoration Across All 5 Zips & Obsolete File Cleanup
+--------------------------------------------------------------------------------
+1. Restored Complete 13-File Manifest in GitHub Pages, Netlify & Hosting-Ready Zips:
+   - Fixed the packaging script path so `apechomes-portal-github-pages.zip`,
+     `apechomes-portal-netlify.zip`, and `apechomes-portal-hosting-ready.zip`
+     bundle all 13 canonical files from `public/netlify-github-package/`:
+     `index.html`, `404.html`, `single-index.html`, `google-sites-embed.html`,
+     `apechomes-logo.png`, `favicon.png`, `.nojekyll`, `_redirects`,
+     `netlify.toml`, `vercel.json`, `GoogleAppsScript_Code.js`,
+     `PATCH_NOTES.txt`, and `README.md` (instead of only 4 files).
+2. Verified Google Sites & Full Source Zips:
+   - `apechomes-portal-google-sites.zip` bundles `google-sites-embed.html`
+     (with inline Base64 logo), `index.html`, `single-index.html`,
+     `apechomes-logo.png`, `favicon.png`, `GoogleAppsScript_Code.js`,
+     `PATCH_NOTES.txt`, and `README.md` (8 files).
+   - `apechomes-utility-portal-source.zip` bundles all clean React/TypeScript,
+     Express server, and standalone package source files with zero recursive
+     `.zip` archives or temporary folders.
+3. Workspace Cleanup of Obsolete Directories:
+   - Removed duplicate temporary root directories (`/netlify-github-package`,
+     `/google-sites-package`, and `/.restore_points`) so `/public/netlify-github-package`
+     remains the single authoritative static package source.
+
+--------------------------------------------------------------------------------
+[v2.8.7] - 2026-11-11 — GitHub Pages Package Sync, Cache-Busting Downloads & Payment Status Column Parity
+--------------------------------------------------------------------------------
+1. GitHub Pages & Static Package Cache-Busting (`?v=2.8.7` + `Cache-Control: no-store`):
+   - Added explicit `Cache-Control: no-store, no-cache, must-revalidate` headers
+     for `.zip`, `.html`, and `.txt` downloads in `server.ts` and appended
+     `?v=2.8.7` to all 5 package download links so browsers always download the
+     freshly built archive instead of a cached copy.
+   - Repacked all 5 `.zip` archives synchronously prior to `vite build` so `dist/`
+     and `public/` contain identical, up-to-date packages.
+2. Standalone HTML & GitHub Pages Theme & Table Parity:
+   - Set `<html class="theme-christmas">` and `<body class="... theme-christmas">`
+     by default in `single-index.html` and bumped the theme persistence key to
+     `apechomes_theme_v3` so browsers opening GitHub Pages immediately render the
+     Lively & Colorful Christmas Holiday theme without stale `localStorage` state.
+   - Aligned the Payment Status table column order in `single-index.html` with
+     `src/App.tsx` (`Request ID [with Duplicate / Late / Overdue flags underneath] |
+     Requestor | Month & Type | Account / Biller | Due Date | Viber | Attachment |
+     Status | Date Submitted`) and hardened `MM/DD/YYYY` + `YYYY-MM-DD` + GViz
+     `Date(Y,M,D)` parsing for live Google Sheet rows.
+
+--------------------------------------------------------------------------------
 [v2.8.6] - 2026-11-11 — Payment Status Flags Moved Under Request ID + Package Optimization & Cleanup
 --------------------------------------------------------------------------------
 1. Payment Status Flags Positioned Directly Under `Request ID`:
