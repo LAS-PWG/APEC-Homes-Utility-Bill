@@ -378,7 +378,176 @@
       box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.28), 0 0 14px rgba(139, 92, 246, 0.35) !important;
     }
 
-    /* Theme-aware Custom Scrollbars (Light, Dark, macOS, Bazzite) */
+    /* ============================================================================
+       5TH THEME: CHRISTMAS HOLIDAY (Lively & Colorful Holiday Wonderland)
+       ============================================================================ */
+    html.theme-christmas,
+    body.theme-christmas,
+    .theme-christmas .min-h-screen {
+      background-color: #fff8f6 !important;
+      background-image:
+        radial-gradient(circle at 10% 14%, rgba(244, 63, 94, 0.34) 0%, transparent 40%),
+        radial-gradient(circle at 88% 12%, rgba(251, 191, 36, 0.38) 0%, transparent 42%),
+        radial-gradient(circle at 84% 85%, rgba(16, 185, 129, 0.34) 0%, transparent 46%),
+        radial-gradient(circle at 14% 86%, rgba(14, 165, 233, 0.26) 0%, transparent 44%),
+        radial-gradient(circle at 50% 48%, rgba(253, 224, 71, 0.22) 0%, transparent 52%),
+        radial-gradient(rgba(225, 29, 72, 0.16) 1.5px, transparent 1.5px),
+        radial-gradient(rgba(16, 185, 129, 0.16) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, #ffe4e6 0%, #fef3c7 34%, #d1fae5 68%, #e0f2fe 100%) !important;
+      background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 56px 56px, 56px 56px, 100% 100% !important;
+      background-position: 0 0, 0 0, 0 0, 0 0, 0 0, 0 0, 28px 28px, 0 0 !important;
+      background-attachment: fixed !important;
+      color: #1e293b !important;
+    }
+    .theme-christmas header {
+      background: linear-gradient(90deg, rgba(255, 241, 242, 0.95) 0%, rgba(254, 249, 195, 0.94) 50%, rgba(209, 250, 229, 0.95) 100%) !important;
+      backdrop-filter: blur(24px) saturate(190%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(190%) !important;
+      border-bottom: 3px solid transparent !important;
+      border-image: repeating-linear-gradient(
+        90deg,
+        #e11d48 0px,
+        #e11d48 18px,
+        #fbbf24 18px,
+        #fbbf24 36px,
+        #10b981 36px,
+        #10b981 54px,
+        #0ea5e9 54px,
+        #0ea5e9 72px
+      ) 1 !important;
+      box-shadow: 0 6px 26px rgba(225, 29, 72, 0.16), 0 2px 10px rgba(16, 185, 129, 0.14) !important;
+    }
+    .theme-christmas main section,
+    .theme-christmas .macos-window-card,
+    .theme-christmas .rounded-2xl,
+    .theme-christmas .rounded-3xl {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 251, 235, 0.92) 52%, rgba(240, 253, 244, 0.94) 100%) !important;
+      backdrop-filter: blur(24px) saturate(180%) !important;
+      -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+      border: 1.5px solid rgba(251, 191, 36, 0.58) !important;
+      box-shadow:
+        0 18px 44px -12px rgba(225, 29, 72, 0.16),
+        0 8px 24px -6px rgba(16, 185, 129, 0.14),
+        inset 0 1px 0 #ffffff !important;
+    }
+    .theme-christmas .nav-group-pill {
+      background: linear-gradient(90deg, rgba(255, 228, 230, 0.85) 0%, rgba(254, 243, 199, 0.85) 50%, rgba(209, 250, 229, 0.85) 100%) !important;
+      border: 1.5px solid rgba(245, 158, 11, 0.45) !important;
+      box-shadow: 0 2px 10px rgba(225, 29, 72, 0.08) !important;
+    }
+    .theme-christmas .nav-action-btn:not(.nav-action-btn-active) {
+      background: linear-gradient(180deg, #ffffff 0%, #fffbeb 100%) !important;
+      border: 1px solid rgba(16, 185, 129, 0.42) !important;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.10) !important;
+      color: #065f46 !important;
+    }
+    .theme-christmas .nav-action-btn:not(.nav-action-btn-active):hover {
+      background: linear-gradient(135deg, #fff1f2 0%, #fef3c7 50%, #ecfdf5 100%) !important;
+      border-color: #e11d48 !important;
+      color: #be123c !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 12px rgba(225, 29, 72, 0.20) !important;
+    }
+    .theme-christmas .macos-window-card .group.rounded-2xl:nth-child(4n+1) {
+      background: linear-gradient(145deg, #fff1f2 0%, #ffffff 65%, #ffe4e6 100%) !important;
+      border-color: rgba(244, 63, 94, 0.45) !important;
+    }
+    .theme-christmas .macos-window-card .group.rounded-2xl:nth-child(4n+2) {
+      background: linear-gradient(145deg, #ecfdf5 0%, #ffffff 65%, #d1fae5 100%) !important;
+      border-color: rgba(16, 185, 129, 0.45) !important;
+    }
+    .theme-christmas .macos-window-card .group.rounded-2xl:nth-child(4n+3) {
+      background: linear-gradient(145deg, #fffbeb 0%, #ffffff 65%, #fef3c7 100%) !important;
+      border-color: rgba(245, 158, 11, 0.50) !important;
+    }
+    .theme-christmas .macos-window-card .group.rounded-2xl:nth-child(4n+4) {
+      background: linear-gradient(145deg, #f0f9ff 0%, #ffffff 65%, #e0f2fe 100%) !important;
+      border-color: rgba(14, 165, 233, 0.45) !important;
+    }
+    .theme-christmas .macos-window-card .group.rounded-2xl:hover {
+      transform: translateY(-3px) !important;
+      border-color: #e11d48 !important;
+      box-shadow: 0 16px 34px -8px rgba(225, 29, 72, 0.25), 0 0 20px rgba(251, 191, 36, 0.35) !important;
+    }
+    .theme-christmas .w-10.h-10.rounded-xl,
+    .theme-christmas .w-9.h-9.rounded-xl,
+    .theme-christmas .w-12.h-12.rounded-2xl {
+      border-radius: 14px !important;
+      color: #ffffff !important;
+      border: 1.5px solid rgba(254, 240, 138, 0.85) !important;
+    }
+    .theme-christmas .bg-blue-500\/10,
+    .theme-christmas .bg-royal-500\/10,
+    .theme-christmas .bg-blue-600.w-9.h-9 {
+      background: linear-gradient(135deg, #e11d48 0%, #dc2626 55%, #f59e0b 100%) !important;
+      box-shadow: 0 6px 16px rgba(225, 29, 72, 0.38) !important;
+      color: #ffffff !important;
+    }
+    .theme-christmas .bg-blue-500\/10 svg,
+    .theme-christmas .bg-royal-500\/10 svg { color: #ffffff !important; }
+    .theme-christmas .bg-emerald-500\/10.w-10.h-10,
+    .theme-christmas .bg-emerald-500.w-10.h-10 {
+      background: linear-gradient(135deg, #10b981 0%, #059669 60%, #eab308 100%) !important;
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.38) !important;
+      color: #ffffff !important;
+    }
+    .theme-christmas .bg-emerald-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-christmas .bg-purple-500\/10.w-10.h-10 {
+      background: linear-gradient(135deg, #f43f5e 0%, #d946ef 55%, #f59e0b 100%) !important;
+      box-shadow: 0 6px 16px rgba(244, 63, 94, 0.38) !important;
+      color: #ffffff !important;
+    }
+    .theme-christmas .bg-purple-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-christmas .bg-amber-500\/10.w-10.h-10 {
+      background: linear-gradient(135deg, #f59e0b 0%, #ea580c 55%, #e11d48 100%) !important;
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.40) !important;
+      color: #ffffff !important;
+    }
+    .theme-christmas .bg-amber-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-christmas footer {
+      background: linear-gradient(90deg, rgba(255, 241, 242, 0.94) 0%, rgba(254, 249, 195, 0.94) 50%, rgba(209, 250, 229, 0.94) 100%) !important;
+      border-top: 2px solid rgba(225, 29, 72, 0.35) !important;
+    }
+    .theme-christmas .bg-royal-500,
+    .theme-christmas .bg-blue-600,
+    .theme-christmas .nav-action-btn-active {
+      background: linear-gradient(135deg, #e11d48 0%, #dc2626 52%, #d97706 100%) !important;
+      border: 1.5px solid rgba(254, 240, 138, 0.85) !important;
+      box-shadow: 0 5px 18px rgba(225, 29, 72, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+      color: #ffffff !important;
+    }
+    .theme-christmas .bg-royal-500:hover,
+    .theme-christmas .bg-blue-600:hover {
+      background: linear-gradient(135deg, #f43f5e 0%, #e11d48 50%, #f59e0b 100%) !important;
+      box-shadow: 0 8px 24px rgba(225, 29, 72, 0.50), 0 0 14px rgba(251, 191, 36, 0.55) !important;
+    }
+    .theme-christmas input:not([type="checkbox"]):not([type="file"]),
+    .theme-christmas select,
+    .theme-christmas textarea {
+      background-color: rgba(255, 255, 255, 0.95) !important;
+      border: 1.5px solid rgba(16, 185, 129, 0.45) !important;
+      color: #0f172a !important;
+      border-radius: 11px !important;
+    }
+    .theme-christmas input:focus,
+    .theme-christmas select:focus,
+    .theme-christmas textarea:focus {
+      outline: none !important;
+      border-color: #e11d48 !important;
+      box-shadow: 0 0 0 3px rgba(244, 63, 94, 0.22), 0 0 14px rgba(251, 191, 36, 0.35) !important;
+    }
+    .theme-christmas thead {
+      background: linear-gradient(90deg, #ffe4e6 0%, #fef3c7 50%, #d1fae5 100%) !important;
+      border-bottom: 2px solid rgba(245, 158, 11, 0.55) !important;
+    }
+    .theme-christmas thead th {
+      color: #881337 !important;
+    }
+    .theme-christmas tbody tr:hover {
+      background: linear-gradient(90deg, rgba(255, 228, 230, 0.45) 0%, rgba(254, 243, 199, 0.45) 50%, rgba(209, 250, 229, 0.45) 100%) !important;
+    }
+
+    /* Theme-aware Custom Scrollbars (Light, Dark, macOS, Bazzite, Christmas) */
     * {
       scrollbar-width: thin;
       scrollbar-color: rgba(148, 163, 184, 0.55) rgba(241, 245, 249, 0.6);
@@ -391,6 +560,9 @@
     }
     html.theme-bazzite * {
       scrollbar-color: rgba(168, 85, 247, 0.65) rgba(13, 9, 26, 0.9);
+    }
+    html.theme-christmas * {
+      scrollbar-color: rgba(225, 29, 72, 0.75) rgba(255, 241, 242, 0.85);
     }
     *::-webkit-scrollbar {
       width: 8px;
@@ -437,6 +609,13 @@
     }
     html.theme-bazzite *::-webkit-scrollbar-thumb {
       background: linear-gradient(180deg, rgba(139, 92, 246, 0.75), rgba(6, 182, 212, 0.75));
+      border-radius: 9999px;
+    }
+    html.theme-christmas *::-webkit-scrollbar-track {
+      background: rgba(255, 241, 242, 0.85);
+    }
+    html.theme-christmas *::-webkit-scrollbar-thumb {
+      background: linear-gradient(180deg, rgba(225, 29, 72, 0.85), rgba(251, 191, 36, 0.85), rgba(16, 185, 129, 0.85));
       border-radius: 9999px;
     }
   </style>
@@ -534,12 +713,17 @@
           </select>
         </div>
 
-        <!-- Theme Selector Dropdown (Light Theme, Dark Theme, macOS Style, Bazzite OS) -->
+        <!-- Theme Selector Dropdown (Christmas Holiday, Light Theme, Dark Theme, macOS Style, Bazzite OS) -->
         <div class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-xl bg-neutral-200/80 dark:bg-[#1e1e1e] border border-neutral-300/60 dark:border-[#2e2e2e]">
           <span id="themeIndicatorMacos" class="hidden items-center space-x-0.5 flex-shrink-0" title="macOS Sequoia Style">
             <span class="w-2 h-2 rounded-full bg-[#ff5f56]"></span>
             <span class="w-2 h-2 rounded-full bg-[#ffbd2e]"></span>
             <span class="w-2 h-2 rounded-full bg-[#27c93f]"></span>
+          </span>
+          <span id="themeIndicatorChristmas" class="hidden items-center space-x-0.5 flex-shrink-0" title="Christmas Holiday Theme">
+            <span class="w-2 h-2 rounded-full bg-[#dc2626] ring-1 ring-amber-300/60"></span>
+            <span class="w-2 h-2 rounded-full bg-[#fbbf24]"></span>
+            <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
           </span>
           <span id="themeIndicatorBazzite" class="hidden w-3.5 h-3.5 rounded-md bg-gradient-to-br from-purple-500 via-fuchsia-500 to-cyan-400 items-center justify-center text-[8px] font-black text-white shadow-xs flex-shrink-0" title="Bazzite OS Theme">
             B
@@ -552,10 +736,11 @@
             aria-label="Select Portal Theme"
             onchange="setTheme(this.value)"
             class="text-xs font-semibold bg-transparent text-neutral-800 dark:text-neutral-200 focus:outline-none cursor-pointer pr-1 py-0.5"
-            title="Select Portal Theme: Light, Dark, macOS Style, or Bazzite OS"
+            title="Select Portal Theme: Christmas Holiday, Light, Dark, macOS Style, or Bazzite OS"
           >
+            <option value="christmas" class="bg-white dark:bg-[#0b2117] text-neutral-800 dark:text-amber-200" selected>Christmas Holiday</option>
             <option value="light" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">Light Theme</option>
-            <option value="dark" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white" selected>Dark Theme</option>
+            <option value="dark" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">Dark Theme</option>
             <option value="macos" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">macOS Style</option>
             <option value="bazzite" class="bg-white dark:bg-[#1a1a1a] text-neutral-800 dark:text-white">Bazzite OS</option>
           </select>
@@ -4170,10 +4355,10 @@ function ensurePaymentHeaders(sheet) {
       return isNaN(parsed) ? 0 : parsed;
     }
 
-    // Theme logic (Light, Dark, macOS Style, Bazzite OS)
+    // Theme logic (Christmas Holiday, Light, Dark, macOS Style, Bazzite OS)
     function initTheme() {
-      const saved = localStorage.getItem("theme") || "dark";
-      setTheme(saved === "light" || saved === "dark" || saved === "macos" || saved === "bazzite" ? saved : "dark");
+      const saved = localStorage.getItem("apechomes_theme_v2") || "christmas";
+      setTheme(saved === "light" || saved === "dark" || saved === "macos" || saved === "bazzite" || saved === "christmas" ? saved : "christmas");
     }
 
     function togglePackagesDropdown(e) {
@@ -4194,13 +4379,15 @@ function ensurePaymentHeaders(sheet) {
       const root = document.documentElement;
       const selectEl = document.getElementById("themeSelectDropdown");
       const macosDots = document.getElementById("themeIndicatorMacos");
+      const christmasDots = document.getElementById("themeIndicatorChristmas");
       const bazziteBadge = document.getElementById("themeIndicatorBazzite");
       const iconWrapper = document.getElementById("themeIconWrapper");
 
-      root.classList.remove("dark", "theme-macos", "theme-bazzite");
-      document.body.classList.remove("dark", "theme-macos", "theme-bazzite");
+      root.classList.remove("dark", "theme-macos", "theme-bazzite", "theme-christmas");
+      document.body.classList.remove("dark", "theme-macos", "theme-bazzite", "theme-christmas");
 
       if (macosDots) { macosDots.classList.add("hidden"); macosDots.classList.remove("inline-flex"); }
+      if (christmasDots) { christmasDots.classList.add("hidden"); christmasDots.classList.remove("inline-flex"); }
       if (bazziteBadge) { bazziteBadge.classList.add("hidden"); bazziteBadge.classList.remove("inline-flex"); }
 
       if (theme === "dark") {
@@ -4211,24 +4398,35 @@ function ensurePaymentHeaders(sheet) {
           iconWrapper.innerHTML = '<i id="themeIcon" data-lucide="moon" class="w-3.5 h-3.5 text-blue-400"></i>';
         }
         localStorage.setItem("theme", "dark");
+        localStorage.setItem("apechomes_theme_v2", "dark");
       } else if (theme === "macos") {
         root.classList.add("theme-macos");
         document.body.classList.add("theme-macos");
         if (macosDots) { macosDots.classList.remove("hidden"); macosDots.classList.add("inline-flex"); }
         if (iconWrapper) iconWrapper.classList.add("hidden");
         localStorage.setItem("theme", "macos");
+        localStorage.setItem("apechomes_theme_v2", "macos");
       } else if (theme === "bazzite") {
         root.classList.add("dark", "theme-bazzite");
         document.body.classList.add("dark", "theme-bazzite");
         if (bazziteBadge) { bazziteBadge.classList.remove("hidden"); bazziteBadge.classList.add("inline-flex"); }
         if (iconWrapper) iconWrapper.classList.add("hidden");
         localStorage.setItem("theme", "bazzite");
+        localStorage.setItem("apechomes_theme_v2", "bazzite");
+      } else if (theme === "christmas") {
+        root.classList.add("theme-christmas");
+        document.body.classList.add("theme-christmas");
+        if (christmasDots) { christmasDots.classList.remove("hidden"); christmasDots.classList.add("inline-flex"); }
+        if (iconWrapper) iconWrapper.classList.add("hidden");
+        localStorage.setItem("theme", "christmas");
+        localStorage.setItem("apechomes_theme_v2", "christmas");
       } else {
         if (iconWrapper) {
           iconWrapper.classList.remove("hidden");
           iconWrapper.innerHTML = '<i id="themeIcon" data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>';
         }
         localStorage.setItem("theme", "light");
+        localStorage.setItem("apechomes_theme_v2", "light");
       }
       if (selectEl) selectEl.value = theme;
       lucide.createIcons();
@@ -5837,16 +6035,92 @@ function ensurePaymentHeaders(sheet) {
         return;
       }
 
+      // Build Payment Status Flags Map (Duplicate, Late Submission <7 weekdays, Overdue on/beyond due date)
+      const parseLocalCalDay = (raw) => {
+        if (!raw) return null;
+        const s = String(raw).trim();
+        if (!s) return null;
+        const gvizMatch = s.match(/Date\((\d+),(\d+),(\d+)/);
+        if (gvizMatch) {
+          return new Date(parseInt(gvizMatch[1], 10), parseInt(gvizMatch[2], 10), parseInt(gvizMatch[3], 10), 0, 0, 0, 0);
+        }
+        const isoMatch = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (isoMatch) {
+          return new Date(parseInt(isoMatch[1], 10), parseInt(isoMatch[2], 10) - 1, parseInt(isoMatch[3], 10), 0, 0, 0, 0);
+        }
+        const d = new Date(s);
+        if (isNaN(d.getTime())) return null;
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+      };
+      const countWeekdaysBetween = (subDate, dueDate) => {
+        if (subDate.getTime() >= dueDate.getTime()) return 0;
+        let count = 0;
+        const cur = new Date(subDate.getTime());
+        while (cur.getTime() < dueDate.getTime()) {
+          cur.setDate(cur.getDate() + 1);
+          const day = cur.getDay();
+          if (day !== 0 && day !== 6) count++;
+        }
+        return count;
+      };
+      const allMergedRequests = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
+      const getDupKey = (r) => {
+        const acc = normalizeRawAccountKey(r.accountNumber || "");
+        const month = String(r.billMonth || "").trim().toLowerCase();
+        if (!acc || !month) return "";
+        const dueD = parseLocalCalDay(r.dueDate);
+        const subD = parseLocalCalDay(r.submittedAt);
+        const yr = dueD ? dueD.getFullYear() : (subD ? subD.getFullYear() : new Date().getFullYear());
+        return `${acc}__${month}__${yr}`;
+      };
+      const activeKeyCounts = {};
+      const totalKeyCounts = {};
+      allMergedRequests.forEach(r => {
+        const k = getDupKey(r);
+        if (!k) return;
+        totalKeyCounts[k] = (totalKeyCounts[k] || 0) + 1;
+        if (!isCancelledOrRejectedStatus(r.status)) {
+          activeKeyCounts[k] = (activeKeyCounts[k] || 0) + 1;
+        }
+      });
+
       tbody.innerHTML = list.map(item => {
         const curStatus = (item.status || "PENDING").toUpperCase();
         const payHref = item.fileUrl || DRIVE_BILL_PAYMENT_FOLDER;
+        const dupKey = getDupKey(item);
+        const isCancRej = isCancelledOrRejectedStatus(item.status);
+        const dupCount = dupKey ? (isCancRej ? (totalKeyCounts[dupKey] || 0) : (activeKeyCounts[dupKey] || 0)) : 0;
+        const isDuplicate = dupCount >= 2 || curStatus === "DUPLICATE";
+        const subD = parseLocalCalDay(item.submittedAt);
+        const dueD = parseLocalCalDay(item.dueDate);
+        let timingFlag = null;
+        let weekdaysBeforeDue = null;
+        if (subD && dueD) {
+          if (subD.getTime() >= dueD.getTime()) {
+            timingFlag = "overdue";
+            weekdaysBeforeDue = 0;
+          } else {
+            const wdays = countWeekdaysBetween(subD, dueD);
+            weekdaysBeforeDue = wdays;
+            if (wdays < 7) timingFlag = "late";
+          }
+        }
+        let flagsHtml = "";
+        if (isDuplicate || timingFlag) {
+          flagsHtml = `<div class="mt-0.5 flex flex-wrap items-center gap-1 leading-none">` +
+            (isDuplicate ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border border-fuchsia-500/30" title="Duplicate entry detected for this Account & Billing Month (Reviewer will manually tag duplicate as REJECTED)"><i data-lucide="layers" class="w-2.5 h-2.5"></i><span>Duplicate</span></span>` : "") +
+            (timingFlag === "overdue" ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30" title="Submitted on or beyond Due Date (${escapeHtml(item.dueDate)})"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i><span>Overdue</span></span>` : "") +
+            (timingFlag === "late" ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30" title="Late Submission: Submitted ${weekdaysBeforeDue} weekday(s) before Due Date (${escapeHtml(item.dueDate)}) — requires at least 7 weekdays lead time"><i data-lucide="clock" class="w-2.5 h-2.5"></i><span>Late (${weekdaysBeforeDue}d)</span></span>` : "") +
+          `</div>`;
+        }
         return `
           <tr class="hover:bg-blue-50/40 dark:hover:bg-[#1a1a1a] transition-colors">
-            <td class="py-3 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap">
-              <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="inline-flex items-center space-x-1.5 text-left hover:underline cursor-pointer group" title="Click to open Request Inspector">
+            <td class="py-2 px-4 font-mono font-bold text-xs text-blue-600 dark:text-blue-400 whitespace-nowrap align-middle">
+              <button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="inline-flex items-center space-x-1.5 text-left hover:underline cursor-pointer group leading-tight" title="Click to open Request Inspector">
                 <span>${escapeHtml(item.requestId)}</span>
                 <span class="px-1.5 py-0.5 rounded text-[9px] font-sans font-bold uppercase bg-blue-500/10 text-blue-600 dark:text-blue-400 group-hover:bg-blue-500/20 transition-colors">${canEditPayBilling ? "Inspect / Edit" : "Inspect"}</span>
               </button>
+              ${flagsHtml}
             </td>
             <td class="py-3 px-4">
               <div class="font-semibold text-slate-900 dark:text-white text-xs">${escapeHtml(item.requestorName)}</div>

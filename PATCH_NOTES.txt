@@ -6,6 +6,50 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.8.6] - 2026-11-11 — Payment Status Flags Moved Under Request ID + Package Optimization & Cleanup
+--------------------------------------------------------------------------------
+1. Payment Status Flags Positioned Directly Under `Request ID`:
+   - Moved the compact `Duplicate`, `Late (Nd)` (< 7 weekdays before Due Date),
+     and `Overdue` (on or beyond Due Date) icon badges directly under the
+     clickable `Request ID` in the first column of the Payment Status table
+     while preserving compact vertical row spacing.
+2. Full Repack, Optimization & Cleanup:
+   - Synchronized all standalone HTML builds (`single-index.html`,
+     `google-sites-embed.html`, and `netlify-github-package`), verified zero
+     obsolete files, and repacked all 5 official `.zip` deployment archives.
+
+--------------------------------------------------------------------------------
+[v2.8.5] - 2026-11-11 — Lively & Colorful Christmas Theme + Payment Status Duplicate, Late & Overdue Flags
+--------------------------------------------------------------------------------
+1. Redone `Christmas Holiday` Theme (`theme-christmas` — Lively & Colorful Wonderland):
+   - Redesigned the Christmas Holiday theme into a bright, vibrant, colorful
+     holiday wonderland featuring Holly Berry Crimson (`#e11d48`), Festive Pine
+     Emerald (`#10b981`), Sparkling Warm Gold (`#fbbf24`), and Winter Frost Blue
+     (`#0ea5e9`) bokeh radial highlights, a candy-stripe header ribbon border,
+     and multi-tinted festive module cards.
+2. Payment Status — Automatic `Duplicate` Flag (Visible to All Users):
+   - Automatically detects and flags duplicate entries sharing the same Account
+     Number and Billing Month with a compact `Duplicate` badge and icon so all
+     users can see it and reviewers can manually tag duplicate rows as `REJECTED`.
+3. Payment Status — `Late Submission` (<7 Weekdays) & `Overdue` (On/Beyond Due Date) Flags:
+   - Automatically flags submissions as `Late (Nd)` when submitted less than 7
+     weekdays before the Due Date, or `Overdue` when submitted on or beyond the
+     Due Date, while preserving compact vertical row spacing.
+
+--------------------------------------------------------------------------------
+[v2.8.4] - 2026-11-10 — Christmas Holiday Theme (Nordic Evergreen, Holly Crimson & Warm Gold)
+--------------------------------------------------------------------------------
+1. New `Christmas Holiday` Theme (`theme-christmas`):
+   - Added a 5th selectable theme (`Christmas Holiday`) alongside `Light Theme`,
+     `Dark Theme`, `macOS Style`, and `Bazzite OS` in the top header theme
+     selector and set it as the default seasonal theme.
+   - Features a deep Nordic Evergreen backdrop (`#071912`) with subtle festive
+     starlight & warm gold radial highlights, frosted evergreen glass cards with
+     warm gold borders (`rgba(251, 191, 36, 0.35)`), holly crimson & gold
+     primary action buttons (`#dc2626` -> `#d97706`), and custom crimson-gold-
+     emerald scrollbars.
+
+--------------------------------------------------------------------------------
 [v2.8.3] - 2026-11-10 — Restricted CANCEL / REJECTED View (Admin, Sub-Admin & Mod Access Only)
 --------------------------------------------------------------------------------
 1. Payment Status (`Request Bill Payments`) — CANCEL / REJECTED View Restriction:
