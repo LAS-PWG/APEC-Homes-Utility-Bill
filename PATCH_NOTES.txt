@@ -6,6 +6,75 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.9.1] - 2026-11-11 — Double-Posting Prevention & Single-Dispatch Guarantee for Request Bill Payment & Enroll New Utility Bill
+--------------------------------------------------------------------------------
+1. Single-Dispatch Webhook Architecture (Eliminates Slow-Internet Double Posts):
+   - Eliminated the multi-POST fallback chain where a browser CORS redirect
+     timeout on Google Apps Script's `302` response caused a second `no-cors`
+     POST or duplicate server relay POST after `doPost(e)` had already appended
+     the row to Google Sheets.
+   - Submissions now route through a strict Single-Dispatch pipeline: backend
+     proxy relay (`/api/bill-payment/submit` and `/api/enrollments/submit`) is
+     attempted first, and a single direct browser POST is used only on static
+     hosts without ever re-POSTing in `catch`.
+2. Synchronous Submission Locks, Disabled Fieldsets & 25-Second Cooldown Guard:
+   - Added synchronous `useRef` / boolean submission locks (`isSubmittingBillPaymentRef`,
+     `isSubmittingEnrollmentRef`, `isSubmittingBillPaymentLock`,
+     `isSubmittingEnrollmentLock`) checked at line 1 of both handlers to block
+     rapid double-clicks or `Enter` key presses before UI re-render.
+   - Wrapped form inputs in `<fieldset disabled={...}>` with `pointer-events-none`
+     on the submit button while posting, and added a 25-second payload
+     fingerprint deduplication cache on both client and server (`30s` window).
+   - Fixed a `ReferenceError` in standalone `handleBillPaymentSubmit`'s
+     `upsertBillerFromActivity` call so the form always resets cleanly after
+     posting.
+
+--------------------------------------------------------------------------------
+[v2.9.0] - 2026-11-11 — Mod Access Gate for `LUT Synced` Flag + New Year Celebration Theme + Full Repack
+--------------------------------------------------------------------------------
+1. Payment Status — `LUT Synced` Flag Restricted to Mod Access (`PS_VIEW_LUT_SYNCED`):
+   - Added a new Module 2 permission **`PS_VIEW_LUT_SYNCED`** (`View LUT Synced
+     Flag`) in User Management -> Mod Access.
+   - Enabled by default for **`Administrator`** and **`Sub-Administrator`**
+     roles and hidden from standard Level 1–10 users unless explicitly granted
+     via Mod Access.
+2. New `New Year Celebration` Theme (`theme-newyear` / `newyear`) & `Christmas Holiday` Default:
+   - Added a 6th selectable theme **`New Year Celebration`** (`theme-newyear`)
+     alongside `Christmas Holiday` (**default** via `apechomes_theme_v5`),
+     `Light Theme`, `Dark Theme`, `macOS Style`, and `Bazzite OS` in the top
+     header theme selector.
+   - Features a festive Midnight Royal Sapphire & Obsidian Gala backdrop
+     (`#070b19` -> `#0f172a` -> `#1e1b4b`) with Champagne Gold (`#fbbf24`),
+     Firework Rose (`#f43f5e`), Electric Cyan (`#38bdf8`), and Violet (`#a855f7`)
+     firework bokeh highlights, gold-trimmed frosted midnight cards, metallic
+     gold & rose action buttons, and custom gold-rose-cyan scrollbars.
+3. Full Optimization, Sync, Repack & Cleanup:
+   - Synchronized `public/single-index.html`, `public/google-sites-embed.html`,
+     and all 13 canonical files in `public/netlify-github-package/`, updated
+     download links to `?v=2.9.0`, and repacked all 5 official `.zip` deployment
+     packages.
+
+--------------------------------------------------------------------------------
+[v2.8.9] - 2026-11-11 — Recomputed Days Delayed & Remaining Lead Time (7-Working-Day Payment Processing Standard)
+--------------------------------------------------------------------------------
+1. Recomputed Days Delayed & Lead Time Left (`7 Working Days` Processing Requirement):
+   - Fixed the `Late` and `Overdue` calculation in both **Payment Status** (under
+     `Request ID`) and **Account History Report** (`Movement / Delay` column).
+   - Previously, `Late (Xd)` displayed the raw working-day difference between
+     Filing Date and Due Date (`weekdaysBeforeDue`), which caused a submission
+     with 5 working days left before Due Date to display `Late (5d)` and a
+     submission with only 1 working day left to display `Late (1d)`.
+   - Since **7 working days** are required to process payment:
+     * **Lead Time Left Till Due Date** = `leadDaysLeft` (working days between
+       Filing Date and Due Date).
+     * **Days Delayed** = `7 - leadDaysLeft` (for late submissions with `< 7`
+       working days lead time) or `7 + weekdaysPastDue` (when submitted on or
+       after Due Date).
+   - Badges now clearly display both values: e.g., `Late 2d (5d left)` when filed
+     5 working days before Due Date, `Late 6d (1d left)` when filed 1 working
+     day before Due Date, and `Overdue · 7d late (0d left)` when filed on Due Date.
+
+--------------------------------------------------------------------------------
 [v2.8.8] - 2026-11-11 — Full 13-File Package Restoration Across All 5 Zips & Obsolete File Cleanup
 --------------------------------------------------------------------------------
 1. Restored Complete 13-File Manifest in GitHub Pages, Netlify & Hosting-Ready Zips:

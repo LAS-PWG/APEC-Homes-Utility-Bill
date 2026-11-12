@@ -240,6 +240,18 @@ function doPost(e) {
       var sheet = ss.getSheetByName('New Bill Endorsement') || ss.insertSheet('New Bill Endorsement');
       ensureEnrollmentHeaders(sheet);
 
+      // Idempotency guard: prevent duplicate rows if the same requestId is received twice
+      var enrExisting = sheet.getDataRange().getValues();
+      for (var eIdx = 1; eIdx < enrExisting.length; eIdx++) {
+        if (String(enrExisting[eIdx][0] || '').trim() === String(data.requestId).trim()) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: 'success',
+            deduplicated: true,
+            requestId: data.requestId
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
+
       var TARGET_FOLDER_ID = '1K9UZYO99WwleEltWmdiX9rouL4rHa3jd';
       var cleanSite = String(data.site || 'site').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
       var cleanAcc = String(data.accountNumber || 'acc').replace(/[^a-zA-Z0-9]/g, '');
@@ -289,6 +301,18 @@ function doPost(e) {
     if (data.requestId && String(data.requestId).indexOf('REQ-') === 0) {
       var paySheet = ss.getSheetByName('Request Bill Payments') || ss.insertSheet('Request Bill Payments');
       ensurePaymentHeaders(paySheet);
+
+      // Idempotency guard: prevent duplicate rows if the same requestId is received twice
+      var payExisting = paySheet.getDataRange().getValues();
+      for (var pIdx = 1; pIdx < payExisting.length; pIdx++) {
+        if (String(payExisting[pIdx][0] || '').trim() === String(data.requestId).trim()) {
+          return ContentService.createTextOutput(JSON.stringify({
+            status: 'success',
+            deduplicated: true,
+            requestId: data.requestId
+          })).setMimeType(ContentService.MimeType.JSON);
+        }
+      }
 
       var PAY_FOLDER_ID = '1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13';
       var tsPay = new Date().getTime();

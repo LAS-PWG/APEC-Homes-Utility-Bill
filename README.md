@@ -1,15 +1,15 @@
-# APEC Homes Utility Portal - Hosting-Ready Multi-File Package (v2.8.8)
+# APEC Homes Utility Portal - Hosting-Ready Multi-File Package (v2.9.1)
 
 This package is pre-configured and ready for 1-click static deployment on **GitHub Pages**, **Netlify**, **Vercel**, **Google Sites**, or any static web host.
 
 ## Included Files (13 Files)
-- `index.html`: Fully self-contained, responsive APEC Homes Utility Portal (`v2.8.8`) with all 9 modules & 5 selectable themes (Christmas Holiday [default], Light, Dark, macOS Style, Bazzite OS):
+- `index.html`: Fully self-contained, responsive APEC Homes Utility Portal (`v2.9.1`) with all 9 modules & 6 selectable themes (Christmas Holiday [default], New Year Celebration, Light, Dark, macOS Style, Bazzite OS):
   1. **Portal Overview & Quick Actions** (with live Google Sheet Announcements sync)
-  2. **Request Bill Payment** (Power & Water with strict file naming: `billmonth_accountnumber_duedate`)
-  3. **View Request Bill Payment Status** (Live authoritative GSheet + `LUT_RBP_Status` sync, Split-Screen Request Inspector, `Duplicate` / `Late (Nd)` / `Overdue` flags under `Request ID`, and restricted `CANCEL`/`REJECTED` visibility)
-  4. **Enroll New Utility Bill** (Unique `ENR-...` ID, GSheet `New Bill Endorsement` tab, dual Google Drive attachment upload)
+  2. **Request Bill Payment** (Power & Water with strict file naming `billmonth_accountnumber_duedate` & single-dispatch anti-double-posting lock)
+  3. **View Request Bill Payment Status** (Live authoritative GSheet + `LUT_RBP_Status` sync, Split-Screen Request Inspector, `Duplicate` / `Late Xd (Yd left)` / `Overdue` flags under `Request ID`, Mod-Access-gated `LUT Synced` & `CANCEL`/`REJECTED` visibility)
+  4. **Enroll New Utility Bill** (Unique `ENR-...` ID, GSheet `New Bill Endorsement` tab, dual Google Drive attachment upload & anti-double-posting lock)
   5. **View Enrollment Status** (Live ledger, Split-Screen Inspector with Dual-Attachment switcher, restricted `CANCEL`/`REJECTED` visibility)
-  6. **User Management** (Admin/Sub-Admin access control, SHA-256 password encryption, `[MODS:...]` granular permissions, GSheet `UserData` tab sync)
+  6. **User Management** (Admin/Sub-Admin access control, SHA-256 password encryption, `[MODS:...]` granular permissions including `PS_VIEW_LUT_SYNCED`, GSheet `UserData` tab sync)
   7. **Account Number Management** (Master `Billers` / `LUT` catalog, `FILEDBY` assignment, live `LUT <-> RBP` cross-reconciliation)
   8. **User Activity Report (`REP_USER_ACTIVITY`)** (Filer activity, 30-day dormancy tracking, `FILEDBY` coverage, and 1-click CSV export)
   9. **Account History Report (`REP_ACCOUNT_HISTORY`)** (12-Month `J–D` payment matrix, clickable Account Number 12-Month History modal with `Prev / Next` navigation, `RFP`/`CV`/`Pay Date` tracking, and 1-click CSV export)
@@ -23,7 +23,7 @@ This package is pre-configured and ready for 1-click static deployment on **GitH
 - `apechomes-logo.png`: High-resolution APEC Homes brand logo asset.
 - `favicon.png`: Official APEC Homes Bill Submission browser tab icon (`Favicon_Bill_Sub`).
 - `GoogleAppsScript_Code.js`: Reference Google Apps Script automation for Google Sheets & Google Drive.
-- `PATCH_NOTES.txt`: Complete version history and release changelog (`v2.5.0` – `v2.8.8`).
+- `PATCH_NOTES.txt`: Complete version history and release changelog (`v2.5.0` – `v2.9.1`).
 - `README.md`: Deployment instructions and architecture guide.
 
 ---
