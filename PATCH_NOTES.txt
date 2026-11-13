@@ -6,6 +6,82 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.9.4] - 2026-11-13 — Permanent Universal PC Wide Mode for All Users, Limiter Removal & Compact Form Footprint
+--------------------------------------------------------------------------------
+1. Permanent Universal PC Wide Mode for All Users:
+   - Enabled the resolution-adaptive PC Wide Mode (`@media (min-width: 768px)`)
+     permanently for all authenticated users (`Administrator`,
+     `Sub-Administrator`, and `Level 1`–`Level 10`), while keeping mobile
+     viewports (`< 768px`) in the untouched stacked layout.
+2. Removed Temporary Limiters & Experimental Toggles:
+   - Removed the temporary `PC Wide: ON / OFF` toggle pill from the top header.
+   - Removed the temporary `UI_PC_WIDE_VIEW` (`"Use PC Wide View (Experimental Mod)"`)
+     permission from `MODULE_PERMISSION_GROUPS`, default role permissions, the
+     User Management Mod Access quick-toggle banner, and the Users Table badge.
+3. Compact Form Footprint in Wide Mode (`48rem` / `max-w-3xl`):
+   - Standardized **Request Bill Payment** (`pc-wide-form-container`) to use the
+     same focused, centered `max-w-3xl` (`48rem` / `768px`) form footprint as
+     **Enroll New Utility Bill** so form inputs remain ergonomic on wide monitors.
+
+--------------------------------------------------------------------------------
+[v2.9.3] - 2026-11-13 — Resolution-Adaptive PC Wide Deck Fix (Zero Nav Clipping) & Temporary `UI_PC_WIDE_VIEW` Mod Access Permission
+--------------------------------------------------------------------------------
+1. Dynamic Resolution-Adaptive PC Wide Sizing (`vw`, `vh`, `clamp()`, `minmax()`):
+   - Upgraded all PC Wide Mode rules (`@media (min-width: 1024px)`) to adjust
+     dynamically based on viewport resolution rather than static pixel sizes:
+     fluid container shell (`width: min(98vw, 2400px)`), resolution-scaled
+     padding/typography (`clamp()`), auto-fitting workflow cards
+     (`repeat(auto-fit, minmax(210px, 1fr))`), and viewport-relative ledger
+     heights (`clamp(460px, calc(100vh - 210px), 1200px)`).
+2. Fixed Top Session Banner & Navigation Bar Clipping / Scrollbar Collision:
+   - Replaced the single-row `row-reverse` flex collision (which squeezed
+     `PAYMENTS` and `ENDORSE` into a clipped horizontal scrollbar when paired
+     with the 5-pill session badge bar on 1280px–1600px screens) with a clean
+     2-tier full-width command deck:
+     * **Tier 1 (Session Strip)**: `"Welcome back, <Name>!"` on the left and
+       session status pills inline on the right (`100%` width).
+     * **Tier 2 (Full-Width Navigation Bar)**: All 5 tab groups (`Overview`,
+       `PAYMENTS`, `ENDORSE`, `ADMIN`, `REPORTS`) flow inline across the full
+       `98vw` card width with `overflow: visible` and zero horizontal scrollbar.
+3. Temporary Mod Access Permission (`UI_PC_WIDE_VIEW`):
+   - Added **`UI_PC_WIDE_VIEW`** (`"Use PC Wide View (Experimental Mod)"`) under
+     **User Management -> Mod Access -> 6. Admin-Only System Modules**.
+   - Default **ON** for `Administrator` and `Sub-Administrator`, and can be
+     temporarily granted per-user to any `Level 1`–`Level 3` account via Mod
+     Access (`[MODS:...,UI_PC_WIDE_VIEW]`).
+
+--------------------------------------------------------------------------------
+[v2.9.2] - 2026-11-12 — Isolated Admin-Only PC Wide Layout Toggle & Desktop Screen Space Maximization
+--------------------------------------------------------------------------------
+1. Admin-Only Experimental Toggle (`PC Wide: ON` / `PC Wide: OFF`):
+   - Added a `PC Wide: ON / OFF` toggle pill in the top header strictly visible
+     only to `Administrator` and `Sub-Administrator` roles (`isAdminOrSubAdmin`)
+     on desktop viewports (`lg:inline-flex`, `>= 1024px`), persisted in
+     `localStorage` (`apechomes_admin_pc_wide_v1`).
+   - Standard users (`Level 1`–`Level 3`) or Admins who switch `PC Wide: OFF`
+     (or preview a non-admin role via `View As`) experience the exact standard
+     layout with zero changes.
+2. Maximized PC Screen Space & Rearranged Desktop Command Deck:
+   - Expands the PC workspace shell to `98vw` and condenses outer/card padding.
+   - Rearranges the Welcome Banner and 2-row Navigation Bar into a unified
+     single-deck command bar where all 5 navigation groups (`Overview`,
+     `Payments`, `Endorse`, `Admin`, `Reports`) flow inline on the left and the
+     session badges + Welcome greeting sit compactly on the right (hiding
+     duplicate card-level Change Password / Log Out buttons on PC since they
+     are already in the sticky top header).
+   - Rearranges the `Overview` tab into a 12-column desktop bento grid:
+     `UserData Database` as a sleek 12-column top strip, `Announcements` on the
+     left (7 columns), and `Utility Services & Workflows` on the right (5
+     columns in a 2×2 grid) so all core modules are visible above the fold.
+   - Expands ledger/report scroll containers (`max-height: calc(100vh - 220px)`)
+     and form widths (`max-w-6xl`) on PC.
+3. Strict Code Isolation & Zero Impact on Tablet / Mobile:
+   - All PC Wide layout rules are encapsulated inside a single marked block
+     (`/* === [ISOLATED EXPERIMENTAL MODULE: ADMIN PC WIDE LAYOUT (v2.9.2)] === */`)
+     strictly scoped to `@media (min-width: 1024px)` and `.pc-wide-mode`,
+     guaranteeing 0% impact on Tablet (`< 1024px`) and Mobile (`< 640px`) views.
+
+--------------------------------------------------------------------------------
 [v2.9.1] - 2026-11-11 — Double-Posting Prevention & Single-Dispatch Guarantee for Request Bill Payment & Enroll New Utility Bill
 --------------------------------------------------------------------------------
 1. Single-Dispatch Webhook Architecture (Eliminates Slow-Internet Double Posts):

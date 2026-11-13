@@ -793,13 +793,183 @@
       background: linear-gradient(180deg, rgba(251, 191, 36, 0.90), rgba(244, 63, 94, 0.85), rgba(56, 189, 248, 0.90));
       border-radius: 9999px;
     }
+
+    /* ============================================================================
+     * === [ISOLATED EXPERIMENTAL MODULE: ADMIN & MOD PC WIDE LAYOUT (v2.9.3)] ===
+     * Strictly gated by `.pc-wide-mode` (Admin / Sub-Admin / UI_PC_WIDE_VIEW Mod)
+     * AND `@media (min-width: 1024px)`.
+     * - All dimensions & positions dynamically scale with screen resolution (`vw`,
+     *   `vh`, `clamp()`, and responsive CSS Grid `minmax()` tracks) rather than
+     *   rigid absolute pixel values.
+     * - Tablet (< 1024px) and Mobile (< 640px) viewports are 100% unaffected.
+     * ============================================================================ */
+    @media (min-width: 768px) {
+      .pc-wide-mode .pc-wide-header-inner {
+        width: min(98vw, 2400px) !important;
+        max-width: min(98vw, 2400px) !important;
+        padding-left: clamp(0.85rem, 1.5vw, 1.75rem) !important;
+        padding-right: clamp(0.85rem, 1.5vw, 1.75rem) !important;
+        height: clamp(3.25rem, 4.5vh, 3.75rem) !important;
+      }
+
+      .pc-wide-mode .pc-wide-main {
+        align-items: flex-start !important;
+        padding-top: clamp(0.35rem, 0.8vh, 0.75rem) !important;
+        padding-bottom: clamp(0.5rem, 1.2vh, 1rem) !important;
+        padding-left: clamp(0.5rem, 1vw, 1.25rem) !important;
+        padding-right: clamp(0.5rem, 1vw, 1.25rem) !important;
+      }
+
+      .pc-wide-mode .pc-wide-shell {
+        width: min(98vw, 2400px) !important;
+        max-width: min(98vw, 2400px) !important;
+        padding-top: 0.25rem !important;
+        padding-bottom: 0.5rem !important;
+      }
+
+      .pc-wide-mode .pc-wide-card {
+        padding: clamp(0.9rem, 1.4vw, 1.5rem) clamp(1rem, 1.8vw, 1.85rem) !important;
+      }
+
+      /* Compact 2-tier full-width command deck:
+         Tier 1: Single-line session bar (Welcome greeting on left, session badges on right)
+         Tier 2: Full-width inline navigation bar underneath — zero horizontal clipping/scrollbars */
+      .pc-wide-mode .pc-wide-banner-nav-wrapper {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: clamp(0.5rem, 0.9vh, 0.75rem) !important;
+        padding-bottom: clamp(0.65rem, 1.1vh, 0.9rem) !important;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.22) !important;
+      }
+
+      .pc-wide-mode .pc-wide-session-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        padding-bottom: 0.35rem !important;
+        border-bottom: 1px dashed rgba(148, 163, 184, 0.2) !important;
+        gap: 0.75rem !important;
+      }
+
+      .pc-wide-mode .pc-wide-session-header > div:first-child {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        width: 100% !important;
+        gap: 0.75rem !important;
+      }
+
+      .pc-wide-mode .pc-wide-session-header h2 {
+        font-size: clamp(1rem, 1.15vw, 1.3rem) !important;
+        line-height: 1.25 !important;
+        text-align: left !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+      }
+
+      .pc-wide-mode .pc-wide-session-badges {
+        justify-content: flex-end !important;
+        margin-bottom: 0 !important;
+        gap: 0.35rem !important;
+      }
+
+      .pc-wide-mode .pc-wide-session-actions {
+        display: none !important;
+      }
+
+      .pc-wide-mode .pc-wide-nav-bar {
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+        border-bottom: none !important;
+        width: 100% !important;
+        overflow: visible !important;
+      }
+
+      .pc-wide-mode .pc-wide-nav-groups {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        gap: clamp(0.35rem, 0.55vw, 0.65rem) !important;
+        width: 100% !important;
+        overflow: visible !important;
+      }
+
+      .pc-wide-mode .pc-wide-nav-groups > div {
+        display: contents !important;
+        overflow: visible !important;
+        padding-bottom: 0 !important;
+      }
+
+      .pc-wide-mode .pc-wide-overview-grid {
+        display: grid !important;
+        grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+        gap: clamp(0.75rem, 1.1vw, 1.25rem) !important;
+        align-items: start !important;
+      }
+
+      .pc-wide-mode .pc-wide-overview-grid > * {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
+      .pc-wide-mode .pc-wide-userdata-card {
+        grid-column: span 12 / span 12 !important;
+        padding: clamp(0.75rem, 1vw, 1.1rem) clamp(1rem, 1.4vw, 1.4rem) !important;
+      }
+
+      .pc-wide-mode .pc-wide-userdata-top {
+        padding-bottom: 0 !important;
+        border-bottom: none !important;
+      }
+
+      .pc-wide-mode .pc-wide-announcements-card {
+        grid-column: span 7 / span 7 !important;
+        padding: clamp(0.95rem, 1.2vw, 1.35rem) clamp(1rem, 1.4vw, 1.5rem) !important;
+        height: 100% !important;
+      }
+
+      .pc-wide-mode .pc-wide-workflows-card {
+        grid-column: span 5 / span 5 !important;
+        background: rgba(148, 163, 184, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 1rem;
+        padding: clamp(0.95rem, 1.2vw, 1.35rem) clamp(1rem, 1.3vw, 1.4rem) !important;
+      }
+
+      .pc-wide-mode .pc-wide-workflows-grid {
+        grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important;
+      }
+
+      .pc-wide-mode .pc-wide-module-body {
+        padding-top: clamp(0.65rem, 1vh, 1rem) !important;
+        padding-bottom: 0.5rem !important;
+      }
+
+      .pc-wide-mode .pc-wide-table-scroll {
+        max-height: clamp(460px, calc(100vh - 210px), 1200px) !important;
+      }
+
+      .pc-wide-mode .pc-wide-form-container {
+        max-width: 48rem !important;
+        margin-left: auto !important;
+        margin-right: auto !important;
+      }
+    }
+    /* === [END ISOLATED EXPERIMENTAL MODULE: ADMIN & MOD PC WIDE LAYOUT] === */
   </style>
 </head>
-<body class="bg-[#f8fafc] text-neutral-800 dark:bg-[#121212] dark:text-[#f3f4f6] theme-christmas min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+<body class="pc-wide-mode bg-[#f8fafc] text-neutral-800 dark:bg-[#121212] dark:text-[#f3f4f6] theme-christmas min-h-screen transition-colors duration-300 flex flex-col justify-between selection:bg-blue-600 selection:text-white">
 
   <!-- TOP HEADER -->
   <header class="w-full border-b border-neutral-200 dark:border-[#262626] bg-white/90 dark:bg-[#121212]/90 backdrop-blur-md sticky top-0 z-50 transition-colors duration-300">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="pc-wide-header-inner max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between transition-all duration-300">
       
       <!-- Upper Left Logo -->
       <div class="flex items-center space-x-3">
@@ -823,7 +993,7 @@
 
       <!-- Right Action Controls -->
       <div class="flex items-center space-x-2.5 sm:space-x-3">
-        
+
         <!-- Live GSheet Database Indicator (ADMIN & SUBADMIN ONLY) -->
         <div id="adminGsheetControls" class="hidden items-center space-x-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" title="Connected to Google Sheet UserData">
           <i data-lucide="database" class="w-3 h-3 text-emerald-500"></i>
@@ -845,30 +1015,30 @@
 
           <div id="adminPackagesMenu" class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#2e2e2e] shadow-2xl p-2 z-50 text-left animate-fade-in">
             <div class="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-100 dark:border-[#262626] mb-1">
-              Static Deployment Packages (v2.9.1)
+              Static Deployment Packages (v2.9.4)
             </div>
-            <a href="./apechomes-portal-github-pages.zip?v=2.9.1" download="apechomes-portal-github-pages.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-github-pages.zip?v=2.9.4" download="apechomes-portal-github-pages.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
               <span>1. GitHub Pages Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-blue-500"></i>
             </a>
-            <a href="./apechomes-portal-netlify.zip?v=2.9.1" download="apechomes-portal-netlify.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-emerald-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-netlify.zip?v=2.9.4" download="apechomes-portal-netlify.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-emerald-50 dark:hover:bg-[#242424] transition-colors">
               <span>2. Netlify Drop Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-500"></i>
             </a>
-            <a href="./apechomes-portal-hosting-ready.zip?v=2.9.1" download="apechomes-portal-hosting-ready.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-indigo-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-hosting-ready.zip?v=2.9.4" download="apechomes-portal-hosting-ready.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-indigo-50 dark:hover:bg-[#242424] transition-colors">
               <span>3. Universal Hosting Ready (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-500"></i>
             </a>
-            <a href="./apechomes-portal-google-sites.zip?v=2.9.1" download="apechomes-portal-google-sites.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-amber-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-google-sites.zip?v=2.9.4" download="apechomes-portal-google-sites.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-amber-50 dark:hover:bg-[#242424] transition-colors">
               <span>4. Google Sites Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-amber-500"></i>
             </a>
-            <a href="./apechomes-utility-portal-source.zip?v=2.9.1" download="apechomes-utility-portal-source.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-purple-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-utility-portal-source.zip?v=2.9.4" download="apechomes-utility-portal-source.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-purple-50 dark:hover:bg-[#242424] transition-colors">
               <span>5. Full Source Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-purple-500"></i>
             </a>
             <div class="border-t border-neutral-100 dark:border-[#262626] mt-1 pt-1">
-              <a href="./google-sites-embed.html?v=2.9.1" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+              <a href="./google-sites-embed.html?v=2.9.4" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
                 <span>Direct Google Sites HTML File</span>
                 <i data-lucide="file-text" class="w-3 h-3"></i>
               </a>
@@ -961,7 +1131,7 @@
   </header>
 
   <!-- MAIN CONTAINER -->
-  <main class="flex-grow flex items-center justify-center p-4 relative overflow-hidden">
+  <main class="pc-wide-main flex-grow flex items-center justify-center p-4 relative overflow-hidden">
     
     <!-- Ambient Glow Effects -->
     <div class="absolute -top-40 -left-40 w-96 h-96 bg-royal-500/10 dark:bg-royal-500/15 rounded-full blur-3xl pointer-events-none transition-all duration-500"></div>
@@ -1147,8 +1317,8 @@
     </div>
 
     <!-- 2. DASHBOARD VIEW -->
-    <div id="dashboardView" class="hidden w-full max-w-6xl animate-fade-in relative z-10 py-6">
-      <div class="macos-window-card bg-white/95 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/60 glass-card rounded-2xl shadow-xl p-6 sm:p-10 transition-all duration-300">
+    <div id="dashboardView" class="pc-wide-shell hidden w-full max-w-6xl animate-fade-in relative z-10 py-6 transition-all duration-300">
+      <div class="pc-wide-card macos-window-card bg-white/95 dark:bg-royal-900/40 border border-slate-200/80 dark:border-royal-800/60 glass-card rounded-2xl shadow-xl p-6 sm:p-10 transition-all duration-300">
         <div class="macos-traffic-bar macos-traffic-bar-lg">
           <div class="flex items-center space-x-2">
             <span class="macos-dot macos-dot-close"></span>
@@ -1162,10 +1332,12 @@
           <div class="w-10"></div>
         </div>
         
+        <!-- ISOLATED PC WIDE WRAPPER FOR TOP BANNER + NAVIGATION BAR -->
+        <div class="pc-wide-banner-nav-wrapper">
         <!-- Welcome Banner Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/80 dark:border-royal-800/60 gap-4">
+        <div class="pc-wide-session-header flex flex-col sm:flex-row sm:items-center justify-between pb-6 border-b border-slate-200/80 dark:border-royal-800/60 gap-4">
           <div>
-            <div class="flex flex-wrap items-center gap-2 mb-2">
+            <div class="pc-wide-session-badges flex flex-wrap items-center gap-2 mb-2">
               <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
                 Authenticated Session
@@ -1188,7 +1360,7 @@
             </h2>
           </div>
 
-          <div class="flex items-center space-x-2">
+          <div class="pc-wide-session-actions flex items-center space-x-2">
             <button 
               type="button"
               id="dashboardChangePwBtn"
@@ -1209,34 +1381,8 @@
           </div>
         </div>
 
-        <!-- SUSPENDED VIEW-ONLY MODE BANNER -->
-        <div id="suspendedViewOnlyBanner" class="hidden mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
-          <div class="flex items-start sm:items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
-              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
-            </div>
-            <div>
-              <h4 class="font-bold text-sm text-amber-900 dark:text-amber-200">
-                Account Suspended — View-Only Mode Active
-              </h4>
-              <p class="text-xs text-amber-700 dark:text-amber-300/90 mt-0.5">
-                You can browse Announcements, Payment Status, and Enrollment Status, but submitting new requests or editing records is currently disabled. Please contact the System Administrator for full reactivation.
-              </p>
-            </div>
-          </div>
-          <div class="flex items-center space-x-2 self-end sm:self-center">
-            <button
-              type="button"
-              onclick="switchTab('payment-status')"
-              class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 font-semibold text-xs transition-colors cursor-pointer whitespace-nowrap"
-            >
-              View Payment Status
-            </button>
-          </div>
-        </div>
-
         <!-- TAB NAVIGATION BAR: OVERVIEW ON LEFT, PAYMENTS + ENDORSE IN ROW 1, ADMIN INLINE BELOW PAYMENTS IN ROW 2 -->
-        <div class="mt-5 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 w-full max-w-full overflow-hidden">
+        <div class="pc-wide-nav-bar mt-5 pb-4 border-b border-slate-200/80 dark:border-royal-800/60 w-full max-w-full overflow-hidden">
           <div class="flex flex-col md:flex-row items-start gap-1.5 sm:gap-2 text-[11px] sm:text-xs font-medium w-full max-w-full">
             <!-- Left Column: Overview Button -->
             <button id="tabBtn-overview" onclick="switchTab('overview')" class="inline-flex items-center space-x-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl transition-all cursor-pointer whitespace-nowrap flex-shrink-0 md:mt-0.5 bg-royal-500 text-white font-semibold shadow-md shadow-royal-500/20">
@@ -1245,7 +1391,7 @@
             </button>
 
             <!-- Right Column: Row 1 (Payments + Endorse) & Row 2 (Admin inline below Payments) -->
-            <div class="flex flex-col items-start gap-2 min-w-0 flex-1 max-w-full">
+            <div class="pc-wide-nav-groups flex flex-col items-start gap-2 min-w-0 flex-1 max-w-full">
               <!-- Row 1: Payments Group + Endorse Group aligned in ONE row -->
               <div class="flex flex-wrap sm:flex-nowrap items-center gap-1.5 sm:gap-2 overflow-x-auto max-w-full">
                 <!-- Payments Operations Group -->
@@ -1311,16 +1457,43 @@
             </div>
           </div>
         </div>
+        </div>
+
+        <!-- SUSPENDED VIEW-ONLY MODE BANNER -->
+        <div id="suspendedViewOnlyBanner" class="hidden mt-4 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+          <div class="flex items-start sm:items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-500/20 text-amber-600 dark:text-amber-400 flex items-center justify-center flex-shrink-0">
+              <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-amber-900 dark:text-amber-200">
+                Account Suspended — View-Only Mode Active
+              </h4>
+              <p class="text-xs text-amber-700 dark:text-amber-300/90 mt-0.5">
+                You can browse Announcements, Payment Status, and Enrollment Status, but submitting new requests or editing records is currently disabled. Please contact the System Administrator for full reactivation.
+              </p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 self-end sm:self-center">
+            <button
+              type="button"
+              onclick="switchTab('payment-status')"
+              class="px-3 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-900 dark:text-amber-200 font-semibold text-xs transition-colors cursor-pointer whitespace-nowrap"
+            >
+              View Payment Status
+            </button>
+          </div>
+        </div>
 
         <!-- TAB CONTENT CONTAINER -->
-        <div class="py-6">
+        <div class="pc-wide-module-body py-6">
           
           <!-- TAB 1: OVERVIEW & ANNOUNCEMENTS -->
-          <div id="tabContent-overview" class="space-y-8 animate-fade-in">
+          <div id="tabContent-overview" class="pc-wide-overview-grid space-y-8 animate-fade-in">
             
             <!-- Admin UserData Database Manager Card -->
-            <div id="adminGsheetCard" class="hidden rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50/60 via-white to-royal-50/40 dark:from-royal-950/90 dark:via-royal-900/40 dark:to-emerald-950/20 p-6 sm:p-7 shadow-sm">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-emerald-500/20 dark:border-emerald-500/10 gap-3">
+            <div id="adminGsheetCard" class="pc-wide-userdata-card hidden rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50/60 via-white to-royal-50/40 dark:from-royal-950/90 dark:via-royal-900/40 dark:to-emerald-950/20 p-6 sm:p-7 shadow-sm">
+              <div class="pc-wide-userdata-top flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-emerald-500/20 dark:border-emerald-500/10 gap-3">
                 <div class="flex items-center space-x-2.5">
                   <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md">
                     <i data-lucide="database" class="w-5 h-5"></i>
@@ -1341,7 +1514,7 @@
             </div>
 
             <!-- Announcements Card from Google Sheet (Announcements Tab) -->
-            <div class="rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-6 sm:p-7 shadow-sm">
+            <div class="pc-wide-announcements-card rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-6 sm:p-7 shadow-sm">
               <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-royal-200/60 dark:border-royal-800/60 gap-3">
                 <div class="flex items-center space-x-2.5">
                   <div class="w-9 h-9 rounded-xl bg-royal-500 text-white flex items-center justify-center shadow-md">
@@ -1463,13 +1636,13 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
 
             <!-- Portal Workflow Cards Grid -->
-            <div>
+            <div class="pc-wide-workflows-card">
               <div class="mb-4">
                 <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Utility Services &amp; Workflows</h4>
                 <p class="text-xs text-slate-500 dark:text-royal-300/60">Select a module below to open its dedicated workspace</p>
               </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="pc-wide-workflows-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <!-- 1. Enroll New Utility Bill -->
                 <div onclick="switchTab('enroll-bill')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
                   <div>
@@ -1552,7 +1725,7 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
 
             <!-- Enrollment Submission Form -->
-            <div class="max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="pc-wide-form-container max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
               <div id="enrollSuccessAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs">
                 <div class="flex items-center space-x-2 font-bold text-sm mb-1">
                   <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
@@ -1879,7 +2052,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- Enrollment Status Table (10-Row Max View) -->
             <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div id="enrollmentScrollContainer" class="max-h-[450px] overflow-auto">
+              <div id="enrollmentScrollContainer" class="pc-wide-table-scroll max-h-[450px] overflow-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
@@ -1935,7 +2108,7 @@ Submit and track your monthly utility payments directly through your account.</p
             </div>
 
             <!-- Payment Request Submission Form -->
-            <div class="max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
+            <div class="pc-wide-form-container max-w-3xl mx-auto bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl p-6 sm:p-8 shadow-sm">
               <div id="billPaymentSuccessAlert" class="hidden mb-6 p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs">
                 <div class="flex items-center space-x-2 font-bold text-sm mb-1">
                   <i data-lucide="check-circle" class="w-4 h-4 text-emerald-500"></i>
@@ -2269,7 +2442,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- Payment Requests Table (10-Row Max View) -->
             <div class="relative bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div id="paymentScrollContainer" class="max-h-[450px] overflow-auto">
+              <div id="paymentScrollContainer" class="pc-wide-table-scroll max-h-[450px] overflow-auto">
                 <table class="w-full text-left text-xs border-collapse">
                   <thead class="sticky top-0 z-10 bg-slate-100 dark:bg-royal-900 border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider shadow-sm">
                     <tr>
@@ -2595,7 +2768,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- Accounts Table -->
             <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto max-h-[450px] overflow-y-auto custom-scrollbar">
+              <div class="pc-wide-table-scroll overflow-x-auto max-h-[450px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left text-xs">
                   <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] uppercase font-bold text-slate-600 dark:text-royal-300 tracking-wider">
                     <tr>
@@ -2721,7 +2894,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- User Activity Table -->
             <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
+              <div class="pc-wide-table-scroll overflow-x-auto max-h-[520px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left text-xs">
                   <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] font-semibold text-slate-600 dark:text-royal-300">
                     <tr>
@@ -2818,7 +2991,7 @@ Submit and track your monthly utility payments directly through your account.</p
 
             <!-- Per-Account History Table with Sorter & Filter Header -->
             <div class="bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 rounded-2xl overflow-hidden shadow-sm">
-              <div class="overflow-x-auto max-h-[560px] overflow-y-auto custom-scrollbar">
+              <div class="pc-wide-table-scroll overflow-x-auto max-h-[560px] overflow-y-auto custom-scrollbar">
                 <table class="w-full text-left text-xs">
                   <thead class="sticky top-0 z-10 bg-slate-100/95 dark:bg-royal-900/95 backdrop-blur-sm border-b border-slate-200 dark:border-royal-800 text-[11px] font-semibold text-slate-600 dark:text-royal-300">
                     <tr class="align-top">
