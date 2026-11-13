@@ -6,6 +6,23 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v2.9.5] - 2026-11-13 — Standalone GitHub/Netlify Package Tab-Switching Fix & Package Cleanup
+--------------------------------------------------------------------------------
+1. Fixed Overview Persisting Across Other Tabs in Standalone Builds (`index.html`):
+   - Fixed a CSS specificity collision in `single-index.html` / `index.html`
+     where `.pc-wide-mode .pc-wide-overview-grid { display: grid !important; }`
+     was applied directly to `#tabContent-overview`, overriding `.hidden`
+     (`display: none`) when switching to `Payment Status`, `Request Payment`,
+     `Enroll Bill`, or `Enrollment Status`.
+   - Separated `#tabContent-overview` from its inner `.pc-wide-overview-grid`
+     container, added `:not(.hidden)` guards on all `.pc-wide-*` display rules,
+     enforced `.pc-wide-mode .hidden { display: none !important; }`, and updated
+     `switchTab()` to toggle both `.hidden` and `style.display`.
+2. Package Optimization & Cleanup:
+   - Removed stale duplicate archive (`apechomes-portal-full-source.zip`) and
+     excluded temporary preview screenshot assets from the source archive.
+
+--------------------------------------------------------------------------------
 [v2.9.4] - 2026-11-13 — Permanent Universal PC Wide Mode for All Users, Limiter Removal & Compact Form Footprint
 --------------------------------------------------------------------------------
 1. Permanent Universal PC Wide Mode for All Users:
