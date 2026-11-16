@@ -6,6 +6,269 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.1.2] - 2026-11-16 — Display Text Cleanup, Sheet Name Callout Removal, Save Button Fix for Add Payment Details Mod (`OTP_ADD_PAYMENT_DETAILS`), Removal of Testing-Only Admin Upload Linker Box in Inspector, & Full Package Repack
+--------------------------------------------------------------------------------
+1. Removed Display Text Callouts:
+   - Removed `"Request ID and User ID are deterministically generated and recorded upon submission."` from the Request Bill Payment submission footer.
+   - Removed `"Requires Approved Request Letter, Current Billing / SOA, Management Approved RLF & Explicit One-Time Payment Acknowledgement"` from the One-Time Utility Bill Payment header and tooltips.
+   - Removed user-facing callouts to specific Google Sheet / Tab names (`Google Sheet Tab: Announcements`, `Target Tab: New Bill Endorsement`, `Sheet: One Time Bill Payments`, `Target Tab: Request Bill Payments`, `New Bill Endorsement Ledger`, `UserData Database`, `Billers`, etc.) across all module headers, subtitles, and inspector headers.
+2. Fixed Save Button & Request Visibility for `Add Payment Details` Mod (`OTP_ADD_PAYMENT_DETAILS`):
+   - Users granted `OTP_ADD_PAYMENT_DETAILS` (as well as `OTP_EDIT_DETAILS` or `OTP_UPDATE_STATUS`) can now view all One-Time Bill Payment requests in `One-Time Bill Payment Status` (with the `All Requests / My Requests` switcher).
+   - Fixed the issue where non-admin users with `OTP_ADD_PAYMENT_DETAILS` did not see a Save button:
+     * In the One-Time Request Inspector, the `Payment & RFP Details` section now includes a dedicated **`Save Payment Details`** button alongside the main **`Save Changes`** button, and payment fields auto-unlock when `OTP_ADD_PAYMENT_DETAILS` is granted.
+     * In the standalone single-file build (`single-index.html`), added an explicit **`Save`** button on each row of `One-Time Bill Payment Status` for users with `OTP_ADD_PAYMENT_DETAILS` or `OTP_UPDATE_STATUS`.
+3. Removed Testing-Only `Admin Upload Linker (Drive Ownership Bypass)` / `OTP_ADMIN_LINKING` from Inspector & Mod Access:
+   - Removed the testing-only `Admin Upload Linker (Drive Ownership Bypass)` / `Admin Only View (OTP_ADMIN_LINKING)` override box from the One-Time Bill Payment Inspector modal (since `Attachments & Drive Access (View in New Tab)` gated by `OTP_ATTACH_LINK` and `OTP_DRIVE_FOLDER_LINK` already provides attachment and Drive folder access).
+   - Removed `OTP_ADMIN_LINKING` from Group 8 Mod Access permissions (`8. One-Time Bill Payment & Status`).
+
+--------------------------------------------------------------------------------
+[v3.1.1] - 2026-11-16 — Dedicated "Admin Actions" Tab Grouped with Users & Accounts, Clean Requestor / Bill Amount / Viber Number Labels, Pending-Only One-Time Status Counter, & Yes/No 1-Time Ack
+--------------------------------------------------------------------------------
+1. Dedicated "Admin Actions" Tab Grouped with Users & Accounts:
+   - Moved all admin-related setup, Google Sheet verification, Drive upload linking,
+     folder ownership, and isolated Apps Script controls out of the filing and status
+     tabs into their own dedicated **`Admin Actions`** tab inside the **`Admin:`**
+     navigation group (`Users` | `Accounts` | `Admin Actions`).
+2. Cleaner Form Field Labels:
+   - Removed `(Logged-in Credentials)` from the `Requestor` label.
+   - Removed `(Optional on submit — also editable via Add Payment Details)` from the
+     `Bill Amount (PHP)` label.
+   - Renamed `Viber Contact Number` / `Viber Contact` to **`Viber Number`** across all
+     forms and inspectors.
+3. Pending-Only One-Time Status Counter:
+   - Updated the `One-Time Status` counter badge (in the navigation bar, Overview card,
+     and filing form shortcut) to strictly count records whose automated status
+     (`computeAutomatedOneTimeStatus`) is **`PENDING`**, excluding records that have
+     already progressed to `WITH RFP`, `FOR PAYMENT`, `PAID`, `CANCEL`, or `REJECTED`.
+4. `Yes` / `No` 1-Time Ack Badge in One-Time Status View:
+   - Replaced `ACK: 1-TIME ONLY` in the `1-Time Ack` column of the One-Time Bill Payment
+     Status table with **`Yes`** (emerald badge) or **`No`** (red badge).
+
+--------------------------------------------------------------------------------
+[v3.1.0] - 2026-11-16 — Full Production Deployment of One-Time Bill Payment (`Module 5`), Removal of Experimental/Temporary Placeholders, & Fix for Google Drive "Files Shared With Me" Upload Emails
+--------------------------------------------------------------------------------
+1. Fixed Google Drive "Files Shared With Me" Emails on Every Upload:
+   - **Root Cause**: `OneTimePayment_Isolated_AppsScript.js` previously called
+     `file.addEditor(ownerEmail)` (`lasarmiento.apec@gmail.com`) on each of the 3
+     uploaded attachments (`RequestLetter`, `SOA`, `MgmtApprovedRLF`). In Google Apps
+     Script, `DriveApp.File.addEditor(email)` unconditionally triggers a Google Drive
+     "File shared with you" notification email on every call.
+   - **Fix (`OneTimePayment_Isolated_AppsScript.js` v2.0 Production + REST API v3)**:
+     * Removed `file.addEditor(...)` completely from `OneTimePayment_Isolated_AppsScript.js`.
+       Because the script is deployed under `lasarmiento.apec@gmail.com` (`Execute as: Me`)
+       and writes directly into personal folder `1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5`,
+       the uploaded files are already owned by your account inside that folder, and
+       `file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW)`
+       enables link viewing silently with **zero email notifications**.
+     * Added `?sendNotificationEmail=false` to the client-side Google Drive REST API v3
+       permission fallback in `oneTimePaymentService.ts`.
+2. Full Production Promotion of One-Time Bill Payment (`Module 5`):
+   - Promoted Group 8 in Mod Access from `8. One-Time Bill Payment (Experimental)` to
+     **`8. One-Time Bill Payment & Status` (`Module 5`)**.
+   - Enabled `EXP_ONETIME_PAYMENT` by default across **all active user roles**
+     (`Administrator`, `Sub-Administrator`, and `Level 1`–`Level 10`) so all portal
+     users can file and track One-Time Bill Payments.
+   - Added **One-Time Utility Bill Payment** and **View One-Time Payment Status**
+     quick-action cards directly to the **Overview Dashboard (`UTILITY SERVICES & WORKFLOWS`)**.
+   - Scoped standard users to their own submitted requests in `One-Time Status` while
+     giving Admins/Sub-Admins an **`All Requests` / `My Requests`** scope toggle.
+3. Production Upload Enforcement & Clean Authoritative Google Sheet Sync:
+   - Set default upload enforcement mode (`getOneTimeUploadMode()`) to **`'required'`**
+     so all 3 attachments (`Approved Request Letter`, `Current Billing / SOA`, and
+     `Management Approved RLF`) are required on submission by default.
+   - Bumped local storage keys to `v2` and made the live Google Sheet tab
+     (`One Time Bill Payments`) the strict authoritative source of truth so deleted
+     test rows never reappear from browser cache.
+   - Removed all temporary `EXPERIMENTAL` badges and `"Assigned for Testing"` banners.
+
+--------------------------------------------------------------------------------
+[v3.0.2] - 2026-11-16 — One-Time Bill Payment Refinements: Requestor Login Credentials, Dedicated Experimental Mod Group 8, Attachment/Folder Link Mods, Automated Status, Separate "Edit Details" & "Add Payment Details" Mods, Admin-Only Linking, & Clean Filing Form
+--------------------------------------------------------------------------------
+1. Requestor Login Credentials (`Requestor` Instead of Email):
+   - Replaced `Email` / `Email / Requestor` across the One-Time Bill Payment filing
+     form, status table, inspector modal, and Google Sheet Column C header with
+     **`Requestor`**, automatically populated and locked (`readOnly`) from the
+     logged-in user's account credentials (`fullName` / `username` + User ID badge).
+2. Dedicated Experimental Mod Group (`8. One-Time Bill Payment [EXPERIMENTAL]`):
+   - Moved all One-Time Bill Payment permissions out of Admin Controls into their
+     own dedicated Mod Access group (`8. One-Time Bill Payment (Experimental)`),
+     tagged with an **`EXPERIMENTAL`** badge:
+     * `EXP_ONETIME_PAYMENT` — One-Time Bill Payment Module Access
+     * `OTP_ATTACH_LINK` — View File in New Tab (Col H, I, J)
+     * `OTP_DRIVE_FOLDER_LINK` — Open Google Drive Folder
+     * `OTP_EDIT_DETAILS` — Edit Details (Account Number, Site, Biller)
+     * `OTP_ADD_PAYMENT_DETAILS` — Add Payment Details (RFP Number, RFP Date, Amount, Date Paid)
+     * `OTP_UPDATE_STATUS` — Update Status (FOR PAYMENT / CANCEL / REJECTED)
+     * `OTP_VIEW_CANCEL_REJECTED` — View CANCEL & REJECTED Rows
+     * `OTP_ADMIN_LINKING` — Admin Upload Linker & Sheet Setup (Admin Only)
+3. One-Time Payment Inspector Refinements:
+   - **Automated Status Priority**: Automatically computes status (`PAID` when `Date Paid`
+     is filled; `WITH RFP` when `RFP Number` is filled) while preserving `CANCEL`
+     and `REJECTED` as top priority whenever selected.
+   - **Removed Status List Text & Old Unlock Button**: Removed the `"CANCEL, REJECTED,
+     WITH RFP, FOR PAYMENT, PAID"` text under Status and removed `"Unlock to edit
+     RFP / Payment details"`.
+   - **Separate Mod-Gated Action Toggles**: Added **`Edit Details`** (`OTP_EDIT_DETAILS`)
+     for Account Number, Site, and Biller, and **`Add Payment Details`**
+     (`OTP_ADD_PAYMENT_DETAILS`) for RFP Number, RFP Date, Amount, and Date Paid.
+   - **View File in New Tab (`Col H, I, J`)**: Moved attachment columns H, I, and J
+     into clean **`View File in New Tab`** action cards gated by `OTP_ATTACH_LINK`.
+   - **Admin-Only Linking (`OTP_ADMIN_LINKING`)**: Restricted `Admin Upload Linker
+     (Drive Ownership Bypass)`, raw URL overrides for Columns H–J, and all sheet/linking
+     setup bars in both the Filing Form and Status Tracker strictly to `OTP_ADMIN_LINKING`.
+4. Clean One-Time Bill Payment Filing Form & Status Header:
+   - Renamed `One-Time Bill Payment Status & RFP Tracker` to **`One-Time Bill Payment Status`**.
+   - Removed all `"Planned"` tags and removed the Unique Upload Filename preview boxes
+     from the 3 upload cards while keeping automatic unique file naming behind the scenes.
+
+--------------------------------------------------------------------------------
+[v3.0.1] - 2026-11-15 — Personal Google Drive Folder (`1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5`) Pre-Assigned for One-Time Bill Payment & Strict Zero-Contact Isolation from Bill Sub / Enrollment Sub
+--------------------------------------------------------------------------------
+1. Personal Google Drive Folder (`1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5`) Pre-Configured:
+   - Set `1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5` (`https://drive.google.com/drive/folders/1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5`)
+     and `lasarmiento.apec@gmail.com` as the default target folder and owner across
+     the One-Time Bill Payment service, UI, `OneTimePayment_Isolated_AppsScript.js`,
+     and `GoogleAppsScript_Code.js`.
+2. 100% Zero-Contact Isolation from Bill Sub & Enrollment Sub Uploads:
+   - Removed all fallback calls from One-Time Bill Payment to `getEnrollmentWebhookUrl()`
+     / `DEFAULT_APPS_SCRIPT_URL`. One-Time Bill Payment never touches or triggers the
+     existing Bill Sub (`Request Bill Payments`) or Enrollment Sub (`New Bill Endorsement`)
+     upload script or folders under any circumstance.
+3. Two Seamless Ways to Upload to Personal Folder `1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5`:
+   - **Direct OAuth Upload (For You Immediately)**: When signed in with Google in the
+     portal, attaching files or clicking **"Auto-Link by Unique Name"** uploads/scans
+     directly in your personal folder `1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5` via Google
+     Drive API v3 and writes the file links into `One Time Bill Payments` Columns H–J.
+   - **Isolated `.gs` Web App (For Any Assigned Test User)**: Click **"Copy Isolated
+     One-Time .gs (For Your Personal Drive)"**, deploy it as a Web App under your own
+     Google account at `script.google.com` (`Execute as: Me`, `Who has access: Anyone`),
+     and paste its `/exec` URL into **"Isolated One-Time Webhook URL"**.
+
+--------------------------------------------------------------------------------
+[v3.0.0] - 2026-11-14 — Sheet-First Focus for One-Time Bill Payment (`One Time Bill Payments`) + Planned Upload Infrastructure, Drive Folder Assignment, Ownership Prep & Unique Upload Filenames
+--------------------------------------------------------------------------------
+1. Sheet-First Mode (`One Time Bill Payments` Tab Focus):
+   - Configured One-Time Bill Payment to run in **Sheet-First Mode (Uploads Planned / Optional)**
+     by default so all One-Time Payment requests, status updates (`PENDING`, `CANCEL`,
+     `REJECTED`, `WITH RFP`, `FOR PAYMENT`, `PAID`), and financial fields (`RFP Number`,
+     `RFP Date`, `Amount`, `Date Paid`) are immediately recorded in the 17-column
+     **`One Time Bill Payments`** tab (`A–Q`) of `Bill Sub WebApp Requests` without
+     waiting for the Google Drive Owner to deploy the upload script.
+   - Added direct Google Sheets v4 API write support (`ensureOneTimeSheetViaGoogleRestApi`
+     & `syncRecordRowToGoogleSheetViaApi`) alongside the webhook so clicking
+     **"Create / Verify GSheet Tab"** or submitting/updating a request writes directly
+     to the Google Sheet.
+2. Prepared Unique Upload Filenames (`<RequestID>_<SITE>_<ACCOUNT>_<BILLER>_...`):
+   - Every One-Time Bill Payment request automatically generates and previews 3
+     deterministic, unique upload filenames in real time (with 1-click Copy buttons):
+     * `<RequestID>_<SITE>_<ACCOUNT>_<BILLER>_RequestLetter.<ext>`
+     * `<RequestID>_<SITE>_<ACCOUNT>_<BILLER>_SOA.<ext>`
+     * `<RequestID>_<SITE>_<ACCOUNT>_<BILLER>_MgmtApprovedRLF.<ext>`
+   - In Sheet-First Mode, Columns H, I, and J of `One Time Bill Payments` automatically
+     store `PLANNED: <UniqueFilename>` so files dropped into the assigned Google Drive
+     folder later can be 1-click auto-matched and linked via **"Auto-Link by Unique Name"**.
+3. Drive Folder Assignment, Ownership Prep & Dual Isolated `.gs` Scripts:
+   - Added a collapsible **"Planned Upload & Owner .gs Prep"** panel in Admin Controls
+     where you can assign the **Target Google Drive Folder URL / ID** and **Designated
+     Drive Owner Email** at any time.
+   - Kept two ready-to-deploy `.gs` scripts isolated from your live system:
+     * `OneTimePayment_Isolated_AppsScript.js` (`v1.1` — 100% isolated One-Time
+       upload + sheet script).
+     * `GoogleAppsScript_Code.js` (`v5.2` — Master All-Uploads script covering
+       `Request Bill Payments` + `New Bill Endorsement` + `One Time Bill Payments`).
+   - Clicking either Copy button automatically injects your assigned Drive Folder ID
+     and Designated Drive Owner Email directly into the copied `.gs` code so it is
+     100% ready when you ask the Drive Owner to deploy it.
+
+--------------------------------------------------------------------------------
+[v2.9.9] - 2026-11-14 — 100% Isolated One-Time Bill Payment Apps Script (`OneTimePayment_Isolated_AppsScript.js`) & Separate Webhook URL
+--------------------------------------------------------------------------------
+1. Zero Impact on Existing Google Drive Upload Script:
+   - Added a completely standalone, isolated Google Apps Script file
+     (`OneTimePayment_Isolated_AppsScript.js`) and a dedicated
+     **"Isolated One-Time Webhook URL"** setting inside the One-Time Payment
+     Admin Experimental Controls box.
+   - Your existing Google Apps Script project and Webhook URL for **Enroll Bill**
+     and **Request Bill Payment** never need to be modified or redeployed,
+     preserving the Drive Owner's existing authorization and file ownership.
+   - The Drive Owner (or Admin for testing) can deploy
+     `OneTimePayment_Isolated_AppsScript.js` as a separate Web App at
+     `https://script.google.com` (`Execute as: Me`, `Who has access: Anyone`)
+     and paste its `/exec` URL into **"Isolated One-Time Webhook URL"** so all
+     3 One-Time Payment uploads (`Approved Request Letter`, `Current Billing / SOA`,
+     `Management Approved RLF`) are stored in the Drive Owner's account while
+     staying 100% isolated from the production script.
+
+--------------------------------------------------------------------------------
+[v2.9.8] - 2026-11-14 — One-Time Bill Payment Sheet Creation & 17-Column Fix, Neutral Color Palette & Row 1 Tab Placement After Enrollment
+--------------------------------------------------------------------------------
+1. Fixed `One Time Bill Payments` Google Sheet Creation & 17-Column (`A–Q`) Sync:
+   - Fixed Google Sheets GViz header detection so the portal accurately detects
+     when GViz falls back to the first tab (`Billers`) if `One Time Bill Payments`
+     has not been created yet, preventing local One-Time Payment records from
+     being overwritten with an empty array.
+   - Updated **"Init / Verify Sheet"** (`handleCheckOneTimeSheet`) to automatically
+     prompt Google Sign-In when no OAuth token is cached so the Google Sheets v4
+     API (`:batchUpdate` `addSheet` + `PUT 'One Time Bill Payments'!A1:Q1`) can
+     immediately create the `One Time Bill Payments` tab, write all 17 headers
+     (`Request ID`, `User ID`, `Email / Requestor`, `Viber Number`, `Account No`,
+     `Site`, `Biller`, `Approved Request Letter`, `Current Billing / SOA`,
+     `Management Approved RLF`, `One-Time Acknowledgement`, `Status`,
+     `RFP Number`, `RFP Date`, `Amount`, `Date Paid`, `Date Submitted`), and
+     backfill any unsynced local `OTP-...` records.
+   - Added a 1-click **"Copy v5.1 Apps Script"** button in Admin Experimental
+     Controls and updated the embedded Apps Script modal in standalone builds to
+     v5.1 so redeploying the Apps Script Web App also auto-creates the sheet and
+     all 17 columns on `doGet` and `doPost`.
+2. Replaced Pink (`fuchsia-*`) Accents with Clean Neutral (`slate-*` / `neutral-*`) Palette:
+   - Replaced all pink/magenta (`fuchsia-*`) accents across the One-Time Bill
+     Payment navigation group, submission form, status tracker, Inspector modal,
+     and User Management `EXP_ONETIME_PAYMENT` toggle/badge with a neutral
+     `slate-*` / `neutral-*` color scheme.
+3. Moved `One-Time:` Navigation Group After Enrollment (`Endorse:`) in Row 1:
+   - Moved the `One-Time:` (`One-Time Payment` & `One-Time Status`) navigation
+     pill group out of Row 2 and placed it in Row 1 immediately after the
+     `Endorse:` (`Enroll Bill` & `Enrollment Status`) group.
+
+--------------------------------------------------------------------------------
+[v2.9.7] - 2026-11-14 — Clean Account Number Display in Payment Status & Isolated Experimental "One-Time Bill Payment" Module (`EXP_ONETIME_PAYMENT`)
+--------------------------------------------------------------------------------
+1. Clean Account Number Display in Payment Status (`Account / Biller` Column):
+   - Removed the redundant `_site_payee` suffix from the upper Account Number
+     line in the Payment Status table (`String(accountNumber).split('_')[0]`),
+     keeping only the clean account number on top while Site and Biller remain
+     displayed on the lower line. This prevents tall row heights for accounts
+     and billers with long names.
+2. Isolated Experimental "One-Time Bill Payment" Module (`EXP_ONETIME_PAYMENT`):
+   - Temporary Mod Access: Enabled by default for `Administrator` and
+     `Sub-Administrator`, and assignable by Admin to any user (`Level 1`–`10`)
+     for testing via User Management -> Mod Access (`EXP_ONETIME_PAYMENT`).
+   - Strictly isolated code blocks (`/* === [ISOLATED EXPERIMENTAL MODULE: ONE-TIME BILL PAYMENT] === */`
+     and `src/services/oneTimePaymentService.ts`) so the feature can be easily
+     kept or removed later.
+   - 3 Required Uploads (`Approved Request Letter`, `Current Billing / SOA`,
+     and `Management Approved RLF`) with configurable Google Drive Folder URL
+     (assignable later) and an Admin **"Auto-Link / Sync Drive Uploads"**
+     trigger (`linkOneTimeUploads` in `GoogleAppsScript_Code.js` v5.1) to bypass
+     Google Drive upload ownership restrictions.
+   - Mandatory Explicit One-Time Payment Acknowledgement checkbox confirming
+     that this is strictly a ONE-TIME PAYMENT ONLY and no succeeding payments
+     for the account can and will be made.
+   - New Google Sheet tab **`One Time Bill Payments`** in `Bill Sub WebApp Requests`
+     with statuses `PENDING`, `CANCEL`, `REJECTED`, `WITH RFP`, `FOR PAYMENT`,
+     and `PAID`, plus columns for `RFP Number`, `RFP Date`, `Amount`, and
+     `Date Paid`.
+
+--------------------------------------------------------------------------------
+[v2.9.6] - 2026-11-14 — Pending-Only Navigation Counter Badges (`Payment Status` & `Enrollment Status`)
+--------------------------------------------------------------------------------
+1. Pending-Only Count on Navigation Badges:
+   - Updated the `Payment Status` and `Enrollment Status` counter badges in the
+     top navigation bar (and Overview workflow cards) to display only the count
+     of `PENDING` requests/enrollments within the user's authorized scope
+     (`All`, `Group`, or `My`) instead of the total historical record count.
+
+--------------------------------------------------------------------------------
 [v2.9.5] - 2026-11-13 — Standalone GitHub/Netlify Package Tab-Switching Fix & Package Cleanup
 --------------------------------------------------------------------------------
 1. Fixed Overview Persisting Across Other Tabs in Standalone Builds (`index.html`):
