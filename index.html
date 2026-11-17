@@ -183,6 +183,8 @@
     /* macOS 3D Glossy Squircle App Icons */
     .theme-macos .w-10.h-10.rounded-xl,
     .theme-macos .w-9.h-9.rounded-xl,
+    .theme-macos .w-8.h-8.rounded-lg,
+    .theme-macos .w-8.h-8.rounded-xl,
     .theme-macos .w-12.h-12.rounded-2xl {
       border-radius: 26% !important;
       color: #ffffff !important;
@@ -192,33 +194,48 @@
         inset 0 -1px 1px rgba(0, 0, 0, 0.15) !important;
       border: 0.5px solid rgba(255, 255, 255, 0.45) !important;
     }
-    .theme-macos .bg-blue-500\/10,
-    .theme-macos .bg-royal-500\/10,
-    .theme-macos .bg-blue-600.w-9.h-9 {
+    .theme-macos .bg-blue-500\/10.w-10.h-10,
+    .theme-macos .bg-blue-500\/10.w-9.h-9,
+    .theme-macos .bg-blue-500\/10.w-8.h-8,
+    .theme-macos .bg-royal-500\/10.w-10.h-10,
+    .theme-macos .bg-royal-500\/10.w-8.h-8,
+    .theme-macos .bg-blue-600.w-9.h-9,
+    .theme-macos .bg-blue-600.w-8.h-8 {
       background: linear-gradient(180deg, #5ac8fa 0%, #007aff 100%) !important;
       color: #ffffff !important;
     }
-    .theme-macos .bg-blue-500\/10 svg,
-    .theme-macos .bg-royal-500\/10 svg { color: #ffffff !important; }
+    .theme-macos .bg-blue-500\/10.w-10.h-10 svg,
+    .theme-macos .bg-blue-500\/10.w-9.h-9 svg,
+    .theme-macos .bg-blue-500\/10.w-8.h-8 svg,
+    .theme-macos .bg-royal-500\/10.w-10.h-10 svg,
+    .theme-macos .bg-royal-500\/10.w-8.h-8 svg { color: #ffffff !important; }
     .theme-macos .bg-emerald-500\/10.w-10.h-10,
-    .theme-macos .bg-emerald-500.w-10.h-10 {
+    .theme-macos .bg-emerald-500\/10.w-8.h-8,
+    .theme-macos .bg-emerald-500.w-10.h-10,
+    .theme-macos .bg-emerald-500.w-9.h-9,
+    .theme-macos .bg-emerald-500.w-8.h-8 {
       background: linear-gradient(180deg, #5de675 0%, #28cd41 100%) !important;
       box-shadow: 0 6px 14px -2px rgba(40, 205, 65, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
       color: #ffffff !important;
     }
-    .theme-macos .bg-emerald-500\/10.w-10.h-10 svg { color: #ffffff !important; }
-    .theme-macos .bg-purple-500\/10.w-10.h-10 {
+    .theme-macos .bg-emerald-500\/10.w-10.h-10 svg,
+    .theme-macos .bg-emerald-500\/10.w-8.h-8 svg { color: #ffffff !important; }
+    .theme-macos .bg-purple-500\/10.w-10.h-10,
+    .theme-macos .bg-purple-500\/10.w-8.h-8 {
       background: linear-gradient(180deg, #d982ff 0%, #af52de 100%) !important;
       box-shadow: 0 6px 14px -2px rgba(175, 82, 222, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
       color: #ffffff !important;
     }
-    .theme-macos .bg-purple-500\/10.w-10.h-10 svg { color: #ffffff !important; }
-    .theme-macos .bg-amber-500\/10.w-10.h-10 {
+    .theme-macos .bg-purple-500\/10.w-10.h-10 svg,
+    .theme-macos .bg-purple-500\/10.w-8.h-8 svg { color: #ffffff !important; }
+    .theme-macos .bg-amber-500\/10.w-10.h-10,
+    .theme-macos .bg-amber-500\/10.w-8.h-8 {
       background: linear-gradient(180deg, #ffd60a 0%, #ff9500 100%) !important;
       box-shadow: 0 6px 14px -2px rgba(255, 149, 0, 0.38), inset 0 1.5px 1px rgba(255, 255, 255, 0.65) !important;
       color: #ffffff !important;
     }
-    .theme-macos .bg-amber-500\/10.w-10.h-10 svg { color: #ffffff !important; }
+    .theme-macos .bg-amber-500\/10.w-10.h-10 svg,
+    .theme-macos .bg-amber-500\/10.w-8.h-8 svg { color: #ffffff !important; }
     .theme-macos input:not([type="checkbox"]):not([type="file"]),
     .theme-macos select,
     .theme-macos textarea {
@@ -322,15 +339,19 @@
       color: #ffffff !important;
       border: 1px solid rgba(255, 255, 255, 0.28) !important;
     }
-    .theme-bazzite .bg-blue-500\/10,
-    .theme-bazzite .bg-royal-500\/10,
+    .theme-bazzite .bg-blue-500\/10.w-10.h-10,
+    .theme-bazzite .bg-blue-500\/10.w-8.h-8,
+    .theme-bazzite .bg-royal-500\/10.w-10.h-10,
+    .theme-bazzite .bg-royal-500\/10.w-8.h-8,
     .theme-bazzite .bg-blue-600.w-9.h-9 {
       background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%) !important;
       box-shadow: 0 0 18px rgba(6, 182, 212, 0.42) !important;
       color: #ffffff !important;
     }
-    .theme-bazzite .bg-blue-500\/10 svg,
-    .theme-bazzite .bg-royal-500\/10 svg { color: #ffffff !important; }
+    .theme-bazzite .bg-blue-500\/10.w-10.h-10 svg,
+    .theme-bazzite .bg-blue-500\/10.w-8.h-8 svg,
+    .theme-bazzite .bg-royal-500\/10.w-10.h-10 svg,
+    .theme-bazzite .bg-royal-500\/10.w-8.h-8 svg { color: #ffffff !important; }
     .theme-bazzite .bg-emerald-500\/10.w-10.h-10,
     .theme-bazzite .bg-emerald-500.w-10.h-10 {
       background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%) !important;
@@ -829,6 +850,18 @@
         padding: clamp(0.9rem, 1.4vw, 1.5rem) clamp(1rem, 1.8vw, 1.85rem) !important;
       }
 
+      /* Ensure macOS Traffic Light Titlebar sits 100% flush with .pc-wide-card padding */
+      .theme-macos .pc-wide-mode .pc-wide-card .macos-traffic-bar-lg,
+      .pc-wide-mode.theme-macos .pc-wide-card .macos-traffic-bar-lg {
+        margin-top: calc(-1 * clamp(0.9rem, 1.4vw, 1.5rem)) !important;
+        margin-left: calc(-1 * clamp(1rem, 1.8vw, 1.85rem)) !important;
+        margin-right: calc(-1 * clamp(1rem, 1.8vw, 1.85rem)) !important;
+        margin-bottom: 1.15rem !important;
+        padding: 11px clamp(1rem, 1.8vw, 1.85rem) !important;
+        border-top-left-radius: 19px !important;
+        border-top-right-radius: 19px !important;
+      }
+
       /* Compact 2-tier full-width command deck:
          Tier 1: Single-line session bar (Welcome greeting on left, session badges on right)
          Tier 2: Full-width inline navigation bar underneath — zero horizontal clipping/scrollbars */
@@ -909,7 +942,7 @@
         display: grid !important;
         grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
         gap: clamp(0.75rem, 1.1vw, 1.25rem) !important;
-        align-items: start !important;
+        align-items: stretch !important;
       }
 
       .pc-wide-mode .pc-wide-overview-grid > * {
@@ -929,6 +962,9 @@
 
       .pc-wide-mode .pc-wide-overview-col {
         grid-column: span 12 / span 12 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
       }
 
       .pc-wide-mode .pc-wide-announcements-card {
@@ -940,6 +976,10 @@
         border: 1px solid rgba(148, 163, 184, 0.18);
         border-radius: 1rem;
         padding: clamp(0.85rem, 1vw, 1.15rem) !important;
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
       }
 
       .pc-wide-mode .pc-wide-module-body {
@@ -966,6 +1006,13 @@
     @media (min-width: 960px) {
       .pc-wide-mode .pc-wide-overview-col {
         grid-column: span 4 / span 4 !important;
+      }
+
+      .pc-wide-mode .overview-col-scroll-list {
+        flex: 1 1 0% !important;
+        min-height: 320px !important;
+        max-height: none !important;
+        overflow-y: auto !important;
       }
     }
     /* === [END UNIVERSAL RESOLUTION-ADAPTIVE PC WIDE LAYOUT] === */
@@ -1718,7 +1765,7 @@ Submit and track your monthly utility payments directly through your account.</p
                   <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
-              <div id="overviewUpcomingListContainer" class="mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
+              <div id="overviewUpcomingListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
                 <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading upcoming due dates...</div>
               </div>
             </div>
@@ -1740,7 +1787,7 @@ Submit and track your monthly utility payments directly through your account.</p
                   <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                 </button>
               </div>
-              <div id="overviewLapsedListContainer" class="mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
+              <div id="overviewLapsedListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
                 <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading lapsed accounts...</div>
               </div>
             </div>
@@ -8730,11 +8777,50 @@ function ensureOneTimePaymentHeaders(sheet) {
     const BILLER_FILEDBY_OVERRIDES_KEY = "apechomes_biller_filedby_v1";
 
     function normalizeRawAccountKey(acc) {
-      return String(acc || "").replace(/^ACC[-_:\s]*/i, "").replace(/[\s-]/g, "").trim().toLowerCase();
+      return String(acc || "").split("_")[0].replace(/^ACC[-_:\s]*/i, "").replace(/[\s-]/g, "").trim().toLowerCase().replace(/^0+(?=\d)/, "");
     }
 
     function normalizeAccountKey(acc) {
       return normalizeRawAccountKey(acc);
+    }
+
+    function deduplicateBillersList(items) {
+      if (!Array.isArray(items)) return [];
+      const map = new Map();
+      for (const raw of items) {
+        if (!raw || !raw.accountNumber) continue;
+        const rawStr = String(raw.accountNumber).trim();
+        const hadSuffix = rawStr.includes("_");
+        const cleanAcc = rawStr.split("_")[0].trim();
+        if (!cleanAcc || cleanAcc.toLowerCase() === "account no" || cleanAcc.toLowerCase() === "account number") continue;
+        const key = normalizeRawAccountKey(cleanAcc);
+        if (!key) continue;
+        const normalizedItem = { ...raw, accountNumber: cleanAcc };
+        const existing = map.get(key);
+        if (!existing) {
+          map.set(key, { item: normalizedItem, hadSuffix });
+        } else if (existing.hadSuffix && !hadSuffix) {
+          // Prioritize clean master entry from Bill Sub WebApp Requests > Billers over RBP-suffixed duplicate
+          map.set(key, {
+            item: { ...normalizedItem, filedBy: normalizedItem.filedBy || existing.item.filedBy || "" },
+            hadSuffix: false
+          });
+        } else if (!existing.item.filedBy && normalizedItem.filedBy) {
+          existing.item.filedBy = normalizedItem.filedBy;
+        }
+      }
+      return Array.from(map.values()).map((entry, idx) => ({
+        ...entry.item,
+        billerId: entry.item.billerId || `BIL-${String(idx + 1).padStart(3, "0")}`
+      }));
+    }
+
+    // Sanitize any cached billers loaded at startup
+    if (Array.isArray(billers) && billers.length > 0) {
+      billers = deduplicateBillersList(billers);
+      try {
+        localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
+      } catch (e) {}
     }
 
     function getBillerFiledByOverrides() {
@@ -8757,6 +8843,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (idx !== -1) {
         billers[idx].filedBy = (filedBy || "").trim();
         billers[idx].lastUpdated = new Date().toISOString().slice(0, 10);
+        billers = deduplicateBillersList(billers);
         localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
       }
       fetch("/api/billers/save", {
@@ -8767,7 +8854,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     function upsertBillerFromActivity(params) {
-      const rawAcc = String(params.accountNumber || "").replace(/^ACC[-_:\s]*/i, "").trim();
+      const rawAcc = String(params.accountNumber || "").split("_")[0].replace(/^ACC[-_:\s]*/i, "").trim();
       const key = normalizeRawAccountKey(rawAcc);
       if (!key) return;
 
@@ -8805,6 +8892,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         });
       }
 
+      billers = deduplicateBillersList(billers);
       localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
       fetch("/api/billers/save", {
         method: "POST",
@@ -8832,12 +8920,10 @@ function ensureOneTimePaymentHeaders(sheet) {
     function enrichBillersCatalog() {
       const overrides = getBillerFiledByOverrides();
       const allRbpMap = buildLutRbpLookupMap("All");
-      const today = new Date().toISOString().slice(0, 10);
-      const existingKeys = new Set();
 
-      billers = billers.map(b => {
+      // Strictly prioritize the Bill Sub WebApp Requests > Billers list without appending RBP duplicates
+      billers = deduplicateBillersList(billers).map(b => {
         const key = normalizeRawAccountKey(b.accountNumber);
-        if (key) existingKeys.add(key);
         let filedBy = overrides[key] !== undefined ? overrides[key] : (b.filedBy || "");
         if (!filedBy) {
           const latestRbp = allRbpMap.get(key);
@@ -8849,22 +8935,6 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
         return { ...b, filedBy };
       });
-
-      for (const [key, rbp] of allRbpMap.entries()) {
-        if (!key || existingKeys.has(key)) continue;
-        existingKeys.add(key);
-        const isWater = /water|sinukuan|district|laguna/i.test(rbp.biller || rbp.billType || "");
-        billers.push({
-          billerId: `BIL-${String(billers.length + 1).padStart(3, "0")}`,
-          site: rbp.site || "General Site",
-          billerName: rbp.biller || "Utility Provider",
-          accountNumber: rbp.accountNumber,
-          utilityType: isWater ? "Water" : "Power",
-          status: "Active",
-          lastUpdated: today,
-          filedBy: overrides[key] !== undefined ? overrides[key] : (rbp.userId || "")
-        });
-      }
     }
 
     function assignAccountFiledByInline(accNo, newFiledBy) {
@@ -9289,13 +9359,13 @@ function ensureOneTimePaymentHeaders(sheet) {
               }
 
               if (list.length > 0) {
-                billers = list;
+                billers = deduplicateBillersList(list);
                 localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
                 synced = true;
                 fetch("/api/billers/save", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ billers: list })
+                  body: JSON.stringify({ billers })
                 }).catch(() => {});
               }
             }
@@ -9312,7 +9382,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           if (res.ok) {
             const data = await res.json();
             if (data.billers && data.billers.length > 0) {
-              billers = data.billers;
+              billers = deduplicateBillersList(data.billers);
               localStorage.setItem("apechomes_billers_catalog_v2", JSON.stringify(billers));
               synced = true;
             }
@@ -12150,13 +12220,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
 
       let fulfilled = 0, upcoming = 0, overdue = 0, lapsed = 0, dateRangeTotal = 0;
-      const rows = billers.map(b => {
+      const masterBillers = deduplicateBillersList(billers);
+      const rows = masterBillers.map(b => {
         const k = normalizeAccountLookupKey(b.accountNumber);
-        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
-        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
         const hasHistory = irList.length > 0 || rbpList.length > 0;
-        const mRbp = rbpList.find(x => x.billYm >= targetYm);
-        const mIr = irList.find(x => x.billYm >= targetYm);
+        const mRbp = rbpList.find(x => x.billYm >= targetYm || x.dueYm >= targetYm);
+        const mIr = irList.find(x => x.billYm >= targetYm || x.dueYm >= targetYm);
         const isFulfilled = Boolean(mRbp || mIr);
 
         const lastIr = irList[irList.length - 1] || null;
@@ -12168,11 +12239,14 @@ function ensureOneTimePaymentHeaders(sheet) {
         const projIso = projDate ? `${targetYear}-${String(targetMIdx+1).padStart(2,"0")}-${String(projDate.getDate()).padStart(2,"0")}` : "—";
         const daysFromToday = projDate ? Math.round((projDate.getTime() - todayMid) / 86400000) : null;
 
-        const covered = new Set([...irList.map(x => x.billYm), ...rbpList.map(x => x.billYm)]);
+        const covered = new Set([...irList.flatMap(x => [x.billYm, x.dueYm]), ...rbpList.flatMap(x => [x.billYm, x.dueYm])]);
         const priorIr = irList.filter(x => x.billYm < targetYm);
         const priorRbp = rbpList.filter(x => x.billYm < targetYm);
-        const lastPriorBillYm = Math.max(priorIr.length ? priorIr[priorIr.length-1].billYm : -1, priorRbp.length ? priorRbp[priorRbp.length-1].billYm : -1);
-        const continuous = lastPriorBillYm >= targetYm - 1;
+        const lastPriorBillYm = Math.max(
+          priorIr.length ? Math.max(priorIr[priorIr.length-1].billYm, priorIr[priorIr.length-1].dueYm < targetYm ? priorIr[priorIr.length-1].dueYm : -1) : -1,
+          priorRbp.length ? Math.max(priorRbp[priorRbp.length-1].billYm, priorRbp[priorRbp.length-1].dueYm < targetYm ? priorRbp[priorRbp.length-1].dueYm : -1) : -1
+        );
+        const continuous = lastPriorBillYm >= targetYm - 1 || covered.has(targetYm - 1);
         const missing = [];
         if (!isFulfilled && hasHistory && lastPriorBillYm > 0 && !continuous) {
           for (let ym = lastPriorBillYm + 1; ym < targetYm; ym++) {
@@ -12297,23 +12371,24 @@ function ensureOneTimePaymentHeaders(sheet) {
       const curYear = now.getFullYear();
       const curMonthIdx = now.getMonth();
       const curYm = curYear * 12 + curMonthIdx;
+      const masterBillers = deduplicateBillersList(billers);
 
       // Identify accounts previously filed by the logged-in user
       const userAccountKeys = new Set();
       if (currentUser) {
         const uEmail = String(currentUser.email || "").trim().toLowerCase();
         const uName = String(currentUser.username || "").trim().toLowerCase();
-        const uId = String(currentUser.id || "").trim().toLowerCase();
+        const uId = String(currentUser.id || currentUser.userId || "").trim().toLowerCase();
         for (const r of paymentRequests) {
-          const rEmail = String(r.submittedByEmail || "").trim().toLowerCase();
-          const rName = String(r.submittedBy || "").trim().toLowerCase();
-          if ((uEmail && (rEmail === uEmail || rName === uEmail)) || (uName && (rName === uName || rEmail === uName)) || (uId && rName === uId)) {
+          const rEmail = String(r.submittedByEmail || r.userId || "").trim().toLowerCase();
+          const rName = String(r.submittedBy || r.requestorName || "").trim().toLowerCase();
+          if ((uEmail && (rEmail === uEmail || rName === uEmail)) || (uName && (rName === uName || rEmail === uName)) || (uId && (rName === uId || rEmail === uId))) {
             const k = normalizeAccountLookupKey(r.accountNumber);
             if (k) userAccountKeys.add(k);
           }
         }
-        for (const b of billers) {
-          const bUser = String(b.assignedUser || "").trim().toLowerCase();
+        for (const b of masterBillers) {
+          const bUser = String(b.assignedUser || b.filedBy || "").trim().toLowerCase();
           if (bUser && ((uEmail && bUser === uEmail) || (uName && bUser === uName) || (uId && bUser === uId))) {
             const k = normalizeAccountLookupKey(b.accountNumber);
             if (k) userAccountKeys.add(k);
@@ -12352,11 +12427,11 @@ function ensureOneTimePaymentHeaders(sheet) {
       const upcomingNext14 = [];
       const lapsedList = [];
 
-      for (const b of billers) {
+      for (const b of masterBillers) {
         const k = normalizeAccountLookupKey(b.accountNumber);
         if (!k) continue;
-        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
-        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
         if (!irList.length && !rbpList.length) continue;
 
         const irDue = [...irList].reverse().find(x => x.dueDay !== null);
@@ -12375,8 +12450,12 @@ function ensureOneTimePaymentHeaders(sheet) {
           candYm = nY * 12 + nM;
         }
         const candMonthName = BILL_MONTH_NAMES[candYm % 12] || "November";
-        const isFulfilledCand = rbpList.some(x => x.billYm >= candYm) || irList.some(x => x.billYm >= candYm);
-        const isFulfilledCur = rbpList.some(x => x.billYm >= curYm) || irList.some(x => x.billYm >= curYm);
+        const isFulfilledCand =
+          rbpList.some(x => x.billYm >= candYm || x.dueYm >= candYm) ||
+          irList.some(x => x.billYm >= candYm || x.dueYm >= candYm);
+        const isFulfilledCur =
+          rbpList.some(x => x.billYm >= curYm || x.dueYm >= curYm) ||
+          irList.some(x => x.billYm >= curYm || x.dueYm >= curYm);
 
         const daysUntilDue = candDate ? Math.round((candDate.getTime() - todayMid) / 86400000) : null;
         const projIso = candDate ? `${candDate.getFullYear()}-${String(candDate.getMonth()+1).padStart(2,"0")}-${String(candDate.getDate()).padStart(2,"0")}` : "—";
@@ -12389,10 +12468,13 @@ function ensureOneTimePaymentHeaders(sheet) {
           upcomingNext14.push({ b, projIso, daysUntilDue, missing: [], lastLabel, wasFiledByUser, targetMonthName: candMonthName });
         }
 
-        const covered = new Set([...irList.map(x => x.billYm), ...rbpList.map(x => x.billYm)]);
+        const covered = new Set([...irList.flatMap(x => [x.billYm, x.dueYm]), ...rbpList.flatMap(x => [x.billYm, x.dueYm])]);
         const priorIr = irList.filter(x => x.billYm < curYm);
         const priorRbp = rbpList.filter(x => x.billYm < curYm);
-        const lastPriorBillYm = Math.max(priorIr.length ? priorIr[priorIr.length-1].billYm : -1, priorRbp.length ? priorRbp[priorRbp.length-1].billYm : -1);
+        const lastPriorBillYm = Math.max(
+          priorIr.length ? Math.max(priorIr[priorIr.length-1].billYm, priorIr[priorIr.length-1].dueYm < curYm ? priorIr[priorIr.length-1].dueYm : -1) : -1,
+          priorRbp.length ? Math.max(priorRbp[priorRbp.length-1].billYm, priorRbp[priorRbp.length-1].dueYm < curYm ? priorRbp[priorRbp.length-1].dueYm : -1) : -1
+        );
         const missing = [];
         const missedYms = [];
         if (!isFulfilledCur && lastPriorBillYm > 0 && lastPriorBillYm < curYm - 1) {
