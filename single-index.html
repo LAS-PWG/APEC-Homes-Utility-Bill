@@ -3517,18 +3517,19 @@ Submit and track your monthly utility payments directly through your account.</p
               <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
                 <input id="repDueSearchInput" type="text" oninput="renderDueLapsedReport()" placeholder="Search Account No, Site, Biller, Missing Month..." class="px-3 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs" />
                 <select id="repDueTargetMonthSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-semibold">
-                  <option value="January">Target: January</option>
-                  <option value="February">Target: February</option>
-                  <option value="March">Target: March</option>
-                  <option value="April">Target: April</option>
-                  <option value="May">Target: May</option>
-                  <option value="June">Target: June</option>
-                  <option value="July">Target: July</option>
-                  <option value="August">Target: August</option>
-                  <option value="September">Target: September</option>
-                  <option value="October">Target: October</option>
-                  <option value="November" selected>Target: November</option>
-                  <option value="December">Target: December</option>
+                  <option value="All" selected>View All Months (By Due Date)</option>
+                  <option value="January">Due Month: January</option>
+                  <option value="February">Due Month: February</option>
+                  <option value="March">Due Month: March</option>
+                  <option value="April">Due Month: April</option>
+                  <option value="May">Due Month: May</option>
+                  <option value="June">Due Month: June</option>
+                  <option value="July">Due Month: July</option>
+                  <option value="August">Due Month: August</option>
+                  <option value="September">Due Month: September</option>
+                  <option value="October">Due Month: October</option>
+                  <option value="November">Due Month: November</option>
+                  <option value="December">Due Month: December</option>
                 </select>
                 <select id="repDueTargetYearSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-mono font-semibold">
                   <option value="2025">2025</option>
@@ -12138,13 +12139,13 @@ function ensureOneTimePaymentHeaders(sheet) {
       const startEl = document.getElementById("repDueStartDateInput");
       const endEl = document.getElementById("repDueEndDateInput");
       if (!startEl || !endEl) return;
-      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "November";
+      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "All";
       const targetYear = parseInt((document.getElementById("repDueTargetYearSelect") || {}).value || "2026", 10);
-      const mIdx = Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
+      const now = new Date();
+      const mIdx = targetMonth === "All" ? now.getMonth() : Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
       const mm = String(mIdx + 1).padStart(2, "0");
       const lastDay = new Date(targetYear, mIdx + 1, 0).getDate();
       const fmtLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-      const now = new Date();
       if (mode === "clear") {
         startEl.value = "";
         endEl.value = "";
@@ -12176,18 +12177,21 @@ function ensureOneTimePaymentHeaders(sheet) {
     function renderDueLapsedReport() {
       const tbody = document.getElementById("repDueTableBody");
       if (!tbody) return;
-      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "November";
+      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "All";
       const targetYear = parseInt((document.getElementById("repDueTargetYearSelect") || {}).value || "2026", 10);
       const flagFilter = (document.getElementById("repDueFlagFilterSelect") || {}).value || "All";
       const dateField = (document.getElementById("repDueDateFieldSelect") || {}).value || "projectedDue";
       const startDateStr = ((document.getElementById("repDueStartDateInput") || {}).value || "").trim();
       const endDateStr = ((document.getElementById("repDueEndDateInput") || {}).value || "").trim();
       const q = ((document.getElementById("repDueSearchInput") || {}).value || "").trim().toLowerCase();
-      const targetMIdx = Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
-      const targetYm = targetYear * 12 + targetMIdx;
-      const maxDay = new Date(targetYear, targetMIdx + 1, 0).getDate();
+      const isAllMonths = targetMonth === "All";
       const now = new Date();
       const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const curYear = now.getFullYear();
+      const curMonthIdx = now.getMonth();
+      const curYm = curYear * 12 + curMonthIdx;
+      const targetMIdx = isAllMonths ? curMonthIdx : Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
+      const targetYm = targetYear * 12 + targetMIdx;
 
       const parseLocalDayMs = (s) => {
         if (!s || s === "—") return null;
@@ -12204,6 +12208,30 @@ function ensureOneTimePaymentHeaders(sheet) {
       const rangeStartMs = rawStartMs !== null && rawEndMs !== null && rawStartMs > rawEndMs ? rawEndMs : rawStartMs;
       const rangeEndMs = rawStartMs !== null && rawEndMs !== null && rawStartMs > rawEndMs ? rawStartMs : rawEndMs;
 
+      const masterBillers = deduplicateBillersList(billers);
+
+      const userAccountKeys = new Set();
+      if (currentUser) {
+        const uEmail = String(currentUser.email || "").trim().toLowerCase();
+        const uName = String(currentUser.username || "").trim().toLowerCase();
+        const uId = String(currentUser.id || currentUser.userId || "").trim().toLowerCase();
+        for (const r of paymentRequests) {
+          const rEmail = String(r.submittedByEmail || r.userId || "").trim().toLowerCase();
+          const rName = String(r.submittedBy || r.requestorName || "").trim().toLowerCase();
+          if ((uEmail && (rEmail === uEmail || rName === uEmail)) || (uName && (rName === uName || rEmail === uName)) || (uId && (rName === uId || rEmail === uId))) {
+            const k = normalizeAccountLookupKey(r.accountNumber);
+            if (k) userAccountKeys.add(k);
+          }
+        }
+        for (const b of masterBillers) {
+          const bUser = String(b.assignedUser || b.filedBy || "").trim().toLowerCase();
+          if (bUser && ((uEmail && bUser === uEmail) || (uName && bUser === uName) || (uId && bUser === uId))) {
+            const k = normalizeAccountLookupKey(b.accountNumber);
+            if (k) userAccountKeys.add(k);
+          }
+        }
+      }
+
       const irMap = new Map();
       for (const r of irRfpReqRecords) {
         const k = normalizeAccountLookupKey(r.accountNumber);
@@ -12213,7 +12241,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const billYm = r.year * 12 + r.monthIndex;
         const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
         if (!irMap.has(k)) irMap.set(k, []);
-        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null, dueD });
       }
 
       const rbpMap = new Map();
@@ -12229,47 +12257,80 @@ function ensureOneTimePaymentHeaders(sheet) {
         const billYm = yr * 12 + mIdx;
         const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
         if (!rbpMap.has(k)) rbpMap.set(k, []);
-        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null, dueD });
       }
 
       let fulfilled = 0, upcoming = 0, overdue = 0, lapsed = 0, dateRangeTotal = 0;
-      const masterBillers = deduplicateBillersList(billers);
       const rows = masterBillers.map(b => {
         const k = normalizeAccountLookupKey(b.accountNumber);
-        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
-        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
+        const irList = (irMap.get(k) || []).sort((x,y) => x.dueYm - y.dueYm || (x.dueD && y.dueD ? x.dueD.getTime() - y.dueD.getTime() : x.billYm - y.billYm));
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.dueYm - y.dueYm || (x.dueD && y.dueD ? x.dueD.getTime() - y.dueD.getTime() : x.billYm - y.billYm));
         const hasHistory = irList.length > 0 || rbpList.length > 0;
-        const mRbp = rbpList.find(x => x.billYm >= targetYm || x.dueYm >= targetYm);
-        const mIr = irList.find(x => x.billYm >= targetYm || x.dueYm >= targetYm);
-        const isFulfilled = Boolean(mRbp || mIr);
+        const wasFiledByUser = userAccountKeys.has(k);
 
         const lastIr = irList[irList.length - 1] || null;
         const lastRbp = rbpList[rbpList.length - 1] || null;
         const irDue = [...irList].reverse().find(x => x.dueDay !== null);
         const rbpDue = [...rbpList].reverse().find(x => x.dueDay !== null);
         const dueDay = irDue ? irDue.dueDay : (rbpDue ? rbpDue.dueDay : null);
-        const projDate = dueDay ? new Date(targetYear, targetMIdx, Math.min(dueDay, maxDay)) : null;
-        const projIso = projDate ? `${targetYear}-${String(targetMIdx+1).padStart(2,"0")}-${String(projDate.getDate()).padStart(2,"0")}` : "—";
+
+        const isNearProj = (recDueD, recDueYm, projD, cycleYm) => {
+          if (recDueD && projD) {
+            const diffDays = Math.abs(recDueD.getTime() - projD.getTime()) / 86400000;
+            if (diffDays <= 16) return true;
+          }
+          return recDueYm >= cycleYm;
+        };
+
+        let evalYear = targetYear;
+        let evalMIdx = targetMIdx;
+        let evalYm = targetYm;
+
+        if (isAllMonths && dueDay !== null) {
+          const maxCur = new Date(curYear, curMonthIdx + 1, 0).getDate();
+          const curCycleDate = new Date(curYear, curMonthIdx, Math.min(dueDay, maxCur));
+          const curFulfilled =
+            rbpList.some(x => isNearProj(x.dueD, x.dueYm, curCycleDate, curYm)) ||
+            irList.some(x => isNearProj(x.dueD, x.dueYm, curCycleDate, curYm));
+          if (curCycleDate.getTime() < todayMid && curFulfilled) {
+            const nextD = new Date(curYear, curMonthIdx + 1, 1);
+            evalYear = nextD.getFullYear();
+            evalMIdx = nextD.getMonth();
+            evalYm = evalYear * 12 + evalMIdx;
+          } else {
+            evalYear = curYear;
+            evalMIdx = curMonthIdx;
+            evalYm = curYm;
+          }
+        }
+
+        const maxDay = new Date(evalYear, evalMIdx + 1, 0).getDate();
+        const projDate = dueDay ? new Date(evalYear, evalMIdx, Math.min(dueDay, maxDay)) : null;
+        const projIso = projDate ? `${evalYear}-${String(evalMIdx+1).padStart(2,"0")}-${String(projDate.getDate()).padStart(2,"0")}` : "—";
         const daysFromToday = projDate ? Math.round((projDate.getTime() - todayMid) / 86400000) : null;
 
-        const covered = new Set([...irList.flatMap(x => [x.billYm, x.dueYm]), ...rbpList.flatMap(x => [x.billYm, x.dueYm])]);
-        const priorIr = irList.filter(x => x.billYm < targetYm);
-        const priorRbp = rbpList.filter(x => x.billYm < targetYm);
-        const lastPriorBillYm = Math.max(
-          priorIr.length ? Math.max(priorIr[priorIr.length-1].billYm, priorIr[priorIr.length-1].dueYm < targetYm ? priorIr[priorIr.length-1].dueYm : -1) : -1,
-          priorRbp.length ? Math.max(priorRbp[priorRbp.length-1].billYm, priorRbp[priorRbp.length-1].dueYm < targetYm ? priorRbp[priorRbp.length-1].dueYm : -1) : -1
+        const mRbp = rbpList.find(x => isNearProj(x.dueD, x.dueYm, projDate, evalYm));
+        const mIr = irList.find(x => isNearProj(x.dueD, x.dueYm, projDate, evalYm));
+        const isFulfilled = Boolean(mRbp || mIr);
+
+        const covered = new Set([...irList.map(x => x.dueYm), ...rbpList.map(x => x.dueYm)]);
+        const priorIr = irList.filter(x => x.dueYm < evalYm);
+        const priorRbp = rbpList.filter(x => x.dueYm < evalYm);
+        const lastPriorDueYm = Math.max(
+          priorIr.length ? priorIr[priorIr.length-1].dueYm : -1,
+          priorRbp.length ? priorRbp[priorRbp.length-1].dueYm : -1
         );
-        const continuous = lastPriorBillYm >= targetYm - 1 || covered.has(targetYm - 1);
+        const continuous = lastPriorDueYm >= evalYm - 1 || covered.has(evalYm - 1);
         const missing = [];
-        if (!isFulfilled && hasHistory && lastPriorBillYm > 0 && !continuous) {
-          for (let ym = lastPriorBillYm + 1; ym < targetYm; ym++) {
+        if (!isFulfilled && hasHistory && lastPriorDueYm > 0 && !continuous) {
+          for (let ym = lastPriorDueYm + 1; ym < evalYm; ym++) {
             if (!covered.has(ym)) {
               missing.push(`${BILL_MONTH_NAMES[ym % 12].slice(0,3)} ${Math.floor(ym / 12)}`);
             }
           }
         }
-        if (!isFulfilled && hasHistory && daysFromToday !== null && daysFromToday < 0 && !covered.has(targetYm)) {
-          const curLbl = `${BILL_MONTH_NAMES[targetYm % 12].slice(0,3)} ${Math.floor(targetYm / 12)}`;
+        if (!isFulfilled && hasHistory && daysFromToday !== null && daysFromToday < 0 && !covered.has(evalYm)) {
+          const curLbl = `${BILL_MONTH_NAMES[evalYm % 12].slice(0,3)} ${Math.floor(evalYm / 12)}`;
           if (!missing.includes(curLbl)) missing.push(curLbl);
         }
         const isLapsed = !isFulfilled && missing.length > 0;
@@ -12320,6 +12381,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         return {
           b,
           hasHistory,
+          wasFiledByUser,
           lastLabel: lastIr ? `${lastIr.billMonth} ${lastIr.year}` : (lastRbp ? `${lastRbp.billMonth} (RBP)` : "No Record"),
           lastDue,
           lastPaid,
@@ -12355,17 +12417,23 @@ function ensureOneTimePaymentHeaders(sheet) {
           if (!r.isFulfilled) return false;
         }
         if (q) {
-          const hay = `${r.b.accountNumber} ${r.b.site} ${r.b.billerName} ${r.lastLabel} ${r.missing.join(" ")}`.toLowerCase();
+          const hay = `${r.b.accountNumber} ${r.b.site} ${r.b.billerName} ${r.lastLabel} ${r.lastDue} ${r.missing.join(" ")}`.toLowerCase();
           if (!hay.includes(q)) return false;
         }
         return true;
+      }).sort((a, b) => {
+        if (a.wasFiledByUser !== b.wasFiledByUser) return a.wasFiledByUser ? -1 : 1;
+        return (a.daysFromToday ?? 999) - (b.daysFromToday ?? 999);
       });
 
       tbody.innerHTML = filtered.map(r => `
         <tr class="hover:bg-slate-50 dark:hover:bg-[#1c1c1c]">
-          <td class="p-3 font-mono font-bold text-rose-600 dark:text-rose-400">${escapeHtml(r.b.accountNumber)}</td>
+          <td class="p-3 font-mono font-bold text-rose-600 dark:text-rose-400">
+            <div>${escapeHtml(r.b.accountNumber)}</div>
+            ${r.wasFiledByUser ? `<span class="mt-0.5 inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">Filed by You</span>` : ""}
+          </td>
           <td class="p-3"><div class="font-semibold">${escapeHtml(r.b.site)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.b.billerName)}</div></td>
-          <td class="p-3 font-mono"><div>${escapeHtml(r.lastLabel)}</div><div class="text-[10px] text-slate-400">Due: ${escapeHtml(r.lastDue)}</div></td>
+          <td class="p-3 font-mono"><div class="font-bold text-slate-800 dark:text-slate-100">Due: ${escapeHtml(r.lastDue)}</div><div class="text-[10px] text-slate-400">Filed: ${escapeHtml(r.lastLabel)}</div></td>
           <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : escapeHtml(r.projIso)}</td>
           <td class="p-3 font-mono">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : r.missing.length > 0 ? `<span class="text-rose-600 font-bold">LAPSED (${r.missing.length}): ${escapeHtml(r.missing.join(", "))}</span>` : `<span class="text-emerald-600">Continuous</span>`}</td>
           <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600">FULFILLED</span>` : r.isLapsed ? `<span class="text-rose-600">FLAGGED • LAPSED</span>` : `<span class="text-blue-600">${escapeHtml(r.cat)}</span>`}</td>
@@ -12418,7 +12486,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const billYm = r.year * 12 + r.monthIndex;
         const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
         if (!irMap.has(k)) irMap.set(k, []);
-        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null, dueD });
       }
 
       const rbpMap = new Map();
@@ -12434,7 +12502,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const billYm = yr * 12 + mIdx;
         const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
         if (!rbpMap.has(k)) rbpMap.set(k, []);
-        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null, dueD });
       }
 
       const upcomingNext14 = [];
@@ -12443,8 +12511,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       for (const b of masterBillers) {
         const k = normalizeAccountLookupKey(b.accountNumber);
         if (!k) continue;
-        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
-        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm || x.dueYm - y.dueYm);
+        const irList = (irMap.get(k) || []).sort((x,y) => x.dueYm - y.dueYm || (x.dueD && y.dueD ? x.dueD.getTime() - y.dueD.getTime() : x.billYm - y.billYm));
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.dueYm - y.dueYm || (x.dueD && y.dueD ? x.dueD.getTime() - y.dueD.getTime() : x.billYm - y.billYm));
         if (!irList.length && !rbpList.length) continue;
 
         const irDue = [...irList].reverse().find(x => x.dueDay !== null);
@@ -12463,12 +12531,22 @@ function ensureOneTimePaymentHeaders(sheet) {
           candYm = nY * 12 + nM;
         }
         const candMonthName = BILL_MONTH_NAMES[candYm % 12] || "November";
-        const isFulfilledCand =
-          rbpList.some(x => x.billYm >= candYm || x.dueYm >= candYm) ||
-          irList.some(x => x.billYm >= candYm || x.dueYm >= candYm);
-        const isFulfilledCur =
-          rbpList.some(x => x.billYm >= curYm || x.dueYm >= curYm) ||
-          irList.some(x => x.billYm >= curYm || x.dueYm >= curYm);
+
+        // Evaluate fulfillment strictly by actual dueDate (within +-16 days of projected date or dueYm >= target cycle)
+        // regardless of inconsistent billMonth text
+        const isDateFulfilledByActualDue = (projD, cycleYm) => {
+          const checkRec = (x) => {
+            if (x.dueD && projD) {
+              const diffDays = Math.abs(x.dueD.getTime() - projD.getTime()) / 86400000;
+              if (diffDays <= 16) return true;
+            }
+            return x.dueYm >= cycleYm;
+          };
+          return rbpList.some(checkRec) || irList.some(checkRec);
+        };
+
+        const isFulfilledCand = isDateFulfilledByActualDue(candDate, candYm);
+        const isFulfilledCur = isDateFulfilledByActualDue(curMonthDate, curYm);
 
         const daysUntilDue = candDate ? Math.round((candDate.getTime() - todayMid) / 86400000) : null;
         const projIso = candDate ? `${candDate.getFullYear()}-${String(candDate.getMonth()+1).padStart(2,"0")}-${String(candDate.getDate()).padStart(2,"0")}` : "—";
@@ -12481,17 +12559,18 @@ function ensureOneTimePaymentHeaders(sheet) {
           upcomingNext14.push({ b, projIso, daysUntilDue, missing: [], lastLabel, wasFiledByUser, targetMonthName: candMonthName });
         }
 
-        const covered = new Set([...irList.flatMap(x => [x.billYm, x.dueYm]), ...rbpList.flatMap(x => [x.billYm, x.dueYm])]);
-        const priorIr = irList.filter(x => x.billYm < curYm);
-        const priorRbp = rbpList.filter(x => x.billYm < curYm);
-        const lastPriorBillYm = Math.max(
-          priorIr.length ? Math.max(priorIr[priorIr.length-1].billYm, priorIr[priorIr.length-1].dueYm < curYm ? priorIr[priorIr.length-1].dueYm : -1) : -1,
-          priorRbp.length ? Math.max(priorRbp[priorRbp.length-1].billYm, priorRbp[priorRbp.length-1].dueYm < curYm ? priorRbp[priorRbp.length-1].dueYm : -1) : -1
+        // Lapsed evaluation strictly by actual dueYm
+        const covered = new Set([...irList.map(x => x.dueYm), ...rbpList.map(x => x.dueYm)]);
+        const priorIr = irList.filter(x => x.dueYm < curYm);
+        const priorRbp = rbpList.filter(x => x.dueYm < curYm);
+        const lastPriorDueYm = Math.max(
+          priorIr.length ? priorIr[priorIr.length-1].dueYm : -1,
+          priorRbp.length ? priorRbp[priorRbp.length-1].dueYm : -1
         );
         const missing = [];
         const missedYms = [];
-        if (!isFulfilledCur && lastPriorBillYm > 0 && lastPriorBillYm < curYm - 1) {
-          for (let ym = lastPriorBillYm + 1; ym < curYm; ym++) {
+        if (!isFulfilledCur && lastPriorDueYm > 0 && lastPriorDueYm < curYm - 1) {
+          for (let ym = lastPriorDueYm + 1; ym < curYm; ym++) {
             if (!covered.has(ym)) {
               missing.push(`${BILL_MONTH_NAMES[ym % 12].slice(0,3)} ${Math.floor(ym / 12)}`);
               missedYms.push(ym);
