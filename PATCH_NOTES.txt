@@ -6,6 +6,33 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.3] - 2026-11-17 — 3-Column Overview Layout, Scrollable Due & Lapsed Panels, 5-Row Announcements Cap, Deduplicated Billers Prioritization, & Package Cleanup
+--------------------------------------------------------------------------------
+1. 3-Column Overview Dashboard & Scrollable Panels:
+   - Column 1 (Left): Stacked **Announcements** (capped at 5 visible rows with
+     scrollbar and streamlined header retaining sync status & timestamp) and
+     **Utility Services & Workflows**.
+   - Column 2 (Middle): **Upcoming Due Dates** (unfulfilled accounts due in the
+     next 14 days, projected due date badge on the left, user's previously filed
+     accounts prioritized at the top, full-height scrollable container with zero
+     bottom gap).
+   - Column 3 (Rightmost): **Lapsed Accounts** (unfulfilled accounts with skipped
+     or recently lapsed billing cycles, date & lapsed month count on the left,
+     user's previously filed accounts prioritized at the top, full-height
+     scrollable container with zero bottom gap).
+2. Deduplicated `Billers` Account List & Dual Cycle Fulfillment Check:
+   - Prioritizes the authoritative `Bill Sub WebApp Requests > Billers` sheet tab
+     and deduplicates accounts by normalized account number so duplicate sheet rows
+     never produce false unfulfilled entries (e.g., `05-0528-0801`).
+   - Checks both `billYm` (Billing Month) and `dueYm` (Due Date Month) when
+     evaluating cycle fulfillment and missing prior months.
+3. macOS Theme & Package Cleanup:
+   - Aligned `.macos-traffic-bar-lg` flush with `.pc-wide-card` and scoped Aqua
+     icon gradients strictly to icon containers.
+   - Cleaned up orphan archives and temporary screenshot assets, and repacked all
+     5 canonical deployment `.zip` bundles (`v3.2.3`).
+
+--------------------------------------------------------------------------------
 [v3.2.0] - 2026-11-16 — New Report: Upcoming Due Date Projections & Lapsed Payments Tracker (`REP_DUE_LAPSED` from `IR_RFPReq`, `Billers`, & `Request Bill Payments`)
 --------------------------------------------------------------------------------
 1. Live `IR_RFPReq` ImportRange Integration (`fetchIrRfpReqRecords` in `billPayment.ts`):
