@@ -927,22 +927,19 @@
         border-bottom: none !important;
       }
 
-      .pc-wide-mode .pc-wide-announcements-card {
+      .pc-wide-mode .pc-wide-overview-col {
         grid-column: span 12 / span 12 !important;
-        padding: clamp(0.95rem, 1.2vw, 1.35rem) clamp(1rem, 1.4vw, 1.5rem) !important;
-        height: 100% !important;
+      }
+
+      .pc-wide-mode .pc-wide-announcements-card {
+        padding: clamp(0.85rem, 1vw, 1.15rem) !important;
       }
 
       .pc-wide-mode .pc-wide-workflows-card {
-        grid-column: span 12 / span 12 !important;
         background: rgba(148, 163, 184, 0.04);
         border: 1px solid rgba(148, 163, 184, 0.18);
         border-radius: 1rem;
-        padding: clamp(0.95rem, 1.2vw, 1.35rem) clamp(1rem, 1.3vw, 1.4rem) !important;
-      }
-
-      .pc-wide-mode .pc-wide-workflows-grid {
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+        padding: clamp(0.85rem, 1vw, 1.15rem) !important;
       }
 
       .pc-wide-mode .pc-wide-module-body {
@@ -967,16 +964,8 @@
     }
 
     @media (min-width: 960px) {
-      .pc-wide-mode .pc-wide-announcements-card {
-        grid-column: span 7 / span 7 !important;
-      }
-
-      .pc-wide-mode .pc-wide-workflows-card {
-        grid-column: span 5 / span 5 !important;
-      }
-
-      .pc-wide-mode .pc-wide-workflows-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      .pc-wide-mode .pc-wide-overview-col {
+        grid-column: span 4 / span 4 !important;
       }
     }
     /* === [END UNIVERSAL RESOLUTION-ADAPTIVE PC WIDE LAYOUT] === */
@@ -1032,30 +1021,30 @@
 
           <div id="adminPackagesMenu" class="hidden absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white dark:bg-[#1a1a1a] border border-neutral-200 dark:border-[#2e2e2e] shadow-2xl p-2 z-50 text-left animate-fade-in">
             <div class="px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 border-b border-neutral-100 dark:border-[#262626] mb-1">
-              Static Deployment Packages (v2.9.9)
+              Static Deployment Packages (v3.2.2)
             </div>
-            <a href="./apechomes-portal-github-pages.zip?v=2.9.9" download="apechomes-portal-github-pages.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-github-pages.zip?v=3.2.2" download="apechomes-portal-github-pages.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
               <span>1. GitHub Pages Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-blue-500"></i>
             </a>
-            <a href="./apechomes-portal-netlify.zip?v=2.9.9" download="apechomes-portal-netlify.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-emerald-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-netlify.zip?v=3.2.2" download="apechomes-portal-netlify.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-emerald-50 dark:hover:bg-[#242424] transition-colors">
               <span>2. Netlify Drop Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-emerald-500"></i>
             </a>
-            <a href="./apechomes-portal-hosting-ready.zip?v=2.9.9" download="apechomes-portal-hosting-ready.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-indigo-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-hosting-ready.zip?v=3.2.2" download="apechomes-portal-hosting-ready.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-indigo-50 dark:hover:bg-[#242424] transition-colors">
               <span>3. Universal Hosting Ready (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-indigo-500"></i>
             </a>
-            <a href="./apechomes-portal-google-sites.zip?v=2.9.9" download="apechomes-portal-google-sites.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-amber-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-portal-google-sites.zip?v=3.2.2" download="apechomes-portal-google-sites.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-amber-50 dark:hover:bg-[#242424] transition-colors">
               <span>4. Google Sites Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-amber-500"></i>
             </a>
-            <a href="./apechomes-utility-portal-source.zip?v=2.9.9" download="apechomes-utility-portal-source.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-purple-50 dark:hover:bg-[#242424] transition-colors">
+            <a href="./apechomes-utility-portal-source.zip?v=3.2.2" download="apechomes-utility-portal-source.zip" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-neutral-700 dark:text-neutral-200 hover:bg-purple-50 dark:hover:bg-[#242424] transition-colors">
               <span>5. Full Source Package (.zip)</span>
               <i data-lucide="download" class="w-3.5 h-3.5 text-purple-500"></i>
             </a>
             <div class="border-t border-neutral-100 dark:border-[#262626] mt-1 pt-1">
-              <a href="./google-sites-embed.html?v=2.9.9" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
+              <a href="./google-sites-embed.html?v=3.2.2" download="google-sites-embed.html" class="flex items-center justify-between px-3 py-1.5 rounded-xl text-[11px] font-medium text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-[#242424] transition-colors">
                 <span>Direct Google Sites HTML File</span>
                 <i data-lucide="file-text" class="w-3 h-3"></i>
               </a>
@@ -1473,7 +1462,7 @@
                   </button>
                 </div>
 
-                <!-- Separated Reports Group (Plan 5: REP_USER_ACTIVITY & REP_ACCOUNT_HISTORY) -->
+                <!-- Separated Reports Group (Plan 5: REP_USER_ACTIVITY, REP_ACCOUNT_HISTORY & REP_DUE_LAPSED) -->
                 <div id="reportsNavGroup" class="nav-group-pill hidden flex-wrap items-center p-1 rounded-xl bg-amber-50/70 dark:bg-amber-950/25 border border-amber-200 dark:border-amber-900/50 gap-1 max-w-full">
                   <span class="hidden sm:inline px-1.5 text-[10px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-400 select-none">Reports:</span>
                   <button id="tabBtn-report-user-activity" onclick="switchTab('report-user-activity')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-amber-400 dark:hover:border-amber-500/60" title="User Activity, Dormancy & FILEDBY Audit Report (REP_USER_ACTIVITY)">
@@ -1483,6 +1472,10 @@
                   <button id="tabBtn-report-account-history" onclick="switchTab('report-account-history')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-teal-400 dark:hover:border-teal-500/60" title="Per-Account Payment History, 12-Month Matrix & Delay Report (REP_ACCOUNT_HISTORY)">
                     <i data-lucide="file-text" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-500 flex-shrink-0"></i>
                     <span>Account History</span>
+                  </button>
+                  <button id="tabBtn-report-due-lapsed" onclick="switchTab('report-due-lapsed')" class="nav-action-btn inline-flex items-center space-x-1 px-2 sm:px-2.5 py-1 rounded-lg transition-all cursor-pointer whitespace-nowrap bg-white dark:bg-[#222222] text-slate-700 dark:text-royal-100 border border-slate-300 dark:border-[#383838] hover:border-rose-400 dark:hover:border-rose-500/60" title="Upcoming Due Date Projections & Lapsed Payment Tracker (REP_DUE_LAPSED)">
+                    <i data-lucide="calendar" class="w-3 h-3 sm:w-3.5 sm:h-3.5 text-rose-500 flex-shrink-0"></i>
+                    <span>Due &amp; Lapsed Tracker</span>
                   </button>
                 </div>
               </div>
@@ -1520,9 +1513,9 @@
         <!-- TAB CONTENT CONTAINER -->
         <div class="pc-wide-module-body py-6">
           
-          <!-- TAB 1: OVERVIEW & ANNOUNCEMENTS -->
+          <!-- TAB 1: OVERVIEW & ANNOUNCEMENTS (3-COLUMN LAYOUT) -->
           <div id="tabContent-overview" class="animate-fade-in">
-            <div class="pc-wide-overview-grid space-y-8">
+            <div class="pc-wide-overview-grid space-y-6">
             
             <!-- Admin UserData Database Manager Card -->
             <div id="adminGsheetCard" class="pc-wide-userdata-card hidden rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50/60 via-white to-royal-50/40 dark:from-royal-950/90 dark:via-royal-900/40 dark:to-emerald-950/20 p-6 sm:p-7 shadow-sm">
@@ -1546,191 +1539,209 @@
               </div>
             </div>
 
-            <!-- Announcements Card from Google Sheet (Announcements Tab) -->
-            <div class="pc-wide-announcements-card rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-6 sm:p-7 shadow-sm">
-              <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-royal-200/60 dark:border-royal-800/60 gap-3">
-                <div class="flex items-center space-x-2.5">
-                  <div class="w-9 h-9 rounded-xl bg-royal-500 text-white flex items-center justify-center shadow-md">
-                    <i data-lucide="file-text" class="w-5 h-5"></i>
-                  </div>
-                  <div>
-                    <div class="flex flex-wrap items-center gap-2">
-                      <h3 class="text-base font-bold text-slate-900 dark:text-white">Announcements</h3>
-                      <span id="announcementViewerTag" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-royal-900 text-slate-500 dark:text-royal-300">
-                        Viewer Only
-                      </span>
+            <!-- COLUMN 1 (LEFT): STACKED ANNOUNCEMENTS & UTILITY SERVICES WORKFLOWS -->
+            <div class="pc-wide-overview-col flex flex-col gap-4">
+              <!-- ANNOUNCEMENTS CARD -->
+              <div class="pc-wide-announcements-card rounded-2xl border border-royal-200/80 dark:border-royal-800/80 bg-gradient-to-br from-royal-50/70 via-white to-royal-100/40 dark:from-royal-950/70 dark:via-royal-900/40 dark:to-royal-950/80 p-5 shadow-sm">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-royal-200/60 dark:border-royal-800/60 gap-2">
+                  <div class="flex items-center space-x-2.5">
+                    <div class="w-8 h-8 rounded-xl bg-royal-500 text-white flex items-center justify-center shadow-sm">
+                      <i data-lucide="file-text" class="w-4 h-4"></i>
                     </div>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Official portal updates and notices</p>
+                    <div>
+                      <div class="flex flex-wrap items-center gap-2">
+                        <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Announcements</h3>
+                        <span id="announcementViewerTag" class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-slate-100 dark:bg-royal-900 text-slate-500 dark:text-royal-300">
+                          Viewer Only
+                        </span>
+                      </div>
+                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60">Official portal updates and notices</p>
+                    </div>
                   </div>
-                </div>
 
-                <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
-                  <span id="announceSyncNotice" class="hidden text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Synced!</span>
-                  <span id="announcementSyncTime" class="text-[11px] text-slate-400 dark:text-royal-400/60">Synced: Just now</span>
-                  <button type="button" onclick="syncAnnouncementFromDoc(true)" class="p-1.5 rounded-lg text-royal-600 dark:text-royal-300 hover:bg-royal-100 dark:hover:bg-royal-800/60 transition-colors cursor-pointer" title="Refresh Announcements from Google Sheet">
-                    <i id="syncAnnounceIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                  </button>
-                  <button id="forceSyncAnnounceBtn" type="button" onclick="forcePullAnnouncementsFromGSheet()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition-all cursor-pointer" title="Force pull latest Announcements from Google Sheet">
-                    <i id="forceSyncAnnounceIcon" data-lucide="refresh-cw" class="w-3 h-3 text-emerald-500"></i>
-                    <span>Force Update</span>
-                  </button>
-                  <button id="docConfigBtn" type="button" onclick="toggleDocSettings()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-royal-500/10 hover:bg-royal-500/20 text-royal-600 dark:text-royal-300 border border-royal-500/20 transition-all cursor-pointer" title="Manage or Post Announcements (Admin / Sub-Admin)">
-                    <i data-lucide="settings" class="w-3 h-3 text-royal-500"></i>
-                    <span>Manage (Admin)</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Admin / Sub-Admin Announcements Manager & Force Update Drawer -->
-              <div id="docSettingsPanel" class="hidden mt-4 p-5 rounded-xl bg-white dark:bg-royal-950 border border-slate-200 dark:border-royal-800 shadow-lg space-y-4 animate-fade-in">
-                <div class="flex items-center justify-between border-b border-slate-200 dark:border-royal-800 pb-2.5">
-                  <div class="flex items-center space-x-2">
-                    <i data-lucide="settings" class="w-4 h-4 text-royal-500"></i>
-                    <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                      Announcement Manager &amp; Force Sync (Admin / Sub-Admin)
-                    </h4>
-                  </div>
-                  <button type="button" onclick="toggleDocSettings(false)" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                  </button>
-                </div>
-
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50 dark:bg-royal-900/50 p-3.5 rounded-xl border border-slate-200 dark:border-royal-800 text-xs">
-                  <div>
-                    <p class="font-bold text-slate-800 dark:text-white">Google Sheet Announcements Tab</p>
-                    <p class="text-[11px] text-slate-500 dark:text-royal-300/70">
-                      Synced live from <code class="font-mono text-royal-600 dark:text-royal-300">Announcements</code> tab in sheet <code class="font-mono">1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY</code>.
-                    </p>
-                  </div>
-                  <div class="flex items-center space-x-2">
-                    <button type="button" onclick="forcePullAnnouncementsFromGSheet()" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer">
-                      <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                      <span>Force Sync from GSheet</span>
+                  <div class="flex flex-wrap items-center gap-2 self-start sm:self-auto">
+                    <span id="announceSyncNotice" class="hidden text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">Synced!</span>
+                    <span id="announcementSyncTime" class="text-[11px] text-slate-400 dark:text-royal-400/60">Synced: Just now</span>
+                    <button type="button" onclick="syncAnnouncementFromDoc(true)" class="p-1.5 rounded-lg text-royal-600 dark:text-royal-300 hover:bg-royal-100 dark:hover:bg-royal-800/60 transition-colors cursor-pointer" title="Refresh Announcements from Google Sheet">
+                      <i id="syncAnnounceIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
                     </button>
-                    <a href="https://docs.google.com/spreadsheets/d/1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY/edit" target="_blank" rel="noopener noreferrer" class="inline-flex items-center space-x-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer">
-                      <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
-                      <span>Open Sheet</span>
-                    </a>
-                  </div>
-                </div>
-
-                <div class="space-y-3">
-                  <div>
-                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
-                      Announcement Title:
-                    </label>
-                    <input type="text" id="adminAnnounceTitleInput" placeholder="Welcome to APECHOMES Utility Portal" class="w-full px-3 py-2 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-semibold" />
-                  </div>
-                  <div>
-                    <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
-                      Announcement Body Content:
-                    </label>
-                    <textarea id="adminAnnounceBodyInput" rows="3" placeholder="Enter announcement details here..." class="w-full px-3 py-2 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-mono"></textarea>
-                  </div>
-                </div>
-
-                <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-royal-800">
-                  <button type="button" onclick="forcePullAnnouncementsFromGSheet()" class="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer">
-                    Discard Local Override &amp; Pull GSheet
-                  </button>
-                  <div class="flex items-center space-x-2">
-                    <button type="button" onclick="toggleDocSettings(false)" class="px-3 py-1.5 rounded-lg text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
-                      Cancel
+                    <button id="forceSyncAnnounceBtn" type="button" onclick="forcePullAnnouncementsFromGSheet()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 transition-all cursor-pointer" title="Force pull latest Announcements from Google Sheet">
+                      <i id="forceSyncAnnounceIcon" data-lucide="refresh-cw" class="w-3 h-3 text-emerald-500"></i>
+                      <span>Force Update</span>
                     </button>
-                    <button type="button" onclick="saveAdminAnnouncementOverride()" class="inline-flex items-center space-x-1.5 px-4 py-1.5 rounded-lg text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer">
-                      <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                      <span>Save &amp; Push to GSheet</span>
+                    <button id="docConfigBtn" type="button" onclick="toggleDocSettings()" class="hidden items-center space-x-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-royal-500/10 hover:bg-royal-500/20 text-royal-600 dark:text-royal-300 border border-royal-500/20 transition-all cursor-pointer" title="Manage or Post Announcements (Admin / Sub-Admin)">
+                      <i data-lucide="settings" class="w-3 h-3 text-royal-500"></i>
+                      <span>Manage (Admin)</span>
                     </button>
                   </div>
                 </div>
-              </div>
 
-              <!-- Announcement Body Content -->
-              <div class="mt-5 space-y-4">
-                <div>
-                  <div id="announceTitle" class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white tracking-tight">
-                    Welcome to APECHOMES Utility Portal
+                <!-- Admin / Sub-Admin Announcements Manager & Force Update Drawer -->
+                <div id="docSettingsPanel" class="hidden mt-4 p-4 rounded-xl bg-white dark:bg-royal-950 border border-slate-200 dark:border-royal-800 shadow-lg space-y-3 animate-fade-in">
+                  <div class="flex items-center justify-between border-b border-slate-200 dark:border-royal-800 pb-2">
+                    <div class="flex items-center space-x-2">
+                      <i data-lucide="settings" class="w-4 h-4 text-royal-500"></i>
+                      <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                        Announcement Manager &amp; Force Sync (Admin / Sub-Admin)
+                      </h4>
+                    </div>
+                    <button type="button" onclick="toggleDocSettings(false)" class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-white cursor-pointer">
+                      <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
                   </div>
-                  <div class="mt-1 flex items-center space-x-2 text-xs font-medium text-slate-600 dark:text-royal-200">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-royal-500"></i>
-                    <span id="announceTime">Updated Today</span>
+
+                  <div class="space-y-2.5">
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
+                        Announcement Title:
+                      </label>
+                      <input type="text" id="adminAnnounceTitleInput" placeholder="Welcome to APECHOMES Utility Portal" class="w-full px-3 py-1.5 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-semibold" />
+                    </div>
+                    <div>
+                      <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 mb-1">
+                        Announcement Body Content:
+                      </label>
+                      <textarea id="adminAnnounceBodyInput" rows="3" placeholder="Enter announcement details here..." class="w-full px-3 py-1.5 rounded-lg text-xs bg-slate-50 dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-900 dark:text-white font-mono"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-royal-800">
+                    <button type="button" onclick="forcePullAnnouncementsFromGSheet()" class="text-xs text-emerald-600 dark:text-emerald-400 hover:underline font-semibold cursor-pointer">
+                      Discard Local Override &amp; Pull GSheet
+                    </button>
+                    <div class="flex items-center space-x-2">
+                      <button type="button" onclick="toggleDocSettings(false)" class="px-3 py-1 rounded-lg text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">
+                        Cancel
+                      </button>
+                      <button type="button" onclick="saveAdminAnnouncementOverride()" class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg text-xs font-semibold bg-royal-500 hover:bg-royal-600 text-white shadow-sm cursor-pointer">
+                        <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                        <span>Save &amp; Push to GSheet</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                <div id="announceParagraphs" class="max-h-60 sm:max-h-72 overflow-y-auto pr-2 space-y-2.5 pt-1 text-sm text-slate-700 dark:text-slate-200 leading-relaxed font-normal bg-white/50 dark:bg-royal-950/40 p-4 rounded-xl border border-slate-200/60 dark:border-royal-800/40">
-                  <p class="whitespace-pre-wrap">Welcome to the APECHOMES Utility Bills Submission &amp; Payment Portal.
+                <!-- Announcement Body Content -->
+                <div class="mt-3 space-y-2">
+                  <div class="flex items-center justify-between gap-2 flex-wrap">
+                    <div id="announceTitle" class="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-tight">
+                      Welcome to APECHOMES Utility Portal
+                    </div>
+                    <div class="flex items-center space-x-1.5 text-[11px] font-medium text-slate-500 dark:text-royal-200">
+                      <i data-lucide="clock" class="w-3 h-3 text-royal-500"></i>
+                      <span id="announceTime">Updated Today</span>
+                    </div>
+                  </div>
+
+                  <div id="announceParagraphs" class="max-h-32 overflow-y-auto pr-2 space-y-2 text-xs text-slate-700 dark:text-slate-200 leading-relaxed font-normal bg-white/50 dark:bg-royal-950/40 p-3 rounded-xl border border-slate-200/60 dark:border-royal-800/40">
+                    <p class="whitespace-pre-wrap">Welcome to the APECHOMES Utility Bills Submission &amp; Payment Portal.
 Submit and track your monthly utility payments directly through your account.</p>
+                  </div>
+                </div>
+              </div>
+
+              <!-- UTILITY SERVICES & WORKFLOWS CARD -->
+              <div class="pc-wide-workflows-card flex flex-col justify-between">
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Utility Services &amp; Workflows</h4>
+                    <p class="text-[11px] text-slate-500 dark:text-royal-300/60">Quick-launch portal workspaces</p>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-2">
+                  <!-- 1. Request Bill Payment -->
+                  <div onclick="switchTab('request-payment')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="credit-card" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">Request Bill Payment</h5>
+                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Submit a request for payment for existing enrolled accounts.</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                  </div>
+
+                  <!-- 2. View Payment Status -->
+                  <div onclick="switchTab('payment-status')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="activity" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">View Payment Status</h5>
+                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Real-time status updates synced from Google Sheet.</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                  </div>
+
+                  <!-- 3. Enroll New Utility Bill -->
+                  <div onclick="switchTab('enroll-bill')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">Enroll New Utility Bill</h5>
+                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Request enrollment of a new utility account.</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                  </div>
+
+                  <!-- 4. View Enrollment Status -->
+                  <div onclick="switchTab('enroll-status')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                      <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">View Enrollment Status</h5>
+                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Track clearance status of new utility endorsements.</p>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <!-- Portal Workflow Cards Grid -->
-            <div class="pc-wide-workflows-card">
-              <div class="mb-4">
-                <h4 class="text-sm font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Utility Services &amp; Workflows</h4>
-                <p class="text-xs text-slate-500 dark:text-royal-300/60">Select a module below to open its dedicated workspace</p>
+            <!-- COLUMN 2 (MIDDLE): UPCOMING DUE DATES (Next 14 Days, Unfulfilled, Date on Left, Prioritized by User) -->
+            <div class="pc-wide-overview-col rounded-2xl border border-amber-500/30 dark:border-amber-500/25 bg-gradient-to-br from-amber-50/50 via-white to-slate-50/50 dark:from-[#181818] dark:via-[#151515] dark:to-amber-950/15 p-5 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between gap-2 pb-3 border-b border-amber-500/20 dark:border-amber-500/15">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                  </div>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Upcoming Due Dates</h3>
+                    <span id="overviewUpcomingCountBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">0</span>
+                    <span id="overviewUpcomingMineBadge" class="hidden items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">0 Filed by You</span>
+                  </div>
+                </div>
+                <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Upcoming Due Dates">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
               </div>
+              <div id="overviewUpcomingListContainer" class="mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
+                <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading upcoming due dates...</div>
+              </div>
+            </div>
 
-              <div class="pc-wide-workflows-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <!-- 1. Enroll New Utility Bill -->
-                <div onclick="switchTab('enroll-bill')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
-                  <div>
-                    <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                      <i data-lucide="file-plus-2" class="w-5 h-5"></i>
-                    </div>
-                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">Enroll New Utility Bill</h5>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Endorse a new utility account with SOA and approved request letter.</p>
+            <!-- COLUMN 3 (RIGHTMOST): LAPSED ACCOUNTS (Unfulfilled with Lapsed Submissions, Date on Left, Prioritized by User) -->
+            <div class="pc-wide-overview-col rounded-2xl border border-rose-500/30 dark:border-rose-500/25 bg-gradient-to-br from-rose-50/50 via-white to-slate-50/50 dark:from-[#181818] dark:via-[#151515] dark:to-rose-950/15 p-5 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between gap-2 pb-3 border-b border-rose-500/20 dark:border-rose-500/15">
+                <div class="flex items-center space-x-2.5">
+                  <div class="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
                   </div>
-                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
-                    <span>New Endorsement</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Lapsed Accounts</h3>
+                    <span id="overviewLapsedCountBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30">0</span>
+                    <span id="overviewLapsedMineBadge" class="hidden items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">0 Filed by You</span>
                   </div>
                 </div>
-
-                <!-- 2. View Enrollment Status -->
-                <div onclick="switchTab('enroll-status')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
-                  <div>
-                    <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                      <i data-lucide="file-check-2" class="w-5 h-5"></i>
-                    </div>
-                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">View Enrollment Status</h5>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Track clearance status of new utility endorsements.</p>
-                  </div>
-                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
-                    <span>Check Endorsements</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                  </div>
-                </div>
-
-                <!-- 3. Request Bill Payment -->
-                <div onclick="switchTab('request-payment')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
-                  <div>
-                    <div class="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                      <i data-lucide="credit-card" class="w-5 h-5"></i>
-                    </div>
-                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">Request Bill Payment</h5>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Submit utility bill payment slip for settlement.</p>
-                  </div>
-                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
-                    <span>Submit Payment</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                  </div>
-                </div>
-
-                <!-- 4. View Request Status -->
-                <div onclick="switchTab('payment-status')" class="p-5 rounded-2xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-lg transition-all cursor-pointer group flex flex-col justify-between">
-                  <div>
-                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
-                      <i data-lucide="activity" class="w-5 h-5"></i>
-                    </div>
-                    <h5 class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors">View Payment Status</h5>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60 mt-1">Real-time status updates synced from Google Sheet.</p>
-                  </div>
-                  <div class="mt-4 pt-3 border-t border-slate-100 dark:border-royal-900/60 flex items-center justify-between text-xs text-royal-600 dark:text-royal-400 font-semibold">
-                    <span>Live Tracker</span>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                  </div>
-                </div>
+                <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Lapsed Accounts">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+              <div id="overviewLapsedListContainer" class="mt-3 flex-1 max-h-[540px] overflow-y-auto pr-1 space-y-2">
+                <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading lapsed accounts...</div>
               </div>
             </div>
 
@@ -1746,7 +1757,7 @@ Submit and track your monthly utility payments directly through your account.</p
                 </button>
                 <div>
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white">Enroll New Utility Bill</h3>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Submit new utility bill endorsement requests with supporting documents</p>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Request enrollment of a new utility account</p>
                 </div>
               </div>
               <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
@@ -2291,7 +2302,7 @@ Submit and track your monthly utility payments directly through your account.</p
                 </button>
                 <div>
                   <h3 class="text-lg font-bold text-slate-900 dark:text-white">Request Bill Payment</h3>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Submit utility bills for clearance with auto-formatted attachment</p>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Submit a request for payment for existing enrolled accounts</p>
                 </div>
               </div>
               <span class="px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">
@@ -3393,6 +3404,127 @@ Submit and track your monthly utility payments directly through your account.</p
                   <tbody id="repAcctTableBody" class="divide-y divide-slate-100 dark:divide-royal-800/50"></tbody>
                 </table>
               </div>
+            </div>
+          </div>
+
+          <!-- TAB 9: UPCOMING DUE DATES & LAPSED PAYMENTS REPORT (REP_DUE_LAPSED) -->
+          <div id="tabContent-report-due-lapsed" class="hidden space-y-5 animate-fade-in">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200 dark:border-royal-800/70">
+              <div class="flex items-center space-x-3">
+                <button type="button" onclick="switchTab('overview')" class="p-2 rounded-xl bg-slate-100 dark:bg-royal-900 hover:bg-slate-200 dark:hover:bg-royal-800 text-slate-600 dark:text-royal-200 transition-colors cursor-pointer" title="Back to Overview">
+                  <i data-lucide="arrow-left" class="w-4 h-4"></i>
+                </button>
+                <div>
+                  <div class="flex items-center space-x-2">
+                    <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Upcoming Due Date Projections &amp; Lapsed Payments Tracker</h3>
+                    <span class="text-[11px] font-mono text-rose-600 dark:text-rose-400">REP_DUE_LAPSED</span>
+                  </div>
+                  <p class="text-xs text-slate-500 dark:text-royal-300">Projects upcoming due dates from last known payments, flags skipped/lapsed billing months, and marks submitted payments as fulfilled.</p>
+                </div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-[#1e1e1e] hover:bg-slate-200 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-200 text-xs font-semibold transition-colors cursor-pointer">
+                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-rose-500"></i>
+                  <span id="repDueSyncBtnLabel">Sync Records</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+              <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#141414] border border-slate-200 dark:border-[#262626]">
+                <div class="text-[11px] font-medium text-slate-500">Registered Billers</div>
+                <div id="repDueTotalCount" class="mt-1 text-xl font-extrabold font-mono text-slate-900 dark:text-white">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
+                <div class="text-[11px] font-medium text-emerald-600 dark:text-emerald-400">Fulfilled (Submitted / Paid)</div>
+                <div id="repDueFulfilledCount" class="mt-1 text-xl font-extrabold font-mono text-emerald-600 dark:text-emerald-400">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-blue-500/5 border border-blue-500/20">
+                <div class="text-[11px] font-medium text-blue-600 dark:text-blue-400">Upcoming Projected Due</div>
+                <div id="repDueUpcomingCount" class="mt-1 text-xl font-extrabold font-mono text-blue-600 dark:text-blue-400">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                <div class="text-[11px] font-medium text-amber-600 dark:text-amber-400">Past Projected Due</div>
+                <div id="repDueOverdueCount" class="mt-1 text-xl font-extrabold font-mono text-amber-600 dark:text-amber-400">0</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-rose-500/5 border border-rose-500/20">
+                <div class="text-[11px] font-medium text-rose-600 dark:text-rose-400">Lapsed Payments (Skipped Mos)</div>
+                <div id="repDueLapsedCount" class="mt-1 text-xl font-extrabold font-mono text-rose-600 dark:text-rose-400">0</div>
+              </div>
+            </div>
+
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#141414] border border-slate-200 dark:border-[#262626] space-y-2.5">
+              <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5">
+                <input id="repDueSearchInput" type="text" oninput="renderDueLapsedReport()" placeholder="Search Account No, Site, Biller, Missing Month..." class="px-3 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs" />
+                <select id="repDueTargetMonthSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-semibold">
+                  <option value="January">Target: January</option>
+                  <option value="February">Target: February</option>
+                  <option value="March">Target: March</option>
+                  <option value="April">Target: April</option>
+                  <option value="May">Target: May</option>
+                  <option value="June">Target: June</option>
+                  <option value="July">Target: July</option>
+                  <option value="August">Target: August</option>
+                  <option value="September">Target: September</option>
+                  <option value="October">Target: October</option>
+                  <option value="November" selected>Target: November</option>
+                  <option value="December">Target: December</option>
+                </select>
+                <select id="repDueTargetYearSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-mono font-semibold">
+                  <option value="2025">2025</option>
+                  <option value="2026" selected>2026</option>
+                  <option value="2027">2027</option>
+                </select>
+                <select id="repDueFlagFilterSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs">
+                  <option value="Unfulfilled" selected>All Unfulfilled (Upcoming, Past Due &amp; Lapsed)</option>
+                  <option value="UpcomingDue">Upcoming Projected Due — Unfulfilled Only</option>
+                  <option value="OverdueUnfulfilled">Past Projected Due — Unfulfilled Only</option>
+                  <option value="Lapsed">Lapsed Payments — Unfulfilled Only</option>
+                  <option value="Fulfilled">Fulfilled (Submitted / Paid)</option>
+                  <option value="All">All Registered Accounts</option>
+                </select>
+              </div>
+              <div class="pt-2 border-t border-slate-200/80 dark:border-[#262626] flex flex-wrap items-center gap-2">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">Date Range Filter:</span>
+                <select id="repDueDateFieldSelect" onchange="renderDueLapsedReport()" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-semibold">
+                  <option value="projectedDue">Projected Due Date</option>
+                  <option value="lastDueDate">Last Known Due Date</option>
+                  <option value="lastPaidDate">Last Known Date Paid</option>
+                </select>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[11px] font-semibold text-slate-500">From</span>
+                  <input id="repDueStartDateInput" type="date" onchange="renderDueLapsedReport()" class="px-2.5 py-1 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-mono" />
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="text-[11px] font-semibold text-slate-500">To</span>
+                  <input id="repDueEndDateInput" type="date" onchange="renderDueLapsedReport()" class="px-2.5 py-1 rounded-lg bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-xs font-mono" />
+                </div>
+                <div class="flex flex-wrap items-center gap-1 ml-auto">
+                  <button type="button" onclick="applyRepDueDatePreset('today')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">Today</button>
+                  <button type="button" onclick="applyRepDueDatePreset('next7')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">Next 7d</button>
+                  <button type="button" onclick="applyRepDueDatePreset('next14')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">Next 14d</button>
+                  <button type="button" onclick="applyRepDueDatePreset('firstHalf')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">1st–15th</button>
+                  <button type="button" onclick="applyRepDueDatePreset('secondHalf')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">16th–End</button>
+                  <button type="button" onclick="applyRepDueDatePreset('fullMonth')" class="px-2 py-1 rounded-md bg-white dark:bg-[#1c1c1c] border border-slate-200 dark:border-[#2e2e2e] text-[10px] font-semibold hover:border-rose-500/40">Full Month</button>
+                  <button type="button" onclick="applyRepDueDatePreset('clear')" class="px-2 py-1 rounded-md bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 text-[10px] font-bold">Clear Dates</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-[#262626] bg-white dark:bg-[#141414]">
+              <table class="w-full text-left border-collapse text-xs">
+                <thead>
+                  <tr class="border-b border-slate-200 dark:border-[#262626] bg-slate-50 dark:bg-[#1a1a1a] text-[11px] font-bold uppercase text-slate-500">
+                    <th class="p-3">Account Number</th>
+                    <th class="p-3">Site &amp; Biller</th>
+                    <th class="p-3">Last Known Payment</th>
+                    <th class="p-3">Projected Due Date</th>
+                    <th class="p-3">Lapsed / Skipped Months</th>
+                    <th class="p-3">Cycle Status</th>
+                  </tr>
+                </thead>
+                <tbody id="repDueTableBody" class="divide-y divide-slate-200 dark:divide-[#262626]"></tbody>
+              </table>
             </div>
           </div>
 
@@ -4905,7 +5037,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         groupTitle: "7. Report System Access",
         items: [
           { id: "REP_USER_ACTIVITY", label: "User Activity Reports" },
-          { id: "REP_ACCOUNT_HISTORY", label: "Account Billing History Reports" }
+          { id: "REP_ACCOUNT_HISTORY", label: "Account Billing History Reports" },
+          { id: "REP_DUE_LAPSED", label: "Upcoming Due Date & Lapsed Payment Report (IR_RFPReq)" }
         ]
       },
       {
@@ -4939,7 +5072,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK", "ES_VIEW_CANCEL_REJECTED",
           "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
           "EXP_ONETIME_PAYMENT", "OTP_ATTACH_LINK", "OTP_DRIVE_FOLDER_LINK", "OTP_EDIT_DETAILS", "OTP_ADD_PAYMENT_DETAILS", "OTP_UPDATE_STATUS", "OTP_VIEW_CANCEL_REJECTED",
-          "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY"
+          "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED"
         ];
       }
       if (norm === "level 3" || norm === "level 5" || norm === "level 6" || norm === "level 7") {
@@ -4949,7 +5082,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           "ENROLL_SUBMIT",
           "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS",
           "EXP_ONETIME_PAYMENT", "OTP_EDIT_DETAILS",
-          "REP_ACCOUNT_HISTORY"
+          "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED"
         ];
       }
       if (norm === "level 2" || norm === "level 4") {
@@ -5339,12 +5472,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       const canViewAllOrGroupEnr = isAdminOrSub || hasUserPermission(currentUser, "ES_VIEW_ALL") || hasUserPermission(currentUser, "ES_VIEW_GROUP");
       const canViewUserActivityRep = isAdminOrSub || hasUserPermission(currentUser, "REP_USER_ACTIVITY");
       const canViewAccountHistoryRep = isAdminOrSub || hasUserPermission(currentUser, "REP_ACCOUNT_HISTORY");
+      const canViewDueLapsedRep = isAdminOrSub || hasUserPermission(currentUser, "REP_DUE_LAPSED");
 
       const reportsNavGroup = document.getElementById("reportsNavGroup");
       const tabBtnRepUser = document.getElementById("tabBtn-report-user-activity");
       const tabBtnRepAcct = document.getElementById("tabBtn-report-account-history");
+      const tabBtnRepDue = document.getElementById("tabBtn-report-due-lapsed");
       if (reportsNavGroup) {
-        if (canViewUserActivityRep || canViewAccountHistoryRep) {
+        if (canViewUserActivityRep || canViewAccountHistoryRep || canViewDueLapsedRep) {
           reportsNavGroup.classList.remove("hidden");
           reportsNavGroup.classList.add("inline-flex");
         } else {
@@ -5359,6 +5494,10 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (tabBtnRepAcct) {
         if (canViewAccountHistoryRep) tabBtnRepAcct.classList.remove("hidden");
         else tabBtnRepAcct.classList.add("hidden");
+      }
+      if (tabBtnRepDue) {
+        if (canViewDueLapsedRep) tabBtnRepDue.classList.remove("hidden");
+        else tabBtnRepDue.classList.add("hidden");
       }
 
       // === [ONE-TIME BILL PAYMENT VISIBILITY (GROUP 8)] ===
@@ -5568,11 +5707,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (tabId === "report-account-history" && !isAdminOrSub && !hasUserPermission(currentUser, "REP_ACCOUNT_HISTORY")) {
         tabId = "overview";
       }
+      if (tabId === "report-due-lapsed" && !isAdminOrSub && !hasUserPermission(currentUser, "REP_DUE_LAPSED")) {
+        tabId = "overview";
+      }
       if ((tabId === "one-time-payment" || tabId === "one-time-status") && !isAdminOrSub && !hasUserPermission(currentUser, "EXP_ONETIME_PAYMENT")) {
         tabId = "overview";
       }
       currentTab = tabId;
-      const tabs = ["overview", "enroll-bill", "enroll-status", "one-time-payment", "one-time-status", "request-payment", "payment-status", "user-management", "account-management", "admin-actions", "report-user-activity", "report-account-history"];
+      const tabs = ["overview", "enroll-bill", "enroll-status", "one-time-payment", "one-time-status", "request-payment", "payment-status", "user-management", "account-management", "admin-actions", "report-user-activity", "report-account-history", "report-due-lapsed"];
       
       tabs.forEach(t => {
         const content = document.getElementById("tabContent-" + t);
@@ -5624,6 +5766,9 @@ function ensureOneTimePaymentHeaders(sheet) {
         renderAccountHistoryReport();
         if (billers.length === 0) handleSyncBillersClick();
         syncLivePaymentRequestsFromGSheet(false);
+      } else if (tabId === "report-due-lapsed") {
+        renderDueLapsedReport();
+        syncLiveIrRfpReqFromGSheet(false);
       } else if (tabId === "one-time-payment") {
         populateOneTimeFormDefaults();
       } else if (tabId === "one-time-status") {
@@ -11837,6 +11982,517 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
     // === [END ISOLATED EXPERIMENTAL MODULE: ONE-TIME BILL PAYMENT JS LOGIC] ===
 
+    // === [UPCOMING DUE DATE & LAPSED PAYMENT TRACKER (REP_DUE_LAPSED)] ===
+    let irRfpReqRecords = [];
+    const BILL_MONTH_NAMES = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+    function normalizeAccountLookupKey(raw) {
+      return String(raw || "").split("_")[0].trim().toLowerCase().replace(/^0+(?=\d)/, "");
+    }
+
+    async function syncLiveIrRfpReqFromGSheet(manual) {
+      const btnLabel = document.getElementById("repDueSyncBtnLabel");
+      if (btnLabel && manual) btnLabel.innerText = "Syncing...";
+      try {
+        const url = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent("IR_RFPReq")}`;
+        const res = await fetch(url);
+        if (res.ok) {
+          const text = await res.text();
+          const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+          if (match && match[1]) {
+            const json = JSON.parse(match[1]);
+            const rows = json.table && json.table.rows ? json.table.rows : [];
+            const cellStr = (c, idx) => {
+              const cell = c && c[idx];
+              if (!cell) return "";
+              const val = cell.f !== undefined && cell.f !== null ? cell.f : cell.v;
+              return val !== undefined && val !== null ? String(val).trim() : "";
+            };
+            const parsed = [];
+            for (const r of rows) {
+              const c = r && r.c;
+              if (!c) continue;
+              const c0 = cellStr(c, 0);
+              const c3 = cellStr(c, 3);
+              let acc = c0;
+              if (c3 && c3.includes("_")) {
+                const parts = c3.split("_");
+                if (parts.length >= 3) {
+                  const hAcc = parts.slice(2).join("_").replace(/Cancel$/i, "").trim();
+                  if (hAcc && (!acc || hAcc.length >= acc.length)) acc = hAcc;
+                }
+              }
+              if (!acc || acc.toLowerCase() === "account number") continue;
+              const yr = parseInt(cellStr(c, 1), 10);
+              const mRaw = cellStr(c, 2);
+              const mIdx = BILL_MONTH_NAMES.findIndex(m => m.toLowerCase() === mRaw.toLowerCase());
+              const cancel = cellStr(c, 20);
+              if (isNaN(yr) || mIdx < 0 || /cancel/i.test(cancel) || /cancel$/i.test(c3)) continue;
+              parsed.push({
+                accountNumber: acc,
+                year: yr,
+                billMonth: BILL_MONTH_NAMES[mIdx],
+                monthIndex: mIdx,
+                dueDate: cellStr(c, 13),
+                rfpNumber: cellStr(c, 16),
+                amount: cellStr(c, 18),
+                status: cellStr(c, 19) || (cellStr(c, 23) ? "PAID" : cellStr(c, 16) ? "WITH RFP" : "RECORDED"),
+                paymentDate: cellStr(c, 23)
+              });
+            }
+            irRfpReqRecords = parsed;
+            if (btnLabel) btnLabel.innerText = `Sync Records (${parsed.length.toLocaleString()})`;
+            if (currentTab === "report-due-lapsed") renderDueLapsedReport();
+            renderOverviewTwoColumn();
+          }
+        }
+      } catch (e) {
+        if (btnLabel) btnLabel.innerText = "Sync Records";
+      }
+    }
+
+    function applyRepDueDatePreset(mode) {
+      const startEl = document.getElementById("repDueStartDateInput");
+      const endEl = document.getElementById("repDueEndDateInput");
+      if (!startEl || !endEl) return;
+      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "November";
+      const targetYear = parseInt((document.getElementById("repDueTargetYearSelect") || {}).value || "2026", 10);
+      const mIdx = Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
+      const mm = String(mIdx + 1).padStart(2, "0");
+      const lastDay = new Date(targetYear, mIdx + 1, 0).getDate();
+      const fmtLocal = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      const now = new Date();
+      if (mode === "clear") {
+        startEl.value = "";
+        endEl.value = "";
+      } else if (mode === "today") {
+        const s = fmtLocal(now);
+        startEl.value = s;
+        endEl.value = s;
+      } else if (mode === "next7") {
+        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 7);
+        startEl.value = fmtLocal(now);
+        endEl.value = fmtLocal(end);
+      } else if (mode === "next14") {
+        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14);
+        startEl.value = fmtLocal(now);
+        endEl.value = fmtLocal(end);
+      } else if (mode === "firstHalf") {
+        startEl.value = `${targetYear}-${mm}-01`;
+        endEl.value = `${targetYear}-${mm}-15`;
+      } else if (mode === "secondHalf") {
+        startEl.value = `${targetYear}-${mm}-16`;
+        endEl.value = `${targetYear}-${mm}-${String(lastDay).padStart(2, "0")}`;
+      } else if (mode === "fullMonth") {
+        startEl.value = `${targetYear}-${mm}-01`;
+        endEl.value = `${targetYear}-${mm}-${String(lastDay).padStart(2, "0")}`;
+      }
+      renderDueLapsedReport();
+    }
+
+    function renderDueLapsedReport() {
+      const tbody = document.getElementById("repDueTableBody");
+      if (!tbody) return;
+      const targetMonth = (document.getElementById("repDueTargetMonthSelect") || {}).value || "November";
+      const targetYear = parseInt((document.getElementById("repDueTargetYearSelect") || {}).value || "2026", 10);
+      const flagFilter = (document.getElementById("repDueFlagFilterSelect") || {}).value || "All";
+      const dateField = (document.getElementById("repDueDateFieldSelect") || {}).value || "projectedDue";
+      const startDateStr = ((document.getElementById("repDueStartDateInput") || {}).value || "").trim();
+      const endDateStr = ((document.getElementById("repDueEndDateInput") || {}).value || "").trim();
+      const q = ((document.getElementById("repDueSearchInput") || {}).value || "").trim().toLowerCase();
+      const targetMIdx = Math.max(0, BILL_MONTH_NAMES.indexOf(targetMonth));
+      const targetYm = targetYear * 12 + targetMIdx;
+      const maxDay = new Date(targetYear, targetMIdx + 1, 0).getDate();
+      const now = new Date();
+      const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+
+      const parseLocalDayMs = (s) => {
+        if (!s || s === "—") return null;
+        const m = String(s).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+        if (m) {
+          const dt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+          return isNaN(dt.getTime()) ? null : dt.getTime();
+        }
+        const dt = new Date(s);
+        return isNaN(dt.getTime()) ? null : new Date(dt.getFullYear(), dt.getMonth(), dt.getDate()).getTime();
+      };
+      const rawStartMs = parseLocalDayMs(startDateStr);
+      const rawEndMs = parseLocalDayMs(endDateStr);
+      const rangeStartMs = rawStartMs !== null && rawEndMs !== null && rawStartMs > rawEndMs ? rawEndMs : rawStartMs;
+      const rangeEndMs = rawStartMs !== null && rawEndMs !== null && rawStartMs > rawEndMs ? rawStartMs : rawEndMs;
+
+      const irMap = new Map();
+      for (const r of irRfpReqRecords) {
+        const k = normalizeAccountLookupKey(r.accountNumber);
+        if (!k) continue;
+        const d = r.dueDate ? new Date(r.dueDate) : null;
+        const dueD = d && !isNaN(d.getTime()) ? d : null;
+        const billYm = r.year * 12 + r.monthIndex;
+        const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
+        if (!irMap.has(k)) irMap.set(k, []);
+        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+      }
+
+      const rbpMap = new Map();
+      for (const r of paymentRequests) {
+        const st = String(r.status || "").toUpperCase();
+        if (["CANCEL","REJECTED","DUPLICATE","BLURRED"].includes(st)) continue;
+        const k = normalizeAccountLookupKey(r.accountNumber);
+        if (!k) continue;
+        const d = r.dueDate ? new Date(r.dueDate) : null;
+        const dueD = d && !isNaN(d.getTime()) ? d : null;
+        const mIdx = Math.max(0, BILL_MONTH_NAMES.findIndex(m => m.toLowerCase() === String(r.billMonth || "").toLowerCase()));
+        const yr = dueD ? dueD.getFullYear() : targetYear;
+        const billYm = yr * 12 + mIdx;
+        const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
+        if (!rbpMap.has(k)) rbpMap.set(k, []);
+        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+      }
+
+      let fulfilled = 0, upcoming = 0, overdue = 0, lapsed = 0, dateRangeTotal = 0;
+      const rows = billers.map(b => {
+        const k = normalizeAccountLookupKey(b.accountNumber);
+        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        const hasHistory = irList.length > 0 || rbpList.length > 0;
+        const mRbp = rbpList.find(x => x.billYm >= targetYm);
+        const mIr = irList.find(x => x.billYm >= targetYm);
+        const isFulfilled = Boolean(mRbp || mIr);
+
+        const lastIr = irList[irList.length - 1] || null;
+        const lastRbp = rbpList[rbpList.length - 1] || null;
+        const irDue = [...irList].reverse().find(x => x.dueDay !== null);
+        const rbpDue = [...rbpList].reverse().find(x => x.dueDay !== null);
+        const dueDay = irDue ? irDue.dueDay : (rbpDue ? rbpDue.dueDay : null);
+        const projDate = dueDay ? new Date(targetYear, targetMIdx, Math.min(dueDay, maxDay)) : null;
+        const projIso = projDate ? `${targetYear}-${String(targetMIdx+1).padStart(2,"0")}-${String(projDate.getDate()).padStart(2,"0")}` : "—";
+        const daysFromToday = projDate ? Math.round((projDate.getTime() - todayMid) / 86400000) : null;
+
+        const covered = new Set([...irList.map(x => x.billYm), ...rbpList.map(x => x.billYm)]);
+        const priorIr = irList.filter(x => x.billYm < targetYm);
+        const priorRbp = rbpList.filter(x => x.billYm < targetYm);
+        const lastPriorBillYm = Math.max(priorIr.length ? priorIr[priorIr.length-1].billYm : -1, priorRbp.length ? priorRbp[priorRbp.length-1].billYm : -1);
+        const continuous = lastPriorBillYm >= targetYm - 1;
+        const missing = [];
+        if (!isFulfilled && hasHistory && lastPriorBillYm > 0 && !continuous) {
+          for (let ym = lastPriorBillYm + 1; ym < targetYm; ym++) {
+            if (!covered.has(ym)) {
+              missing.push(`${BILL_MONTH_NAMES[ym % 12].slice(0,3)} ${Math.floor(ym / 12)}`);
+            }
+          }
+        }
+        if (!isFulfilled && hasHistory && daysFromToday !== null && daysFromToday < 0 && !covered.has(targetYm)) {
+          const curLbl = `${BILL_MONTH_NAMES[targetYm % 12].slice(0,3)} ${Math.floor(targetYm / 12)}`;
+          if (!missing.includes(curLbl)) missing.push(curLbl);
+        }
+        const isLapsed = !isFulfilled && missing.length > 0;
+        let cat = "UpcomingDue";
+        if (!hasHistory) { cat = "NoHistory"; }
+        else if (isFulfilled) { cat = "Fulfilled"; }
+        else if (isLapsed) { cat = "Lapsed"; }
+        else if (daysFromToday !== null && daysFromToday < 0) { cat = "OverdueUnfulfilled"; }
+
+        const lastDue = (lastIr && lastIr.dueDate) || (lastRbp && lastRbp.dueDate) || "—";
+        const lastPaid = (lastIr && lastIr.paymentDate) || (lastRbp && lastRbp.datePaid) || "—";
+
+        let inDateRange = true;
+        if (rangeStartMs !== null || rangeEndMs !== null) {
+          if (dateField === "projectedDue") {
+            if (dueDay === null) {
+              inDateRange = false;
+            } else if (rangeStartMs !== null && rangeEndMs !== null) {
+              const sD = new Date(rangeStartMs);
+              const eD = new Date(rangeEndMs);
+              let hit = false;
+              let y = sD.getFullYear(), m = sD.getMonth();
+              while (y < eD.getFullYear() || (y === eD.getFullYear() && m <= eD.getMonth())) {
+                const mMax = new Date(y, m + 1, 0).getDate();
+                const occMs = new Date(y, m, Math.min(dueDay, mMax)).getTime();
+                if (occMs >= rangeStartMs && occMs <= rangeEndMs) { hit = true; break; }
+                m++; if (m > 11) { m = 0; y++; }
+              }
+              inDateRange = hit;
+            } else {
+              const pMs = projDate ? projDate.getTime() : null;
+              inDateRange = pMs !== null && (rangeStartMs === null || pMs >= rangeStartMs) && (rangeEndMs === null || pMs <= rangeEndMs);
+            }
+          } else {
+            const candidateMs = parseLocalDayMs(dateField === "lastDueDate" ? lastDue : lastPaid);
+            inDateRange = candidateMs !== null && (rangeStartMs === null || candidateMs >= rangeStartMs) && (rangeEndMs === null || candidateMs <= rangeEndMs);
+          }
+        }
+
+        if (inDateRange) {
+          dateRangeTotal++;
+          if (isFulfilled) fulfilled++;
+          else if (cat === "Lapsed") lapsed++;
+          else if (cat === "OverdueUnfulfilled") overdue++;
+          else if (cat === "UpcomingDue") upcoming++;
+        }
+
+        return {
+          b,
+          hasHistory,
+          lastLabel: lastIr ? `${lastIr.billMonth} ${lastIr.year}` : (lastRbp ? `${lastRbp.billMonth} (RBP)` : "No Record"),
+          lastDue,
+          lastPaid,
+          projIso,
+          dueDay,
+          daysFromToday,
+          missing,
+          isFulfilled,
+          isLapsed,
+          cat,
+          inDateRange
+        };
+      });
+
+      const elTotal = document.getElementById("repDueTotalCount");
+      const elFulf = document.getElementById("repDueFulfilledCount");
+      const elUpc = document.getElementById("repDueUpcomingCount");
+      const elOvd = document.getElementById("repDueOverdueCount");
+      const elLap = document.getElementById("repDueLapsedCount");
+      if (elTotal) elTotal.innerText = dateRangeTotal;
+      if (elFulf) elFulf.innerText = fulfilled;
+      if (elUpc) elUpc.innerText = upcoming;
+      if (elOvd) elOvd.innerText = overdue;
+      if (elLap) elLap.innerText = lapsed;
+
+      const filtered = rows.filter(r => {
+        if (!r.inDateRange) return false;
+        if (flagFilter === "Unfulfilled") {
+          if (r.isFulfilled || !r.hasHistory) return false;
+        } else if (flagFilter === "UpcomingDue" || flagFilter === "OverdueUnfulfilled" || flagFilter === "Lapsed") {
+          if (r.isFulfilled || r.cat !== flagFilter) return false;
+        } else if (flagFilter === "Fulfilled") {
+          if (!r.isFulfilled) return false;
+        }
+        if (q) {
+          const hay = `${r.b.accountNumber} ${r.b.site} ${r.b.billerName} ${r.lastLabel} ${r.missing.join(" ")}`.toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      tbody.innerHTML = filtered.map(r => `
+        <tr class="hover:bg-slate-50 dark:hover:bg-[#1c1c1c]">
+          <td class="p-3 font-mono font-bold text-rose-600 dark:text-rose-400">${escapeHtml(r.b.accountNumber)}</td>
+          <td class="p-3"><div class="font-semibold">${escapeHtml(r.b.site)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.b.billerName)}</div></td>
+          <td class="p-3 font-mono"><div>${escapeHtml(r.lastLabel)}</div><div class="text-[10px] text-slate-400">Due: ${escapeHtml(r.lastDue)}</div></td>
+          <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : escapeHtml(r.projIso)}</td>
+          <td class="p-3 font-mono">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : r.missing.length > 0 ? `<span class="text-rose-600 font-bold">LAPSED (${r.missing.length}): ${escapeHtml(r.missing.join(", "))}</span>` : `<span class="text-emerald-600">Continuous</span>`}</td>
+          <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600">FULFILLED</span>` : r.isLapsed ? `<span class="text-rose-600">FLAGGED • LAPSED</span>` : `<span class="text-blue-600">${escapeHtml(r.cat)}</span>`}</td>
+        </tr>
+      `).join("");
+      renderOverviewTwoColumn();
+    }
+
+    function renderOverviewTwoColumn() {
+      const upcContainer = document.getElementById("overviewUpcomingListContainer");
+      const lapContainer = document.getElementById("overviewLapsedListContainer");
+      if (!upcContainer || !lapContainer) return;
+
+      const now = new Date();
+      const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+      const curYear = now.getFullYear();
+      const curMonthIdx = now.getMonth();
+      const curYm = curYear * 12 + curMonthIdx;
+
+      // Identify accounts previously filed by the logged-in user
+      const userAccountKeys = new Set();
+      if (currentUser) {
+        const uEmail = String(currentUser.email || "").trim().toLowerCase();
+        const uName = String(currentUser.username || "").trim().toLowerCase();
+        const uId = String(currentUser.id || "").trim().toLowerCase();
+        for (const r of paymentRequests) {
+          const rEmail = String(r.submittedByEmail || "").trim().toLowerCase();
+          const rName = String(r.submittedBy || "").trim().toLowerCase();
+          if ((uEmail && (rEmail === uEmail || rName === uEmail)) || (uName && (rName === uName || rEmail === uName)) || (uId && rName === uId)) {
+            const k = normalizeAccountLookupKey(r.accountNumber);
+            if (k) userAccountKeys.add(k);
+          }
+        }
+        for (const b of billers) {
+          const bUser = String(b.assignedUser || "").trim().toLowerCase();
+          if (bUser && ((uEmail && bUser === uEmail) || (uName && bUser === uName) || (uId && bUser === uId))) {
+            const k = normalizeAccountLookupKey(b.accountNumber);
+            if (k) userAccountKeys.add(k);
+          }
+        }
+      }
+
+      const irMap = new Map();
+      for (const r of irRfpReqRecords) {
+        const k = normalizeAccountLookupKey(r.accountNumber);
+        if (!k) continue;
+        const d = r.dueDate ? new Date(r.dueDate) : null;
+        const dueD = d && !isNaN(d.getTime()) ? d : null;
+        const billYm = r.year * 12 + r.monthIndex;
+        const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
+        if (!irMap.has(k)) irMap.set(k, []);
+        irMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+      }
+
+      const rbpMap = new Map();
+      for (const r of paymentRequests) {
+        const st = String(r.status || "").toUpperCase();
+        if (["CANCEL","REJECTED","DUPLICATE","BLURRED"].includes(st)) continue;
+        const k = normalizeAccountLookupKey(r.accountNumber);
+        if (!k) continue;
+        const d = r.dueDate ? new Date(r.dueDate) : null;
+        const dueD = d && !isNaN(d.getTime()) ? d : null;
+        const mIdx = Math.max(0, BILL_MONTH_NAMES.findIndex(m => m.toLowerCase() === String(r.billMonth || "").toLowerCase()));
+        const yr = dueD ? dueD.getFullYear() : curYear;
+        const billYm = yr * 12 + mIdx;
+        const dueYm = dueD ? dueD.getFullYear() * 12 + dueD.getMonth() : billYm;
+        if (!rbpMap.has(k)) rbpMap.set(k, []);
+        rbpMap.get(k).push({ ...r, billYm, dueYm, dueDay: dueD ? dueD.getDate() : null });
+      }
+
+      const upcomingNext14 = [];
+      const lapsedList = [];
+
+      for (const b of billers) {
+        const k = normalizeAccountLookupKey(b.accountNumber);
+        if (!k) continue;
+        const irList = (irMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        const rbpList = (rbpMap.get(k) || []).sort((x,y) => x.billYm - y.billYm);
+        if (!irList.length && !rbpList.length) continue;
+
+        const irDue = [...irList].reverse().find(x => x.dueDay !== null);
+        const rbpDue = [...rbpList].reverse().find(x => x.dueDay !== null);
+        const dueDay = irDue ? irDue.dueDay : (rbpDue ? rbpDue.dueDay : null);
+
+        const maxDayCur = new Date(curYear, curMonthIdx + 1, 0).getDate();
+        const curMonthDate = dueDay !== null ? new Date(curYear, curMonthIdx, Math.min(dueDay, maxDayCur)) : null;
+        let candDate = curMonthDate;
+        let candYm = curYm;
+        if (candDate && candDate.getTime() < todayMid && dueDay !== null) {
+          const nextD = new Date(curYear, curMonthIdx + 1, 1);
+          const nY = nextD.getFullYear(), nM = nextD.getMonth();
+          const maxN = new Date(nY, nM + 1, 0).getDate();
+          candDate = new Date(nY, nM, Math.min(dueDay, maxN));
+          candYm = nY * 12 + nM;
+        }
+        const candMonthName = BILL_MONTH_NAMES[candYm % 12] || "November";
+        const isFulfilledCand = rbpList.some(x => x.billYm >= candYm) || irList.some(x => x.billYm >= candYm);
+        const isFulfilledCur = rbpList.some(x => x.billYm >= curYm) || irList.some(x => x.billYm >= curYm);
+
+        const daysUntilDue = candDate ? Math.round((candDate.getTime() - todayMid) / 86400000) : null;
+        const projIso = candDate ? `${candDate.getFullYear()}-${String(candDate.getMonth()+1).padStart(2,"0")}-${String(candDate.getDate()).padStart(2,"0")}` : "—";
+        const wasFiledByUser = userAccountKeys.has(k);
+        const lastIr = irList[irList.length - 1] || null;
+        const lastRbp = rbpList[rbpList.length - 1] || null;
+        const lastLabel = lastIr ? `${lastIr.billMonth} ${lastIr.year}` : (lastRbp ? `${lastRbp.billMonth} (RBP)` : "No Record");
+
+        if (!isFulfilledCand && daysUntilDue !== null && daysUntilDue >= 0 && daysUntilDue <= 14) {
+          upcomingNext14.push({ b, projIso, daysUntilDue, missing: [], lastLabel, wasFiledByUser, targetMonthName: candMonthName });
+        }
+
+        const covered = new Set([...irList.map(x => x.billYm), ...rbpList.map(x => x.billYm)]);
+        const priorIr = irList.filter(x => x.billYm < curYm);
+        const priorRbp = rbpList.filter(x => x.billYm < curYm);
+        const lastPriorBillYm = Math.max(priorIr.length ? priorIr[priorIr.length-1].billYm : -1, priorRbp.length ? priorRbp[priorRbp.length-1].billYm : -1);
+        const missing = [];
+        const missedYms = [];
+        if (!isFulfilledCur && lastPriorBillYm > 0 && lastPriorBillYm < curYm - 1) {
+          for (let ym = lastPriorBillYm + 1; ym < curYm; ym++) {
+            if (!covered.has(ym)) {
+              missing.push(`${BILL_MONTH_NAMES[ym % 12].slice(0,3)} ${Math.floor(ym / 12)}`);
+              missedYms.push(ym);
+            }
+          }
+        }
+        const curDiff = curMonthDate ? Math.round((curMonthDate.getTime() - todayMid) / 86400000) : null;
+        if (!isFulfilledCur && curDiff !== null && curDiff < 0 && !covered.has(curYm)) {
+          const curLbl = `${BILL_MONTH_NAMES[curYm % 12].slice(0,3)} ${Math.floor(curYm / 12)}`;
+          if (!missing.includes(curLbl)) {
+            missing.push(curLbl);
+            missedYms.push(curYm);
+          }
+        }
+        if (!isFulfilledCur && missing.length > 0) {
+          let lapsedIso = curMonthDate ? `${curMonthDate.getFullYear()}-${String(curMonthDate.getMonth()+1).padStart(2,"0")}-${String(curMonthDate.getDate()).padStart(2,"0")}` : "—";
+          if (dueDay !== null && missedYms.length > 0) {
+            const latestYm = missedYms[missedYms.length - 1];
+            const mY = Math.floor(latestYm / 12), mM = latestYm % 12;
+            const maxM = new Date(mY, mM + 1, 0).getDate();
+            const mD = new Date(mY, mM, Math.min(dueDay, maxM));
+            lapsedIso = `${mD.getFullYear()}-${String(mD.getMonth()+1).padStart(2,"0")}-${String(mD.getDate()).padStart(2,"0")}`;
+          }
+          lapsedList.push({ b, projIso: lapsedIso, daysUntilDue: curDiff, missing, lastLabel, wasFiledByUser, targetMonthName: BILL_MONTH_NAMES[curMonthIdx] || "November" });
+        }
+      }
+
+      upcomingNext14.sort((a, b) => {
+        if (a.wasFiledByUser !== b.wasFiledByUser) return a.wasFiledByUser ? -1 : 1;
+        return (a.daysUntilDue ?? 999) - (b.daysUntilDue ?? 999);
+      });
+      lapsedList.sort((a, b) => {
+        if (a.wasFiledByUser !== b.wasFiledByUser) return a.wasFiledByUser ? -1 : 1;
+        if (b.missing.length !== a.missing.length) return b.missing.length - a.missing.length;
+        return (a.daysUntilDue ?? 999) - (b.daysUntilDue ?? 999);
+      });
+
+      const upcBadge = document.getElementById("overviewUpcomingCountBadge");
+      const upcMine = document.getElementById("overviewUpcomingMineBadge");
+      const lapBadge = document.getElementById("overviewLapsedCountBadge");
+      const lapMine = document.getElementById("overviewLapsedMineBadge");
+      if (upcBadge) upcBadge.innerText = upcomingNext14.length;
+      const upcMineCount = upcomingNext14.filter(x => x.wasFiledByUser).length;
+      if (upcMine) {
+        upcMine.innerText = `${upcMineCount} Filed by You`;
+        upcMine.classList.toggle("hidden", upcMineCount === 0);
+        upcMine.classList.toggle("inline-flex", upcMineCount > 0);
+      }
+      if (lapBadge) lapBadge.innerText = lapsedList.length;
+      const lapMineCount = lapsedList.filter(x => x.wasFiledByUser).length;
+      if (lapMine) {
+        lapMine.innerText = `${lapMineCount} Filed by You`;
+        lapMine.classList.toggle("hidden", lapMineCount === 0);
+        lapMine.classList.toggle("inline-flex", lapMineCount > 0);
+      }
+
+      upcContainer.innerHTML = upcomingNext14.length === 0
+        ? `<div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">No unfulfilled accounts due in the next 14 days.</div>`
+        : upcomingNext14.map(item => `
+          <div class="p-2.5 rounded-xl border flex items-center gap-2.5 ${item.wasFiledByUser ? 'bg-amber-50/90 dark:bg-amber-950/25 border-amber-400/60 dark:border-amber-500/40' : 'bg-white/90 dark:bg-[#1c1c1c] border-slate-200/80 dark:border-[#2a2a2a]'}">
+            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-left font-mono">
+              <div class="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">${escapeHtml(item.projIso)}</div>
+              <div class="text-[10px] font-bold text-amber-600 dark:text-amber-400 leading-tight mt-0.5">${item.daysUntilDue === 0 ? 'Due Today' : `In ${item.daysUntilDue}d`}</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-mono text-xs font-bold text-slate-900 dark:text-white">${escapeHtml(item.b.accountNumber)}</span>
+                ${item.wasFiledByUser ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-neutral-300 truncate">${escapeHtml(item.b.billerName)}</span>
+              </div>
+              <div class="text-[11px] text-slate-500 dark:text-neutral-400 truncate mt-0.5">${escapeHtml(item.b.site)} • Last: ${escapeHtml(item.lastLabel)}</div>
+            </div>
+          </div>
+        `).join("");
+
+      lapContainer.innerHTML = lapsedList.length === 0
+        ? `<div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">No unfulfilled accounts with lapsed submissions.</div>`
+        : lapsedList.map(item => `
+          <div class="p-2.5 rounded-xl border flex items-center gap-2.5 ${item.wasFiledByUser ? 'bg-rose-50/90 dark:bg-rose-950/25 border-rose-400/60 dark:border-rose-500/40' : 'bg-white/90 dark:bg-[#1c1c1c] border-slate-200/80 dark:border-[#2a2a2a]'}">
+            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-left font-mono">
+              <div class="text-[11px] font-bold text-slate-900 dark:text-white leading-tight truncate">${escapeHtml(item.projIso)}</div>
+              <div class="text-[10px] font-bold text-rose-600 dark:text-rose-400 leading-tight mt-0.5">${item.missing.length} ${item.missing.length === 1 ? 'mo' : 'mos'} lapsed</div>
+            </div>
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <span class="font-mono text-xs font-bold text-rose-700 dark:text-rose-300">${escapeHtml(item.b.accountNumber)}</span>
+                ${item.wasFiledByUser ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
+                <span class="text-[11px] font-semibold text-slate-600 dark:text-neutral-300 truncate">${escapeHtml(item.b.billerName)}</span>
+              </div>
+              <div class="text-[11px] text-slate-500 dark:text-neutral-400 truncate mt-0.5">${escapeHtml(item.b.site)} • Last: ${escapeHtml(item.lastLabel)}</div>
+              <div class="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 mt-0.5 truncate">Missing (${item.missing.length}): ${escapeHtml(item.missing.join(", "))}</div>
+            </div>
+          </div>
+        `).join("");
+    }
+
     // ==========================================
     // INITIALIZATION & PERIODIC AUTO-POLLING
     // ==========================================
@@ -11847,6 +12503,8 @@ function ensureOneTimePaymentHeaders(sheet) {
     syncLivePaymentRequestsFromGSheet(false);
     syncLiveEnrollmentsFromGSheet(false);
     syncLiveOneTimePaymentsFromGSheet(false);
+    syncLiveIrRfpReqFromGSheet(false);
+    renderOverviewTwoColumn();
 
     // Auto-polling every 25 seconds: keep statuses & announcements perfectly fresh!
     setInterval(() => {

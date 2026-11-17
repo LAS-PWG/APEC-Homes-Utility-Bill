@@ -6,6 +6,38 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.0] - 2026-11-16 — New Report: Upcoming Due Date Projections & Lapsed Payments Tracker (`REP_DUE_LAPSED` from `IR_RFPReq`, `Billers`, & `Request Bill Payments`)
+--------------------------------------------------------------------------------
+1. Live `IR_RFPReq` ImportRange Integration (`fetchIrRfpReqRecords` in `billPayment.ts`):
+   - Fetches all 5,488+ historical and current payment records from the `IR_RFPReq`
+     sheet tab in `Bill Sub WebApp Requests` (`1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA`).
+   - Automatically recovers alphanumeric/hyphenated Water & Utility account numbers
+     from `Col D (Helper: Month_Year_AccountNumber)` whenever Google Visualization
+     API types `Col A` as numeric, achieving 99%+ account matching across all 361
+     registered accounts in the `Billers` catalog.
+2. Upcoming Due Date Projections from Last Known Payments:
+   - Determines each registered `Billers` account's typical billing due day-of-month
+     from its latest valid `Due Date` in `IR_RFPReq` / `Request Bill Payments` and
+     projects its upcoming due date for the selected Target Month & Year.
+   - Flags accounts with countdown indicators (`Due in Xd`, `Projected Due Today`,
+     `Past Projected by Xd`, or `Cycle Fulfilled`).
+3. Lapsed / Skipped Monthly Payments Detection:
+   - Detects and flags accounts that have skipped one or more monthly billing cycles
+     between their last known payment record and the target billing cycle (e.g., if
+     due for November 2026 but the last known record was July 2026, flags as
+     `LAPSED (3 MONTHS)` and explicitly lists `Missing: Aug 2026, Sep 2026, Oct 2026`).
+4. Automatic Fulfillment Resolution:
+   - Upcoming Projected Due, Past Projected Due, and Lapsed Payments strictly
+     display and count ONLY unfulfilled accounts (and default to the
+     "All Unfulfilled" view on load).
+   - If a payment request for the target billing/due month has been submitted in
+     `Request Bill Payments` (active/non-cancelled/non-rejected) or recorded in
+     `IR_RFPReq`, the account is automatically marked as **`FULFILLED`**
+     (`FULFILLED • PAID`, `FULFILLED • WITH RFP`, or `FULFILLED • SUBMITTED`).
+   - Includes a per-account **Timeline** drill-down modal, direct **`+ File RBP`**
+     prefill shortcut, interactive KPI filter cards, and full CSV export.
+
+--------------------------------------------------------------------------------
 [v3.1.2] - 2026-11-16 — Display Text Cleanup, Sheet Name Callout Removal, Save Button Fix for Add Payment Details Mod (`OTP_ADD_PAYMENT_DETAILS`), Removal of Testing-Only Admin Upload Linker Box in Inspector, & Full Package Repack
 --------------------------------------------------------------------------------
 1. Removed Display Text Callouts:
