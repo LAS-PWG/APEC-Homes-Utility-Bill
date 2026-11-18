@@ -6,6 +6,32 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.4] - 2026-11-17 — Historical Payment Timeline Modal in GitHub / Static Packages, Module Access (`REP_HISTORICAL_TIMELINE`), & Balanced 3-Column Overview Layout
+--------------------------------------------------------------------------------
+1. Historical Payment Timeline Modal & Module Access (`REP_HISTORICAL_TIMELINE`):
+   - Added dedicated Module Access permission **`REP_HISTORICAL_TIMELINE`**
+     (*"Historical Payment Timeline (Overview & Due Tracker)"*) under **7. Report
+     System Access** in both the React portal and the standalone GitHub Pages /
+     Netlify / Google Sites builds so Administrators can enable or restrict
+     clicking account numbers to view the Historical Payment Timeline per user.
+   - Implemented the full interactive **Historical Payment Timeline Modal** in the
+     standalone GitHub Pages / Netlify / Google Sites build (`single-index.html`),
+     so clicking any Account Number in **Overview > Upcoming Due Dates**,
+     **Overview > Lapsed Accounts**, or **Due & Lapsed Tracker** opens the complete
+     payment timeline (`IR_RFPReq` history + submitted `RBP` requests, 4-card cycle
+     summary strip, `← Prev / Next →` navigation, and `+ File RBP` quick action).
+2. Balanced 3-Column Overview Layout Across Preview & Deployed GitHub:
+   - Synchronized **Utility Services & Workflows** in the standalone GitHub build
+     with all 6 workflow cards (`Request Bill Payment`, `Payment Status` with live
+     `<N> Pending` badge, `Enroll New Utility Bill`, `Enrollment Status` with live
+     `<N> Pending` badge, `One-Time Bill Payment`, and `One-Time Status` with live
+     `<N> Pending` badge), plus `Full Tracker →` shortcuts on **Upcoming Due Dates**
+     and **Lapsed Accounts**.
+   - Unified the 3-column grid and flex distribution (`pc-wide-workflows-list`)
+     so all three Overview columns align flush at top and bottom across desktop
+     resolutions.
+
+--------------------------------------------------------------------------------
 [v3.2.3] - 2026-11-17 — Actual Due Date Evaluation, "View All Months (By Due Date)" Tracker Mode, 3-Column Overview Layout, Scrollable Panels, & Package Cleanup
 --------------------------------------------------------------------------------
 1. Actual Due Date Evaluation (Independent of Inconsistent `Bill Month` Text):

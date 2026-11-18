@@ -961,10 +961,11 @@
       }
 
       .pc-wide-mode .pc-wide-overview-col {
-        grid-column: span 12 / span 12 !important;
+        grid-column: span 4 / span 4 !important;
         display: flex !important;
         flex-direction: column !important;
         height: 100% !important;
+        min-height: 0 !important;
       }
 
       .pc-wide-mode .pc-wide-announcements-card {
@@ -980,6 +981,14 @@
         display: flex !important;
         flex-direction: column !important;
         justify-content: flex-start !important;
+      }
+
+      .pc-wide-mode .pc-wide-workflows-list {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        flex: 1 1 auto !important;
+        gap: 0.5rem !important;
       }
 
       .pc-wide-mode .pc-wide-module-body {
@@ -1018,15 +1027,53 @@
     }
 
     @media (min-width: 960px) {
+      .pc-wide-mode .pc-wide-overview-grid:not(.hidden) {
+        display: grid !important;
+        grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+        gap: clamp(0.75rem, 1.1vw, 1.25rem) !important;
+        align-items: stretch !important;
+      }
+
+      .pc-wide-mode .pc-wide-overview-grid > * {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+      }
+
       .pc-wide-mode .pc-wide-overview-col {
         grid-column: span 4 / span 4 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        height: 100% !important;
         min-height: 0 !important;
+      }
+
+      .pc-wide-mode .pc-wide-announcements-card {
+        padding: clamp(0.85rem, 1vw, 1.15rem) !important;
+      }
+
+      .pc-wide-mode .pc-wide-workflows-card {
+        background: rgba(148, 163, 184, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 1rem;
+        padding: clamp(0.85rem, 1vw, 1.15rem) !important;
+        flex: 1 1 auto !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: flex-start !important;
+      }
+
+      .pc-wide-mode .pc-wide-workflows-list {
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        flex: 1 1 auto !important;
+        gap: 0.5rem !important;
       }
 
       .pc-wide-mode .overview-col-scroll-list {
         contain: size !important;
         flex: 1 1 0% !important;
-        min-height: 320px !important;
+        min-height: 280px !important;
         max-height: none !important;
         overflow-y: auto !important;
         scrollbar-gutter: stable;
@@ -1579,29 +1626,8 @@
           
           <!-- TAB 1: OVERVIEW & ANNOUNCEMENTS (3-COLUMN LAYOUT) -->
           <div id="tabContent-overview" class="animate-fade-in">
+            <div id="adminGsheetCard" class="hidden"></div>
             <div class="pc-wide-overview-grid space-y-6">
-            
-            <!-- Admin UserData Database Manager Card -->
-            <div id="adminGsheetCard" class="pc-wide-userdata-card hidden rounded-2xl border border-emerald-500/30 dark:border-emerald-500/20 bg-gradient-to-br from-emerald-50/60 via-white to-royal-50/40 dark:from-royal-950/90 dark:via-royal-900/40 dark:to-emerald-950/20 p-6 sm:p-7 shadow-sm">
-              <div class="pc-wide-userdata-top flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-emerald-500/20 dark:border-emerald-500/10 gap-3">
-                <div class="flex items-center space-x-2.5">
-                  <div class="w-9 h-9 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-md">
-                    <i data-lucide="database" class="w-5 h-5"></i>
-                  </div>
-                  <div>
-                    <h3 class="text-base font-bold text-slate-900 dark:text-white">UserData Database</h3>
-                    <p class="text-xs text-slate-500 dark:text-royal-300/60">Live Google Sheets user authorization ledger</p>
-                  </div>
-                </div>
-
-                <div class="flex items-center space-x-2">
-                  <button type="button" onclick="syncDatabaseFromGSheet(true)" class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 cursor-pointer">
-                    <i id="syncDbIcon" data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                    <span>Sync UserData</span>
-                  </button>
-                </div>
-              </div>
-            </div>
 
             <!-- COLUMN 1 (LEFT): STACKED ANNOUNCEMENTS & UTILITY SERVICES WORKFLOWS -->
             <div class="pc-wide-overview-col flex flex-col gap-4">
@@ -1701,106 +1727,161 @@ Submit and track your monthly utility payments directly through your account.</p
               </div>
 
               <!-- UTILITY SERVICES & WORKFLOWS CARD -->
-              <div class="pc-wide-workflows-card flex flex-col justify-start">
+              <div class="pc-wide-workflows-card rounded-2xl border border-slate-200/80 dark:border-[#262626] bg-slate-50/60 dark:bg-[#1a1a1a] p-5 shadow-sm flex flex-col justify-start">
                 <div class="flex items-center justify-between mb-3">
                   <div>
-                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Utility Services &amp; Workflows</h4>
-                    <p class="text-[11px] text-slate-500 dark:text-royal-300/60">Quick-launch portal workspaces</p>
+                    <h4 class="text-xs font-bold uppercase tracking-wider text-slate-800 dark:text-neutral-200">Utility Services &amp; Workflows</h4>
+                    <p class="text-[11px] text-slate-500 dark:text-neutral-400">Quick-launch portal forms and status trackers</p>
                   </div>
                 </div>
 
-                <div class="grid grid-cols-1 gap-2">
+                <div class="pc-wide-workflows-list grid grid-cols-1 gap-2 flex-1">
                   <!-- 1. Request Bill Payment -->
-                  <div onclick="switchTab('request-payment')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="credit-card" class="w-4 h-4"></i>
+                  <div onclick="switchTab('request-payment')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-purple-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="credit-card" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">Request Bill Payment</h5>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Submit payment for enrolled accounts</p>
+                      </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">Request Bill Payment</h5>
-                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Submit a request for payment for existing enrolled accounts.</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-purple-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
                   </div>
 
                   <!-- 2. View Payment Status -->
-                  <div onclick="switchTab('payment-status')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="activity" class="w-4 h-4"></i>
+                  <div onclick="switchTab('payment-status')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-amber-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center space-x-1.5">
+                          <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">Payment Status</h5>
+                          <span id="overviewPendingPayBadge" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400">0 Pending</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Clearance &amp; payment records</p>
+                      </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">View Payment Status</h5>
-                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Real-time status updates synced from Google Sheet.</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-amber-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
                   </div>
 
                   <!-- 3. Enroll New Utility Bill -->
-                  <div onclick="switchTab('enroll-bill')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                  <div onclick="switchTab('enroll-bill')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-blue-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">Enroll New Utility Bill</h5>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Request enrollment of new account</p>
+                      </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">Enroll New Utility Bill</h5>
-                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Request enrollment of a new utility account.</p>
-                    </div>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-blue-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
                   </div>
 
                   <!-- 4. View Enrollment Status -->
-                  <div onclick="switchTab('enroll-status')" class="p-3 rounded-xl bg-white dark:bg-royal-950/60 border border-slate-200/80 dark:border-royal-800/60 hover:border-royal-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
-                      <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                  <div onclick="switchTab('enroll-status')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-emerald-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center space-x-1.5">
+                          <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-blue-500 transition-colors truncate">Enrollment Status</h5>
+                          <span id="overviewPendingEnrollBadge" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">0 Pending</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Track endorsement approvals</p>
+                      </div>
                     </div>
-                    <div class="min-w-0 flex-1">
-                      <h5 class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-royal-500 transition-colors truncate">View Enrollment Status</h5>
-                      <p class="text-[11px] text-slate-500 dark:text-royal-300/60 truncate">Track clearance status of new utility endorsements.</p>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-emerald-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
+                  </div>
+
+                  <!-- 5. One-Time Bill Payment -->
+                  <div id="overviewOneTimePayCard" onclick="switchTab('one-time-payment')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-slate-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-slate-500/15 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate">One-Time Bill Payment</h5>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Submit one-time utility payment</p>
+                      </div>
                     </div>
-                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-400 group-hover:text-royal-500 shrink-0"></i>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
+                  </div>
+
+                  <!-- 6. One-Time Status -->
+                  <div id="overviewOneTimeStatusCard" onclick="switchTab('one-time-status')" class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#262626] hover:border-slate-500/50 hover:shadow-md transition-all cursor-pointer group flex items-center justify-between gap-2.5">
+                    <div class="flex items-center space-x-2.5 min-w-0">
+                      <div class="w-8 h-8 rounded-lg bg-slate-500/15 text-slate-700 dark:text-slate-300 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                        <i data-lucide="activity" class="w-4 h-4"></i>
+                      </div>
+                      <div class="min-w-0">
+                        <div class="flex items-center space-x-1.5">
+                          <h5 class="text-xs font-bold text-slate-900 dark:text-white truncate">One-Time Status</h5>
+                          <span id="overviewPendingOneTimeBadge" class="px-1.5 py-0.2 rounded text-[10px] font-mono font-bold bg-slate-500/15 text-slate-700 dark:text-slate-300">0 Pending</span>
+                        </div>
+                        <p class="text-[11px] text-slate-500 dark:text-neutral-400 truncate">Track one-time clearance</p>
+                      </div>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-slate-500 shrink-0 group-hover:translate-x-0.5 transition-transform"></i>
                   </div>
                 </div>
               </div>
             </div>
 
             <!-- COLUMN 2 (MIDDLE): UPCOMING DUE DATES (Next 14 Days, Unfulfilled, Date on Left, Prioritized by User) -->
-            <div class="pc-wide-overview-col rounded-2xl border border-amber-500/30 dark:border-amber-500/25 bg-gradient-to-br from-amber-50/50 via-white to-slate-50/50 dark:from-[#181818] dark:via-[#151515] dark:to-amber-950/15 p-5 shadow-sm flex flex-col">
-              <div class="flex items-center justify-between gap-2 pb-3 border-b border-amber-500/20 dark:border-amber-500/15">
+            <div class="pc-wide-overview-col rounded-2xl border border-blue-500/25 dark:border-blue-500/20 bg-white dark:bg-[#161616] p-5 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between gap-2 pb-3.5 border-b border-slate-200 dark:border-[#262626]">
                 <div class="flex items-center space-x-2.5">
-                  <div class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center shadow-sm shrink-0">
-                    <i data-lucide="clock" class="w-4 h-4"></i>
+                  <div class="w-9 h-9 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <i data-lucide="calendar" class="w-4 h-4"></i>
                   </div>
                   <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Upcoming Due Dates</h3>
-                    <span id="overviewUpcomingCountBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">0</span>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Upcoming Due Dates</h3>
+                    <span id="overviewUpcomingCountBadge" class="px-2 py-0.5 rounded-md text-[11px] font-extrabold font-mono bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">0</span>
                     <span id="overviewUpcomingMineBadge" class="hidden items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">0 Filed by You</span>
                   </div>
                 </div>
-                <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-amber-600 dark:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Upcoming Due Dates">
-                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                </button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button id="overviewUpcomingTrackerBtn" type="button" onclick="openFullTrackerFromOverview('UpcomingDue')" class="px-2.5 py-1 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-[11px] font-semibold transition-colors cursor-pointer whitespace-nowrap">
+                    Full Tracker &rarr;
+                  </button>
+                  <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-blue-600 dark:text-blue-400 hover:bg-blue-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Upcoming Due Dates">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
-              <div id="overviewUpcomingListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[440px] overflow-y-auto pr-1 space-y-2">
+              <div id="overviewUpcomingListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[440px] overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-[#222222]">
                 <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading upcoming due dates...</div>
               </div>
             </div>
 
             <!-- COLUMN 3 (RIGHTMOST): LAPSED ACCOUNTS (Unfulfilled with Lapsed Submissions, Date on Left, Prioritized by User) -->
-            <div class="pc-wide-overview-col rounded-2xl border border-rose-500/30 dark:border-rose-500/25 bg-gradient-to-br from-rose-50/50 via-white to-slate-50/50 dark:from-[#181818] dark:via-[#151515] dark:to-rose-950/15 p-5 shadow-sm flex flex-col">
-              <div class="flex items-center justify-between gap-2 pb-3 border-b border-rose-500/20 dark:border-rose-500/15">
+            <div class="pc-wide-overview-col rounded-2xl border border-rose-500/25 dark:border-rose-500/20 bg-white dark:bg-[#161616] p-5 shadow-sm flex flex-col">
+              <div class="flex items-center justify-between gap-2 pb-3.5 border-b border-slate-200 dark:border-[#262626]">
                 <div class="flex items-center space-x-2.5">
-                  <div class="w-8 h-8 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-sm shrink-0">
-                    <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                  <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-sm shrink-0">
+                    <i data-lucide="alert-triangle" class="w-4 h-4"></i>
                   </div>
                   <div class="flex items-center gap-2 flex-wrap">
-                    <h3 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">Lapsed Accounts</h3>
-                    <span id="overviewLapsedCountBadge" class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30">0</span>
+                    <h3 class="text-base font-bold text-slate-900 dark:text-white">Lapsed Accounts</h3>
+                    <span id="overviewLapsedCountBadge" class="px-2 py-0.5 rounded-md text-[11px] font-extrabold font-mono bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20">0</span>
                     <span id="overviewLapsedMineBadge" class="hidden items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">0 Filed by You</span>
                   </div>
                 </div>
-                <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Lapsed Accounts">
-                  <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                </button>
+                <div class="flex items-center gap-1.5 shrink-0">
+                  <button id="overviewLapsedTrackerBtn" type="button" onclick="openFullTrackerFromOverview('Lapsed')" class="px-2.5 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 text-[11px] font-semibold transition-colors cursor-pointer whitespace-nowrap">
+                    Full Tracker &rarr;
+                  </button>
+                  <button type="button" onclick="syncLiveIrRfpReqFromGSheet(true)" class="p-1.5 rounded-lg text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 transition-colors cursor-pointer shrink-0" title="Refresh Lapsed Accounts">
+                    <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
               </div>
-              <div id="overviewLapsedListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[440px] overflow-y-auto pr-1 space-y-2">
+              <div id="overviewLapsedListContainer" class="overview-col-scroll-list mt-3 flex-1 max-h-[440px] overflow-y-auto pr-1 divide-y divide-slate-100 dark:divide-[#222222]">
                 <div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">Loading lapsed accounts...</div>
               </div>
             </div>
@@ -3582,6 +3663,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     <th class="p-3">Projected Due Date</th>
                     <th class="p-3">Lapsed / Skipped Months</th>
                     <th class="p-3">Cycle Status</th>
+                    <th class="p-3 text-right">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="repDueTableBody" class="divide-y divide-slate-200 dark:divide-[#262626]"></tbody>
@@ -3595,6 +3677,100 @@ Submit and track your monthly utility payments directly through your account.</p
     </div>
 
   </main>
+
+  <!-- MODAL: HISTORICAL PAYMENT TIMELINE & DUE DATE PROJECTION (REP_HISTORICAL_TIMELINE) -->
+  <div id="historicalTimelineModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+    <div class="w-full max-w-5xl max-h-[90vh] flex flex-col rounded-2xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-[#2a2a2a] shadow-2xl overflow-hidden">
+      <!-- Modal Header -->
+      <div class="px-4 sm:px-6 py-4 border-b border-slate-200 dark:border-[#262626] flex flex-wrap items-center justify-between gap-3 bg-slate-50 dark:bg-[#1a1a1a]">
+        <div>
+          <div class="flex items-center space-x-2 flex-wrap">
+            <span id="histTlAccNo" class="font-mono text-base sm:text-lg font-extrabold text-rose-600 dark:text-rose-400"></span>
+            <span id="histTlMeta" class="text-xs font-semibold text-slate-700 dark:text-neutral-300"></span>
+          </div>
+          <p id="histTlSubtitle" class="text-xs text-slate-500 dark:text-neutral-400 mt-0.5">
+            Historical payment timeline, projected due date, and lapsed cycle audit.
+          </p>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <button type="button" id="histTlPrevBtn" onclick="stepHistoricalTimelineModal(-1)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#222222] border border-slate-200 dark:border-[#333333] disabled:opacity-40 text-xs font-semibold text-slate-700 dark:text-neutral-200 cursor-pointer">
+            &larr; Prev
+          </button>
+          <span id="histTlCounter" class="text-xs font-mono text-slate-500">1 / 1</span>
+          <button type="button" id="histTlNextBtn" onclick="stepHistoricalTimelineModal(1)" class="px-2.5 py-1.5 rounded-lg bg-white dark:bg-[#222222] border border-slate-200 dark:border-[#333333] disabled:opacity-40 text-xs font-semibold text-slate-700 dark:text-neutral-200 cursor-pointer">
+            Next &rarr;
+          </button>
+          <button type="button" onclick="closeHistoricalTimelineModal()" class="p-1.5 rounded-lg bg-slate-200/70 dark:bg-[#262626] hover:bg-slate-300 dark:hover:bg-[#333333] text-slate-700 dark:text-neutral-300 cursor-pointer">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-4 sm:p-6 overflow-y-auto space-y-5">
+        <div id="histTlSummaryStrip" class="grid grid-cols-1 sm:grid-cols-4 gap-3"></div>
+
+        <!-- Submitted Portal Requests (RBP) -->
+        <div id="histTlRbpSection" class="hidden space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-neutral-300">
+            Submitted Portal Requests (<span id="histTlRbpCount">0</span>)
+          </h4>
+          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-[#262626]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-[#1a1a1a] border-b border-slate-200 dark:border-[#262626] text-[10px] font-bold uppercase text-slate-500">
+                  <th class="p-2.5">Request ID</th>
+                  <th class="p-2.5">Bill Month</th>
+                  <th class="p-2.5">Due Date</th>
+                  <th class="p-2.5">Status</th>
+                  <th class="p-2.5">RFP / CV / Paid</th>
+                  <th class="p-2.5">Submitted At</th>
+                </tr>
+              </thead>
+              <tbody id="histTlRbpTableBody" class="divide-y divide-slate-200 dark:divide-[#262626]"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Historical Payments from IR_RFPReq -->
+        <div class="space-y-2">
+          <h4 class="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-neutral-300">
+            Historical Payments Recorded (<span id="histTlIrCount">0</span>)
+          </h4>
+          <div class="overflow-x-auto rounded-xl border border-slate-200 dark:border-[#262626]">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-slate-50 dark:bg-[#1a1a1a] border-b border-slate-200 dark:border-[#262626] text-[10px] font-bold uppercase text-slate-500">
+                  <th class="p-2.5">Billing Period</th>
+                  <th class="p-2.5">Coverage Dates</th>
+                  <th class="p-2.5">Due Date</th>
+                  <th class="p-2.5">Amount</th>
+                  <th class="p-2.5">RFP No &amp; Date</th>
+                  <th class="p-2.5">Status</th>
+                  <th class="p-2.5">Payment Date</th>
+                </tr>
+              </thead>
+              <tbody id="histTlIrTableBody" class="divide-y divide-slate-200 dark:divide-[#262626]"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="px-4 sm:px-6 py-3 border-t border-slate-200 dark:border-[#262626] bg-slate-50 dark:bg-[#1a1a1a] flex items-center justify-between gap-2">
+        <div id="histTlFooterCount" class="text-xs text-slate-500 font-mono">0 historical payments &middot; 0 portal requests</div>
+        <div class="flex items-center space-x-2">
+          <button type="button" id="histTlFileRbpBtn" onclick="fileRbpFromTimelineModal()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold cursor-pointer">
+            + File RBP
+          </button>
+          <button type="button" onclick="closeHistoricalTimelineModal()" class="px-3 py-1.5 rounded-xl bg-slate-200 dark:bg-[#262626] hover:bg-slate-300 dark:hover:bg-[#333333] text-slate-800 dark:text-neutral-200 text-xs font-semibold cursor-pointer">
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- MODAL: ACCOUNT 12-MONTH PAYMENT HISTORY INSPECTOR (WITH PREV / NEXT ACCOUNT & CSV EXPORT) -->
   <div id="accountMonthlyHistoryModal" class="hidden fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-2 sm:p-4 animate-fade-in">
@@ -5099,7 +5275,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         items: [
           { id: "REP_USER_ACTIVITY", label: "User Activity Reports" },
           { id: "REP_ACCOUNT_HISTORY", label: "Account Billing History Reports" },
-          { id: "REP_DUE_LAPSED", label: "Upcoming Due Date & Lapsed Payment Report (IR_RFPReq)" }
+          { id: "REP_DUE_LAPSED", label: "Upcoming Due Date & Lapsed Payment Report (IR_RFPReq)" },
+          { id: "REP_HISTORICAL_TIMELINE", label: "Historical Payment Timeline (Overview & Due Tracker)" }
         ]
       },
       {
@@ -5133,17 +5310,17 @@ function ensureOneTimePaymentHeaders(sheet) {
           "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK", "ES_VIEW_CANCEL_REJECTED",
           "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
           "EXP_ONETIME_PAYMENT", "OTP_ATTACH_LINK", "OTP_DRIVE_FOLDER_LINK", "OTP_EDIT_DETAILS", "OTP_ADD_PAYMENT_DETAILS", "OTP_UPDATE_STATUS", "OTP_VIEW_CANCEL_REJECTED",
-          "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED"
+          "REP_USER_ACTIVITY", "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED", "REP_HISTORICAL_TIMELINE"
         ];
       }
-      if (norm === "level 3" || norm === "level 5" || norm === "level 6" || norm === "level 7") {
+      if (norm === "level 3" || norm === "level 4" || norm === "level 5" || norm === "level 6" || norm === "level 7") {
         return [
           "RBP_SUBMIT",
           "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING",
           "ENROLL_SUBMIT",
           "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS",
           "EXP_ONETIME_PAYMENT", "OTP_EDIT_DETAILS",
-          "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED"
+          "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED", "REP_HISTORICAL_TIMELINE"
         ];
       }
       if (norm === "level 2" || norm === "level 4") {
@@ -5625,7 +5802,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           else tabBtnAdminActions.classList.add("hidden");
         }
         if (adminAccountSyncBtn) { adminAccountSyncBtn.classList.remove("hidden"); adminAccountSyncBtn.classList.add("inline-flex"); }
-        if (adminGsheetCard) adminGsheetCard.classList.remove("hidden");
+        if (adminGsheetCard) adminGsheetCard.classList.add("hidden");
         if (adminGsheetControls) { adminGsheetControls.classList.remove("hidden"); adminGsheetControls.classList.add("flex"); }
         if (roleTesterWrapper) { roleTesterWrapper.classList.remove("hidden"); roleTesterWrapper.classList.add("flex"); }
         if (docConfigBtn) { docConfigBtn.classList.remove("hidden"); docConfigBtn.classList.add("inline-flex"); }
@@ -5723,6 +5900,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const roleSelect = document.getElementById("roleTesterSelect");
       if (roleSelect) roleSelect.value = currentUser.accessLevel;
 
+      if (typeof renderOverviewTwoColumn === "function") renderOverviewTwoColumn();
       lucide.createIcons();
     }
 
@@ -12380,6 +12558,9 @@ function ensureOneTimePaymentHeaders(sheet) {
 
         return {
           b,
+          lookupKey: k,
+          irList,
+          rbpList,
           hasHistory,
           wasFiledByUser,
           lastLabel: lastIr ? `${lastIr.billMonth} ${lastIr.year}` : (lastRbp ? `${lastRbp.billMonth} (RBP)` : "No Record"),
@@ -12392,9 +12573,13 @@ function ensureOneTimePaymentHeaders(sheet) {
           isFulfilled,
           isLapsed,
           cat,
+          evalMonthName: BILL_MONTH_NAMES[evalMIdx] || "November",
+          evalYear,
           inDateRange
         };
       });
+
+      window._lastDueLapsedAllRows = rows;
 
       const elTotal = document.getElementById("repDueTotalCount");
       const elFulf = document.getElementById("repDueFulfilledCount");
@@ -12426,26 +12611,274 @@ function ensureOneTimePaymentHeaders(sheet) {
         return (a.daysFromToday ?? 999) - (b.daysFromToday ?? 999);
       });
 
+      window._lastDueLapsedFilteredRows = filtered;
+      const canTimeline = canViewHistoricalTimeline();
+
       tbody.innerHTML = filtered.map(r => `
         <tr class="hover:bg-slate-50 dark:hover:bg-[#1c1c1c]">
           <td class="p-3 font-mono font-bold text-rose-600 dark:text-rose-400">
-            <div>${escapeHtml(r.b.accountNumber)}</div>
-            ${r.wasFiledByUser ? `<span class="mt-0.5 inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400">Filed by You</span>` : ""}
+            <div class="flex items-center gap-1.5 flex-wrap">
+              ${canTimeline
+                ? `<button type="button" onclick="openHistoricalTimelineModal('${escapeHtml(r.lookupKey)}')" class="font-mono font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer text-left" title="Click to view Historical Payment Timeline">${escapeHtml(r.b.accountNumber)}</button>`
+                : `<span class="font-mono font-bold text-rose-600 dark:text-rose-400" title="Historical Payment Timeline requires Module Access (REP_HISTORICAL_TIMELINE)">${escapeHtml(r.b.accountNumber)}</span>`
+              }
+              ${r.wasFiledByUser ? `<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ""}
+            </div>
+            <div class="text-[10px] text-slate-400 font-mono">${r.irList.length} historical &middot; ${r.rbpList.length} RBP</div>
           </td>
-          <td class="p-3"><div class="font-semibold">${escapeHtml(r.b.site)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.b.billerName)}</div></td>
+          <td class="p-3"><div class="font-semibold">${escapeHtml(r.b.site)}</div><div class="text-[11px] text-slate-500">${escapeHtml(r.b.billerName)} <span class="text-[10px] font-mono text-slate-400">(${escapeHtml(r.b.utilityType || 'Power')})</span></div></td>
           <td class="p-3 font-mono"><div class="font-bold text-slate-800 dark:text-slate-100">Due: ${escapeHtml(r.lastDue)}</div><div class="text-[10px] text-slate-400">Filed: ${escapeHtml(r.lastLabel)}</div></td>
           <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : escapeHtml(r.projIso)}</td>
           <td class="p-3 font-mono">${r.isFulfilled ? `<span class="text-emerald-600 font-semibold">— (Fulfilled)</span>` : r.missing.length > 0 ? `<span class="text-rose-600 font-bold">LAPSED (${r.missing.length}): ${escapeHtml(r.missing.join(", "))}</span>` : `<span class="text-emerald-600">Continuous</span>`}</td>
           <td class="p-3 font-mono font-bold">${r.isFulfilled ? `<span class="text-emerald-600">FULFILLED</span>` : r.isLapsed ? `<span class="text-rose-600">FLAGGED • LAPSED</span>` : `<span class="text-blue-600">${escapeHtml(r.cat)}</span>`}</td>
+          <td class="p-3 text-right whitespace-nowrap">
+            <div class="inline-flex items-center space-x-1">
+              ${canTimeline ? `<button type="button" onclick="openHistoricalTimelineModal('${escapeHtml(r.lookupKey)}')" class="px-2 py-1 rounded-lg bg-rose-500/10 hover:bg-rose-600 text-rose-700 dark:text-rose-300 hover:text-white text-[11px] font-semibold transition-colors cursor-pointer" title="View complete historical payment timeline">Timeline</button>` : ""}
+              ${!r.isFulfilled ? `<button type="button" onclick="quickFileRbpForAccount('${escapeHtml(r.lookupKey)}', '${escapeHtml(r.projIso)}', '${escapeHtml(r.evalMonthName)}')" class="px-2 py-1 rounded-lg bg-blue-600/10 hover:bg-blue-600 text-blue-600 dark:text-blue-400 hover:text-white text-[11px] font-semibold transition-colors cursor-pointer">+ File RBP</button>` : ""}
+            </div>
+          </td>
         </tr>
       `).join("");
       renderOverviewTwoColumn();
+    }
+
+    function canViewHistoricalTimeline() {
+      if (!currentUser) return false;
+      const acc = String(currentUser.accessLevel || "").trim().toLowerCase();
+      const isAdminOrSub = acc === "administrator" || acc === "admin" || acc === "sub-administrator" || acc === "sub-admin" || acc === "subadmin";
+      return isAdminOrSub || hasUserPermission(currentUser, "REP_HISTORICAL_TIMELINE");
+    }
+
+    function openFullTrackerFromOverview(mode) {
+      const mSel = document.getElementById("repDueTargetMonthSelect");
+      const fSel = document.getElementById("repDueFlagFilterSelect");
+      const dSel = document.getElementById("repDueDateFieldSelect");
+      const sInp = document.getElementById("repDueStartDateInput");
+      const eInp = document.getElementById("repDueEndDateInput");
+      if (mSel) mSel.value = "All";
+      if (mode === "UpcomingDue") {
+        if (fSel) fSel.value = "UpcomingDue";
+        if (dSel) dSel.value = "projectedDue";
+        const now = new Date();
+        const end = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 14);
+        const fmt = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+        if (sInp) sInp.value = fmt(now);
+        if (eInp) eInp.value = fmt(end);
+      } else {
+        if (fSel) fSel.value = "Lapsed";
+        if (sInp) sInp.value = "";
+        if (eInp) eInp.value = "";
+      }
+      switchTab("report-due-lapsed");
+      renderDueLapsedReport();
+    }
+
+    function quickFileRbpForAccount(lookupKey, projIso, monthName) {
+      const masterBillers = deduplicateBillersList(billers);
+      const b = masterBillers.find(x => normalizeAccountLookupKey(x.accountNumber) === lookupKey);
+      if (!b) return;
+      switchTab("request-payment");
+      const searchEl = document.getElementById("accountSearchInput");
+      if (searchEl) {
+        searchEl.value = b.accountNumber;
+        if (typeof selectBillerAccount === "function") {
+          selectBillerAccount(b.id || b.billerId || b.accountNumber);
+        }
+      }
+      const mEl = document.getElementById("billReqMonth");
+      if (mEl && monthName && BILL_MONTH_NAMES.includes(monthName)) mEl.value = monthName;
+      const dEl = document.getElementById("billReqDueDate");
+      if (dEl && projIso && projIso !== "—") dEl.value = projIso;
+      if (typeof updateFormattedFileName === "function") updateFormattedFileName();
+    }
+
+    let _activeTimelineAcctKey = null;
+
+    function buildTimelineRowForKey(lookupKey) {
+      if (!window._lastDueLapsedAllRows || !window._lastDueLapsedAllRows.length) {
+        renderDueLapsedReport();
+      }
+      const all = window._lastDueLapsedAllRows || [];
+      return all.find(r => r.lookupKey === lookupKey) || null;
+    }
+
+    function openHistoricalTimelineModal(lookupKey) {
+      if (!canViewHistoricalTimeline()) return;
+      if (!window._lastDueLapsedAllRows || !window._lastDueLapsedAllRows.length) {
+        renderDueLapsedReport();
+      }
+      _activeTimelineAcctKey = lookupKey;
+      const navList = (window._lastDueLapsedFilteredRows && window._lastDueLapsedFilteredRows.length > 0)
+        ? window._lastDueLapsedFilteredRows
+        : (window._lastDueLapsedAllRows || []);
+      const currentIdx = navList.findIndex(r => r.lookupKey === lookupKey);
+      const activeRow = (currentIdx >= 0 ? navList[currentIdx] : null) || buildTimelineRowForKey(lookupKey);
+      if (!activeRow) return;
+
+      const modal = document.getElementById("historicalTimelineModal");
+      if (!modal) return;
+
+      const accEl = document.getElementById("histTlAccNo");
+      const metaEl = document.getElementById("histTlMeta");
+      const subEl = document.getElementById("histTlSubtitle");
+      const prevBtn = document.getElementById("histTlPrevBtn");
+      const nextBtn = document.getElementById("histTlNextBtn");
+      const cntEl = document.getElementById("histTlCounter");
+      const stripEl = document.getElementById("histTlSummaryStrip");
+      const rbpSec = document.getElementById("histTlRbpSection");
+      const rbpCnt = document.getElementById("histTlRbpCount");
+      const rbpBody = document.getElementById("histTlRbpTableBody");
+      const irCnt = document.getElementById("histTlIrCount");
+      const irBody = document.getElementById("histTlIrTableBody");
+      const footCnt = document.getElementById("histTlFooterCount");
+      const fileBtn = document.getElementById("histTlFileRbpBtn");
+
+      if (accEl) accEl.innerText = activeRow.b.accountNumber;
+      if (metaEl) metaEl.innerText = `· ${activeRow.b.site} · ${activeRow.b.billerName} (${activeRow.b.utilityType || 'Power'})`;
+      if (subEl) subEl.innerText = `Historical payment timeline, projected ${activeRow.evalMonthName} ${activeRow.evalYear} due date, and lapsed cycle audit.`;
+      if (prevBtn) prevBtn.disabled = !(currentIdx > 0);
+      if (nextBtn) nextBtn.disabled = !(currentIdx >= 0 && currentIdx < navList.length - 1);
+      if (cntEl) cntEl.innerText = currentIdx >= 0 ? `${currentIdx + 1} / ${navList.length}` : "1 / 1";
+
+      const hasMissing = activeRow.missing && activeRow.missing.length > 0;
+      if (stripEl) {
+        stripEl.innerHTML = `
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-[#1a1a1a] border border-slate-200 dark:border-[#262626]">
+            <div class="text-[11px] text-slate-500 dark:text-neutral-400">Last Known Payment</div>
+            <div class="mt-1 font-mono font-bold text-sm text-slate-900 dark:text-white">Due: ${escapeHtml(activeRow.lastDue)}</div>
+            <div class="text-[11px] font-mono text-slate-500">Filed: ${escapeHtml(activeRow.lastLabel)}</div>
+          </div>
+          <div class="p-3 rounded-xl bg-blue-500/5 border border-blue-500/20">
+            <div class="text-[11px] text-blue-600 dark:text-blue-400">Projected ${escapeHtml(activeRow.evalMonthName.slice(0, 3))} ${activeRow.evalYear} Due</div>
+            <div class="mt-1 font-mono font-bold text-sm text-blue-600 dark:text-blue-400">${escapeHtml(activeRow.projIso || "—")}</div>
+            <div class="text-[11px] font-mono text-blue-600/80 dark:text-blue-400/80">${activeRow.dueDay !== null ? `Every ~Day ${activeRow.dueDay}` : "No baseline"}</div>
+          </div>
+          <div class="p-3 rounded-xl border ${hasMissing ? "bg-rose-500/5 border-rose-500/20" : "bg-emerald-500/5 border-emerald-500/20"}">
+            <div class="text-[11px] ${hasMissing ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}">Lapsed / Skipped Months</div>
+            <div class="mt-1 font-mono font-bold text-sm ${hasMissing ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400"}">${hasMissing ? `${activeRow.missing.length} Lapsed` : "0 Lapsed (Continuous)"}</div>
+            <div class="text-[11px] font-mono text-slate-500">${hasMissing ? escapeHtml(activeRow.missing.join(", ")) : "No missing intermediate months"}</div>
+          </div>
+          <div class="p-3 rounded-xl border ${activeRow.isFulfilled ? "bg-emerald-500/10 border-emerald-500/30" : "bg-amber-500/10 border-amber-500/30"}">
+            <div class="text-[11px] text-slate-500 dark:text-neutral-400">${escapeHtml(activeRow.evalMonthName)} ${activeRow.evalYear} Cycle Status</div>
+            <div class="mt-1 font-mono font-bold text-sm ${activeRow.isFulfilled ? "text-emerald-600 dark:text-emerald-400" : "text-amber-600 dark:text-amber-400"}">${activeRow.isFulfilled ? "FULFILLED" : "UNFULFILLED"}</div>
+            <div class="text-[11px] font-mono text-slate-500">${activeRow.isFulfilled ? "Submitted / Paid" : "Not yet submitted"}</div>
+          </div>
+        `;
+      }
+
+      const sortedRbpDesc = [...(activeRow.rbpList || [])].reverse();
+      if (rbpSec && rbpBody && rbpCnt) {
+        rbpCnt.innerText = sortedRbpDesc.length;
+        if (sortedRbpDesc.length > 0) {
+          rbpSec.classList.remove("hidden");
+          rbpBody.innerHTML = sortedRbpDesc.map(r => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-[#1c1c1c]">
+              <td class="p-2.5 font-mono font-bold text-blue-600 dark:text-blue-400">${escapeHtml(r.id || r.requestId || "—")}</td>
+              <td class="p-2.5 font-mono">${escapeHtml(r.billMonth || "—")}</td>
+              <td class="p-2.5 font-mono">${escapeHtml(r.dueDate || "—")}</td>
+              <td class="p-2.5 font-mono font-semibold">${escapeHtml(r.status || "PENDING")}</td>
+              <td class="p-2.5 font-mono text-[11px] text-slate-500">${escapeHtml([r.rfpNumber ? `RFP: ${r.rfpNumber}` : "", r.cvNumber ? `CV: ${r.cvNumber}` : "", r.datePaid ? `Paid: ${r.datePaid}` : ""].filter(Boolean).join(" · ") || "—")}</td>
+              <td class="p-2.5 font-mono text-[11px] text-slate-500">${escapeHtml(r.submittedAt || "—")}</td>
+            </tr>
+          `).join("");
+        } else {
+          rbpSec.classList.add("hidden");
+          rbpBody.innerHTML = "";
+        }
+      }
+
+      const sortedIrDesc = [...(activeRow.irList || [])].reverse();
+      if (irCnt && irBody) {
+        irCnt.innerText = sortedIrDesc.length;
+        if (sortedIrDesc.length === 0) {
+          irBody.innerHTML = `<tr><td colspan="7" class="p-6 text-center text-slate-500">No historical payment records found for this account.</td></tr>`;
+        } else {
+          irBody.innerHTML = sortedIrDesc.map(rec => `
+            <tr class="hover:bg-slate-50 dark:hover:bg-[#1c1c1c]">
+              <td class="p-2.5 font-mono font-bold text-slate-900 dark:text-white">${escapeHtml(rec.billMonth || "")} ${escapeHtml(rec.year || "")}</td>
+              <td class="p-2.5 font-mono text-[11px] text-slate-500">${rec.dateFrom || rec.dateTo ? `${escapeHtml(rec.dateFrom || "?")} → ${escapeHtml(rec.dateTo || "?")}` : "—"}</td>
+              <td class="p-2.5 font-mono font-semibold text-slate-800 dark:text-neutral-200">${escapeHtml(rec.dueDate || "—")}</td>
+              <td class="p-2.5 font-mono font-semibold text-slate-900 dark:text-white">${escapeHtml(rec.amount || "—")}</td>
+              <td class="p-2.5 font-mono text-[11px] text-slate-600 dark:text-neutral-300">${escapeHtml(rec.rfpNumber || "—")}${rec.rfpDate ? ` (${escapeHtml(rec.rfpDate)})` : ""}</td>
+              <td class="p-2.5 font-mono font-bold text-emerald-600 dark:text-emerald-400">${escapeHtml(rec.status || "PAID")}</td>
+              <td class="p-2.5 font-mono text-[11px] text-slate-600 dark:text-neutral-300">${escapeHtml(rec.paymentDate || "—")}</td>
+            </tr>
+          `).join("");
+        }
+      }
+
+      if (footCnt) footCnt.innerText = `${sortedIrDesc.length} historical payments · ${sortedRbpDesc.length} portal requests`;
+      if (fileBtn) {
+        if (activeRow.isFulfilled) {
+          fileBtn.classList.add("hidden");
+        } else {
+          fileBtn.classList.remove("hidden");
+          fileBtn.innerText = `+ File RBP for ${activeRow.evalMonthName}`;
+        }
+      }
+
+      modal.classList.remove("hidden");
+      if (window.lucide) window.lucide.createIcons();
+    }
+
+    function stepHistoricalTimelineModal(delta) {
+      if (!_activeTimelineAcctKey) return;
+      const navList = (window._lastDueLapsedFilteredRows && window._lastDueLapsedFilteredRows.length > 0)
+        ? window._lastDueLapsedFilteredRows
+        : (window._lastDueLapsedAllRows || []);
+      const idx = navList.findIndex(r => r.lookupKey === _activeTimelineAcctKey);
+      if (idx < 0) return;
+      const next = navList[idx + delta];
+      if (next) openHistoricalTimelineModal(next.lookupKey);
+    }
+
+    function closeHistoricalTimelineModal() {
+      _activeTimelineAcctKey = null;
+      const modal = document.getElementById("historicalTimelineModal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function fileRbpFromTimelineModal() {
+      if (!_activeTimelineAcctKey) return;
+      const row = buildTimelineRowForKey(_activeTimelineAcctKey);
+      closeHistoricalTimelineModal();
+      if (row) quickFileRbpForAccount(row.lookupKey, row.projIso, row.evalMonthName);
     }
 
     function renderOverviewTwoColumn() {
       const upcContainer = document.getElementById("overviewUpcomingListContainer");
       const lapContainer = document.getElementById("overviewLapsedListContainer");
       if (!upcContainer || !lapContainer) return;
+
+      // Update Overview Pending Badges & One-Time Workflow Cards visibility
+      const payPendEl = document.getElementById("overviewPendingPayBadge");
+      const enrPendEl = document.getElementById("overviewPendingEnrollBadge");
+      const otpPendEl = document.getElementById("overviewPendingOneTimeBadge");
+      const otpPayCard = document.getElementById("overviewOneTimePayCard");
+      const otpStCard = document.getElementById("overviewOneTimeStatusCard");
+      const upcTrkBtn = document.getElementById("overviewUpcomingTrackerBtn");
+      const lapTrkBtn = document.getElementById("overviewLapsedTrackerBtn");
+
+      if (payPendEl) {
+        const pCount = (paymentRequests || []).filter(r => String(r.status || "PENDING").trim().toUpperCase() === "PENDING").length;
+        payPendEl.innerText = `${pCount} Pending`;
+      }
+      if (enrPendEl) {
+        const eCount = (enrollmentRequests || []).filter(r => String(r.status || "PENDING").trim().toUpperCase() === "PENDING").length;
+        enrPendEl.innerText = `${eCount} Pending`;
+      }
+      if (otpPendEl) {
+        const oCount = (typeof oneTimePaymentRequests !== "undefined" ? oneTimePaymentRequests : []).filter(r => String(r.status || "PENDING").trim().toUpperCase() === "PENDING").length;
+        otpPendEl.innerText = `${oCount} Pending`;
+      }
+      const accLvl = currentUser ? String(currentUser.accessLevel || "").trim().toLowerCase() : "";
+      const isAdm = accLvl === "administrator" || accLvl === "admin" || accLvl === "sub-administrator" || accLvl === "sub-admin" || accLvl === "subadmin";
+      const canOtp = !currentUser || isAdm || hasUserPermission(currentUser, "EXP_ONETIME_PAYMENT");
+      if (otpPayCard) otpPayCard.classList.toggle("hidden", !canOtp);
+      if (otpStCard) otpStCard.classList.toggle("hidden", !canOtp);
+      const canDueRep = !currentUser || isAdm || hasUserPermission(currentUser, "REP_DUE_LAPSED");
+      if (upcTrkBtn) upcTrkBtn.classList.toggle("hidden", !canDueRep);
+      if (lapTrkBtn) lapTrkBtn.classList.toggle("hidden", !canDueRep);
 
       const now = new Date();
       const todayMid = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -12532,8 +12965,6 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
         const candMonthName = BILL_MONTH_NAMES[candYm % 12] || "November";
 
-        // Evaluate fulfillment strictly by actual dueDate (within +-16 days of projected date or dueYm >= target cycle)
-        // regardless of inconsistent billMonth text
         const isDateFulfilledByActualDue = (projD, cycleYm) => {
           const checkRec = (x) => {
             if (x.dueD && projD) {
@@ -12556,10 +12987,9 @@ function ensureOneTimePaymentHeaders(sheet) {
         const lastLabel = lastIr ? `${lastIr.billMonth} ${lastIr.year}` : (lastRbp ? `${lastRbp.billMonth} (RBP)` : "No Record");
 
         if (!isFulfilledCand && daysUntilDue !== null && daysUntilDue >= 0 && daysUntilDue <= 14) {
-          upcomingNext14.push({ b, projIso, daysUntilDue, missing: [], lastLabel, wasFiledByUser, targetMonthName: candMonthName });
+          upcomingNext14.push({ b, lookupKey: k, projIso, daysUntilDue, missing: [], lastLabel, wasFiledByUser, targetMonthName: candMonthName });
         }
 
-        // Lapsed evaluation strictly by actual dueYm
         const covered = new Set([...irList.map(x => x.dueYm), ...rbpList.map(x => x.dueYm)]);
         const priorIr = irList.filter(x => x.dueYm < curYm);
         const priorRbp = rbpList.filter(x => x.dueYm < curYm);
@@ -12594,7 +13024,7 @@ function ensureOneTimePaymentHeaders(sheet) {
             const mD = new Date(mY, mM, Math.min(dueDay, maxM));
             lapsedIso = `${mD.getFullYear()}-${String(mD.getMonth()+1).padStart(2,"0")}-${String(mD.getDate()).padStart(2,"0")}`;
           }
-          lapsedList.push({ b, projIso: lapsedIso, daysUntilDue: curDiff, missing, lastLabel, wasFiledByUser, targetMonthName: BILL_MONTH_NAMES[curMonthIdx] || "November" });
+          lapsedList.push({ b, lookupKey: k, projIso: lapsedIso, daysUntilDue: curDiff, missing, lastLabel, wasFiledByUser, targetMonthName: BILL_MONTH_NAMES[curMonthIdx] || "November" });
         }
       }
 
@@ -12627,41 +13057,48 @@ function ensureOneTimePaymentHeaders(sheet) {
         lapMine.classList.toggle("inline-flex", lapMineCount > 0);
       }
 
+      const canTimeline = canViewHistoricalTimeline();
+
       upcContainer.innerHTML = upcomingNext14.length === 0
-        ? `<div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">No unfulfilled accounts due in the next 14 days.</div>`
+        ? `<div class="py-12 text-center text-xs text-slate-400">No unfulfilled accounts projected due within the next 14 days.</div>`
         : upcomingNext14.map(item => `
-          <div class="p-2.5 rounded-xl border flex items-center gap-2.5 ${item.wasFiledByUser ? 'bg-amber-50/90 dark:bg-amber-950/25 border-amber-400/60 dark:border-amber-500/40' : 'bg-white/90 dark:bg-[#1c1c1c] border-slate-200/80 dark:border-[#2a2a2a]'}">
-            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-left font-mono">
-              <div class="text-[11px] font-bold text-slate-900 dark:text-white leading-tight">${escapeHtml(item.projIso)}</div>
-              <div class="text-[10px] font-bold text-amber-600 dark:text-amber-400 leading-tight mt-0.5">${item.daysUntilDue === 0 ? 'Due Today' : `In ${item.daysUntilDue}d`}</div>
+          <div class="py-2.5 px-2.5 rounded-xl transition-colors flex items-center gap-3 ${item.wasFiledByUser ? 'bg-blue-500/[0.06] dark:bg-blue-500/[0.09] hover:bg-blue-500/[0.11]' : 'hover:bg-slate-50 dark:hover:bg-[#1e1e1e]'}">
+            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-blue-500/10 dark:bg-blue-500/15 border border-blue-500/20 text-left font-mono">
+              <div class="text-[11px] font-bold text-slate-900 dark:text-white tabular-nums leading-tight">${escapeHtml(item.projIso)}</div>
+              <div class="text-[10px] font-bold leading-tight mt-0.5 ${item.daysUntilDue === 0 ? 'text-rose-600 dark:text-rose-400' : (item.daysUntilDue ?? 99) <= 3 ? 'text-amber-600 dark:text-amber-400' : 'text-blue-600 dark:text-blue-400'}">${item.daysUntilDue === 0 ? 'Due Today' : `In ${item.daysUntilDue}d`}</div>
             </div>
             <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="font-mono text-xs font-bold text-slate-900 dark:text-white">${escapeHtml(item.b.accountNumber)}</span>
-                ${item.wasFiledByUser ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
-                <span class="text-[11px] font-semibold text-slate-600 dark:text-neutral-300 truncate">${escapeHtml(item.b.billerName)}</span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${canTimeline
+                  ? `<button type="button" onclick="openHistoricalTimelineModal('${escapeHtml(item.lookupKey)}')" class="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline cursor-pointer truncate" title="Click to view Historical Payment Timeline">${escapeHtml(item.b.accountNumber)}</button>`
+                  : `<span class="font-mono text-xs font-bold text-blue-600 dark:text-blue-400 truncate" title="Historical Payment Timeline requires Module Access (REP_HISTORICAL_TIMELINE)">${escapeHtml(item.b.accountNumber)}</span>`
+                }
+                ${item.wasFiledByUser ? `<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
+                <span class="text-[10px] font-mono text-slate-400">(${escapeHtml(item.b.utilityType || 'Power')})</span>
               </div>
-              <div class="text-[11px] text-slate-500 dark:text-neutral-400 truncate mt-0.5">${escapeHtml(item.b.site)} • Last: ${escapeHtml(item.lastLabel)}</div>
+              <div class="text-xs font-semibold text-slate-800 dark:text-neutral-200 truncate mt-0.5">${escapeHtml(item.b.site)} <span class="text-slate-400 font-normal">&middot;</span> <span class="text-slate-500 dark:text-neutral-400 font-normal">${escapeHtml(item.b.billerName)}</span></div>
             </div>
           </div>
         `).join("");
 
       lapContainer.innerHTML = lapsedList.length === 0
-        ? `<div class="py-10 text-center text-xs text-slate-500 dark:text-neutral-400">No unfulfilled accounts with lapsed submissions.</div>`
+        ? `<div class="py-12 text-center text-xs text-slate-400">No unfulfilled accounts with lapsed submissions found.</div>`
         : lapsedList.map(item => `
-          <div class="p-2.5 rounded-xl border flex items-center gap-2.5 ${item.wasFiledByUser ? 'bg-rose-50/90 dark:bg-rose-950/25 border-rose-400/60 dark:border-rose-500/40' : 'bg-white/90 dark:bg-[#1c1c1c] border-slate-200/80 dark:border-[#2a2a2a]'}">
-            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-rose-500/10 border border-rose-500/20 text-left font-mono">
-              <div class="text-[11px] font-bold text-slate-900 dark:text-white leading-tight truncate">${escapeHtml(item.projIso)}</div>
+          <div class="py-2.5 px-2.5 rounded-xl transition-colors flex items-center gap-3 ${item.wasFiledByUser ? 'bg-rose-500/[0.06] dark:bg-rose-500/[0.09] hover:bg-rose-500/[0.11]' : 'hover:bg-slate-50 dark:hover:bg-[#1e1e1e]'}">
+            <div class="w-[88px] shrink-0 px-2 py-1.5 rounded-lg bg-rose-500/10 dark:bg-rose-500/15 border border-rose-500/20 text-left font-mono">
+              <div class="text-[11px] font-bold text-slate-900 dark:text-white tabular-nums leading-tight truncate">${escapeHtml(item.projIso)}</div>
               <div class="text-[10px] font-bold text-rose-600 dark:text-rose-400 leading-tight mt-0.5">${item.missing.length} ${item.missing.length === 1 ? 'mo' : 'mos'} lapsed</div>
             </div>
             <div class="min-w-0 flex-1">
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="font-mono text-xs font-bold text-rose-700 dark:text-rose-300">${escapeHtml(item.b.accountNumber)}</span>
-                ${item.wasFiledByUser ? `<span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
-                <span class="text-[11px] font-semibold text-slate-600 dark:text-neutral-300 truncate">${escapeHtml(item.b.billerName)}</span>
+              <div class="flex flex-wrap items-center gap-1.5">
+                ${canTimeline
+                  ? `<button type="button" onclick="openHistoricalTimelineModal('${escapeHtml(item.lookupKey)}')" class="font-mono text-xs font-bold text-rose-600 dark:text-rose-400 hover:underline cursor-pointer truncate" title="Click to view Historical Payment Timeline">${escapeHtml(item.b.accountNumber)}</button>`
+                  : `<span class="font-mono text-xs font-bold text-rose-600 dark:text-rose-400 truncate" title="Historical Payment Timeline requires Module Access (REP_HISTORICAL_TIMELINE)">${escapeHtml(item.b.accountNumber)}</span>`
+                }
+                ${item.wasFiledByUser ? `<span class="px-1.5 py-0.2 rounded text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">Filed by You</span>` : ''}
+                <span class="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400">Missing: ${escapeHtml(item.missing.join(", "))}</span>
               </div>
-              <div class="text-[11px] text-slate-500 dark:text-neutral-400 truncate mt-0.5">${escapeHtml(item.b.site)} • Last: ${escapeHtml(item.lastLabel)}</div>
-              <div class="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 mt-0.5 truncate">Missing (${item.missing.length}): ${escapeHtml(item.missing.join(", "))}</div>
+              <div class="text-xs font-semibold text-slate-800 dark:text-neutral-200 truncate mt-0.5">${escapeHtml(item.b.site)} <span class="text-slate-400 font-normal">&middot;</span> <span class="text-slate-500 dark:text-neutral-400 font-normal">${escapeHtml(item.b.billerName)}</span></div>
             </div>
           </div>
         `).join("");
