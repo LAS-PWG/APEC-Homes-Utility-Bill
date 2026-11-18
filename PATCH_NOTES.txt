@@ -6,6 +6,36 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.5] - 2026-11-18 — Level 2 One-Time Bill Payment Default, Configurable Level Default Permissions, & Modified vs. Default Access Status Indicators
+--------------------------------------------------------------------------------
+1. Level 2 Default Access Includes One-Time Bill Payment Filing & Status Access:
+   - Explicitly included **`EXP_ONETIME_PAYMENT`** (*"One-Time Bill Payment Filing
+     & Status Access"*) in the default module permissions for **Level 2**, and
+     auto-upgraded any legacy cached/synced Level 2 user accounts that were
+     previously missing `EXP_ONETIME_PAYMENT` so all Level 2 users have immediate
+     access to One-Time Bill Payment & Status.
+2. Configurable Default Access Permissions per Level (`Configure Level Defaults`):
+   - Added a **Configure Level Defaults** manager in **User Management** across
+     both the React portal and the standalone GitHub Pages / Netlify / Google Sites
+     builds (`Level 1`–`Level 10`, `Sub-Administrator`, and `Administrator`).
+   - Administrators can select any Access Level, toggle groups or individual
+     module permissions, save the new default for that level (which automatically
+     updates all users on that level using Default Access), optionally force-apply
+     to reset all users on that level to the new default, or restore Factory
+     Default presets.
+   - Added **"Reset to Level Default"** and **"Set as <Level> Default"** quick
+     actions inside the Create/Edit User modal.
+3. Modified Access vs. Default Access Status Indicators (Dot + Badge + Filter):
+   - Added a real-time status indicator dot and badge (**`● Default Access`** in
+     emerald vs. **`● Modified Access (+A/-R)`** with a pulsing amber dot and
+     detailed added/removed permissions tooltip) on every user row in the **User
+     Management** table, inside the **Add/Edit User** permissions panel, and in the
+     **Authenticated Session** top bar.
+   - Added an **Access Mode Filter** (`All Modes`, `● Default Access Only`,
+     `● Modified Access Only`) and a 1-click **`Reset to Default`** button on
+     modified user rows.
+
+--------------------------------------------------------------------------------
 [v3.2.4] - 2026-11-17 — Historical Payment Timeline Modal in GitHub / Static Packages, Module Access (`REP_HISTORICAL_TIMELINE`), & Balanced 3-Column Overview Layout
 --------------------------------------------------------------------------------
 1. Historical Payment Timeline Modal & Module Access (`REP_HISTORICAL_TIMELINE`):

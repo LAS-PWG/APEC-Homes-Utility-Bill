@@ -1463,6 +1463,10 @@
                 <span>Access:</span>
                 <strong id="displayAccessLevel" class="font-semibold">Level 1</strong>
               </span>
+              <span id="displayAccessModeBadge" class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25" title="Using standard Default Access permissions for this level">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Default Access</span>
+              </span>
               <span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/10 text-blue-600 dark:text-blue-300 border border-blue-500/20 font-mono">
                 <span>User ID:</span>
                 <strong id="displayUserIdTag">APEC-USR-0001</strong>
@@ -2851,6 +2855,16 @@ Submit and track your monthly utility payments directly through your account.</p
                 </button>
                 <button 
                   type="button" 
+                  id="configureLevelDefaultsBtn"
+                  onclick="toggleConfigureLevelDefaultsPanel()" 
+                  class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow-sm cursor-pointer"
+                  title="Configure the default module permissions for each Access Level (Level 1 - Level 10, Sub-Administrator, Administrator)"
+                >
+                  <i data-lucide="sliders" class="w-3.5 h-3.5"></i>
+                  <span>Configure Level Defaults</span>
+                </button>
+                <button 
+                  type="button" 
                   onclick="toggleAddUserModal(true)" 
                   class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm cursor-pointer"
                 >
@@ -2879,6 +2893,74 @@ Submit and track your monthly utility payments directly through your account.</p
               </button>
             </div>
 
+            <!-- CONFIGURE LEVEL DEFAULT ACCESS PANEL -->
+            <div id="levelDefaultsConfigPanel" class="hidden mb-5 p-5 rounded-2xl bg-white dark:bg-[#161616] border-2 border-purple-500/35 shadow-xl animate-fade-in space-y-4">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-200 dark:border-royal-800">
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <i data-lucide="layers" class="w-4 h-4 text-purple-600 dark:text-purple-400"></i>
+                    <h4 class="text-sm font-bold text-slate-900 dark:text-white">Configure Default Module Access by Level</h4>
+                    <span id="levelDefaultsCustomStatusBadge" class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Factory Default Preset</span>
+                    </span>
+                  </div>
+                  <p class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5">
+                    Select any Access Level below to customize its default module permissions. Users on that level with <strong class="text-emerald-600 dark:text-emerald-400">Default Access</strong> automatically inherit updates.
+                  </p>
+                </div>
+                <button type="button" onclick="toggleConfigureLevelDefaultsPanel(false)" class="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white cursor-pointer self-end sm:self-auto">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 dark:text-neutral-400">1. Select Access Level to Configure:</label>
+                <div id="levelDefaultsSelectorPills" class="flex flex-wrap gap-1.5">
+                  <!-- Populated via renderLevelDefaultsConfigPanel() -->
+                </div>
+              </div>
+
+              <div class="p-4 rounded-2xl bg-slate-50 dark:bg-[#121212] border border-slate-200 dark:border-[#262626] space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2 pb-2.5 border-b border-slate-200 dark:border-[#262626]">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="text-xs font-bold text-slate-900 dark:text-white">
+                      2. Default Permissions for <span id="levelDefaultsSelectedTitle" class="text-purple-600 dark:text-purple-400">Level 2</span>
+                    </span>
+                    <span id="levelDefaultsPermCountBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30">
+                      0 / 23 Modules Enabled
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <button type="button" onclick="loadFactoryPresetIntoLevelConfig()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-[#1e1e1e] hover:bg-slate-100 dark:hover:bg-[#282828] text-slate-700 dark:text-neutral-300 border border-slate-200 dark:border-[#2e2e2e] cursor-pointer">
+                      Load Factory Preset
+                    </button>
+                    <button type="button" onclick="toggleAllLevelDefaultPerms()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-purple-600 hover:bg-purple-700 text-white cursor-pointer">
+                      Toggle All
+                    </button>
+                  </div>
+                </div>
+
+                <div id="levelDefaultsGroupsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-96 overflow-y-auto pr-1">
+                  <!-- Populated via renderLevelDefaultsConfigPanel() -->
+                </div>
+              </div>
+
+              <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-[#262626]">
+                <button type="button" onclick="restoreConfiguredLevelFactoryDefault()" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-[#222222] hover:bg-slate-200 dark:hover:bg-[#2c2c2c] text-slate-700 dark:text-neutral-300 cursor-pointer">
+                  Restore Factory Default for <span id="levelDefaultsRestoreBtnLabel">Level 2</span>
+                </button>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button type="button" onclick="saveConfiguredLevelDefault(true)" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow cursor-pointer" title="Saves this default AND resets any modified users on this level so they all use the new Default Access">
+                    Save &amp; Reset All <span id="levelDefaultsResetAllBtnLabel">Level 2</span> Users to Default
+                  </button>
+                  <button type="button" onclick="saveConfiguredLevelDefault(false)" class="px-4 py-2 rounded-xl text-xs font-semibold bg-purple-600 hover:bg-purple-700 text-white shadow cursor-pointer">
+                    Save <span id="levelDefaultsSaveBtnLabel">Level 2</span> Default
+                  </button>
+                </div>
+              </div>
+            </div>
+
             <!-- User Management Filter Bar -->
             <div class="mb-4 flex flex-wrap items-center justify-between gap-2.5 p-3.5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200/80 dark:border-royal-800/60 shadow-sm w-full max-w-full overflow-hidden">
               <div class="flex flex-wrap items-center gap-2 flex-1 min-w-0">
@@ -2892,6 +2974,19 @@ Submit and track your monthly utility payments directly through your account.</p
                     class="w-full pl-9 pr-8 py-2 rounded-xl bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-indigo-500"
                   />
                   <button type="button" id="userSearchClearBtn" onclick="clearSearchInput('userSearchInput','userSearchClearBtn','renderUserManagementTable')" class="hidden absolute inset-y-0 right-2.5 my-auto px-1 text-slate-400 hover:text-slate-700 dark:hover:text-white text-sm font-bold cursor-pointer" title="Clear search">&times;</button>
+                </div>
+
+                <div class="flex items-center space-x-1.5 flex-shrink-0">
+                  <label class="text-[11px] font-semibold text-slate-500 dark:text-neutral-400 whitespace-nowrap">Access Mode:</label>
+                  <select 
+                    id="userAccessModeFilter" 
+                    onchange="renderUserManagementTable()" 
+                    class="px-2.5 py-2 rounded-xl text-xs bg-white dark:bg-[#121212] border border-slate-200 dark:border-[#2e2e2e] text-slate-800 dark:text-neutral-200 font-semibold cursor-pointer"
+                  >
+                    <option value="All">All Modes (Default &amp; Modified)</option>
+                    <option value="Default">● Default Access Only</option>
+                    <option value="Modified">● Modified Access Only</option>
+                  </select>
                 </div>
 
                 <div class="flex items-center space-x-1.5 flex-shrink-0">
@@ -2926,6 +3021,9 @@ Submit and track your monthly utility payments directly through your account.</p
                     <option value="Level 5">Level 5</option>
                     <option value="Level 6">Level 6</option>
                     <option value="Level 7">Level 7</option>
+                    <option value="Level 8">Level 8</option>
+                    <option value="Level 9">Level 9</option>
+                    <option value="Level 10">Level 10</option>
                   </select>
                 </div>
 
@@ -2944,7 +3042,7 @@ Submit and track your monthly utility payments directly through your account.</p
                       <th class="py-3 px-4 whitespace-nowrap">User ID</th>
                       <th class="py-3 px-4">Username</th>
                       <th class="py-3 px-4">Full Name</th>
-                      <th class="py-3 px-4 whitespace-nowrap">Access Level</th>
+                      <th class="py-3 px-4 whitespace-nowrap">Access Level &amp; Mode</th>
                       <th class="py-3 px-4 whitespace-nowrap">Lifecycle Status</th>
                       <th class="py-3 px-4 whitespace-nowrap">Password Security</th>
                       <th class="py-3 px-4 text-right">Actions</th>
@@ -3891,11 +3989,18 @@ Submit and track your monthly utility payments directly through your account.</p
         <div>
           <label class="block text-[11px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Access Level Preset <span class="text-red-500">*</span></label>
           <select id="userInputAccessLevel" onchange="handleUserAccessPresetChange(this.value)" required class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold cursor-pointer">
-            <option value="Administrator">Administrator (All 22 Modules)</option>
-            <option value="Sub-Administrator">Sub-Administrator (18 Operational Modules)</option>
-            <option value="Level 1">Level 1 (Requestor — View Own)</option>
-            <option value="Level 2">Level 2 (Requestor / Site Lead — View Group)</option>
-            <option value="Level 3">Level 3 (Supervisor — View All + Edit Details)</option>
+            <option value="Administrator">Administrator (All 23 Modules)</option>
+            <option value="Sub-Administrator">Sub-Administrator (22 Operational Modules)</option>
+            <option value="Level 1">Level 1 (Basic Requestor)</option>
+            <option value="Level 2">Level 2 (Standard + One-Time Bill Payment)</option>
+            <option value="Level 3">Level 3 (Supervisor — Group + Edit)</option>
+            <option value="Level 4">Level 4</option>
+            <option value="Level 5">Level 5</option>
+            <option value="Level 6">Level 6</option>
+            <option value="Level 7">Level 7</option>
+            <option value="Level 8">Level 8</option>
+            <option value="Level 9">Level 9</option>
+            <option value="Level 10">Level 10</option>
           </select>
         </div>
 
@@ -3920,18 +4025,24 @@ Submit and track your monthly utility payments directly through your account.</p
           <input type="text" id="userInputCurrentPw" placeholder="Leave blank for Default PW setup, or type new password to auto-hash" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono" />
         </div>
 
-        <!-- PLAN-MODULE-RBAC: 7 GROUPED MODULE PERMISSION PANELS -->
+        <!-- PLAN-MODULE-RBAC: 8 GROUPED MODULE PERMISSION PANELS -->
         <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800 space-y-3">
           <div class="flex flex-wrap items-center justify-between gap-2 pb-2 border-b border-slate-200 dark:border-royal-800">
             <div>
-              <span class="text-xs font-bold text-slate-900 dark:text-white flex items-center space-x-1.5">
+              <div class="flex flex-wrap items-center gap-1.5">
                 <i data-lucide="shield" class="w-3.5 h-3.5 text-indigo-500"></i>
-                <span>Module-Based Access Control (PLAN-MODULE-RBAC)</span>
-                <span id="userModalPermCounterBadge" class="ml-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">0 / 22 Enabled</span>
-              </span>
-              <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-0.5">Use 1-Click Role Presets or toggle individual module groups &amp; permissions. Stored in UserData Col G without adding new columns.</p>
+                <span class="text-xs font-bold text-slate-900 dark:text-white">Module-Based Access Control</span>
+                <span id="userModalPermCounterBadge" class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20">0 / 23 Enabled</span>
+                <span id="userModalAccessModeBadge" class="inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25">
+                  <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span>Default Access</span>
+                </span>
+              </div>
+              <p class="text-[10px] text-slate-500 dark:text-neutral-400 mt-0.5">Use 1-Click Role Presets, reset to Level Default, or set current checkboxes as the new Level Default.</p>
             </div>
             <div class="flex flex-wrap items-center gap-1">
+              <button type="button" onclick="resetUserModalToLevelDefault()" class="px-2 py-1 rounded text-[10px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 cursor-pointer" title="Reset this user's permissions to match their Access Level's current Default Access">Reset to Level Default</button>
+              <button type="button" onclick="promoteUserModalPermsToLevelDefault()" class="px-2 py-1 rounded text-[10px] font-bold bg-purple-500/15 hover:bg-purple-500/25 text-purple-700 dark:text-purple-300 border border-purple-500/30 cursor-pointer" title="Save the currently checked modules as the new Default Access for this Access Level">Set as Level Default</button>
               <button type="button" onclick="applyUserRolePreset('Administrator')" class="px-2 py-1 rounded text-[10px] font-bold bg-purple-500/10 hover:bg-purple-500/20 text-purple-600 dark:text-purple-400 border border-purple-500/20 cursor-pointer">Admin</button>
               <button type="button" onclick="applyUserRolePreset('Sub-Administrator')" class="px-2 py-1 rounded text-[10px] font-bold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 cursor-pointer">Sub-Admin</button>
               <button type="button" onclick="applyUserRolePreset('Level 3')" class="px-2 py-1 rounded text-[10px] font-bold bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/20 cursor-pointer">Level 3</button>
@@ -5297,12 +5408,40 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     const ALL_MODULE_PERMISSION_IDS = MODULE_PERMISSION_GROUPS.flatMap(g => g.items.map(i => i.id));
 
-    function getDefaultPermissionsForAccessLevel(accessLevel) {
-      const norm = String(accessLevel || "Level 1").trim().toLowerCase();
-      if (norm === "administrator" || norm === "admin") {
+    const ALL_CONFIGURABLE_ACCESS_LEVELS = [
+      "Administrator",
+      "Sub-Administrator",
+      "Level 1",
+      "Level 2",
+      "Level 3",
+      "Level 4",
+      "Level 5",
+      "Level 6",
+      "Level 7",
+      "Level 8",
+      "Level 9",
+      "Level 10"
+    ];
+
+    const LEVEL_DEFAULT_PERMS_STORAGE_KEY = "apechomes_level_default_perms_v1";
+
+    function normalizeAccessLevelKey(accessLevel) {
+      const clean = String(accessLevel || "Level 2")
+        .replace(/\s*\|?\s*MODS:[A-Za-z0-9_,]+/gi, "")
+        .replace(/\s*\[(ACTIVE|SUSPENDED|BANNED|RETIRED|INACTIVE)\]\s*/gi, "")
+        .trim()
+        .toLowerCase();
+      if (clean === "administrator" || clean === "admin") return "administrator";
+      if (clean === "sub-administrator" || clean === "sub-admin" || clean === "subadmin") return "sub-administrator";
+      return clean || "level 2";
+    }
+
+    function getFactoryDefaultPermissionsForAccessLevel(accessLevel) {
+      const norm = normalizeAccessLevelKey(accessLevel);
+      if (norm === "administrator") {
         return [...ALL_MODULE_PERMISSION_IDS];
       }
-      if (norm === "sub-administrator" || norm === "subadmin" || norm === "sub-admin") {
+      if (norm === "sub-administrator") {
         return [
           "RBP_SUBMIT",
           "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK", "PS_VIEW_CANCEL_REJECTED", "PS_VIEW_LUT_SYNCED",
@@ -5316,19 +5455,19 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (norm === "level 3" || norm === "level 4" || norm === "level 5" || norm === "level 6" || norm === "level 7") {
         return [
           "RBP_SUBMIT",
-          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING",
+          "PS_VIEW_GROUP", "PS_VIEW_OWN", "PS_FILTER", "PS_EDIT_BILLING",
           "ENROLL_SUBMIT",
-          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS",
+          "ES_VIEW_GROUP", "ES_VIEW_OWN", "ES_FILTER", "ES_EDIT_DETAILS",
           "EXP_ONETIME_PAYMENT", "OTP_EDIT_DETAILS",
-          "REP_ACCOUNT_HISTORY", "REP_DUE_LAPSED", "REP_HISTORICAL_TIMELINE"
+          "REP_HISTORICAL_TIMELINE"
         ];
       }
-      if (norm === "level 2" || norm === "level 4") {
+      if (norm === "level 2") {
         return [
           "RBP_SUBMIT",
-          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_FILTER",
+          "PS_VIEW_OWN", "PS_FILTER",
           "ENROLL_SUBMIT",
-          "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_FILTER",
+          "ES_VIEW_OWN", "ES_FILTER",
           "EXP_ONETIME_PAYMENT"
         ];
       }
@@ -5341,21 +5480,93 @@ function ensureOneTimePaymentHeaders(sheet) {
       ];
     }
 
+    function getCustomLevelDefaultPermissionsMap() {
+      try {
+        const raw = localStorage.getItem(LEVEL_DEFAULT_PERMS_STORAGE_KEY);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && typeof parsed === "object") return parsed;
+        }
+      } catch(e) {}
+      return {};
+    }
+
+    function getDefaultPermissionsForAccessLevel(accessLevel) {
+      const cleanKey = normalizeAccessLevelKey(accessLevel);
+      const customMap = getCustomLevelDefaultPermissionsMap();
+      if (customMap[cleanKey] && Array.isArray(customMap[cleanKey]) && customMap[cleanKey].length > 0) {
+        const validSet = new Set(ALL_MODULE_PERMISSION_IDS);
+        const filtered = ALL_MODULE_PERMISSION_IDS.filter(id => customMap[cleanKey].includes(id) && validSet.has(id));
+        if (filtered.length > 0) return filtered;
+      }
+      return getFactoryDefaultPermissionsForAccessLevel(accessLevel);
+    }
+
+    function isLevelDefaultCustomized(accessLevel) {
+      const cleanKey = normalizeAccessLevelKey(accessLevel);
+      const customMap = getCustomLevelDefaultPermissionsMap();
+      if (!customMap[cleanKey] || !Array.isArray(customMap[cleanKey])) return false;
+      const cur = getDefaultPermissionsForAccessLevel(accessLevel);
+      const fac = getFactoryDefaultPermissionsForAccessLevel(accessLevel);
+      if (cur.length !== fac.length) return true;
+      const setF = new Set(fac);
+      return !cur.every(p => setF.has(p));
+    }
+
+    function getPermissionLabelById(id) {
+      for (const grp of MODULE_PERMISSION_GROUPS) {
+        const found = grp.items.find(i => i.id === id);
+        if (found) return found.label;
+      }
+      return id;
+    }
+
     function normalizePermissionsList(perms, fallbackAccessLevel) {
       if (!Array.isArray(perms) || perms.length === 0) {
         return getDefaultPermissionsForAccessLevel(fallbackAccessLevel || "Level 1");
       }
       const validSet = new Set(ALL_MODULE_PERMISSION_IDS);
-      const filtered = Array.from(new Set(perms.filter(p => validSet.has(p))));
+      const filtered = ALL_MODULE_PERMISSION_IDS.filter(id => perms.includes(id) && validSet.has(id));
       return filtered.length > 0 ? filtered : getDefaultPermissionsForAccessLevel(fallbackAccessLevel || "Level 1");
     }
 
     function arePermissionsEqualToDefault(perms, accessLevel) {
+      if (!Array.isArray(perms) || perms.length === 0) return true;
       const def = getDefaultPermissionsForAccessLevel(accessLevel);
       const norm = normalizePermissionsList(perms, accessLevel);
       if (def.length !== norm.length) return false;
       const setA = new Set(def);
       return norm.every(p => setA.has(p));
+    }
+
+    function getUserAccessModificationInfo(user) {
+      if (!user) {
+        return { isModified: false, added: [], removed: [], defaultPerms: [], effectivePerms: [] };
+      }
+      if (isPrimaryAdminAccount(user.userId, user.username)) {
+        return {
+          isModified: false,
+          added: [],
+          removed: [],
+          defaultPerms: [...ALL_MODULE_PERMISSION_IDS],
+          effectivePerms: [...ALL_MODULE_PERMISSION_IDS]
+        };
+      }
+      const defaultPerms = getDefaultPermissionsForAccessLevel(user.accessLevel || "Level 2");
+      const effectivePerms = Array.isArray(user.permissions) && user.permissions.length > 0
+        ? normalizePermissionsList(user.permissions, user.accessLevel)
+        : defaultPerms;
+      const defSet = new Set(defaultPerms);
+      const effSet = new Set(effectivePerms);
+      const added = effectivePerms.filter(p => !defSet.has(p));
+      const removed = defaultPerms.filter(p => !effSet.has(p));
+      return {
+        isModified: added.length > 0 || removed.length > 0,
+        added,
+        removed,
+        defaultPerms,
+        effectivePerms
+      };
     }
 
     function hasUserPermission(user, perm) {
@@ -5381,6 +5592,16 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
     } catch(e) {}
 
+    function isLegacyLevel2DefaultWithoutOtp(list, accessLevel) {
+      if (normalizeAccessLevelKey(accessLevel) !== "level 2") return false;
+      if (!Array.isArray(list) || list.includes("EXP_ONETIME_PAYMENT")) return false;
+      const legacy6 = new Set(["RBP_SUBMIT", "PS_VIEW_OWN", "PS_FILTER", "ENROLL_SUBMIT", "ES_VIEW_OWN", "ES_FILTER"]);
+      const legacy8 = new Set(["RBP_SUBMIT", "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_FILTER", "ENROLL_SUBMIT", "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_FILTER"]);
+      if (list.length === 6 && list.every(p => legacy6.has(p))) return true;
+      if (list.length === 8 && list.every(p => legacy8.has(p))) return true;
+      return false;
+    }
+
     function parseAccessAndStatus(rawAccess, rawCurrentPw, fallbackStatus) {
       let text = String(rawAccess || "Level 1").trim();
       let status = normalizeLifecycleStatus(fallbackStatus || "ACTIVE");
@@ -5404,7 +5625,9 @@ function ensureOneTimePaymentHeaders(sheet) {
         status = "RETIRED";
       }
       const cleanAccess = text || "Level 1";
-      const permissions = customMods || getDefaultPermissionsForAccessLevel(cleanAccess);
+      const permissions = (customMods && !isLegacyLevel2DefaultWithoutOtp(customMods, cleanAccess))
+        ? customMods
+        : getDefaultPermissionsForAccessLevel(cleanAccess);
       return { accessLevel: cleanAccess, status, permissions };
     }
 
@@ -5481,9 +5704,18 @@ function ensureOneTimePaymentHeaders(sheet) {
         const parsedState = parseAccessAndStatus(u.accessLevel, u.currentPassword, u.status);
         const finalStatus = isPrimaryAdminAccount(u.userId, u.username) ? "ACTIVE" : parsedState.status;
         const overridePw = pwOverrides[uKey] ? encryptPassword(pwOverrides[uKey]) : "";
+        const rawCandidate = permOverrides[uKey] || u.permissions || parsedState.permissions;
+        if (isLegacyLevel2DefaultWithoutOtp(rawCandidate, parsedState.accessLevel)) {
+          delete permOverrides[uKey];
+        }
         const finalPerms = isPrimaryAdminAccount(u.userId, u.username)
           ? [...ALL_MODULE_PERMISSION_IDS]
-          : normalizePermissionsList(permOverrides[uKey] || u.permissions || parsedState.permissions, parsedState.accessLevel);
+          : normalizePermissionsList(
+              isLegacyLevel2DefaultWithoutOtp(rawCandidate, parsedState.accessLevel)
+                ? getDefaultPermissionsForAccessLevel(parsedState.accessLevel)
+                : rawCandidate,
+              parsedState.accessLevel
+            );
         return {
           ...u,
           accessLevel: parsedState.accessLevel,
@@ -5862,6 +6094,19 @@ function ensureOneTimePaymentHeaders(sheet) {
 
       const displayAccess = document.getElementById("displayAccessLevel");
       if (displayAccess) displayAccess.innerText = currentUser.accessLevel;
+      const displayAccessModeBadge = document.getElementById("displayAccessModeBadge");
+      if (displayAccessModeBadge) {
+        const sessionModInfo = getUserAccessModificationInfo(currentUser);
+        if (sessionModInfo.isModified) {
+          displayAccessModeBadge.className = "inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/35";
+          displayAccessModeBadge.title = `Modified Access active (+${sessionModInfo.added.length} added, -${sessionModInfo.removed.length} removed vs ${currentUser.accessLevel} Default)`;
+          displayAccessModeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse ring-2 ring-amber-500/30"></span><span>Modified Access</span>`;
+        } else {
+          displayAccessModeBadge.className = "inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25";
+          displayAccessModeBadge.title = `Using standard Default Access permissions for ${currentUser.accessLevel}`;
+          displayAccessModeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Default Access</span>`;
+        }
+      }
       const displayUserIdTag = document.getElementById("displayUserIdTag");
       if (displayUserIdTag) displayUserIdTag.innerText = currentUser.userId;
       const headerRole = document.getElementById("headerRole");
@@ -8456,6 +8701,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const searchInput = document.getElementById("userSearchInput");
       const roleFilter = document.getElementById("userRoleFilter");
       const statusFilter = document.getElementById("userStatusFilter");
+      const accessModeFilter = document.getElementById("userAccessModeFilter");
       const encBtnText = document.getElementById("encryptAllPlainTextBtnText");
 
       if (!tbody) return;
@@ -8468,6 +8714,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const q = (searchInput?.value || "").toLowerCase().trim();
       const role = roleFilter ? roleFilter.value : "All";
       const stFilter = statusFilter ? statusFilter.value : "All";
+      const modeFilter = accessModeFilter ? accessModeFilter.value : "All";
 
       let list = [...userDatabase];
 
@@ -8477,6 +8724,13 @@ function ensureOneTimePaymentHeaders(sheet) {
 
       if (stFilter && stFilter !== "All") {
         list = list.filter(u => normalizeLifecycleStatus(u.status) === stFilter);
+      }
+
+      if (modeFilter && modeFilter !== "All") {
+        list = list.filter(u => {
+          const m = getUserAccessModificationInfo(u);
+          return modeFilter === "Modified" ? m.isModified : !m.isModified;
+        });
       }
 
       if (q) {
@@ -8499,6 +8753,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       tbody.innerHTML = list.map(u => {
         const isProtected = isPrimaryAdminAccount(u.userId, u.username);
         const uStatus = isProtected ? "ACTIVE" : normalizeLifecycleStatus(u.status);
+        const modInfo = getUserAccessModificationInfo(u);
         let pwBadgeHtml = "";
         if (isRetiredPasswordMarker(u.currentPassword) || uStatus === "RETIRED") {
           pwBadgeHtml = `<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded text-[10px] font-semibold bg-slate-500/15 text-slate-600 dark:text-slate-400 border border-slate-500/20"><i data-lucide="lock" class="w-3 h-3"></i><span>Retired (RETIRED$LOCKED)</span></span>`;
@@ -8515,7 +8770,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const statusControlHtml = isProtected
           ? `<span class="inline-flex items-center space-x-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" title="Primary Administrator account is protected"><i data-lucide="check-circle" class="w-3 h-3"></i><span>ACTIVE (Protected)</span></span>`
           : `<select onchange="quickChangeUserStatus('${escapeHtml(u.userId)}', this.value)" class="px-2.5 py-1 rounded-lg text-[10px] font-bold border cursor-pointer focus:outline-none ${
-              uStatus === "ACTIVE" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" :
+              uStatus === "ACTIVE" ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20" :
               uStatus === "SUSPENDED" ? "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30" :
               uStatus === "BANNED" ? "bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30" :
               "bg-slate-500/15 text-slate-500 dark:text-slate-400 border-slate-500/30"
@@ -8525,6 +8780,23 @@ function ensureOneTimePaymentHeaders(sheet) {
               <option value="BANNED" ${uStatus === "BANNED" ? "selected" : ""}>BANNED (Locked)</option>
               <option value="RETIRED" ${uStatus === "RETIRED" ? "selected" : ""}>RETIRED (Offboard)</option>
             </select>`;
+
+        const diffText = (modInfo.added.length > 0 || modInfo.removed.length > 0)
+          ? ` (${modInfo.added.length > 0 ? `+${modInfo.added.length}` : ""}${modInfo.added.length > 0 && modInfo.removed.length > 0 ? "/" : ""}${modInfo.removed.length > 0 ? `-${modInfo.removed.length}` : ""})`
+          : "";
+        const modTooltip = modInfo.isModified
+          ? `Modified Access vs ${u.accessLevel} Default&#10;Added (${modInfo.added.length}): ${escapeHtml(modInfo.added.map(getPermissionLabelById).join(", ") || "None")}&#10;Removed (${modInfo.removed.length}): ${escapeHtml(modInfo.removed.map(getPermissionLabelById).join(", ") || "None")}`
+          : `Using standard Default Access preset for ${escapeHtml(u.accessLevel)} (${modInfo.defaultPerms.length} modules)`;
+
+        const accessModeBadgeHtml = modInfo.isModified
+          ? `<span class="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/35" title="${modTooltip}">
+               <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse ring-2 ring-amber-500/30 flex-shrink-0"></span>
+               <span>Modified Access${escapeHtml(diffText)}</span>
+             </span>`
+          : `<span class="inline-flex items-center space-x-1.5 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25" title="${modTooltip}">
+               <span class="w-2 h-2 rounded-full bg-emerald-500 flex-shrink-0"></span>
+               <span>Default Access</span>
+             </span>`;
 
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-[#1a1a1a] transition-colors">
@@ -8539,17 +8811,24 @@ function ensureOneTimePaymentHeaders(sheet) {
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
               <div class="flex flex-col space-y-1">
-                <span class="inline-block w-fit px-2 py-0.5 rounded text-[10px] font-bold ${
-                  u.accessLevel === "Administrator" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" :
-                  u.accessLevel === "Sub-Administrator" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20" :
-                  "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
-                }">
-                  ${escapeHtml(u.accessLevel)}
-                </span>
-                <span class="inline-flex items-center space-x-1 text-[10px] font-mono text-slate-500 dark:text-neutral-400">
-                  <i data-lucide="shield" class="w-2.5 h-2.5 text-indigo-500"></i>
-                  <span>${(Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions : getDefaultPermissionsForAccessLevel(u.accessLevel)).length}/${ALL_MODULE_PERMISSION_IDS.length} Mods</span>
-                </span>
+                <div class="flex flex-wrap items-center gap-1.5">
+                  <span class="inline-block w-fit px-2 py-0.5 rounded text-[10px] font-bold ${
+                    u.accessLevel === "Administrator" ? "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" :
+                    u.accessLevel === "Sub-Administrator" ? "bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20" :
+                    "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20"
+                  }">
+                    ${escapeHtml(u.accessLevel)}
+                  </span>
+                  ${accessModeBadgeHtml}
+                </div>
+                <div class="flex items-center space-x-1.5">
+                  <span class="inline-flex items-center space-x-1 text-[10px] font-mono text-slate-500 dark:text-neutral-400">
+                    <i data-lucide="shield" class="w-2.5 h-2.5 text-indigo-500"></i>
+                    <span>${modInfo.effectivePerms.length}/${ALL_MODULE_PERMISSION_IDS.length} Mods</span>
+                  </span>
+                  ${modInfo.effectivePerms.includes("EXP_ONETIME_PAYMENT") ? `<span class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-slate-500/15 text-slate-700 dark:text-slate-300 border border-slate-500/30" title="One-Time Bill Payment Filing & Status Access Enabled">1-Time Pay</span>` : ""}
+                  ${(modInfo.isModified && !isProtected) ? `<button type="button" onclick="quickResetUserToLevelDefault('${escapeHtml(u.userId)}')" class="px-1.5 py-0.2 rounded text-[9px] font-bold bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 cursor-pointer" title="Reset ${escapeHtml(u.username)} to ${escapeHtml(u.accessLevel)} Default Access">Reset to Default</button>` : ""}
+                </div>
               </div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
@@ -8600,13 +8879,276 @@ function ensureOneTimePaymentHeaders(sheet) {
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
-    let userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 1")];
+    let userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 2")];
+    let selectedConfigLevel = "Level 2";
+    let configLevelPerms = [...getDefaultPermissionsForAccessLevel("Level 2")];
+
+    function toggleConfigureLevelDefaultsPanel(forceState) {
+      const panel = document.getElementById("levelDefaultsConfigPanel");
+      if (!panel) return;
+      const shouldOpen = typeof forceState === "boolean" ? forceState : panel.classList.contains("hidden");
+      if (shouldOpen) {
+        panel.classList.remove("hidden");
+        configLevelPerms = [...getDefaultPermissionsForAccessLevel(selectedConfigLevel)];
+        renderLevelDefaultsConfigPanel();
+      } else {
+        panel.classList.add("hidden");
+      }
+      lucide.createIcons();
+    }
+
+    function selectConfigAccessLevel(lvl) {
+      selectedConfigLevel = lvl;
+      configLevelPerms = [...getDefaultPermissionsForAccessLevel(lvl)];
+      renderLevelDefaultsConfigPanel();
+    }
+
+    function renderLevelDefaultsConfigPanel() {
+      const pillsEl = document.getElementById("levelDefaultsSelectorPills");
+      const titleEl = document.getElementById("levelDefaultsSelectedTitle");
+      const countEl = document.getElementById("levelDefaultsPermCountBadge");
+      const statusBadgeEl = document.getElementById("levelDefaultsCustomStatusBadge");
+      const groupsEl = document.getElementById("levelDefaultsGroupsContainer");
+      const restoreBtnLbl = document.getElementById("levelDefaultsRestoreBtnLabel");
+      const resetAllBtnLbl = document.getElementById("levelDefaultsResetAllBtnLabel");
+      const saveBtnLbl = document.getElementById("levelDefaultsSaveBtnLabel");
+
+      if (titleEl) titleEl.innerText = selectedConfigLevel;
+      if (restoreBtnLbl) restoreBtnLbl.innerText = selectedConfigLevel;
+      if (resetAllBtnLbl) resetAllBtnLbl.innerText = selectedConfigLevel;
+      if (saveBtnLbl) saveBtnLbl.innerText = selectedConfigLevel;
+      if (countEl) countEl.innerText = `${configLevelPerms.length} / ${ALL_MODULE_PERMISSION_IDS.length} Modules Enabled`;
+
+      if (statusBadgeEl) {
+        if (isLevelDefaultCustomized(selectedConfigLevel)) {
+          statusBadgeEl.className = "inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/30";
+          statusBadgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-purple-500 animate-pulse"></span><span>Customized Level Default</span>`;
+        } else {
+          statusBadgeEl.className = "inline-flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25";
+          statusBadgeEl.innerHTML = `<span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span><span>Factory Default Preset</span>`;
+        }
+      }
+
+      if (pillsEl) {
+        pillsEl.innerHTML = ALL_CONFIGURABLE_ACCESS_LEVELS.map(lvl => {
+          const isSel = selectedConfigLevel === lvl;
+          const lvlPerms = getDefaultPermissionsForAccessLevel(lvl);
+          const isCust = isLevelDefaultCustomized(lvl);
+          const usrCount = userDatabase.filter(u => (u.accessLevel || "").toLowerCase() === lvl.toLowerCase()).length;
+          return `
+            <button
+              type="button"
+              onclick="selectConfigAccessLevel('${escapeHtml(lvl)}')"
+              class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold border transition-all cursor-pointer ${
+                isSel
+                  ? "bg-purple-600 text-white border-purple-600 shadow-sm"
+                  : "bg-slate-50 dark:bg-[#1e1e1e] text-slate-700 dark:text-neutral-300 border-slate-200 dark:border-[#2e2e2e] hover:border-purple-400"
+              }"
+            >
+              ${isCust ? `<span class="w-2 h-2 rounded-full ${isSel ? "bg-amber-300" : "bg-purple-500"}" title="Customized default permissions"></span>` : ""}
+              <span>${escapeHtml(lvl)}</span>
+              <span class="px-1.5 py-0.2 rounded-full text-[10px] font-mono ${isSel ? "bg-white/20 text-white" : "bg-slate-200/70 dark:bg-[#2a2a2a] text-slate-600 dark:text-neutral-400"}">${lvlPerms.length}/${ALL_MODULE_PERMISSION_IDS.length}</span>
+              ${usrCount > 0 ? `<span class="text-[10px] ${isSel ? "text-purple-100" : "text-slate-400"}">(${usrCount} usr)</span>` : ""}
+            </button>
+          `;
+        }).join("");
+      }
+
+      if (groupsEl) {
+        groupsEl.innerHTML = MODULE_PERMISSION_GROUPS.map(group => {
+          const groupIds = group.items.map(i => i.id);
+          const enabledCount = groupIds.filter(id => configLevelPerms.includes(id)).length;
+          const allChecked = enabledCount === groupIds.length;
+          return `
+            <div class="p-3 rounded-xl bg-white dark:bg-[#181818] border border-slate-200 dark:border-[#282828] space-y-2">
+              <div class="flex items-center justify-between pb-1.5 border-b border-slate-100 dark:border-[#242424]">
+                <div class="flex items-center gap-1.5">
+                  <span class="text-xs font-bold text-slate-800 dark:text-white">${escapeHtml(group.groupTitle)}</span>
+                  <span class="px-1.5 py-0.2 rounded text-[10px] font-semibold bg-slate-100 dark:bg-[#242424] text-slate-600 dark:text-neutral-300">${enabledCount}/${groupIds.length}</span>
+                </div>
+                <label class="inline-flex items-center space-x-1 px-2 py-0.5 rounded bg-purple-500/10 text-purple-600 dark:text-purple-400 text-[10px] font-bold cursor-pointer">
+                  <input type="checkbox" ${allChecked ? "checked" : ""} onchange="toggleLevelDefaultPermGroup('${group.groupId}', this.checked)" class="rounded text-purple-600" />
+                  <span>Group</span>
+                </label>
+              </div>
+              <div class="space-y-1">
+                ${group.items.map(item => {
+                  const checked = configLevelPerms.includes(item.id);
+                  return `
+                    <label class="flex items-start space-x-2 p-1.5 rounded-lg text-[11px] cursor-pointer ${checked ? "bg-purple-50/50 dark:bg-purple-950/20 text-slate-900 dark:text-white font-semibold" : "text-slate-500 dark:text-neutral-400 hover:bg-slate-50 dark:hover:bg-[#202020]"}">
+                      <input type="checkbox" ${checked ? "checked" : ""} onchange="toggleSingleLevelDefaultPerm('${item.id}', this.checked)" class="mt-0.5 rounded text-purple-600 flex-shrink-0" />
+                      <span class="leading-tight">${escapeHtml(item.label)}</span>
+                    </label>
+                  `;
+                }).join("")}
+              </div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+
+    function toggleSingleLevelDefaultPerm(permId, isChecked) {
+      const set = new Set(configLevelPerms);
+      if (isChecked) set.add(permId);
+      else set.delete(permId);
+      configLevelPerms = ALL_MODULE_PERMISSION_IDS.filter(id => set.has(id));
+      renderLevelDefaultsConfigPanel();
+    }
+
+    function toggleLevelDefaultPermGroup(groupId, checkAll) {
+      const grp = MODULE_PERMISSION_GROUPS.find(g => g.groupId === groupId);
+      if (!grp) return;
+      const set = new Set(configLevelPerms);
+      grp.items.forEach(i => {
+        if (checkAll) set.add(i.id);
+        else set.delete(i.id);
+      });
+      configLevelPerms = ALL_MODULE_PERMISSION_IDS.filter(id => set.has(id));
+      renderLevelDefaultsConfigPanel();
+    }
+
+    function loadFactoryPresetIntoLevelConfig() {
+      configLevelPerms = [...getFactoryDefaultPermissionsForAccessLevel(selectedConfigLevel)];
+      renderLevelDefaultsConfigPanel();
+    }
+
+    function toggleAllLevelDefaultPerms() {
+      if (configLevelPerms.length === ALL_MODULE_PERMISSION_IDS.length) {
+        configLevelPerms = ["RBP_SUBMIT", "PS_VIEW_OWN"];
+      } else {
+        configLevelPerms = [...ALL_MODULE_PERMISSION_IDS];
+      }
+      renderLevelDefaultsConfigPanel();
+    }
+
+    function saveCustomLevelDefaultPermissions(accessLevel, newDefaultPerms, applyToAllUsersOnLevel) {
+      const cleanKey = normalizeAccessLevelKey(accessLevel);
+      const previousDefault = getDefaultPermissionsForAccessLevel(accessLevel);
+      const normalizedNew = ALL_MODULE_PERMISSION_IDS.filter(id => newDefaultPerms.includes(id));
+      const finalNew = normalizedNew.length > 0 ? normalizedNew : ["RBP_SUBMIT", "PS_VIEW_OWN"];
+
+      try {
+        const map = getCustomLevelDefaultPermissionsMap();
+        const factoryDef = getFactoryDefaultPermissionsForAccessLevel(accessLevel);
+        const matchesFactory = finalNew.length === factoryDef.length && finalNew.every(p => factoryDef.includes(p));
+        if (matchesFactory) {
+          delete map[cleanKey];
+        } else {
+          map[cleanKey] = finalNew;
+        }
+        localStorage.setItem(LEVEL_DEFAULT_PERMS_STORAGE_KEY, JSON.stringify(map));
+      } catch(e) {}
+
+      let updatedCount = 0;
+      const prevSet = new Set(previousDefault);
+      userDatabase = userDatabase.map(u => {
+        if (isPrimaryAdminAccount(u.userId, u.username)) return u;
+        if (normalizeAccessLevelKey(u.accessLevel) !== cleanKey) return u;
+        const uPerms = Array.isArray(u.permissions) && u.permissions.length > 0 ? u.permissions : previousDefault;
+        const wasDefault = uPerms.length === previousDefault.length && uPerms.every(p => prevSet.has(p));
+        if (wasDefault || applyToAllUsersOnLevel) {
+          updatedCount++;
+          const uKey = (u.username || "").trim().toLowerCase();
+          delete permOverrides[uKey];
+          const updatedUser = { ...u, permissions: [...finalNew] };
+          syncUserObjectToGSheetAndBackend(updatedUser);
+          return updatedUser;
+        }
+        return u;
+      });
+      localStorage.setItem("apechomes_perm_overrides_v1", JSON.stringify(permOverrides));
+      localStorage.setItem("apechomes_user_db_v4", JSON.stringify(userDatabase));
+      if (currentUser && normalizeAccessLevelKey(currentUser.accessLevel) === cleanKey) {
+        const selfRecord = userDatabase.find(u => u.username.toLowerCase() === currentUser.username.toLowerCase());
+        if (selfRecord) {
+          currentUser.permissions = selfRecord.permissions;
+          updateAccessUI();
+        }
+      }
+      return { updatedCount, permissions: finalNew };
+    }
+
+    function saveConfiguredLevelDefault(applyToAll) {
+      const res = saveCustomLevelDefaultPermissions(selectedConfigLevel, configLevelPerms, Boolean(applyToAll));
+      configLevelPerms = [...res.permissions];
+      renderLevelDefaultsConfigPanel();
+      renderUserManagementTable();
+      showUserMgmtNotice(
+        applyToAll
+          ? `Saved new ${selectedConfigLevel} default (${res.permissions.length} modules) and reset all ${res.updatedCount} user(s) on ${selectedConfigLevel} to Default Access!`
+          : `Saved default access for ${selectedConfigLevel} (${res.permissions.length} modules). Updated ${res.updatedCount} default-access user(s).`
+      );
+    }
+
+    function restoreConfiguredLevelFactoryDefault() {
+      const fac = getFactoryDefaultPermissionsForAccessLevel(selectedConfigLevel);
+      const res = saveCustomLevelDefaultPermissions(selectedConfigLevel, fac, false);
+      configLevelPerms = [...res.permissions];
+      renderLevelDefaultsConfigPanel();
+      renderUserManagementTable();
+      showUserMgmtNotice(`Restored ${selectedConfigLevel} to Factory Default (${res.permissions.length} modules). Updated ${res.updatedCount} user(s) on Default Access.`);
+    }
+
+    function quickResetUserToLevelDefault(uid) {
+      const idx = userDatabase.findIndex(x => x.userId === uid);
+      if (idx === -1) return;
+      const u = userDatabase[idx];
+      if (isPrimaryAdminAccount(u.userId, u.username)) return;
+      const defPerms = getDefaultPermissionsForAccessLevel(u.accessLevel);
+      userDatabase[idx] = { ...u, permissions: [...defPerms] };
+      delete permOverrides[(u.username || "").trim().toLowerCase()];
+      localStorage.setItem("apechomes_perm_overrides_v1", JSON.stringify(permOverrides));
+      syncUserObjectToGSheetAndBackend(userDatabase[idx]);
+      renderUserManagementTable();
+      if (currentUser && currentUser.username.toLowerCase() === u.username.toLowerCase()) {
+        currentUser.permissions = [...defPerms];
+        updateAccessUI();
+      }
+      showUserMgmtNotice(`Reset ${u.username} (${u.userId}) to ${u.accessLevel} Default Access (${defPerms.length} modules).`);
+    }
+
+    function resetUserModalToLevelDefault() {
+      const sel = document.getElementById("userInputAccessLevel");
+      const roleLabel = sel ? sel.value : "Level 2";
+      userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel(roleLabel)];
+      renderUserModalPermissionGroups();
+    }
+
+    function promoteUserModalPermsToLevelDefault() {
+      const sel = document.getElementById("userInputAccessLevel");
+      const roleLabel = sel ? sel.value : "Level 2";
+      const res = saveCustomLevelDefaultPermissions(roleLabel, userModalSelectedPerms, false);
+      userModalSelectedPerms = [...res.permissions];
+      renderUserModalPermissionGroups();
+      renderUserManagementTable();
+      showUserMgmtNotice(`Updated default access for ${roleLabel} (${res.permissions.length} modules). This user now matches ${roleLabel} Default Access!`);
+    }
 
     function renderUserModalPermissionGroups() {
       const container = document.getElementById("userPermissionsGroupsContainer");
       const counter = document.getElementById("userModalPermCounterBadge");
+      const modeBadge = document.getElementById("userModalAccessModeBadge");
+      const sel = document.getElementById("userInputAccessLevel");
+      const roleLabel = sel ? sel.value : "Level 2";
+
       if (counter) {
         counter.innerText = `${userModalSelectedPerms.length} / ${ALL_MODULE_PERMISSION_IDS.length} Enabled`;
+      }
+      if (modeBadge) {
+        const modInfo = getUserAccessModificationInfo({
+          accessLevel: roleLabel,
+          permissions: userModalSelectedPerms,
+          userId: document.getElementById("userInputId")?.value || "",
+          username: document.getElementById("userInputUsername")?.value || ""
+        });
+        if (modInfo.isModified) {
+          modeBadge.className = "inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/35";
+          modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse ring-2 ring-amber-500/30"></span><span>Modified Access (+${modInfo.added.length} / -${modInfo.removed.length})</span>`;
+        } else {
+          modeBadge.className = "inline-flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25";
+          modeBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span><span>Default Access (${escapeHtml(roleLabel)})</span>`;
+        }
       }
       if (!container) return;
 
@@ -8697,10 +9239,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         document.getElementById("userInputId").disabled = false;
         document.getElementById("userInputStatus").value = "ACTIVE";
         document.getElementById("userInputStatus").disabled = false;
-        document.getElementById("userInputAccessLevel").value = "Level 1";
+        document.getElementById("userInputAccessLevel").value = "Level 2";
         document.getElementById("userInputAccessLevel").disabled = false;
         if (document.getElementById("userInputCurrentPw")) document.getElementById("userInputCurrentPw").value = "";
-        userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 1")];
+        userModalSelectedPerms = [...getDefaultPermissionsForAccessLevel("Level 2")];
         renderUserModalPermissionGroups();
         if (title) title.innerText = "Add New User";
       } else {
@@ -8822,10 +9364,15 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
 
       if (savedUserObj && savedUserObj.username) {
-        permOverrides[savedUserObj.username.toLowerCase()] = finalPermissions;
+        const uKey = savedUserObj.username.toLowerCase();
+        if (arePermissionsEqualToDefault(finalPermissions, finalAccessLevel)) {
+          delete permOverrides[uKey];
+        } else {
+          permOverrides[uKey] = finalPermissions;
+        }
         localStorage.setItem("apechomes_perm_overrides_v1", JSON.stringify(permOverrides));
         if (savedUserObj.currentPassword && !isRetiredPasswordMarker(savedUserObj.currentPassword)) {
-          pwOverrides[savedUserObj.username.toLowerCase()] = savedUserObj.currentPassword;
+          pwOverrides[uKey] = savedUserObj.currentPassword;
           localStorage.setItem("apechomes_pw_overrides_v1", JSON.stringify(pwOverrides));
         }
       }
@@ -10173,11 +10720,17 @@ function ensureOneTimePaymentHeaders(sheet) {
                 const finalStatus = isPrimaryAdminAccount(uid, uname) ? "ACTIVE" : parsedState.status;
                 const uKey = (uname || "").toLowerCase();
                 const hasSheetCustomMods = /\|\s*MODS:/i.test(rawAccess);
+                const targetLvl = parsedState.accessLevel || existing?.accessLevel || "Level 2";
+                const rawCandidatePerms = hasSheetCustomMods
+                  ? parsedState.permissions
+                  : (permOverrides[uKey] || parsedState.permissions);
                 const finalPerms = isPrimaryAdminAccount(uid, uname)
                   ? [...ALL_MODULE_PERMISSION_IDS]
                   : normalizePermissionsList(
-                      hasSheetCustomMods ? parsedState.permissions : (permOverrides[uKey] || existing?.permissions || parsedState.permissions),
-                      parsedState.accessLevel || existing?.accessLevel || "Level 2"
+                      isLegacyLevel2DefaultWithoutOtp(rawCandidatePerms, targetLvl)
+                        ? getDefaultPermissionsForAccessLevel(targetLvl)
+                        : rawCandidatePerms,
+                      targetLvl
                     );
 
                 const overridePw = pwOverrides[uKey] ? encryptPassword(pwOverrides[uKey]) : "";
