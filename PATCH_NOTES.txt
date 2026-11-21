@@ -6,6 +6,36 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.6] - 2026-11-20 — Expected Bill Release Date Projections (Tracker & Overview) & 100% Preview vs. GitHub Static Package Synchronization
+--------------------------------------------------------------------------------
+1. Expected Bill Release Date Column in Upcoming Due Date Projections & Lapsed Payments Tracker (`REP_DUE_LAPSED`):
+   - Added a sortable **Expected Bill Release** column calculated from each
+     account's previous billing cycle cut-off date (`Date To` / Col M in
+     `IR_RFPReq`, with automatic fallback to `Projected Due Date - 14 days` when no
+     prior billing period cut-off is on record).
+   - Displays the projected release date (`YYYY-MM-DD`), status badge
+     (**`Released Xd ago`**, **`Releases Today`**, or **`In Xd`**), and previous
+     cycle cut-off reference (`Prev cycle cut-off: YYYY-MM-DD (~Day N)` or
+     `Est. 14d prior to due (~Day N)`).
+   - Integrated `Expected Bill Release Date` into the Date Range filter selector,
+     full-text search, CSV export (`Expected Bill Release Date`, `Expected Release
+     Day`, `Previous Cycle Cut-off`), and Historical Payment Timeline Modal 5-card
+     summary header.
+2. Expected Bill Release Sub-Line in Overview > Upcoming Due Dates & Lapsed Accounts:
+   - Added a compact, high-legibility `Exp. Bill Release: YYYY-MM-DD (Released Xd ago / Releases Today / In Xd)`
+     line directly beneath the `{Site} · {Biller}` line on every card in both
+     **Overview > Upcoming Due Dates (Next 14 Days)** and **Overview > Lapsed
+     Accounts**.
+3. 100% Consistency Between AI Studio Preview & GitHub Pages / Netlify / Google Sites Packages:
+   - Synchronized `single-index.html` and all 5 canonical static `.zip` packages
+     with the React Preview (`src/App.tsx`), including identical local-midnight
+     calendar date parsing (`parseCalDayJs`), full `IR_RFPReq` field extraction
+     (`dateFrom`, `dateTo`, `consumption`, `payType`, `cvReference`, `cvDate`,
+     `paymentDate`), automatic Overview & Due/Lapsed Tracker re-renders after all
+     Google Sheet live syncs, current + next month 14-day rolling window calculation,
+     and full `REP_DUE_LAPSED` filter/sort/KPI/CSV parity.
+
+--------------------------------------------------------------------------------
 [v3.2.5] - 2026-11-18 — Level 2 One-Time Bill Payment Default, Configurable Level Default Permissions, & Modified vs. Default Access Status Indicators
 --------------------------------------------------------------------------------
 1. Level 2 Default Access Includes One-Time Bill Payment Filing & Status Access:
