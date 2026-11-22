@@ -603,11 +603,96 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    // 9a. Initialize Dedicated AI Sheet Tab ("AI_SOA_Extractions") & Row 1 Headers (Cols A–Q)
+    if (data.action === 'initAiExtractionSheet') {
+      var initAiSs = getUserSpreadsheet(data.spreadsheetId);
+      var initTabName = String(data.targetSheetName || 'AI_SOA_Extractions').trim();
+      var initAiSheet = initAiSs.getSheetByName(initTabName) || initAiSs.insertSheet(initTabName);
+      ensureAiExtractionHeaders(initAiSheet);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        sheetName: initTabName,
+        rows: initAiSheet.getLastRow()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 9b. Save Free AI Extracted Statement Fields to Dedicated Sheet ("AI_SOA_Extractions") Keyed by Request ID (Col A)
+    if ((data.action === 'saveAiExtractedData' || data.subAction === 'saveAiExtractedData') && data.requestId) {
+      var aiSs = getUserSpreadsheet(data.spreadsheetId);
+      var aiTabName = String(data.targetSheetName || 'AI_SOA_Extractions').trim();
+      var aiSheet = aiSs.getSheetByName(aiTabName) || aiSs.insertSheet(aiTabName);
+      ensureAiExtractionHeaders(aiSheet);
+      var targetReqId = String(data.requestId).trim();
+      var aiRowValues = [
+        targetReqId,
+        String(data.accountNumber || ''),
+        String(data.site || ''),
+        String(data.biller || ''),
+        String(data.cycleFrom || 'UNREADABLE'),
+        String(data.cycleTo || 'UNREADABLE'),
+        String(data.aiDueDate || data.dueDate || 'UNREADABLE'),
+        String(data.gracePeriod || 'NOT ON BILL'),
+        String(data.consumption || 'UNREADABLE'),
+        String(data.arrears || 'NOT ON BILL'),
+        String(data.currentAmount || 'UNREADABLE'),
+        String(data.totalAmount || 'UNREADABLE'),
+        String(data.amountBeforeDue || 'NOT ON BILL'),
+        String(data.detectedFormat || 'Utility Statement'),
+        String(data.readabilityStatus || data.legibilityStatus || 'READABLE'),
+        String(data.pagesAnalyzed || data.pageCountDetected || 1),
+        String(data.extractedAt || data.scannedAt || new Date().toISOString())
+      ];
+      var aiVals = aiSheet.getDataRange().getValues();
+      var foundAiRow = -1;
+      for (var aIdx = 1; aIdx < aiVals.length; aIdx++) {
+        if (String(aiVals[aIdx][0] || '').trim() === targetReqId) {
+          foundAiRow = aIdx + 1;
+          break;
+        }
+      }
+      if (foundAiRow > 0) {
+        if (!aiRowValues[1] && aiVals[foundAiRow - 1][1]) aiRowValues[1] = String(aiVals[foundAiRow - 1][1]);
+        if (!aiRowValues[2] && aiVals[foundAiRow - 1][2]) aiRowValues[2] = String(aiVals[foundAiRow - 1][2]);
+        if (!aiRowValues[3] && aiVals[foundAiRow - 1][3]) aiRowValues[3] = String(aiVals[foundAiRow - 1][3]);
+        aiSheet.getRange(foundAiRow, 1, 1, aiRowValues.length).setValues([aiRowValues]);
+      } else {
+        aiSheet.appendRow(aiRowValues);
+        foundAiRow = aiSheet.getLastRow();
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        requestId: targetReqId,
+        sheetName: aiTabName,
+        row: foundAiRow
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
   } catch(err) {
     return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
+  }
+}
+
+function ensureAiExtractionHeaders(sheet) {
+  var headers = [
+    'Request ID', 'Account Number', 'Site', 'Biller',
+    'Cycle From', 'Cycle To', 'AI Due Date', 'Grace Period',
+    'Consumption', 'Arrears', 'Current Amount', 'Total Amount', 'Amount Before Due',
+    'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At'
+  ];
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    sheet.getRange(1, 1, 1, headers.length).setFontWeight('bold').setBackground('#d1fae5');
+    sheet.setFrozenRows(1);
+    return;
+  }
+  var firstCell = String(sheet.getRange(1, 1).getValue() || '').trim();
+  if (firstCell !== 'Request ID') {
+    sheet.insertRowBefore(1);
+    sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold').setBackground('#d1fae5');
+    sheet.setFrozenRows(1);
   }
 }
 

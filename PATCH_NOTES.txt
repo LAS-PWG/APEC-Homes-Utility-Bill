@@ -6,6 +6,161 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.2.9] - 2026-11-21 — Dedicated AI Extraction Google Sheet (`AI_SOA_Extractions`) & Standalone `Code.gs` Keyed by `Request ID` (100% Independent of Drive Owner's Upload Sheet & Script)
+--------------------------------------------------------------------------------
+1. Dedicated AI Statement Extraction Sheet (`AI_SOA_Extractions`) & Standalone Apps Script (`Code.gs`) Keyed by `Request ID` (`Col A: REQ-YYYYMMDD-XXXX`):
+   - **100% Decoupled from Drive Owner's Sheet & Upload Script**:
+     Instead of writing AI-extracted statement fields into the Drive Owner's
+     `Request Bill Payments` sheet (`1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA`),
+     all Free-AI extracted statement records are now stored in a dedicated
+     **`AI_SOA_Extractions`** sheet tab inside a spreadsheet you fully own
+     (defaults to your owned `1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY`
+     spreadsheet, or any brand-new Google Spreadsheet ID/URL you paste).
+   - **Upsert by `Request ID` (`Col A`) — Zero Timing Race Conditions**:
+     Every AI scan upserts a row in `AI_SOA_Extractions` keyed by `Request ID`
+     (`REQ-YYYYMMDD-XXXX`) in Column A (`Cols A–Q`: `A: Request ID`,
+     `B: Account Number`, `C: Site`, `D: Biller`, `E: Cycle From`,
+     `F: Cycle To`, `G: AI Due Date`, `H: Grace Period`, `I: Consumption`,
+     `J: Arrears`, `K: Current Amount`, `L: Total Amount`,
+     `M: Amount Before Due`, `N: Detected Format`, `O: Legibility`,
+     `P: Pages Scanned`, `Q: Scanned At`). Because it updates the row if the
+     `Request ID` exists or appends a new row with the `Request ID` if it does
+     not exist yet, it has zero dependency on when the Drive Owner's script
+     finishes uploading the file.
+   - **Automatic Live GViz Join by `Request ID`**:
+     During live portal synchronization, the portal queries `AI_SOA_Extractions`
+     via GViz in parallel with `Request Bill Payments` and `LUT_RBP_Status`,
+     automatically joining every AI statement breakdown to its payment request
+     by matching **`Request ID`** (`Col A`).
+   - **In-App Dedicated AI Sheet & GS Setup Drawer**:
+     Added a **`Dedicated AI Sheet & GS Setup`** button inside the Free AI
+     Statement Extractor card with:
+     - **1-Click `Copy Dedicated AI Code.gs`** (standalone 80-line Apps Script
+       solely for `AI_SOA_Extractions`).
+     - **1-Click `Copy Sheet =XLOOKUP Formula`**
+       (`=IFERROR(XLOOKUP($A2, 'AI_SOA_Extractions'!$A:$A, 'AI_SOA_Extractions'!E:Q, ""), "")`)
+       if you ever want to mirror the AI columns inside a spreadsheet view.
+     - Configurable **Dedicated Google Sheet ID or URL**, **Sheet Tab Name**
+       (`AI_SOA_Extractions`), and **Dedicated AI Apps Script `/exec` URL**.
+2. Automated Batch Queue with Multi-Model Free-Tier Rotation, Cooldown Auto-Resume, & Dynamic New-Filing Pickup:
+   - **4-Model Free-Tier Rotation Pool (`₱0.00`)**: Automatically rotates across
+     `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-4-hydrogen`, and
+     `gemini-3.1-flash-lite-preview` so hitting a 20-request cap on one free
+     model seamlessly switches to the next free model on the same call.
+   - **Live Sync Skip of Already-Processed Bills**: Before running, the batch
+     scanner syncs all existing rows from `AI_SOA_Extractions` via GViz so
+     previously scanned bills are always skipped and only unprocessed bills are
+     scanned.
+   - **Cooldown Countdown & Auto-Resume**: If all Free-Tier models enter a
+     1-minute rate-limit window, the batch queue displays a live countdown and
+     automatically resumes from the exact unscanned bill where it paused.
+   - **Dynamic Pickup of Newly Filed Requests**: Dynamically re-checks the live
+     request list on every step and schedules background auto-retries so any new
+     request filed while waiting to resume is automatically processed.
+3. Full Package & Deployment Sync (`v3.2.9`):
+   - Synchronized `/server.ts`, `/src/services/billPayment.ts`, `/src/App.tsx`,
+     `/public/single-index.html`, `/public/google-sites-embed.html`, and all 5
+     canonical `.zip` deployment packages (`apechomes-portal-github-pages.zip`,
+     `apechomes-portal-netlify.zip`, `apechomes-portal-hosting-ready.zip`,
+     `apechomes-portal-google-sites.zip`, and
+     `apechomes-utility-portal-source.zip`) to `v3.2.9`.
+
+--------------------------------------------------------------------------------
+[v3.2.8] - 2026-11-21 — Strict Explicit "Grace Period" Rule (Never Due-to-Disconnection), Auto-Run Free AI Reader + Auto-Write to Google Sheet (Cols O–W) While Preserving Drive Owner Upload Accountability, & Full Package Sync
+--------------------------------------------------------------------------------
+1. Strict Explicit "Grace Period" Rule (`Grace Period` != `Due Date to Disconnection`):
+   - Enforced a strict rule in the Free AI Statement Extractor prompt, JSON
+     schema, and UI cards so **`gracePeriod`** is ONLY extracted if the billing
+     statement explicitly prints the words **"Grace Period"** (e.g., `"Grace
+     Period: 3 days"`).
+   - Never treats a Disconnection Date, Notice of Disconnection, or the days
+     between Due Date and Disconnection Date as a Grace Period. If the bill does
+     not explicitly print the words "Grace Period", it strictly returns
+     **`"NOT ON BILL"`** (or **`"UNREADABLE"`** if the label "Grace Period" is
+     printed on the bill but its value is blurry).
+2. Auto-Run Free AI Statement Reader & Auto-Write to Google Sheet (`Request Bill Payments` Columns O–W) While Preserving Drive Owner Upload Accountability:
+   - **Auto-Run on File Attach & Inspector Open (`₱0.00 Free Tier Guaranteed`)**:
+     Added an **`Auto-Run & Write to Sheet`** toggle (enabled by default) that
+     automatically runs the Free AI Statement Reader as soon as a PDF/image
+     statement is attached in **Request Bill Payment** (and when inspecting an
+     unscanned statement in **Payment Request Inspector**), auto-filling the
+     ISO Due Date when empty and stopping immediately if the Free AI quota
+     circuit breaker is reached (`₱0.00` guaranteed).
+   - **Two-Webhook Accountability Architecture (Drive Owner Upload vs. Master Sheet Writer)**:
+     - **File Upload (`PAYMENT_SCRIPT_URL`)**: Keeps Google Drive file uploads
+       100% routed through the Drive Owner's Upload Script so every uploaded
+       statement in Google Drive remains tagged to the Drive Owner's
+       accountability and requires zero modifications to the Drive Owner's
+       limited-access script.
+     - **In-Place AI Field Writeback (`USER_SCRIPT_URL`, Columns O–W)**:
+       Routes the 9 AI-extracted statement fields (`Col O: Cycle From`,
+       `Col P: Cycle To`, `Col Q: AI Due Date`, `Col R: Grace Period`,
+       `Col S: Consumption`, `Col T: Arrears`, `Col U: Current Amount`,
+       `Col V: Total Amount`, `Col W: Amount Before Due`) strictly through the
+       Master Sheet Script (`USER_SCRIPT_URL`) via `action: 'updateBillingDetails'`
+       (`subAction: 'saveAiExtractedData'`), matching the row by `Request ID`
+       (Col A) in place.
+     - **Live Google Sheet Readback (`Cols O–W`)**: Reads Columns O through W
+       during live `Request Bill Payments` synchronization so previously written
+       AI fields load directly from Google Sheet (`✓ Synced to Sheet (Cols O–W)`)
+       without re-running AI extraction.
+3. Code Cleanup, Optimization & 100% Preview vs. Deployed Package Sync (`v3.2.8`):
+   - Synchronized all changes across `/server.ts`, `/src/services/billPayment.ts`,
+     `/src/App.tsx`, `/public/single-index.html`, and all 5 canonical static
+     deployment `.zip` packages (`v3.2.8`).
+
+--------------------------------------------------------------------------------
+[v3.2.7] - 2026-11-21 — Multi-Page (2+ Page) PDF Attachment Preview, Strictly Free-Tier AI Utility Statement Extractor (9 Fields + Auto-Stop Quota Guard), & Placeholder Cleanup
+--------------------------------------------------------------------------------
+1. Multi-Page (2+ Page) PDF Attachment Preview Across All Inspectors & Filing Form:
+   - Upgraded the Attachment Viewer across **Payment Request Inspector**,
+     **Enrollment Request Inspector** (including side-by-side `Compare Both`),
+     and **One-Time Payment Request Inspector** (including `Compare All (3)`) to
+     default to **Multi-Page PDF (All Pages)** mode (`https://drive.google.com/file/d/{id}/preview`),
+     allowing users to scroll seamlessly through Page 1, Page 2, and all
+     subsequent pages of multi-page PDF statements (previously, Google Drive's
+     `/thumbnail` endpoint only rasterized Page 1).
+   - Retained the 1-click toggle to switch between **`Multi-Page PDF (All Pages)`**
+     and **`Page 1 Canvas (Rotate/Zoom)`**, while preserving the role-gated
+     pop-out shield for View-Only access levels.
+   - Added an **In-Form Multi-Page Attachment Preview** directly inside
+     **Request Bill Payment** that automatically detects the PDF page count
+     (e.g., `2-Page PDF (All Pages Scrollable)`) and renders an interactive
+     multi-page preview before submission.
+2. Strictly Free-Tier AI Utility Statement Extractor (`₱0.00 Free Tier • Auto-Stop Circuit Breaker`):
+   - Added a **Free AI Statement Extractor** inside **Request Bill Payment** and
+     **Payment Request Inspector** that reads across all pages of 1-page or
+     2-page PDFs and images across diverse utility statement formats (Meralco,
+     electric cooperatives, water districts, etc.) to extract 9 key fields:
+     1) **Billing Cycle From** (`cycleFrom`)
+     2) **Billing Cycle To / Cut-off** (`cycleTo`)
+     3) **Due Date** (`dueDate` + 1-click auto-fill `YYYY-MM-DD`)
+     4) **Grace Period / Disconnection Date** (`gracePeriod`)
+     5) **Consumption** (`consumption` with kWh / cu.m. unit)
+     6) **Arrears / Previous Balance** (`arrears`)
+     7) **Current Charges** (`currentAmount`)
+     8) **Total Amount Due** (`totalAmount`)
+     9) **Amount Before Due / Prompt Payment** (`amountBeforeDue`)
+   - **Strict Zero-Assumption Policy**: Never guesses, extrapolates, or computes
+     blurry or cut-off values. Any illegible field is strictly returned as
+     `"UNREADABLE"`, and fields not printed on that utility's format are marked
+     `"NOT ON BILL"`.
+   - **Hard-Stop Free Quota Guard (`₱0.00 Guaranteed`)**: Exclusively uses
+     free-tier Gemini models (`gemini-4-hydrogen` / `gemini-3.1-flash-lite`)
+     with a rolling per-minute (`12 RPM`) and daily (`200/day`) free-tier cap
+     plus an immediate `429 RESOURCE_EXHAUSTED` circuit breaker that
+     automatically stops and disables AI extraction when the free limit is
+     reached so zero charges are ever incurred.
+3. Temporary/Placeholder Code Audit, Package Optimization & 100% Preview vs. Deployed Sync:
+   - Removed the 16 legacy dummy seed biller records (`0192837465-Power`, etc.)
+     from `INITIAL_BILLERS` in `src/services/billPayment.ts` and added automatic
+     sanitization of cached localStorage biller catalogs in both Preview and
+     `single-index.html` so both environments rely 100% on live Google Sheet
+     records.
+   - Rebuilt and verified all 5 canonical static deployment `.zip` packages
+     (`v3.2.7`).
+
+--------------------------------------------------------------------------------
 [v3.2.6] - 2026-11-20 — Expected Bill Release Date Projections (Tracker & Overview) & 100% Preview vs. GitHub Static Package Synchronization
 --------------------------------------------------------------------------------
 1. Expected Bill Release Date Column in Upcoming Due Date Projections & Lapsed Payments Tracker (`REP_DUE_LAPSED`):
