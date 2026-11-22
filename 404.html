@@ -4388,8 +4388,8 @@ Submit and track your monthly utility payments directly through your account.</p
                     <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       ₱0.00 Free Tier
                     </span>
-                    <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20">
-                      Writes Cols O–W via Master Sheet Script
+                    <span id="inspectorDedicatedAiSheetBadge" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20" title="File upload stays on Drive Owner script; AI fields upsert into Dedicated AI_SOA_Extractions Sheet referenced by Request ID (Col A)">
+                      Upserts to AI_SOA_Extractions by Request ID (Col A)
                     </span>
                   </div>
                   <p class="text-[10px] text-slate-500 dark:text-royal-300/70">
@@ -4397,7 +4397,7 @@ Submit and track your monthly utility payments directly through your account.</p
                   </p>
                 </div>
                 <div class="flex items-center gap-1.5">
-                  <label class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Auto-run Free AI scan and write to Google Sheet Columns O–W">
+                  <label class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Auto-run Free AI scan and upsert into Dedicated AI_SOA_Extractions sheet keyed by Request ID (Col A)">
                     <input type="checkbox" id="inspectorFreeAiAutoRunToggle" checked onchange="setFreeAiAutoRunEnabled(this.checked)" class="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
                     <span>Auto</span>
                   </label>
@@ -4407,7 +4407,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     onclick="handleFreeAiExtractInInspector()"
                     class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
                   >
-                    ✨ Scan &amp; Write to Sheet (Free)
+                    ✨ Scan &amp; Save by Request ID (Free)
                   </button>
                 </div>
               </div>
@@ -7875,13 +7875,20 @@ function ensureOneTimePaymentHeaders(sheet) {
 
       const getDynamicUnscannedInStatic = () => {
         const currentMap = getExtractedSoaMap();
-        return paymentRequests.filter(r => {
+        const filtered = paymentRequests.filter(r => {
           if (!r.requestId || attemptedOrFailedIds.has(r.requestId)) return false;
           const st = String(r.status || "").toUpperCase();
           if (st === "CANCEL" || st === "CANCELLED" || st === "REJECTED" || st === "DUPLICATE" || st === "BLURRED") return false;
           if (currentMap[r.requestId] || liveSheetAiMap[r.requestId] || r.extractedBillData) return false;
           const fid = extractDriveFileIdFromUrl(r.fileUrl || "");
           return Boolean(fid);
+        });
+        // Sort strictly Earliest to Newest so batch writes always proceed chronologically from oldest to newest
+        return [...filtered].sort((a, b) => {
+          const tA = new Date(a.submittedAt || "").getTime() || 0;
+          const tB = new Date(b.submittedAt || "").getTime() || 0;
+          if (tA !== tB && tA > 0 && tB > 0) return tA - tB;
+          return String(a.requestId || "").localeCompare(String(b.requestId || ""));
         });
       };
 
@@ -7900,8 +7907,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       await initializeDedicatedAiSheetInGSheet(false);
 
       let completed = 0;
-      let consecutiveCooldownWaits = 0;
-      const MAX_CONSECUTIVE_COOLDOWN_WAITS = 6;
+      let stoppedByFreeLimit = false;
 
       while (!stopBatchScanStatic) {
         const remainingList = getDynamicUnscannedInStatic();
@@ -7915,40 +7921,32 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
         const totalScope = completed + remainingList.length;
         if (banner) {
-          banner.innerText = `⏳ Auto-Scanning ${completed + 1}/${totalScope}: ${item.requestId} (${item.accountNumber}) • ${remainingList.length} remaining... [Free Tier Paced Queue • ₱0.00]`;
+          banner.innerText = `⏳ Auto-Scanning ${completed + 1}/${totalScope} (Earliest → Newest): ${item.requestId} (${item.accountNumber}) • ${remainingList.length} remaining... [Free Tier Paced Queue • ₱0.00]`;
         }
         const result = await callFreeAiExtractEndpoint({
           requestId: item.requestId,
           driveFileId: fid,
+          fileName: item.fileName || "",
+          accountNumber: item.accountNumber || "",
+          site: item.site || "",
+          biller: item.biller || "",
           mimeType: (item.fileName || "").toLowerCase().endsWith(".png")
             ? "image/png"
             : (item.fileName || "").toLowerCase().endsWith(".jpg") || (item.fileName || "").toLowerCase().endsWith(".jpeg")
             ? "image/jpeg"
             : "application/pdf",
           billerHint: item.biller || "",
-          billTypeHint: item.billType || ""
+          billTypeHint: item.billType || "",
+          autoWriteToSheet: true
         });
         if (result.limitReached) {
-          consecutiveCooldownWaits++;
-          if (consecutiveCooldownWaits > MAX_CONSECUTIVE_COOLDOWN_WAITS) {
-            if (banner) {
-              banner.innerText = `⛔ Daily Free AI quota exhausted after ${completed} new scan(s) — Paused at ₱0.00. Remaining ${remainingList.length} unscanned requests will process on next run.`;
-            }
-            break;
+          stoppedByFreeLimit = true;
+          if (banner) {
+            banner.innerText = `⛔ Free AI limit reached (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}) — Auto-stopped immediately at ₱0.00. Remaining ${remainingList.length} unscanned bill(s) will process after quota resets.`;
           }
-          const waitSeconds = Math.max(15, Math.min(95, Number(result.quota?.resetInSeconds || result.retryAfterSeconds) || 60));
-          for (let sec = waitSeconds; sec > 0; sec--) {
-            if (stopBatchScanStatic) break;
-            const liveRem = getDynamicUnscannedInStatic().length;
-            if (banner) {
-              banner.innerText = `⏳ Free AI limit window reached (${completed} saved) — Auto-resuming in ${sec}s at ${item.requestId} (${liveRem} remaining, new filings auto-queued • ₱0.00)...`;
-            }
-            await new Promise(r => setTimeout(r, 1000));
-          }
-          continue;
+          break;
         }
         if (result.ok && result.extracted) {
-          consecutiveCooldownWaits = 0;
           completed++;
           liveSheetAiMap[item.requestId] = result.extracted;
           await writeExtractedSoaToGSheet(item.requestId, result.extracted, {
@@ -7961,14 +7959,16 @@ function ensureOneTimePaymentHeaders(sheet) {
           attemptedOrFailedIds.add(item.requestId);
         }
         if (getDynamicUnscannedInStatic().length > 0 && !stopBatchScanStatic) {
-          await new Promise(r => setTimeout(r, 4500));
+          await new Promise(r => setTimeout(r, 5500));
         }
       }
 
       isBatchScanningStatic = false;
       if (btnText) btnText.innerText = "✨ Auto-Scan Unscanned Bills (Free AI)";
       if (banner) {
-        if (!stopBatchScanStatic && getDynamicUnscannedInStatic().length === 0) {
+        if (stoppedByFreeLimit) {
+          setTimeout(() => banner.classList.add("hidden"), 9000);
+        } else if (!stopBatchScanStatic && getDynamicUnscannedInStatic().length === 0) {
           banner.innerText = `✓ Batch Auto-Scan complete: ${completed} new bill(s) scanned & written to ${getDedicatedAiSheetName()} (all previously processed bills were skipped)!`;
           setTimeout(() => banner.classList.add("hidden"), 7000);
         } else if (stopBatchScanStatic) {
@@ -8408,7 +8408,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (!q.canRun) {
           bar.innerHTML = `<span class="text-amber-600 dark:text-amber-400 font-bold">⛔ Free AI Limit Reached — Auto-Stopped (${escapeHtml(q.reason || "Free quota exhausted")}). Zero charges incurred.</span>`;
         } else {
-          bar.innerHTML = `Free Quota Remaining: <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpmRemaining}/${q.rpmMax} per min</span> • <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpdRemaining}/${q.rpdMax} today</span> (Strictly ₱0.00 Free Tier • Auto-Writes Cols O–W)`;
+          bar.innerHTML = `Free Quota Remaining: <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpmRemaining}/${q.rpmMax} per min</span> • <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpdRemaining}/${q.rpdMax} today</span> (Strictly ₱0.00 Free Tier • Auto-Upserts to AI_SOA_Extractions by Request ID)`;
         }
       }
       const btn = document.getElementById("rbpFreeAiExtractBtn");
@@ -8442,15 +8442,15 @@ function ensureOneTimePaymentHeaders(sheet) {
     function renderExtractedSoaGridHtml(data, contextMode, reqId) {
       if (!data) return "";
       const fields = [
-        ["Cycle From (Col O)", data.cycleFrom],
-        ["Cycle To / Cut-off (Col P)", data.cycleTo],
-        ["Due Date (Col Q)", data.dueDate],
-        ["Grace Period (Col R • Explicit Only)", data.gracePeriod],
-        ["Consumption (Col S)", data.consumption],
-        ["Arrears / Prev Bal (Col T)", data.arrears],
-        ["Current Charges (Col U)", data.currentAmount],
-        ["Total Amount Due (Col V)", data.totalAmount],
-        ["Amount Before Due (Col W)", data.amountBeforeDue]
+        ["Cycle From (AI Col E)", data.cycleFrom],
+        ["Cycle To / Cut-off (AI Col F)", data.cycleTo],
+        ["Due Date (AI Col G)", data.dueDate],
+        ["Grace Period (AI Col H • Explicit Only)", data.gracePeriod],
+        ["Consumption (AI Col I)", data.consumption],
+        ["Arrears / Prev Bal (AI Col J)", data.arrears],
+        ["Current Charges (AI Col K)", data.currentAmount],
+        ["Total Amount Due (AI Col L)", data.totalAmount],
+        ["Amount Before Due (AI Col M)", data.amountBeforeDue]
       ];
       const badgeColor = (val) => {
         const u = String(val || "").toUpperCase();
@@ -8463,11 +8463,11 @@ function ensureOneTimePaymentHeaders(sheet) {
         ? `<button type="button" onclick="applyExtractedDueDateToForm('${escapeHtml(data.dueDateIso)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Apply Due Date (${escapeHtml(data.dueDateIso)})</button>`
         : "";
       const sheetSyncBadgeHtml = data.sheetSynced
-        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Written to Request Bill Payments Columns O–W via Master Sheet Script">✓ Synced to Sheet (Cols O–W)</span>`
+        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Upserted into AI_SOA_Extractions keyed by Request ID (Col A)">✓ Synced to AI_SOA_Extractions (Col A: Request ID)</span>`
         : contextMode === "form"
-        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">Will Auto-Write to Sheet (Cols O–W) on Submit</span>`
+        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">Will Auto-Upsert to AI_SOA_Extractions on Submit</span>`
         : reqId
-        ? `<button type="button" onclick="manualWriteExtractedSoaInInspector('${escapeHtml(reqId)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Write to Sheet (Cols O–W)</button>`
+        ? `<button type="button" onclick="manualWriteExtractedSoaInInspector('${escapeHtml(reqId)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Write to AI Sheet (By Request ID)</button>`
         : "";
       return `
         <div class="space-y-2 pt-1">
@@ -8511,7 +8511,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (resBox && updated) {
         resBox.innerHTML = renderExtractedSoaGridHtml(updated, "inspector", reqId);
       }
-      showEditPayToast("AI extracted fields written to Google Sheet (Cols O–W)!");
+      showEditPayToast("AI extracted fields written to AI_SOA_Extractions (keyed by Request ID)!");
     }
 
     function applyExtractedDueDateToForm(isoDate) {
@@ -8531,17 +8531,26 @@ function ensureOneTimePaymentHeaders(sheet) {
           error: q.reason || "Free AI quota limit reached. Extraction stopped automatically so zero charges are incurred."
         };
       }
-      const endpoints = ["/api/bill-payment/extract-soa-free", `${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`];
+      const enrichedPayload = {
+        ...payload,
+        aiWebhookUrl: payload.aiWebhookUrl || getDedicatedAiScriptUrl(),
+        aiSpreadsheetId: payload.aiSpreadsheetId || getDedicatedAiSpreadsheetId(),
+        aiSheetTabName: payload.aiSheetTabName || getDedicatedAiSheetName()
+      };
+      const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
+      const endpoints = isStaticHost
+        ? [`${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`, "/api/bill-payment/extract-soa-free"]
+        : ["/api/bill-payment/extract-soa-free", `${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`];
       let lastError = "Free AI service unreachable.";
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify(enrichedPayload)
           });
           const data = await res.json().catch(() => null);
-          if (res.status === 429 || (data && data.limitReached)) {
+          if (res.status === 429 || (data && (data.limitReached || data.freeLimitReached))) {
             const msg = (data && data.error) || "Free AI tier rate/daily limit reached. Auto-stopped to guarantee ₱0.00 cost.";
             recordLocalFreeAiUsage(msg);
             return { ok: false, limitReached: true, error: msg };
@@ -8554,7 +8563,12 @@ function ensureOneTimePaymentHeaders(sheet) {
             lastError = data.error;
           }
         } catch (err) {
-          lastError = err?.message || "Network error connecting to Free AI extractor.";
+          const rawMsg = err?.message || "Network error connecting to Free AI extractor.";
+          if (isStaticHost && /failed to fetch/i.test(rawMsg)) {
+            lastError = "Static GitHub Pages has no server-side Gemini endpoint (cross-origin fetch blocked). Run AI Scan in the Live Portal to write to AI_SOA_Extractions — GitHub Pages automatically loads those rows live from Google Sheets!";
+          } else {
+            lastError = rawMsg;
+          }
         }
       }
       return { ok: false, error: lastError };
@@ -8636,7 +8650,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const btn = document.getElementById("inspectorFreeAiExtractBtn");
       if (btn) btn.innerText = "⏳ Scanning & Writing...";
       if (resBox) {
-        resBox.innerHTML = `<div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Scanning all PDF pages &amp; writing Columns O–W to Google Sheet...</div>`;
+        resBox.innerHTML = `<div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Scanning all PDF pages &amp; writing to AI_SOA_Extractions (keyed by Request ID)...</div>`;
       }
       refreshFreeAiQuotaBars();
 
@@ -8650,7 +8664,14 @@ function ensureOneTimePaymentHeaders(sheet) {
             ? "image/jpeg"
             : "application/pdf",
           billerHint: item.biller || "",
-          billTypeHint: item.billType || ""
+          billTypeHint: item.billType || "",
+          accountNumber: item.accountNumber || "",
+          site: item.site || "",
+          biller: item.biller || "",
+          autoWriteToSheet: true,
+          aiWebhookUrl: getDedicatedAiScriptUrl(),
+          aiSpreadsheetId: getDedicatedAiSpreadsheetId(),
+          aiSheetTabName: getDedicatedAiSheetName()
         });
         if (!result.ok) {
           if (resBox) {
@@ -8665,7 +8686,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
       } finally {
         isExtractingFreeAi = false;
-        if (btn) btn.innerText = "✨ Scan & Write to Sheet (Free)";
+        if (btn) btn.innerText = "✨ Scan & Write to AI Sheet (Free)";
         refreshFreeAiQuotaBars();
       }
     }
