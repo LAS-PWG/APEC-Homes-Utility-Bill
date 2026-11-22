@@ -2673,8 +2673,8 @@ Submit and track your monthly utility payments directly through your account.</p
                       <div id="rbpInFormPreviewStage" class="w-full bg-slate-900 flex items-center justify-center"></div>
                     </div>
 
-                    <!-- Strictly Free AI Bill Statement Extractor Card -->
-                    <div class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2.5">
+                    <!-- Strictly Free AI Bill Statement Extractor Card (Gated by PS_TRIGGER_AI / PS_VIEW_AI_RESULTS) -->
+                    <div id="rbpFreeAiExtractorCard" class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2.5">
                       <div class="flex flex-wrap items-center justify-between gap-2">
                         <div>
                           <div class="flex flex-wrap items-center gap-1.5">
@@ -2690,7 +2690,7 @@ Submit and track your monthly utility payments directly through your account.</p
                             Reads all pages (1-page or 2-page PDFs/images). Extracts <span class="font-bold">Grace Period</span> ONLY if explicitly labeled "Grace Period" (Due Date to Disconnection is NOT Grace Period). Upserts into your dedicated <span class="font-mono font-bold">AI_SOA_Extractions</span> sheet referenced by <span class="font-mono font-bold">Request ID</span> (Col A) and auto-joins on live sync.
                           </p>
                         </div>
-                        <div class="flex flex-wrap items-center gap-2">
+                        <div id="rbpFreeAiTriggerControls" class="flex flex-wrap items-center gap-2">
                           <button
                             type="button"
                             onclick="toggleDedicatedAiSheetSetupPanel()"
@@ -4379,8 +4379,8 @@ Submit and track your monthly utility payments directly through your account.</p
               </div>
             </div>
 
-            <!-- Strictly Free AI Bill Statement Extractor in Payment Request Inspector -->
-            <div class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2">
+            <!-- Strictly Free AI Bill Statement Extractor in Payment Request Inspector (Gated by PS_TRIGGER_AI / PS_VIEW_AI_RESULTS) -->
+            <div id="inspectorFreeAiExtractorCard" class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2">
               <div class="flex flex-wrap items-center justify-between gap-2">
                 <div>
                   <div class="flex flex-wrap items-center gap-1.5">
@@ -4396,7 +4396,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     Cycle, Due Date, Grace Period (explicit only — never Due-to-Discon), Consumption, Arrears, Current, Total &amp; Amount Before Due
                   </p>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div id="inspectorFreeAiTriggerControls" class="flex items-center gap-1.5">
                   <label class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Auto-run Free AI scan and upsert into Dedicated AI_SOA_Extractions sheet keyed by Request ID (Col A)">
                     <input type="checkbox" id="inspectorFreeAiAutoRunToggle" checked onchange="setFreeAiAutoRunEnabled(this.checked)" class="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
                     <span>Auto</span>
@@ -5653,7 +5653,9 @@ function ensureOneTimePaymentHeaders(sheet) {
           { id: "PS_UPDATE_STATUS", label: "Approve / Change Payment Status" },
           { id: "PS_ATTACH_LINK", label: "Open External Attachment File Link" },
           { id: "PS_VIEW_CANCEL_REJECTED", label: "View Cancelled / Rejected Requests" },
-          { id: "PS_VIEW_LUT_SYNCED", label: "View LUT Synced Flag" }
+          { id: "PS_VIEW_LUT_SYNCED", label: "View LUT Synced Flag" },
+          { id: "PS_TRIGGER_AI", label: "Trigger AI Statement Reader" },
+          { id: "PS_VIEW_AI_RESULTS", label: "View AI Read Results" }
         ]
       },
       {
@@ -5761,7 +5763,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (norm === "sub-administrator") {
         return [
           "RBP_SUBMIT",
-          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK", "PS_VIEW_CANCEL_REJECTED", "PS_VIEW_LUT_SYNCED",
+          "PS_VIEW_OWN", "PS_VIEW_GROUP", "PS_VIEW_ALL", "PS_FILTER", "PS_EDIT_BILLING", "PS_UPDATE_STATUS", "PS_ATTACH_LINK", "PS_VIEW_CANCEL_REJECTED", "PS_VIEW_LUT_SYNCED", "PS_TRIGGER_AI", "PS_VIEW_AI_RESULTS",
           "ENROLL_SUBMIT",
           "ES_VIEW_OWN", "ES_VIEW_GROUP", "ES_VIEW_ALL", "ES_FILTER", "ES_EDIT_DETAILS", "ES_UPDATE_STATUS", "ES_ATTACH_LINK", "ES_VIEW_CANCEL_REJECTED",
           "SUBADMIN_ACCT_MGMT", "SUBADMIN_ANNOUNCEMENTS", "SUBADMIN_SOA_TRACKER", "SUBADMIN_BATCH_UPLOAD",
@@ -5893,6 +5895,19 @@ function ensureOneTimePaymentHeaders(sheet) {
         ? user.permissions
         : getDefaultPermissionsForAccessLevel(user.accessLevel);
       return perms.includes(perm);
+    }
+
+    function canUserTriggerPaymentAi() {
+      if (!currentUser) return false;
+      if (normalizeLifecycleStatus(currentUser.status) === "SUSPENDED") return false;
+      const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
+      return isAdminOrSub || hasUserPermission(currentUser, "PS_TRIGGER_AI");
+    }
+
+    function canUserViewPaymentAiResults() {
+      if (!currentUser) return false;
+      const isAdminOrSub = currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator";
+      return isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_AI_RESULTS");
     }
 
     function isCancelledOrRejectedStatus(status) {
@@ -7851,6 +7866,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     async function handleBatchAutoScanUnscannedInStatic() {
+      if (!canUserTriggerPaymentAi()) return;
       const btnText = document.getElementById("batchAutoScanFreeAiBtnText");
       const banner = document.getElementById("batchAutoScanFreeAiBanner");
       if (isBatchScanningStatic) {
@@ -8441,6 +8457,11 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     function renderExtractedSoaGridHtml(data, contextMode, reqId) {
       if (!data) return "";
+      const canTriggerAi = canUserTriggerPaymentAi();
+      const canViewAi = canUserViewPaymentAiResults();
+      if (!canViewAi) {
+        return `<div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-700 dark:text-emerald-300 text-[10px] font-semibold">✓ Statement scanned &amp; synced to ${escapeHtml(getDedicatedAiSheetName())} (Enable "View AI Read Results" in Mod Access to view extracted fields).</div>`;
+      }
       const fields = [
         ["Cycle From (AI Col E)", data.cycleFrom],
         ["Cycle To / Cut-off (AI Col F)", data.cycleTo],
@@ -8466,7 +8487,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         ? `<span class="px-1.5 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Upserted into AI_SOA_Extractions keyed by Request ID (Col A)">✓ Synced to AI_SOA_Extractions (Col A: Request ID)</span>`
         : contextMode === "form"
         ? `<span class="px-1.5 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">Will Auto-Upsert to AI_SOA_Extractions on Submit</span>`
-        : reqId
+        : (reqId && canTriggerAi)
         ? `<button type="button" onclick="manualWriteExtractedSoaInInspector('${escapeHtml(reqId)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Write to AI Sheet (By Request ID)</button>`
         : "";
       return `
@@ -8575,6 +8596,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     async function handleFreeAiExtractInForm(isAutoTriggered = false) {
+      if (!canUserTriggerPaymentAi()) return;
       if (!currentRbpFileDataUrl) {
         if (!isAutoTriggered) alert("Please attach a PDF or image statement first.");
         return;
@@ -8632,6 +8654,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     async function handleFreeAiExtractInInspector() {
+      if (!canUserTriggerPaymentAi()) return;
       const reqId = document.getElementById("editPayReqId")?.value;
       if (!reqId) return;
       const base = paymentRequests.find(r => r.requestId === reqId);
@@ -8742,8 +8765,15 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
         }
 
-        // Auto-Run Free AI Statement Reader when enabled and Free AI quota is available
-        if (getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun) {
+        const canTriggerAi = canUserTriggerPaymentAi();
+        const canViewAi = canUserViewPaymentAiResults();
+        const rbpAiCard = document.getElementById("rbpFreeAiExtractorCard");
+        if (rbpAiCard) rbpAiCard.classList.toggle("hidden", !(canTriggerAi || canViewAi));
+        const rbpAiCtrls = document.getElementById("rbpFreeAiTriggerControls");
+        if (rbpAiCtrls) rbpAiCtrls.classList.toggle("hidden", !canTriggerAi);
+
+        // Auto-Run Free AI Statement Reader when permitted, enabled, and Free AI quota is available
+        if (canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun) {
           handleFreeAiExtractInForm(true);
         }
       };
@@ -9024,6 +9054,12 @@ function ensureOneTimePaymentHeaders(sheet) {
       const canOpenPayLink = isAdminOrSub || hasUserPermission(currentUser, "PS_ATTACH_LINK");
       const canViewPayCancelRejected = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_CANCEL_REJECTED");
       const canViewPayLutSynced = isAdminOrSub || hasUserPermission(currentUser, "PS_VIEW_LUT_SYNCED");
+      const canTriggerPayAi = canUserTriggerPaymentAi();
+      const canViewPayAiResults = canUserViewPaymentAiResults();
+      const batchScanBtn = document.getElementById("batchAutoScanFreeAiBtn");
+      if (batchScanBtn) {
+        batchScanBtn.classList.toggle("hidden", !canTriggerPayAi);
+      }
 
       let list = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
 
@@ -9313,14 +9349,28 @@ function ensureOneTimePaymentHeaders(sheet) {
                   ${escapeHtml(curStatus)}
                 </span>
               `}
-              ${((item.lutStatusSynced && canViewPayLutSynced) || item.rfp || item.cv || item.payDate) ? `
-                <div class="mt-1 flex flex-wrap items-center gap-1">
-                  ${(item.lutStatusSynced && canViewPayLutSynced) ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" title="Synced from LUT_RBP_Status Col H (Visible via Mod Access: View LUT Synced Flag)">LUT Synced</span>` : ''}
-                  ${item.rfp ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">RFP: ${escapeHtml(item.rfp)}</span>` : ''}
-                  ${item.cv ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">CV: ${escapeHtml(item.cv)}</span>` : ''}
-                  ${item.payDate ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400">Paid: ${escapeHtml(item.payDate)}</span>` : ''}
-                </div>
-              ` : ''}
+              ${(() => {
+                const savedMap = getExtractedSoaMap();
+                const rowAi = canViewPayAiResults ? (item.extractedBillData || savedMap[item.requestId] || null) : null;
+                if (!(item.lutStatusSynced && canViewPayLutSynced) && !rowAi && !item.rfp && !item.cv && !item.payDate) {
+                  return '';
+                }
+                const aiTotalSuffix = rowAi && rowAi.totalAmount && rowAi.totalAmount !== "UNREADABLE" && rowAi.totalAmount !== "NOT ON BILL"
+                  ? `: ${escapeHtml(rowAi.totalAmount)}`
+                  : '';
+                const aiTooltip = rowAi
+                  ? `AI Read Results (AI_SOA_Extractions) — Cycle: ${escapeHtml(rowAi.cycleFrom || "—")} to ${escapeHtml(rowAi.cycleTo || "—")} | Due: ${escapeHtml(rowAi.dueDate || "—")} | Total: ${escapeHtml(rowAi.totalAmount || "—")} | Current: ${escapeHtml(rowAi.currentAmount || "—")} | Arrears: ${escapeHtml(rowAi.arrears || "—")} | Cons: ${escapeHtml(rowAi.consumption || "—")}`
+                  : '';
+                return `
+                  <div class="mt-1 flex flex-wrap items-center gap-1">
+                    ${(item.lutStatusSynced && canViewPayLutSynced) ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" title="Synced from LUT_RBP_Status Col H (Visible via Mod Access: View LUT Synced Flag)">LUT Synced</span>` : ''}
+                    ${rowAi ? `<button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 cursor-pointer" title="${aiTooltip}">✨ AI Read${aiTotalSuffix}</button>` : ''}
+                    ${item.rfp ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">RFP: ${escapeHtml(item.rfp)}</span>` : ''}
+                    ${item.cv ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">CV: ${escapeHtml(item.cv)}</span>` : ''}
+                    ${item.payDate ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400">Paid: ${escapeHtml(item.payDate)}</span>` : ''}
+                  </div>
+                `;
+              })()}
             </td>
             <td class="py-3 px-4 text-slate-500 dark:text-neutral-400 whitespace-nowrap text-[11px]">
               ${escapeHtml(item.submittedAt)}
@@ -9752,7 +9802,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       updateInspectorRenderModeButtons();
       renderPayInspectorStage(item);
 
-      // Populate saved or sheet-synced Free AI extracted fields for this request
+      // Populate saved or sheet-synced Free AI extracted fields for this request (Gated by PS_TRIGGER_AI / PS_VIEW_AI_RESULTS)
+      const canTriggerAi = canUserTriggerPaymentAi();
+      const canViewAi = canUserViewPaymentAiResults();
+      const inspCard = document.getElementById("inspectorFreeAiExtractorCard");
+      if (inspCard) inspCard.classList.toggle("hidden", !(canTriggerAi || canViewAi));
+      const inspCtrls = document.getElementById("inspectorFreeAiTriggerControls");
+      if (inspCtrls) inspCtrls.classList.toggle("hidden", !canTriggerAi);
+
       const savedMap = getExtractedSoaMap();
       const savedSoa = item.extractedBillData || savedMap[item.requestId];
       if (item.extractedBillData && !savedMap[item.requestId]) {
@@ -9760,12 +9817,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
       const inspAiBox = document.getElementById("inspectorFreeAiResultBox");
       refreshFreeAiQuotaBars();
-      if (inspAiBox) {
+      if (inspAiBox && (canTriggerAi || canViewAi)) {
         if (savedSoa) {
           inspAiBox.innerHTML = renderExtractedSoaGridHtml(savedSoa, "inspector", item.requestId);
         } else {
-          inspAiBox.innerHTML = `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">Click <span class="font-bold text-emerald-600 dark:text-emerald-400">Scan &amp; Write to Sheet (Free)</span> to extract Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due and write Columns O–W to Google Sheet.</div>`;
-          if (getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
+          inspAiBox.innerHTML = canTriggerAi
+            ? `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">Click <span class="font-bold text-emerald-600 dark:text-emerald-400">Scan &amp; Save by Request ID (Free)</span> to extract Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due and upsert into Dedicated Sheet (${escapeHtml(getDedicatedAiSheetName())}) keyed by Request ID (Col A).</div>`
+            : `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">No AI read results synced for this Request ID yet.</div>`;
+          if (canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
             setTimeout(() => {
               const openId = document.getElementById("editPayReqId")?.value;
               if (openId === item.requestId && !getExtractedSoaMap()[item.requestId]) {
