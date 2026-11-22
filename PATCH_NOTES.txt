@@ -42,28 +42,34 @@ Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release
        if you ever want to mirror the AI columns inside a spreadsheet view.
      - Configurable **Dedicated Google Sheet ID or URL**, **Sheet Tab Name**
        (`AI_SOA_Extractions`), and **Dedicated AI Apps Script `/exec` URL**.
-2. Automated Batch Queue with Multi-Model Free-Tier Rotation, Cooldown Auto-Resume, & Dynamic New-Filing Pickup:
-   - **4-Model Free-Tier Rotation Pool (`₱0.00`)**: Automatically rotates across
-     `gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-4-hydrogen`, and
-     `gemini-3.1-flash-lite-preview` so hitting a 20-request cap on one free
-     model seamlessly switches to the next free model on the same call.
-   - **Live Sync Skip of Already-Processed Bills**: Before running, the batch
-     scanner syncs all existing rows from `AI_SOA_Extractions` via GViz so
-     previously scanned bills are always skipped and only unprocessed bills are
-     scanned.
-   - **Cooldown Countdown & Auto-Resume**: If all Free-Tier models enter a
-     1-minute rate-limit window, the batch queue displays a live countdown and
-     automatically resumes from the exact unscanned bill where it paused.
-   - **Dynamic Pickup of Newly Filed Requests**: Dynamically re-checks the live
-     request list on every step and schedules background auto-retries so any new
-     request filed while waiting to resume is automatically processed.
+2. Automated Batch Queue (Earliest -> Newest), Direct Browser PDF.js + OCR Engine for Static GitHub Pages, & RBAC Module Permissions (`PS_TRIGGER_AI`, `PS_VIEW_AI_RESULTS`):
+   - **Single Verified Free-Tier Model (`gemini-4-hydrogen` at `₱0.00`)**: Uses
+     the single verified Free-Tier model in the Live Portal and halts
+     immediately (`break`) when the Free AI quota limit (`HTTP 429`) is reached.
+   - **Direct Browser Multi-Page PDF.js + Tesseract.js OCR Engine on Static GitHub Pages (`github.io`)**:
+     On static hosts without a Node backend (`github.io`, Netlify, Google Sites,
+     local HTML), the portal downloads Google Drive attachments directly via
+     `drive.usercontent.google.com` (`Access-Control-Allow-Origin: *`), extracts
+     all pages using **PDF.js** (with automatic **Tesseract.js** browser vision
+     OCR fallback for scanned/CamScanner pages and photos), parses the 9
+     statement fields, and writes them directly to `AI_SOA_Extractions` via
+     `DEFAULT_USER_SCRIPT_URL` at `₱0.00` cost.
+   - **Granular Module RBAC (`PS_TRIGGER_AI` & `PS_VIEW_AI_RESULTS`)**: Added
+     `Trigger AI Statement Reader` (`PS_TRIGGER_AI`) and `View AI Read Results`
+     (`PS_VIEW_AI_RESULTS`) to `MODS:...` permissions in User Management and
+     Access Level Defaults (`Level 1`–`Level 3`, `Sub-Administrator`,
+     `Administrator`).
+   - **Chronological Batch Queue (`Earliest -> Newest`) & Skip Processed**:
+     Syncs existing rows from `AI_SOA_Extractions` via GViz before scanning,
+     skips already-processed bills, orders unscanned bills strictly from
+     Earliest to Newest, and dynamically picks up newly filed requests.
 3. Full Package & Deployment Sync (`v3.2.9`):
    - Synchronized `/server.ts`, `/src/services/billPayment.ts`, `/src/App.tsx`,
      `/public/single-index.html`, `/public/google-sites-embed.html`, and all 5
      canonical `.zip` deployment packages (`apechomes-portal-github-pages.zip`,
      `apechomes-portal-netlify.zip`, `apechomes-portal-hosting-ready.zip`,
      `apechomes-portal-google-sites.zip`, and
-     `apechomes-utility-portal-source.zip`) to `v3.2.9`.
+     `apechomes-utility-portal-source.zip`) with all complete package files.
 
 --------------------------------------------------------------------------------
 [v3.2.8] - 2026-11-21 — Strict Explicit "Grace Period" Rule (Never Due-to-Disconnection), Auto-Run Free AI Reader + Auto-Write to Google Sheet (Cols O–W) While Preserving Drive Owner Upload Accountability, & Full Package Sync
