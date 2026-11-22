@@ -7924,6 +7924,8 @@ function ensureOneTimePaymentHeaders(sheet) {
 
       let completed = 0;
       let stoppedByFreeLimit = false;
+      let stoppedByErrorMsg = null;
+      let consecutiveFailures = 0;
 
       while (!stopBatchScanStatic) {
         const remainingList = getDynamicUnscannedInStatic();
@@ -7955,7 +7957,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           billTypeHint: item.billType || "",
           autoWriteToSheet: true
         });
-        if (result.limitReached) {
+        if (result.limitReached || /429|RESOURCE_EXHAUSTED|quota|rate.?limit/i.test(String(result.error || ""))) {
           stoppedByFreeLimit = true;
           if (banner) {
             banner.innerText = `⛔ Free AI limit reached (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}) — Auto-stopped immediately at ₱0.00. Remaining ${remainingList.length} unscanned bill(s) will process after quota resets.`;
@@ -7964,15 +7966,36 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
         if (result.ok && result.extracted) {
           completed++;
-          liveSheetAiMap[item.requestId] = result.extracted;
-          await writeExtractedSoaToGSheet(item.requestId, result.extracted, {
-            accountNumber: item.accountNumber,
-            site: item.site,
-            biller: item.biller
-          });
+          consecutiveFailures = 0;
+          const syncedObj = { ...result.extracted, sheetSynced: true };
+          liveSheetAiMap[item.requestId] = syncedObj;
+          if (result.extracted.sheetSynced) {
+            saveExtractedSoaForRequest(item.requestId, syncedObj);
+            const target = paymentRequests.find(r => r.requestId === item.requestId);
+            if (target) target.extractedBillData = syncedObj;
+          } else {
+            await writeExtractedSoaToGSheet(item.requestId, result.extracted, {
+              accountNumber: item.accountNumber,
+              site: item.site,
+              biller: item.biller
+            });
+          }
           renderBillPaymentTable();
         } else {
+          consecutiveFailures++;
           attemptedOrFailedIds.add(item.requestId);
+          const errText = String(result.error || "Free AI endpoint unreachable.");
+          const isServiceError = Boolean(result.staticHostBlocked) || /unable to reach|failed to fetch|network|endpoint|not found|HTTP 5\d\d|cross-origin|Static GitHub Pages/i.test(errText);
+          if (isServiceError || consecutiveFailures >= 2) {
+            stoppedByErrorMsg = errText;
+            if (banner) {
+              banner.innerText = result.staticHostBlocked
+                ? `✓ Synced ${Object.keys(liveSheetAiMap).length} processed row(s) from ${getDedicatedAiSheetName()} in Google Sheets. To scan new Drive PDFs with Gemini AI, run Auto-Scan in the Live Portal.`
+                : `⚠️ Batch Auto-Scan stopped (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}): ${errText}`;
+            }
+            renderBillPaymentTable();
+            break;
+          }
         }
         if (getDynamicUnscannedInStatic().length > 0 && !stopBatchScanStatic) {
           await new Promise(r => setTimeout(r, 5500));
@@ -7982,8 +8005,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       isBatchScanningStatic = false;
       if (btnText) btnText.innerText = "✨ Auto-Scan Unscanned Bills (Free AI)";
       if (banner) {
-        if (stoppedByFreeLimit) {
-          setTimeout(() => banner.classList.add("hidden"), 9000);
+        if (stoppedByFreeLimit || stoppedByErrorMsg) {
+          setTimeout(() => banner.classList.add("hidden"), 10000);
         } else if (!stopBatchScanStatic && getDynamicUnscannedInStatic().length === 0) {
           banner.innerText = `✓ Batch Auto-Scan complete: ${completed} new bill(s) scanned & written to ${getDedicatedAiSheetName()} (all previously processed bills were skipped)!`;
           setTimeout(() => banner.classList.add("hidden"), 7000);
@@ -8560,9 +8583,10 @@ function ensureOneTimePaymentHeaders(sheet) {
       };
       const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
       const endpoints = isStaticHost
-        ? [`${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`, "/api/bill-payment/extract-soa-free"]
-        : ["/api/bill-payment/extract-soa-free", `${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`];
+        ? [`${FREE_AI_REMOTE_API_BASE}/api/bill-payment/extract-soa-free`]
+        : ["/api/bill-payment/extract-soa-free"];
       let lastError = "Free AI service unreachable.";
+      let staticHostBlocked = false;
       for (const ep of endpoints) {
         try {
           const res = await fetch(ep, {
@@ -8571,7 +8595,11 @@ function ensureOneTimePaymentHeaders(sheet) {
             body: JSON.stringify(enrichedPayload)
           });
           const data = await res.json().catch(() => null);
-          if (res.status === 429 || (data && (data.limitReached || data.freeLimitReached))) {
+          if (
+            res.status === 429 ||
+            (data && (data.limitReached || data.freeLimitReached)) ||
+            /429|RESOURCE_EXHAUSTED|quota|rate.?limit/i.test(String(data?.error || ""))
+          ) {
             const msg = (data && data.error) || "Free AI tier rate/daily limit reached. Auto-stopped to guarantee ₱0.00 cost.";
             recordLocalFreeAiUsage(msg);
             return { ok: false, limitReached: true, error: msg };
@@ -8582,17 +8610,20 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
           if (data && data.error) {
             lastError = data.error;
+          } else {
+            lastError = `Free AI service returned HTTP ${res.status}.`;
           }
         } catch (err) {
           const rawMsg = err?.message || "Network error connecting to Free AI extractor.";
           if (isStaticHost && /failed to fetch/i.test(rawMsg)) {
-            lastError = "Static GitHub Pages has no server-side Gemini endpoint (cross-origin fetch blocked). Run AI Scan in the Live Portal to write to AI_SOA_Extractions — GitHub Pages automatically loads those rows live from Google Sheets!";
+            staticHostBlocked = true;
+            lastError = `Synced live rows from ${getDedicatedAiSheetName()} in Google Sheets. To scan a new PDF with Gemini AI, run Scan in the Live Portal.`;
           } else {
             lastError = rawMsg;
           }
         }
       }
-      return { ok: false, error: lastError };
+      return { ok: false, staticHostBlocked, error: lastError };
     }
 
     async function handleFreeAiExtractInForm(isAutoTriggered = false) {
@@ -8697,12 +8728,29 @@ function ensureOneTimePaymentHeaders(sheet) {
           aiSheetTabName: getDedicatedAiSheetName()
         });
         if (!result.ok) {
+          if (result.staticHostBlocked) {
+            await syncDedicatedAiExtractionsInStatic();
+            const syncedFromSheet = getExtractedSoaMap()[reqId];
+            if (syncedFromSheet && resBox) {
+              resBox.innerHTML = renderExtractedSoaGridHtml(syncedFromSheet, "inspector", reqId);
+              renderBillPaymentTable();
+              return;
+            }
+          }
           if (resBox) {
             resBox.innerHTML = `<div class="p-2 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-[11px] font-semibold">⚠️ ${escapeHtml(result.error || "Unable to extract statement.")}</div>`;
           }
           return;
         }
-        await writeExtractedSoaToGSheet(reqId, result.extracted);
+        if (result.extracted?.sheetSynced) {
+          const syncedObj = { ...result.extracted, sheetSynced: true };
+          saveExtractedSoaForRequest(reqId, syncedObj);
+          const target = paymentRequests.find(r => r.requestId === reqId);
+          if (target) target.extractedBillData = syncedObj;
+          renderBillPaymentTable();
+        } else {
+          await writeExtractedSoaToGSheet(reqId, result.extracted);
+        }
         const synced = getExtractedSoaMap()[reqId] || { ...result.extracted, sheetSynced: true };
         if (resBox) {
           resBox.innerHTML = renderExtractedSoaGridHtml(synced, "inspector", reqId);
@@ -9821,10 +9869,21 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (savedSoa) {
           inspAiBox.innerHTML = renderExtractedSoaGridHtml(savedSoa, "inspector", item.requestId);
         } else {
+          const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
           inspAiBox.innerHTML = canTriggerAi
             ? `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">Click <span class="font-bold text-emerald-600 dark:text-emerald-400">Scan &amp; Save by Request ID (Free)</span> to extract Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due and upsert into Dedicated Sheet (${escapeHtml(getDedicatedAiSheetName())}) keyed by Request ID (Col A).</div>`
             : `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">No AI read results synced for this Request ID yet.</div>`;
-          if (canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
+          if (isStaticHost) {
+            // On static GitHub Pages, silently check AI_SOA_Extractions in Google Sheets so any newly scanned rows appear automatically without throwing a cross-origin error
+            syncDedicatedAiExtractionsInStatic().then(() => {
+              const openId = document.getElementById("editPayReqId")?.value;
+              const newlySynced = getExtractedSoaMap()[item.requestId];
+              if (openId === item.requestId && newlySynced && inspAiBox) {
+                inspAiBox.innerHTML = renderExtractedSoaGridHtml(newlySynced, "inspector", item.requestId);
+                renderBillPaymentTable();
+              }
+            }).catch(() => {});
+          } else if (canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
             setTimeout(() => {
               const openId = document.getElementById("editPayReqId")?.value;
               if (openId === item.requestId && !getExtractedSoaMap()[item.requestId]) {
