@@ -6,6 +6,19 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.3.5] - 2026-11-22 — Admin AI Limit Indicator, Space-Saving `✨` Star Badge in View Table, CORS-Safe Drive Attachment Reader on GitHub Pages (`Failed to fetch` Fix), & Full 15-File Package Sync
+--------------------------------------------------------------------------------
+1. Fixed `Batch Auto-Scan stopped: Failed to fetch` on Static GitHub Pages (`github.io`):
+   - `drive.usercontent.google.com/download` sends `cross-origin-resource-policy: same-site` and blocks default credentialed fetches from `github.io`.
+   - `extractUtilityStatementInBrowser` now uses `{ credentials: "omit", mode: "cors" }` with automatic 3-tier fallback to Google's CORS-enabled Drive Document Renderer (`https://lh3.googleusercontent.com/d/{fileId}=w2000`, which sends `Access-Control-Allow-Origin: *` and `CORP: null`) plus an `<img crossOrigin="anonymous">` canvas fallback so Drive PDFs and images scan reliably in the browser and write directly to `AI_SOA_Extractions` via Google Apps Script.
+2. Live Admin Free AI Limit & Quota Indicator Badge:
+   - Added a live **Admin AI Limit Indicator** (`AI Limit: X/12 RPM • Y/200 Day` / `🔴 AI Limit Reached`) in the **View Request Bill Payment Status** top toolbar (next to `Auto-Scan Unscanned Bills (Free AI)`) and inside the **Payment Request Inspector** modal header for Admins, Sub-Admins, and users with `PS_TRIGGER_AI`.
+3. Compact `✨` Star Badge in View Request Bill Payment Status Table:
+   - Replaced `✨ AI Read: 36,081.40` with a compact `✨` star button in the `View Request Bill Payment Status` table to save horizontal space while retaining the full AI breakdown tooltip on hover and one-click Inspector opening.
+4. Full 15-File Static Package & Archive Synchronization:
+   - Synchronized `/public/single-index.html`, `/public/index.html`, `/public/google-sites-embed.html`, `/public/404.html`, `/public/netlify-github-package/` (all 15 files), `/docs/` (all 15 files), `/github-pages/` (all 15 files), and rebuilt all 5 `.zip` archives (`apechomes-portal-github-pages.zip`, `apechomes-portal-netlify.zip`, `apechomes-portal-hosting-ready.zip`, `apechomes-portal-google-sites.zip`, `apechomes-utility-portal-source.zip`).
+
+--------------------------------------------------------------------------------
 [v3.2.9] - 2026-11-21 — Dedicated AI Extraction Google Sheet (`AI_SOA_Extractions`) & Standalone `Code.gs` Keyed by `Request ID` (100% Independent of Drive Owner's Upload Sheet & Script)
 --------------------------------------------------------------------------------
 1. Dedicated AI Statement Extraction Sheet (`AI_SOA_Extractions`) & Standalone Apps Script (`Code.gs`) Keyed by `Request ID` (`Col A: REQ-YYYYMMDD-XXXX`):

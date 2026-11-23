@@ -2858,6 +2858,16 @@ Submit and track your monthly utility payments directly through your account.</p
               <div class="flex flex-wrap items-center gap-2">
                 <button
                   type="button"
+                  id="adminFreeAiLimitBadge"
+                  onclick="handleAdminRecheckFreeAiQuota()"
+                  class="inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer"
+                  title="Admin Free AI Quota Monitor (Strictly ₱0.00 Free Tier). Click to refresh or re-check quota."
+                >
+                  <span id="adminFreeAiLimitDot" class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                  <span id="adminFreeAiLimitText">AI Limit: 12/12 RPM • 200/200 Day</span>
+                </button>
+                <button
+                  type="button"
                   id="batchAutoScanFreeAiBtn"
                   onclick="handleBatchAutoScanUnscannedInStatic()"
                   class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer"
@@ -4395,6 +4405,9 @@ Submit and track your monthly utility payments directly through your account.</p
                     <span class="text-[11px] font-bold text-slate-800 dark:text-white">Free AI Statement Extractor</span>
                     <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       ₱0.00 Free Tier
+                    </span>
+                    <span id="inspectorAdminFreeAiLimitBadge" class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Live Free AI Quota Status (Strictly ₱0.00 Free Tier)">
+                      🟢 AI Limit: 12/12 RPM • 200/200 Day
                     </span>
                     <span id="inspectorDedicatedAiSheetBadge" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20" title="File upload stays on Drive Owner script; AI fields upsert into Dedicated AI_SOA_Extractions Sheet referenced by Request ID (Col A)">
                       Upserts to AI_SOA_Extractions by Request ID (Col A)
@@ -8365,10 +8378,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         }).catch(() => {});
       }
 
-      const endpoints = ["/api/bill-payment/save-ai-extraction", `${FREE_AI_REMOTE_API_BASE}/api/bill-payment/save-ai-extraction`];
-      for (const ep of endpoints) {
+      const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
+      if (!isStaticHost) {
         try {
-          const res = await fetch(ep, {
+          await fetch("/api/bill-payment/save-ai-extraction", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -8383,7 +8396,6 @@ function ensureOneTimePaymentHeaders(sheet) {
               webhookDispatched
             })
           });
-          if (res.ok) break;
         } catch (e) {}
       }
       return true;
@@ -8441,6 +8453,31 @@ function ensureOneTimePaymentHeaders(sheet) {
       refreshFreeAiQuotaBars();
     }
 
+    function isCurrentUserAdminOrSubAdmin() {
+      return Boolean(
+        currentUser &&
+          (currentUser.accessLevel === "Administrator" ||
+            currentUser.accessLevel === "Sub-Administrator")
+      );
+    }
+
+    function handleAdminRecheckFreeAiQuota() {
+      const q = getLocalFreeAiQuotaStatus();
+      if (q.isTripped && q.rpmRemaining > 0 && q.rpdRemaining > 0) {
+        try {
+          const updated = {
+            day: q.day,
+            dailyCount: q.dailyCount,
+            timestamps: q.timestamps,
+            circuitTrippedUntil: 0,
+            reason: ""
+          };
+          localStorage.setItem(FREE_AI_LOCAL_QUOTA_KEY, JSON.stringify(updated));
+        } catch (e) {}
+      }
+      refreshFreeAiQuotaBars();
+    }
+
     function refreshFreeAiQuotaBars() {
       syncFreeAiAutoRunCheckboxes();
       const q = getLocalFreeAiQuotaStatus();
@@ -8451,6 +8488,46 @@ function ensureOneTimePaymentHeaders(sheet) {
         } else {
           bar.innerHTML = `Free Quota Remaining: <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpmRemaining}/${q.rpmMax} per min</span> • <span class="font-bold text-emerald-600 dark:text-emerald-400">${q.rpdRemaining}/${q.rpdMax} today</span> (Strictly ₱0.00 Free Tier • Auto-Upserts to AI_SOA_Extractions by Request ID)`;
         }
+      }
+      const adminBadge = document.getElementById("adminFreeAiLimitBadge");
+      const adminDot = document.getElementById("adminFreeAiLimitDot");
+      const adminText = document.getElementById("adminFreeAiLimitText");
+      const isAdminOrCanTrigger = isCurrentUserAdminOrSubAdmin() || canUserTriggerPaymentAi();
+      if (adminBadge) {
+        adminBadge.classList.toggle("hidden", !isAdminOrCanTrigger);
+        const isLimitHit = !q.canRun || q.rpmRemaining === 0 || q.rpdRemaining === 0;
+        const isNearLimit = !isLimitHit && (q.rpmRemaining <= 3 || q.rpdRemaining <= 25);
+        adminBadge.className = isLimitHit
+          ? "inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-mono font-bold bg-red-500/15 text-red-700 dark:text-red-300 border border-red-500/40 animate-pulse transition-all cursor-pointer"
+          : isNearLimit
+          ? "inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-mono font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40 transition-all cursor-pointer"
+          : "inline-flex items-center space-x-1.5 px-2.5 py-1.5 rounded-xl text-[11px] font-mono font-bold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 transition-all cursor-pointer";
+        if (!isAdminOrCanTrigger) adminBadge.classList.add("hidden");
+        if (adminDot) {
+          adminDot.className = isLimitHit
+            ? "w-2 h-2 rounded-full bg-red-500"
+            : isNearLimit
+            ? "w-2 h-2 rounded-full bg-amber-500"
+            : "w-2 h-2 rounded-full bg-emerald-500";
+        }
+        if (adminText) {
+          adminText.innerText = isLimitHit
+            ? `AI Limit Reached (0/${q.rpmMax} RPM • ${q.rpdRemaining}/${q.rpdMax} Day)`
+            : `AI Limit: ${q.rpmRemaining}/${q.rpmMax} RPM • ${q.rpdRemaining}/${q.rpdMax} Day`;
+        }
+        adminBadge.title = isLimitHit
+          ? `Free AI Limit Reached (${q.reason || "Quota exhausted"}). Auto-stopped at ₱0.00. Click to re-check or reset after 1-min cooldown.`
+          : `Admin Free AI Quota Monitor — ${q.rpmRemaining}/${q.rpmMax} RPM remaining • ${q.rpdRemaining}/${q.rpdMax} Daily remaining (Strictly ₱0.00 Free Tier). Click to refresh.`;
+      }
+      const inspLimitBadge = document.getElementById("inspectorAdminFreeAiLimitBadge");
+      if (inspLimitBadge) {
+        const isLimitHit = !q.canRun || q.rpmRemaining === 0 || q.rpdRemaining === 0;
+        inspLimitBadge.className = isLimitHit
+          ? "px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-red-500/15 text-red-600 dark:text-red-300 border border-red-500/30"
+          : "px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30";
+        inspLimitBadge.innerText = isLimitHit
+          ? "🔴 AI Limit Reached"
+          : `🟢 AI Limit: ${q.rpmRemaining}/${q.rpmMax} RPM • ${q.rpdRemaining}/${q.rpdMax} Day`;
       }
       const btn = document.getElementById("rbpFreeAiExtractBtn");
       if (btn) {
@@ -8737,8 +8814,31 @@ function ensureOneTimePaymentHeaders(sheet) {
       };
     }
 
+    async function loadDriveRenderedImageCanvas(driveFileId) {
+      const renderUrl = `https://lh3.googleusercontent.com/d/${encodeURIComponent(driveFileId)}=w2000`;
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.crossOrigin = "anonymous";
+        img.onload = () => {
+          try {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.naturalWidth || img.width || 1600;
+            canvas.height = img.naturalHeight || img.height || 2200;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas);
+          } catch (err) {
+            reject(err);
+          }
+        };
+        img.onerror = () => reject(new Error("Could not load Google Drive statement render image."));
+        img.src = renderUrl;
+      });
+    }
+
     async function extractUtilityStatementInBrowser(payload) {
       let u8 = null;
+      let fallbackCanvas = null;
       let mime = String(payload.mimeType || "application/pdf").toLowerCase();
       if (payload.fileBase64) {
         const b64 = payload.fileBase64.includes(",") ? payload.fileBase64.split(",")[1] : payload.fileBase64;
@@ -8746,20 +8846,68 @@ function ensureOneTimePaymentHeaders(sheet) {
         u8 = new Uint8Array(bin.length);
         for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
       } else if (payload.driveFileId) {
-        const dlUrl = `https://drive.usercontent.google.com/download?id=${encodeURIComponent(payload.driveFileId)}&export=download`;
-        const dlRes = await fetch(dlUrl);
-        if (!dlRes.ok) {
-          throw new Error(`Could not fetch Google Drive attachment (${dlRes.status}).`);
+        const fid = encodeURIComponent(payload.driveFileId);
+        const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
+        // Tier 0 (Live Portal / Preview): Fetch raw multi-page PDF via local server proxy
+        if (!isStaticHost) {
+          try {
+            const proxyRes = await fetch(`/api/drive-file-proxy/${fid}`);
+            if (proxyRes.ok) {
+              const ctype = (proxyRes.headers.get("content-type") || "").toLowerCase();
+              if (!ctype.includes("text/html")) {
+                const arr = new Uint8Array(await proxyRes.arrayBuffer());
+                if (arr.length > 100) {
+                  if (ctype) mime = ctype;
+                  u8 = arr;
+                }
+              }
+            }
+          } catch (e0) {}
         }
-        const ctype = (dlRes.headers.get("content-type") || "").toLowerCase();
-        if (ctype) mime = ctype;
-        u8 = new Uint8Array(await dlRes.arrayBuffer());
+
+        // Tier 1: Direct anonymous fetch from drive.usercontent.google.com (credentials: omit avoids Google cookie CORP block)
+        if (!u8) {
+          try {
+            const dlUrl = `https://drive.usercontent.google.com/download?id=${fid}&export=download`;
+            const dlRes = await fetch(dlUrl, { credentials: "omit", mode: "cors" });
+            if (dlRes.ok) {
+              const ctype = (dlRes.headers.get("content-type") || "").toLowerCase();
+              if (!ctype.includes("text/html")) {
+                const arr = new Uint8Array(await dlRes.arrayBuffer());
+                const head5 = String.fromCharCode(...arr.slice(0, 5));
+                if (head5 !== "<!DOC" && head5 !== "<html") {
+                  if (ctype) mime = ctype;
+                  u8 = arr;
+                }
+              }
+            }
+          } catch (e1) {}
+        }
+
+        // Tier 2: Google Drive CORS-enabled High-Res Page Renderer (lh3.googleusercontent.com/d/{id}=w2000 has Access-Control-Allow-Origin: * and CORP: null)
+        if (!u8) {
+          try {
+            const lh3Url = `https://lh3.googleusercontent.com/d/${fid}=w2000`;
+            const lh3Res = await fetch(lh3Url, { credentials: "omit", mode: "cors" });
+            if (lh3Res.ok) {
+              const ctype = (lh3Res.headers.get("content-type") || "image/png").toLowerCase();
+              mime = ctype;
+              u8 = new Uint8Array(await lh3Res.arrayBuffer());
+            }
+          } catch (e2) {}
+        }
+
+        // Tier 3: HTML Image crossOrigin="anonymous" canvas fallback if fetch() was intercepted by browser privacy shield
+        if (!u8) {
+          fallbackCanvas = await loadDriveRenderedImageCanvas(payload.driveFileId);
+          mime = "image/png";
+        }
       } else {
         throw new Error("No PDF or image source provided for extraction.");
       }
 
-      const magic5 = String.fromCharCode(...u8.slice(0, 5));
-      const isPdf = magic5 === "%PDF-" || mime.includes("pdf");
+      const magic5 = u8 ? String.fromCharCode(...u8.slice(0, 5)) : "";
+      const isPdf = Boolean(u8 && (magic5 === "%PDF-" || (mime.includes("pdf") && !mime.startsWith("image/"))));
       let allTokens = [];
       let allLinesText = [];
       let pageCount = 1;
@@ -8793,8 +8941,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
       } else if (window.Tesseract) {
         usedOcr = true;
-        const blob = new Blob([u8], { type: mime.startsWith("image/") ? mime : "image/jpeg" });
-        const ocrRes = await window.Tesseract.recognize(blob, "eng");
+        const ocrSource = fallbackCanvas
+          ? fallbackCanvas
+          : new Blob([u8], { type: mime.startsWith("image/") ? mime : "image/png" });
+        const ocrRes = await window.Tesseract.recognize(ocrSource, "eng");
         const ocrTxt = String(ocrRes?.data?.text || "").trim();
         if (ocrTxt) {
           allLinesText.push(ocrTxt);
@@ -8802,6 +8952,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
       }
 
+      recordLocalFreeAiUsage();
       const parsed = parsePhilippineUtilityBillText(allLinesText.join("\n"), allTokens, payload);
       const extractedData = {
         ...parsed,
@@ -8885,10 +9036,17 @@ function ensureOneTimePaymentHeaders(sheet) {
           recordLocalFreeAiUsage();
           return data;
         }
-        if (data && data.error) {
-          lastError = data.error;
-        } else {
-          lastError = `Free AI service returned HTTP ${res.status}.`;
+        // Non-429 server/cloud error (e.g. temporary 503 high demand or static host 404):
+        // Automatically fall back to the Direct Browser Multi-Page PDF.js + Tesseract.js Reader
+        try {
+          const browserRes = await extractUtilityStatementInBrowser(enrichedPayload);
+          return browserRes;
+        } catch {
+          if (data && data.error) {
+            lastError = data.error;
+          } else {
+            lastError = `Free AI service returned HTTP ${res.status}.`;
+          }
         }
       } catch (err) {
         // Fallback to Direct Browser Multi-Page PDF.js + Tesseract.js Engine if static host on custom domain (e.g., Netlify/Vercel static)
@@ -9384,6 +9542,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (batchScanBtn) {
         batchScanBtn.classList.toggle("hidden", !canTriggerPayAi);
       }
+      refreshFreeAiQuotaBars();
 
       let list = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
 
@@ -9679,16 +9838,13 @@ function ensureOneTimePaymentHeaders(sheet) {
                 if (!(item.lutStatusSynced && canViewPayLutSynced) && !rowAi && !item.rfp && !item.cv && !item.payDate) {
                   return '';
                 }
-                const aiTotalSuffix = rowAi && rowAi.totalAmount && rowAi.totalAmount !== "UNREADABLE" && rowAi.totalAmount !== "NOT ON BILL"
-                  ? `: ${escapeHtml(rowAi.totalAmount)}`
-                  : '';
                 const aiTooltip = rowAi
                   ? `AI Read Results (AI_SOA_Extractions) — Cycle: ${escapeHtml(rowAi.cycleFrom || "—")} to ${escapeHtml(rowAi.cycleTo || "—")} | Due: ${escapeHtml(rowAi.dueDate || "—")} | Total: ${escapeHtml(rowAi.totalAmount || "—")} | Current: ${escapeHtml(rowAi.currentAmount || "—")} | Arrears: ${escapeHtml(rowAi.arrears || "—")} | Cons: ${escapeHtml(rowAi.consumption || "—")}`
                   : '';
                 return `
                   <div class="mt-1 flex flex-wrap items-center gap-1">
                     ${(item.lutStatusSynced && canViewPayLutSynced) ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20" title="Synced from LUT_RBP_Status Col H (Visible via Mod Access: View LUT Synced Flag)">LUT Synced</span>` : ''}
-                    ${rowAi ? `<button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 cursor-pointer" title="${aiTooltip}">✨ AI Read${aiTotalSuffix}</button>` : ''}
+                    ${rowAi ? `<button type="button" onclick="openEditPaymentBillingModal('${escapeHtml(item.requestId)}')" class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 cursor-pointer leading-none" title="${aiTooltip}">✨</button>` : ''}
                     ${item.rfp ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400">RFP: ${escapeHtml(item.rfp)}</span>` : ''}
                     ${item.cv ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">CV: ${escapeHtml(item.cv)}</span>` : ''}
                     ${item.payDate ? `<span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-semibold bg-amber-500/10 text-amber-600 dark:text-amber-400">Paid: ${escapeHtml(item.payDate)}</span>` : ''}
