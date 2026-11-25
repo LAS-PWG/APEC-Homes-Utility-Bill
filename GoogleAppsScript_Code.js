@@ -27,6 +27,15 @@ var PAYMENT_DRIVE_FOLDER_ID = '1OwToQbKB_u4aMCjurtOqsfNMv5bn1Z13';
 var DEFAULT_ONETIME_DRIVE_FOLDER_ID = '1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5';
 var DESIGNATED_DRIVE_OWNER_EMAIL = 'lasarmiento.apec@gmail.com';
 
+// Select "authorizeDriveAndSheets" in the top toolbar of script.google.com and click Run (▶) once to authorize Drive & Sheets
+function authorizeDriveAndSheets() {
+  var ss = SpreadsheetApp.openById(UTILITY_SPREADSHEET_ID);
+  var otpSheet = ss.getSheetByName('One Time Bill Payments') || ss.insertSheet('One Time Bill Payments');
+  ensureOneTimePaymentHeaders(otpSheet);
+  var folder = DriveApp.getFolderById(DEFAULT_ONETIME_DRIVE_FOLDER_ID);
+  Logger.log('SUCCESS! Authorized Spreadsheet: ' + ss.getName() + ' | Drive Folder: ' + folder.getName());
+}
+
 function getAssignedOneTimeFolderId(payloadFolderId) {
   if (payloadFolderId && String(payloadFolderId).trim().length >= 15) {
     try {

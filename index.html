@@ -2338,27 +2338,33 @@ Submit and track your monthly utility payments directly through your account.</p
                   <input type="text" id="otpReqAmount" placeholder="e.g. 4,250.00" class="w-full sm:w-64 px-3.5 py-2 rounded-xl bg-slate-50 dark:bg-[#121212] border border-slate-300 dark:border-royal-800 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400" />
                 </div>
 
-                <!-- 3 Supporting Document Uploads (Clean — No "Planned" Tags & No Unique Upload Box) -->
+                <!-- Error Banner for One-Time Payment Validation -->
+                <div id="otpErrorBanner" class="hidden p-3.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-semibold"></div>
+
+                <!-- 3 Supporting Document Uploads (Strictly JPEG, PNG, and PDF Only) -->
                 <div class="space-y-2.5">
                   <div class="flex flex-wrap items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-100 dark:bg-[#121212] border border-slate-200 dark:border-slate-800">
                     <span class="text-xs font-bold text-slate-800 dark:text-slate-200">Supporting Document Attachments (3 Uploads)</span>
+                    <span class="px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/25">
+                      Allowed Formats: JPEG (.jpg/.jpeg), PNG (.png), PDF (.pdf) Only
+                    </span>
                   </div>
 
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#121212] border border-dashed border-slate-300 dark:border-[#333333] space-y-2">
-                      <span class="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400 block">Upload 1 of 3</span>
+                      <span class="text-[10px] font-bold uppercase text-blue-600 dark:text-blue-400 block">Upload 1 of 3 &bull; PDF / JPEG / PNG</span>
                       <label class="text-xs font-bold text-slate-900 dark:text-white block">Approved Request Letter</label>
-                      <input type="file" id="otpFileLetter" accept="image/*,.pdf,.doc,.docx" class="text-[11px] w-full" />
+                      <input type="file" id="otpFileLetter" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" onchange="validateOtpFileInput(this)" class="text-[11px] w-full" />
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#121212] border border-dashed border-slate-300 dark:border-[#333333] space-y-2">
-                      <span class="text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400 block">Upload 2 of 3</span>
+                      <span class="text-[10px] font-bold uppercase text-emerald-600 dark:text-emerald-400 block">Upload 2 of 3 &bull; PDF / JPEG / PNG</span>
                       <label class="text-xs font-bold text-slate-900 dark:text-white block">Current Billing / SOA</label>
-                      <input type="file" id="otpFileSoa" accept="image/*,.pdf,.doc,.docx" class="text-[11px] w-full" />
+                      <input type="file" id="otpFileSoa" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" onchange="validateOtpFileInput(this)" class="text-[11px] w-full" />
                     </div>
                     <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-[#121212] border-2 border-dashed border-slate-400/70 dark:border-slate-600 space-y-2">
-                      <span class="text-[10px] font-bold uppercase text-slate-700 dark:text-slate-300 block">Upload 3 of 3</span>
+                      <span class="text-[10px] font-bold uppercase text-slate-700 dark:text-slate-300 block">Upload 3 of 3 &bull; PDF / JPEG / PNG</span>
                       <label class="text-xs font-bold text-slate-900 dark:text-white block">Management Approved RLF</label>
-                      <input type="file" id="otpFileRlf" accept="image/*,.pdf,.doc,.docx" class="text-[11px] w-full" />
+                      <input type="file" id="otpFileRlf" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" onchange="validateOtpFileInput(this)" class="text-[11px] w-full" />
                     </div>
                   </div>
                 </div>
@@ -3307,18 +3313,18 @@ Submit and track your monthly utility payments directly through your account.</p
                   <div class="flex flex-wrap items-center gap-2">
                     <h3 class="text-lg font-bold text-slate-900 dark:text-white">Admin Actions &amp; System Setup</h3>
                     <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
-                      Admin Group
+                      Organized by Module
                     </span>
                   </div>
-                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Centralized Google Sheet initialization, Drive upload linking, folder ownership &amp; isolated Apps Script configuration</p>
+                  <p class="text-xs text-slate-500 dark:text-royal-300/60">Select a module below or view all sections to manage Google Sheets, Drive folders, Free AI extraction, and User/Account catalogs</p>
                 </div>
               </div>
               <div class="flex flex-wrap items-center gap-2">
                 <button type="button" onclick="switchTab('user-management')" class="px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 text-xs font-semibold cursor-pointer">
-                  Users
+                  Manage Users
                 </button>
                 <button type="button" onclick="switchTab('account-management')" class="px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 text-xs font-semibold cursor-pointer">
-                  Accounts
+                  Manage Biller Accounts
                 </button>
                 <button type="button" onclick="openWebhookSettingsModal()" class="px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border border-purple-500/25 text-xs font-semibold cursor-pointer">
                   Webhook Settings
@@ -3326,20 +3332,89 @@ Submit and track your monthly utility payments directly through your account.</p
               </div>
             </div>
 
-            <!-- Section 1: One-Time Bill Payment Sheet, Upload Linking & Isolated Drive Setup -->
+            <!-- Quick Module Filter & Purpose Guide -->
+            <div class="p-3.5 rounded-2xl bg-slate-100/90 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800/60 space-y-2.5">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 dark:text-royal-200">
+                  Filter Admin Setup by Module:
+                </span>
+                <span class="text-[11px] text-slate-500 dark:text-royal-300/70">
+                  Each card below is labeled with its target Portal Tab, Google Sheet, and Drive Folder
+                </span>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <button type="button" id="adminFilterBtn-all" onclick="filterAdminActionsSection('all')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white">
+                  All Admin Sections (4)
+                </button>
+                <button type="button" id="adminFilterBtn-regular-bills" onclick="filterAdminActionsSection('regular-bills')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-white dark:bg-[#1e1e1e] text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700">
+                  1. Regular Bill &amp; Enrollment
+                </button>
+                <button type="button" id="adminFilterBtn-one-time-payment" onclick="filterAdminActionsSection('one-time-payment')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-white dark:bg-[#1e1e1e] text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700">
+                  2. One-Time Bill Payment
+                </button>
+                <button type="button" id="adminFilterBtn-free-ai" onclick="filterAdminActionsSection('free-ai')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-white dark:bg-[#1e1e1e] text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700">
+                  3. Free AI Statement Reader
+                </button>
+                <button type="button" id="adminFilterBtn-users-accounts" onclick="filterAdminActionsSection('users-accounts')" class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-white dark:bg-[#1e1e1e] text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700">
+                  4. Users &amp; Biller Accounts
+                </button>
+              </div>
+            </div>
+
+            <!-- MODULE 1: Regular Monthly Bill Payment & Utility Bill Enrollment -->
+            <div id="adminSection-regular-bills" class="p-5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200 dark:border-royal-800/60 space-y-3.5">
+              <div class="flex flex-wrap items-start justify-between gap-3 pb-3 border-b border-slate-200 dark:border-royal-800/60">
+                <div class="space-y-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                      MODULE 1
+                    </span>
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">
+                      Regular Bill Payment &amp; Utility Bill Enrollment Setup
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-600 dark:text-royal-300/80">
+                    <strong>What this is for:</strong> Manages the Google Sheet tabs &amp; webhooks for <strong>Request Bill Payment</strong> (<code class="font-mono">Request Bill Payments</code>) and <strong>Enroll Bill</strong> (<code class="font-mono">New Bill Endorsement</code>) inside the main utility operations workbook.
+                  </p>
+                </div>
+                <a href="https://docs.google.com/spreadsheets/d/1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA/edit" target="_blank" rel="noopener noreferrer" class="px-3 py-1.5 rounded-xl bg-white dark:bg-[#222222] text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:underline">
+                  Open Operations Workbook
+                </a>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <button type="button" id="adminEnrollCheckSheetBtn" onclick="checkOrGenerateEnrollmentSheet()" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer">
+                  <i id="checkEnrollSheetIcon" data-lucide="sheet" class="w-3.5 h-3.5"></i>
+                  <span>Check / Update &ldquo;New Bill Endorsement&rdquo; Tab</span>
+                </button>
+                <button type="button" onclick="openWebhookSettingsModal()" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-sm cursor-pointer">
+                  <i data-lucide="settings" class="w-3.5 h-3.5"></i>
+                  <span>Configure Google Sheets Webhooks</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- MODULE 2: One-Time Bill Payment Sheet, Upload Linking & Isolated Drive Setup -->
             <div id="adminOtpFolderConfigBox" class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/40 border border-slate-200 dark:border-slate-800 space-y-4">
-              <div class="flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
-                <div class="flex flex-wrap items-center gap-2">
-                  <span class="text-sm font-bold text-slate-900 dark:text-white">
-                    One-Time Bill Payment — Sheet &amp; Upload Linking (&ldquo;One Time Bill Payments&rdquo;)
-                  </span>
-                  <span id="otpSheetLiveBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                    Checking Sheet...
-                  </span>
+              <div class="flex flex-wrap items-start justify-between gap-2 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div class="space-y-1">
+                  <div class="flex flex-wrap items-center gap-2">
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                      MODULE 2
+                    </span>
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">
+                      One-Time Bill Payment — Sheet &amp; Personal Drive Upload Setup (&ldquo;One Time Bill Payments&rdquo;)
+                    </span>
+                    <span id="otpSheetLiveBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                      ✓ Live in GSheet
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-600 dark:text-slate-400">
+                    <strong>What this is for:</strong> Controls the <strong>One-Time Bill Payment</strong> &amp; <strong>One-Time Status</strong> tabs. Saves 17-column records to <code class="font-mono">One Time Bill Payments</code> and uploads the 3 required PDF/JPEG/PNG attachments (Request Letter, SOA, Management Approved RLF) to personal Drive folder <code class="font-mono">1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5</code>.
+                  </p>
                 </div>
                 <div class="flex flex-wrap items-center gap-2">
                   <button type="button" id="adminOtpLinkUploadsBtn" onclick="handleAdminTriggerLinkOneTimeUploads()" class="px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-xs font-bold cursor-pointer">
-                    Admin: Link / Sync Uploads
+                    Link / Sync Drive Uploads
                   </button>
                   <button type="button" onclick="handleInitOneTimeSheet()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold cursor-pointer">
                     Init / Verify Sheet
@@ -3352,14 +3427,14 @@ Submit and track your monthly utility payments directly through your account.</p
 
               <div id="otpPlannedPrepPanel" class="space-y-3">
                 <div class="p-3 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-slate-800 text-xs text-slate-700 dark:text-slate-300 space-y-1">
-                  <div class="font-bold text-slate-900 dark:text-white">✓ 100% Isolated Personal Drive Setup (Zero Impact on Bill Sub &amp; Enrollment Sub):</div>
+                  <div class="font-bold text-slate-900 dark:text-white">✓ Isolated Personal Drive &amp; Webhook Configuration (Allowed Uploads: JPEG, PNG, PDF Only):</div>
                   <div>
-                    1. Personal folder <code class="font-mono font-bold">1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5</code> is pre-assigned below.<br/>
-                    2. Click <strong>&ldquo;Copy Isolated One-Time .gs&rdquo;</strong>, open <a href="https://script.google.com" target="_blank" rel="noopener noreferrer" class="underline font-semibold">script.google.com</a> in your Google account, deploy as Web App (<em>Execute as: Me</em>, <em>Access: Anyone</em>), and paste its <code class="font-mono">/exec</code> URL below.
+                    1. Personal folder <code class="font-mono font-bold">1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5</code> and your default Apps Script webhook are pre-configured below.<br/>
+                    2. To update your personal Apps Script with One-Time Drive upload support, click <strong>&ldquo;Copy Isolated One-Time .gs&rdquo;</strong> (or <strong>&ldquo;1. Copy Dedicated AI Code.gs&rdquo;</strong> in Module 3) and deploy as Web App (<em>Execute as: Me</em>, <em>Access: Anyone</em>).
                   </div>
                 </div>
                 <div class="flex flex-wrap items-center justify-between gap-2 bg-white dark:bg-[#141414] p-3 rounded-xl border border-slate-200 dark:border-slate-800">
-                  <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Upload Requirement Mode:</span>
+                  <span class="text-xs font-bold text-slate-700 dark:text-slate-300">Upload Requirement Mode (Formats: PDF, JPEG, PNG Only):</span>
                   <select id="otpUploadModeSelect" onchange="saveOtpUploadModeSetting(this.value)" class="px-3 py-1.5 rounded-lg bg-slate-100 dark:bg-[#222222] border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-800 dark:text-slate-200">
                     <option value="required">Active Uploads (Require All 3 Files on Submit)</option>
                     <option value="planned">Uploads Optional (Sheet-First Mode)</option>
@@ -3381,39 +3456,42 @@ Submit and track your monthly utility payments directly through your account.</p
                 <div class="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200 dark:border-slate-800">
                   <span class="text-xs font-semibold text-slate-500">Apps Script Deployment Files (v2.0 Production — Silent Drive Sharing, Zero Emails):</span>
                   <div class="flex flex-wrap items-center gap-2">
+                    <button type="button" id="copyUnifiedGsBtnMod2" onclick="copyDedicatedAiGsCode()" class="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold cursor-pointer">
+                      Copy Unified Code.gs
+                    </button>
                     <button type="button" onclick="copyIsolatedOneTimeAppsScript()" class="px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 dark:bg-white dark:hover:bg-neutral-200 text-white dark:text-slate-900 text-xs font-bold cursor-pointer">
                       Copy Isolated One-Time .gs
                     </button>
                     <button type="button" onclick="copyMasterAllUploadsAppsScript()" class="px-3 py-1.5 rounded-xl bg-white dark:bg-[#222222] border border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 text-xs font-bold cursor-pointer">
                       Copy Master All-Uploads Code.gs
                     </button>
+                    <button type="button" onclick="toggleUnifiedCodeGsPreview()" class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-xs font-bold cursor-pointer">
+                      View Unified Code.gs
+                    </button>
                   </div>
+                </div>
+                <div id="unifiedCodeGsPreviewDrawer" class="hidden p-3 rounded-xl bg-slate-950 border border-slate-800 space-y-2">
+                  <div class="flex items-center justify-between text-[11px] text-slate-300 font-bold">
+                    <span>Unified Code.gs (Select All &amp; Copy into script.google.com, then Run authorizeDriveAndSheets once):</span>
+                    <button type="button" onclick="copyDedicatedAiGsCode()" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">
+                      Copy to Clipboard
+                    </button>
+                  </div>
+                  <textarea id="unifiedCodeGsPreviewTextarea" readonly rows="12" onclick="this.select()" class="w-full p-2.5 rounded-lg bg-slate-900 text-emerald-300 font-mono text-[11px] border border-slate-700 focus:outline-none"></textarea>
                 </div>
               </div>
               <div id="otpAdminNoticeText" class="hidden text-xs font-semibold text-slate-700 dark:text-slate-300"></div>
             </div>
 
-            <!-- Section 2: Utility Bill Enrollment & Webhook Sheet Maintenance -->
-            <div class="p-5 rounded-2xl bg-white dark:bg-royal-950/40 border border-slate-200 dark:border-royal-800/60 space-y-3">
-              <div class="text-sm font-bold text-slate-900 dark:text-white">Google Sheet Tab Verification &amp; Webhooks</div>
-              <div class="flex flex-wrap items-center gap-3">
-                <button type="button" id="adminEnrollCheckSheetBtn" onclick="checkOrGenerateEnrollmentSheet()" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer">
-                  <i id="checkEnrollSheetIcon" data-lucide="sheet" class="w-3.5 h-3.5"></i>
-                  <span>Check / Update &ldquo;New Bill Endorsement&rdquo; Tab</span>
-                </button>
-                <button type="button" onclick="openWebhookSettingsModal()" class="inline-flex items-center space-x-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-sm cursor-pointer">
-                  <i data-lucide="settings" class="w-3.5 h-3.5"></i>
-                  <span>Configure Google Sheets Webhooks</span>
-                </button>
-              </div>
-            </div>
-
-            <!-- Section 3: Free AI Statement Extractor & Dedicated AI_SOA_Extractions Sheet Setup (Moved to Admin Mod) -->
-            <div class="p-5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/30 space-y-3">
+            <!-- MODULE 3: Free AI Statement Extractor & Dedicated AI_SOA_Extractions Sheet Setup -->
+            <div id="adminSection-free-ai" class="p-5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/30 space-y-3">
               <div class="flex flex-wrap items-start justify-between gap-3">
                 <div class="space-y-1.5">
                   <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="text-sm font-bold text-slate-900 dark:text-white">Free AI Statement Extractor</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-500/20 text-emerald-800 dark:text-emerald-200 border border-emerald-500/40">
+                      MODULE 3
+                    </span>
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">Free AI Statement Extractor &amp; Dedicated AI Sheet</span>
                     <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
                       ₱0.00 FREE TIER
                     </span>
@@ -3427,11 +3505,11 @@ Submit and track your monthly utility payments directly through your account.</p
                     </span>
                   </div>
                   <p class="text-xs text-slate-600 dark:text-royal-300/80">
-                    Cycle, Due Date, Grace Period (explicit only — never Due-to-Discon), Consumption, Arrears, Current, Total &amp; Amount Before Due
+                    <strong>What this is for:</strong> Powers the automatic &amp; manual <strong>AI Bill Reader</strong> in the Request Payment Status Inspector. Extracts Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due.
                   </p>
                   <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[10px]">
                     <span class="px-2 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                      Meralco / Water / Utility Statement Formats
+                      Dual-Source + Auto-Rotate (0°/90°/180°/270°) Active
                     </span>
                     <span class="px-2 py-0.5 rounded font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">
                       Multi-Page PDF &amp; Image Scanned
@@ -3466,10 +3544,10 @@ Submit and track your monthly utility payments directly through your account.</p
                 <div class="flex flex-wrap items-center justify-between gap-2">
                   <div>
                     <div class="text-[11px] font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
-                      Dedicated AI Sheet &amp; Standalone Code.gs (Keyed by Request ID)
+                      Dedicated AI Sheet &amp; Unified Code.gs (Keyed by Request ID)
                     </div>
                     <p class="text-[10px] text-slate-500 dark:text-royal-300/75 mt-0.5">
-                      100% independent of the Drive Owner's <code class="font-mono">Request Bill Payments</code> sheet &amp; upload script. Every AI scan upserts a row with <code class="font-mono">Request ID</code> (<code class="font-mono">REQ-YYYYMMDD-XXXX</code>) in Column A and joins automatically on live sync.
+                      Includes <code class="font-mono">AI_SOA_Extractions</code>, <code class="font-mono">UserData</code>, <code class="font-mono">Announcements</code>, and <code class="font-mono">One Time Bill Payments</code> + Personal Drive Folder <code class="font-mono">1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5</code>.
                     </p>
                   </div>
                   <div class="flex flex-wrap items-center gap-1.5">
@@ -3479,7 +3557,14 @@ Submit and track your monthly utility payments directly through your account.</p
                       onclick="copyDedicatedAiGsCode()"
                       class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer"
                     >
-                      1. Copy Dedicated AI Code.gs
+                      1. Copy Unified Code.gs
+                    </button>
+                    <button
+                      type="button"
+                      onclick="toggleUnifiedCodeGsPreview()"
+                      class="px-2.5 py-1 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-800 dark:text-amber-300 border border-amber-500/30 text-[10px] font-bold cursor-pointer"
+                    >
+                      View Unified Code.gs
                     </button>
                     <button
                       type="button"
@@ -3550,6 +3635,43 @@ Submit and track your monthly utility payments directly through your account.</p
                     class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold cursor-pointer"
                   >
                     Save Dedicated AI Sheet Config
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- MODULE 4: Users, Biller Catalog (LUT) & Announcements Directory -->
+            <div id="adminSection-users-accounts" class="p-5 rounded-2xl bg-indigo-500/5 dark:bg-indigo-950/20 border border-indigo-500/25 space-y-3.5">
+              <div class="space-y-1 pb-2 border-b border-indigo-500/20">
+                <div class="flex flex-wrap items-center gap-2">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-indigo-500/15 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
+                    MODULE 4
+                  </span>
+                  <span class="text-sm font-bold text-slate-900 dark:text-white">
+                    User Accounts, Role Permissions &amp; Enrolled Biller Catalog (LUT)
+                  </span>
+                </div>
+                <p class="text-xs text-slate-600 dark:text-royal-300/80">
+                  <strong>What this is for:</strong> Direct shortcuts to manage portal logins, encrypted passwords, module RBAC permissions (<code class="font-mono">UserData</code> in <code class="font-mono">1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY</code>) and enrolled utility accounts (<code class="font-mono">Billers</code> in <code class="font-mono">1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA</code>).
+                </p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                <div class="p-3.5 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                  <div>
+                    <div class="font-bold text-slate-900 dark:text-white">User Management &amp; RBAC</div>
+                    <div class="text-[11px] text-slate-500">Add users, reset passwords, suspend/retire accounts &amp; configure level permissions</div>
+                  </div>
+                  <button type="button" onclick="switchTab('user-management')" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold whitespace-nowrap cursor-pointer">
+                    Open Users
+                  </button>
+                </div>
+                <div class="p-3.5 rounded-xl bg-white dark:bg-[#141414] border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+                  <div>
+                    <div class="font-bold text-slate-900 dark:text-white">Enrolled Biller Catalog (LUT)</div>
+                    <div class="text-[11px] text-slate-500">View and manage enrolled utility accounts, sites, biller names &amp; assigned filers</div>
+                  </div>
+                  <button type="button" onclick="switchTab('account-management')" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold whitespace-nowrap cursor-pointer">
+                    Open Accounts
                   </button>
                 </div>
               </div>
@@ -4635,6 +4757,195 @@ Submit and track your monthly utility payments directly through your account.</p
           <!-- Interactive Pan/Zoom Stage -->
           <div id="enrollInspectorStage" oncontextmenu="event.preventDefault()" onwheel="handleInspectorWheel(event)" onmousedown="startInspectorPan(event)" onmousemove="moveInspectorPan(event)" onmouseup="endInspectorPan()" onmouseleave="endInspectorPan()" class="flex-1 relative overflow-y-auto flex items-center justify-center p-4 cursor-grab">
             <div id="enrollInspectorTransformBox" class="transition-transform duration-75 ease-out origin-center w-full flex items-center justify-center"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: SPLIT-SCREEN ONE-TIME BILL PAYMENT REQUEST INSPECTOR & 3-ATTACHMENT VIEWER -->
+  <div id="editOneTimeDetailsModal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 animate-fade-in">
+    <div class="bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 rounded-2xl shadow-2xl max-w-6xl w-full h-[90vh] flex flex-col overflow-hidden">
+      <!-- Top Bar -->
+      <div class="flex flex-wrap items-center justify-between gap-2 px-5 py-3.5 border-b border-slate-200 dark:border-royal-800 bg-slate-50/80 dark:bg-royal-950/60 shrink-0">
+        <div class="flex items-center space-x-3">
+          <div class="w-9 h-9 rounded-xl bg-amber-600/10 text-amber-600 dark:text-amber-400 flex items-center justify-center border border-amber-500/20">
+            <i data-lucide="file-check-2" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <div class="flex flex-wrap items-center gap-2">
+              <h4 class="text-sm sm:text-base font-bold text-slate-900 dark:text-white">One-Time Bill Payment Request Inspector</h4>
+              <span id="editOtpDetailsSubtitle" class="px-2 py-0.5 rounded text-[11px] font-mono font-bold bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">OTP-ID</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20">ONE-TIME PAYMENT ONLY</span>
+              <span id="editOtpAccessModeBadge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">Edit Access</span>
+            </div>
+            <p id="editOtpSubmittedMeta" class="text-[11px] text-slate-500 dark:text-royal-300/70">3-Attachment One-Time Payment Verification (Request Letter • SOA • Management Approved RLF)</p>
+          </div>
+        </div>
+        <button type="button" onclick="closeEditOneTimeDetailsModal()" class="p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-royal-800 cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- 2-Pane Split Body -->
+      <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 overflow-hidden">
+        <!-- LEFT PANE (5 cols): One-Time Payment Details, RFP/Payment Editor & In-Place Details Editor -->
+        <div class="lg:col-span-5 border-b lg:border-b-0 lg:border-r border-slate-200 dark:border-royal-800 p-5 overflow-y-auto flex flex-col justify-between bg-white dark:bg-royal-900">
+          <form id="editOneTimeDetailsForm" onsubmit="handleSaveOneTimeDetailsEdit(event)" class="space-y-3.5">
+            <input type="hidden" id="editOtpReqId" value="" />
+
+            <!-- Live Status Bar -->
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-royal-950/90 border border-slate-200 dark:border-royal-800">
+              <div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400">One-Time Payment Status</div>
+                <div class="text-xs font-bold text-slate-700 dark:text-royal-200 mt-0.5">Automated by RFP# &amp; Date Paid</div>
+              </div>
+              <div id="editOtpStatusContainer"></div>
+            </div>
+
+            <div id="editOtpStatusConfirmBar" class="hidden p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/50 border border-amber-300 dark:border-amber-700/60 flex items-center justify-between gap-2">
+              <div class="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                Confirm status change to <span id="editOtpPendingStatusLabel" class="underline font-extrabold"></span>?
+              </div>
+              <div class="flex items-center space-x-1.5 shrink-0">
+                <button type="button" onclick="cancelPendingOtpStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-white dark:bg-royal-900 text-slate-600 dark:text-slate-300 border border-slate-300 dark:border-royal-700 cursor-pointer">Cancel</button>
+                <button type="button" onclick="confirmPendingOtpStatusChange()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow cursor-pointer">Confirm Commit</button>
+              </div>
+            </div>
+
+            <div id="editOtpSuccessToast" class="hidden p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold flex items-center space-x-2">
+              <span>✓</span>
+              <span id="editOtpSuccessToastText">One-Time Payment details committed!</span>
+            </div>
+
+            <!-- Quick Open in New Tab & Drive Folder Bar -->
+            <div id="editOtpQuickLinksCard" class="p-3 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800 space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">3 Uploaded Attachments (Preview or Open)</span>
+                <a id="editOtpDriveFolderQuickLink" href="https://drive.google.com/drive/folders/1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5" target="_blank" rel="noopener noreferrer" class="text-[10px] font-bold text-amber-600 dark:text-amber-400 hover:underline">
+                  Open Drive Folder &nearr;
+                </a>
+              </div>
+              <div id="editOtpQuickFileButtons" class="grid grid-cols-1 sm:grid-cols-3 gap-1.5"></div>
+            </div>
+
+            <!-- Payment & RFP Details Section -->
+            <div class="p-3.5 rounded-xl bg-amber-500/5 dark:bg-amber-950/20 border border-amber-500/25 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300">Payment &amp; RFP Details</span>
+                <button type="button" id="editOtpPaymentUnlockBtn" onclick="toggleOtpPaymentUnlock()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs cursor-pointer">
+                  Add / Edit Payment Details
+                </button>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-royal-200 uppercase mb-1">RFP Number</label>
+                  <input type="text" id="editOtpRfpNumber" placeholder="e.g. RFP-2026-001" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono disabled:opacity-70" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-royal-200 uppercase mb-1">RFP Date</label>
+                  <input type="date" id="editOtpRfpDate" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono disabled:opacity-70" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-royal-200 uppercase mb-1">Amount (PHP)</label>
+                  <input type="text" id="editOtpAmount" placeholder="0.00" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-emerald-600 dark:text-emerald-400 disabled:opacity-70" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-600 dark:text-royal-200 uppercase mb-1">Date Paid</label>
+                  <input type="date" id="editOtpDatePaid" class="w-full px-2.5 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono disabled:opacity-70" />
+                </div>
+              </div>
+            </div>
+
+            <!-- Account, Site & Biller Details Section -->
+            <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-royal-950/60 border border-slate-200 dark:border-royal-800 space-y-2.5">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-2">
+                  <span id="editOtpUnlockStatusDot" class="w-2 h-2 rounded-full bg-slate-400"></span>
+                  <span class="text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-royal-200">Account &amp; Requestor Details</span>
+                </div>
+                <button type="button" id="editOtpDetailsUnlockBtn" onclick="toggleOtpDetailsUnlock()" class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer">
+                  Edit Details
+                </button>
+              </div>
+
+              <div>
+                <label class="block text-[10px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Account Number (SOA)</label>
+                <input type="text" id="editOtpAccountNo" required class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 disabled:opacity-70" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Site / Subdivision</label>
+                  <input type="text" id="editOtpSite" required class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold disabled:opacity-70" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Utility Biller</label>
+                  <input type="text" id="editOtpBiller" required class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-semibold disabled:opacity-70" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Viber Number</label>
+                  <input type="text" id="editOtpViber" required class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs font-mono disabled:opacity-70" />
+                </div>
+                <div>
+                  <label class="block text-[10px] font-bold text-slate-700 dark:text-royal-200 uppercase mb-1">Requestor / Email</label>
+                  <input type="text" id="editOtpEmail" class="w-full px-3 py-1.5 rounded-xl bg-white dark:bg-royal-950 border border-slate-300 dark:border-royal-700 text-xs disabled:opacity-70" />
+                </div>
+              </div>
+            </div>
+
+            <div id="editOtpActionRow" class="flex items-center justify-end space-x-2 pt-3 border-t border-slate-200 dark:border-royal-800">
+              <button type="button" onclick="closeEditOneTimeDetailsModal()" class="px-4 py-2 rounded-xl text-xs text-slate-600 dark:text-royal-200 hover:bg-slate-100 dark:hover:bg-royal-800 cursor-pointer">Close</button>
+              <button type="submit" id="editOtpSaveBtn" class="hidden px-5 py-2 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white shadow-md cursor-pointer">Review &amp; Save Changes</button>
+            </div>
+
+            <div id="editOtpConfirmBanner" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/60 border border-amber-300 dark:border-amber-700/70 space-y-2">
+              <div class="text-xs font-bold text-amber-900 dark:text-amber-200">Confirm Before Commit</div>
+              <p class="text-[11px] text-amber-800 dark:text-amber-300/90">Are you sure you want to commit these One-Time Bill Payment updates to the live "One Time Bill Payments" Google Sheet?</p>
+              <div class="flex items-center justify-end space-x-2 pt-1">
+                <button type="button" onclick="cancelEditOtpDetailsCommit()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white dark:bg-royal-900 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-royal-700 cursor-pointer">Back to Edit</button>
+                <button type="button" onclick="commitOneTimeDetailsEdit()" class="px-4 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer">Yes, Confirm &amp; Commit</button>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- RIGHT PANE (7 cols): 3-Attachment Switcher + Zoom/Pan/Rotate Preview Window -->
+        <div class="lg:col-span-7 bg-slate-900/95 flex flex-col overflow-hidden select-none" oncontextmenu="event.preventDefault()">
+          <!-- Top Switcher Bar for 3 Attachments -->
+          <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-950 border-b border-slate-800 text-slate-200 shrink-0">
+            <div class="flex flex-wrap items-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-800">
+              <button type="button" id="otpModeBtnLetter" onclick="setOtpAttachmentMode('letter')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer">1. Request Letter</button>
+              <button type="button" id="otpModeBtnSoa" onclick="setOtpAttachmentMode('soa')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer">2. Billing / SOA</button>
+              <button type="button" id="otpModeBtnRlf" onclick="setOtpAttachmentMode('rlf')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-600 text-white cursor-pointer">3. Approved RLF</button>
+              <button type="button" id="otpModeBtnCompare" onclick="setOtpAttachmentMode('compare')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer">⊞ Compare All (3)</button>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-1.5">
+              <div class="inline-flex items-center bg-slate-900 p-0.5 rounded-lg border border-slate-800 mr-1">
+                <button type="button" id="otpRenderModeBtnIframe" onclick="setInspectorDriveRenderMode('iframe')" class="px-2 py-1 rounded-md text-[10px] font-bold bg-amber-600 text-white cursor-pointer" title="Scroll through all pages of 2-page or multi-page PDFs">
+                  📄 Multi-Page PDF
+                </button>
+                <button type="button" id="otpRenderModeBtnImage" onclick="setInspectorDriveRenderMode('image')" class="px-2 py-1 rounded-md text-[10px] font-bold text-slate-400 hover:text-white cursor-pointer" title="Page 1 rotatable image canvas">
+                  🔍 Page 1 Canvas
+                </button>
+              </div>
+              <button type="button" onclick="adjustInspectorZoom(-0.25)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">−</button>
+              <span id="otpInspectorZoomLabel" class="px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-[11px] font-mono font-bold text-amber-400">100%</span>
+              <button type="button" onclick="adjustInspectorZoom(0.25)" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-bold cursor-pointer">+</button>
+              <button type="button" onclick="rotateInspectorView()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">↻ 90°</button>
+              <button type="button" onclick="resetInspectorView()" class="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] font-semibold cursor-pointer">Reset</button>
+            </div>
+          </div>
+
+          <div id="otpInspectorLinkBar" class="flex items-center justify-between px-4 py-1.5 bg-slate-900/90 border-b border-slate-800/80 text-[11px] text-slate-300 shrink-0"></div>
+
+          <!-- Interactive Pan/Zoom Stage -->
+          <div id="otpInspectorStage" oncontextmenu="event.preventDefault()" onwheel="handleInspectorWheel(event)" onmousedown="startInspectorPan(event)" onmousemove="moveInspectorPan(event)" onmouseup="endInspectorPan()" onmouseleave="endInspectorPan()" class="flex-1 relative overflow-y-auto flex items-center justify-center p-4 cursor-grab">
+            <div id="otpInspectorTransformBox" class="transition-transform duration-75 ease-out origin-center w-full flex items-center justify-center"></div>
           </div>
         </div>
       </div>
@@ -6625,6 +6936,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         renderOneTimeStatusTable();
         syncLiveOneTimePaymentsFromGSheet(false);
       } else if (tabId === "admin-actions") {
+        populateOneTimeFormDefaults();
+        verifyOneTimeSheetTabExistsInGSheet();
         syncDedicatedAiSetupInputs();
         refreshFreeAiQuotaBars();
       }
@@ -7899,6 +8212,114 @@ function ensureOneTimePaymentHeaders(sheet) {
       return map;
     }
 
+    const PARTIAL_RETRY_ONCE_STORAGE_KEY_STATIC = "apec_ai_partial_retry_once_v1";
+
+    function getPartialRetryOnceMapInStatic() {
+      try {
+        const raw = localStorage.getItem(PARTIAL_RETRY_ONCE_STORAGE_KEY_STATIC);
+        return raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        return {};
+      }
+    }
+
+    function hasUsedPartialRetryInStatic(reqId) {
+      if (!reqId) return false;
+      const map = getPartialRetryOnceMapInStatic();
+      return Boolean(map[reqId]);
+    }
+
+    function markPartialRetryUsedInStatic(reqId) {
+      if (!reqId) return;
+      try {
+        const map = getPartialRetryOnceMapInStatic();
+        map[reqId] = Date.now();
+        localStorage.setItem(PARTIAL_RETRY_ONCE_STORAGE_KEY_STATIC, JSON.stringify(map));
+      } catch (e) {}
+    }
+
+    function isBillCompletelyReadInStatic(scan) {
+      if (!scan) return false;
+      const isConcreteValue = (v) => {
+        const u = String(v || "").trim().toUpperCase();
+        return u !== "" && u !== "—" && !u.includes("UNREADABLE") && !u.includes("NOT ON BILL");
+      };
+      if (!isConcreteValue(scan.totalAmount) || !isConcreteValue(scan.dueDate)) {
+        return false;
+      }
+      const checkedFields = [
+        scan.cycleFrom,
+        scan.cycleTo,
+        scan.dueDate,
+        scan.consumption,
+        scan.arrears,
+        scan.currentAmount,
+        scan.totalAmount
+      ];
+      const hasAnyUnreadable = checkedFields.some(v => String(v || "").trim().toUpperCase().includes("UNREADABLE"));
+      if (hasAnyUnreadable) return false;
+      const st = String(scan.readabilityStatus || scan.legibilityStatus || "").trim().toUpperCase();
+      if (st === "PARTIALLY_READABLE" || st === "UNREADABLE") return false;
+      return true;
+    }
+
+    function mergeRetryExtractionWithoutAssumptionsInStatic(prevScan, newScan) {
+      if (!prevScan) return newScan;
+      const isNotUnreadable = (v) => {
+        const u = String(v || "").trim().toUpperCase();
+        return u !== "" && u !== "—" && !u.includes("UNREADABLE");
+      };
+      const pick = (newVal, oldVal, fallback = "UNREADABLE") => {
+        if (isNotUnreadable(newVal)) return String(newVal).trim();
+        if (isNotUnreadable(oldVal)) return String(oldVal).trim();
+        return fallback;
+      };
+      const cycleFrom = pick(newScan.cycleFrom, prevScan.cycleFrom);
+      const cycleTo = pick(newScan.cycleTo, prevScan.cycleTo);
+      const dueDate = pick(newScan.dueDate, prevScan.dueDate);
+      const dueDateIso = newScan.dueDateIso || prevScan.dueDateIso || "";
+      const gracePeriod = pick(newScan.gracePeriod, prevScan.gracePeriod, "NOT ON BILL");
+      const consumption = pick(newScan.consumption, prevScan.consumption);
+      const arrears = pick(newScan.arrears, prevScan.arrears);
+      const currentAmount = pick(newScan.currentAmount, prevScan.currentAmount);
+      const totalAmount = pick(newScan.totalAmount, prevScan.totalAmount);
+      const amountBeforeDue = pick(newScan.amountBeforeDue, prevScan.amountBeforeDue, "NOT ON BILL");
+
+      const isConcreteValue = (v) => {
+        const u = String(v || "").toUpperCase();
+        return u !== "" && !u.includes("UNREADABLE") && !u.includes("NOT ON BILL");
+      };
+      const checkedFields = [cycleFrom, cycleTo, dueDate, consumption, arrears, currentAmount, totalAmount];
+      const hasAnyUnreadable = checkedFields.some(v => String(v || "").toUpperCase().includes("UNREADABLE"));
+      const concreteCount = [cycleFrom, cycleTo, dueDate, consumption, currentAmount, totalAmount].filter(isConcreteValue).length;
+
+      const readabilityStatus =
+        isConcreteValue(totalAmount) && isConcreteValue(dueDate) && !hasAnyUnreadable
+          ? "READABLE"
+          : concreteCount >= 1
+          ? "PARTIALLY_READABLE"
+          : "UNREADABLE";
+      const legibilityStatus = readabilityStatus === "READABLE" ? "CLEAR" : readabilityStatus;
+
+      return {
+        ...prevScan,
+        ...newScan,
+        cycleFrom,
+        cycleTo,
+        dueDate,
+        dueDateIso,
+        gracePeriod,
+        consumption,
+        arrears,
+        currentAmount,
+        totalAmount,
+        amountBeforeDue,
+        readabilityStatus,
+        legibilityStatus,
+        notes: readabilityStatus === "READABLE" ? "" : (newScan.notes || prevScan.notes || "")
+      };
+    }
+
     async function handleBatchAutoScanUnscannedInStatic() {
       if (!canUserTriggerPaymentAi()) return;
       const btnText = document.getElementById("batchAutoScanFreeAiBtnText");
@@ -7929,9 +8350,13 @@ function ensureOneTimePaymentHeaders(sheet) {
           if (!r.requestId || attemptedOrFailedIds.has(r.requestId)) return false;
           const st = String(r.status || "").toUpperCase();
           if (st === "CANCEL" || st === "CANCELLED" || st === "REJECTED" || st === "DUPLICATE" || st === "BLURRED") return false;
-          if (currentMap[r.requestId] || liveSheetAiMap[r.requestId] || r.extractedBillData) return false;
           const fid = extractDriveFileIdFromUrl(r.fileUrl || "");
-          return Boolean(fid);
+          if (!fid) return false;
+          const existingAi = currentMap[r.requestId] || liveSheetAiMap[r.requestId] || r.extractedBillData || null;
+          if (!existingAi) return true; // Never scanned -> scan once
+          if (isBillCompletelyReadInStatic(existingAi)) return false; // Completely read -> skip (never read again)
+          // Has partial unreadable or unreadable fields -> retry at most 1 time
+          return !hasUsedPartialRetryInStatic(r.requestId);
         });
         // Sort strictly Earliest to Newest so batch writes always proceed chronologically from oldest to newest
         return [...filtered].sort((a, b) => {
@@ -7948,7 +8373,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (btnText) btnText.innerText = "✨ Auto-Scan Unscanned Bills (Free AI)";
         if (banner) {
           banner.classList.remove("hidden");
-          banner.innerText = "✓ All active payment requests with Google Drive attachments are already processed!";
+          banner.innerText = "✓ All active payment requests with Google Drive attachments are already processed (and any partial bills have completed their 1-time retry)!";
           setTimeout(() => banner.classList.add("hidden"), 4500);
         }
         return;
@@ -7971,9 +8396,16 @@ function ensureOneTimePaymentHeaders(sheet) {
           attemptedOrFailedIds.add(item.requestId);
           continue;
         }
+        const currentMapNow = getExtractedSoaMap();
+        const prevAi = currentMapNow[item.requestId] || liveSheetAiMap[item.requestId] || item.extractedBillData || null;
+        const isOneTimePartialRetry = Boolean(prevAi && !isBillCompletelyReadInStatic(prevAi));
+
         const totalScope = completed + remainingList.length;
         if (banner) {
-          banner.innerText = `⏳ Auto-Scanning ${completed + 1}/${totalScope} (Earliest → Newest): ${item.requestId} (${item.accountNumber}) • ${remainingList.length} remaining... [Free Tier Paced Queue • ₱0.00]`;
+          banner.innerText = `⏳ Auto-Scanning ${completed + 1}/${totalScope} (Earliest → Newest)${isOneTimePartialRetry ? " [1-Time Partial Retry]" : ""}: ${item.requestId} (${item.accountNumber}) • ${remainingList.length} remaining... [Free Tier Paced Queue • ₱0.00]`;
+        }
+        if (isOneTimePartialRetry) {
+          markPartialRetryUsedInStatic(item.requestId);
         }
         const result = await callFreeAiExtractEndpoint({
           requestId: item.requestId,
@@ -7994,21 +8426,25 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (result.limitReached || /429|RESOURCE_EXHAUSTED|quota|rate.?limit/i.test(String(result.error || ""))) {
           stoppedByFreeLimit = true;
           if (banner) {
-            banner.innerText = `⛔ Free AI limit reached (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}) — Auto-stopped immediately at ₱0.00. Remaining ${remainingList.length} unscanned bill(s) will process after quota resets.`;
+            banner.innerText = `⛔ Free AI limit reached (${completed} scan(s) saved to ${getDedicatedAiSheetName()}) — Auto-stopped immediately at ₱0.00. Remaining ${remainingList.length} bill(s) will process after quota resets.`;
           }
           break;
         }
         if (result.ok && result.extracted) {
           completed++;
           consecutiveFailures = 0;
-          const syncedObj = { ...result.extracted, sheetSynced: true };
+          attemptedOrFailedIds.add(item.requestId);
+          const mergedObj = prevAi
+            ? mergeRetryExtractionWithoutAssumptionsInStatic(prevAi, result.extracted)
+            : result.extracted;
+          const syncedObj = { ...mergedObj, sheetSynced: true };
           liveSheetAiMap[item.requestId] = syncedObj;
-          if (result.extracted.sheetSynced) {
+          if (result.extracted.sheetSynced && (!prevAi || JSON.stringify(mergedObj) === JSON.stringify(result.extracted))) {
             saveExtractedSoaForRequest(item.requestId, syncedObj);
             const target = paymentRequests.find(r => r.requestId === item.requestId);
             if (target) target.extractedBillData = syncedObj;
           } else {
-            await writeExtractedSoaToGSheet(item.requestId, result.extracted, {
+            await writeExtractedSoaToGSheet(item.requestId, syncedObj, {
               accountNumber: item.accountNumber,
               site: item.site,
               biller: item.biller
@@ -8025,7 +8461,7 @@ function ensureOneTimePaymentHeaders(sheet) {
             if (banner) {
               banner.innerText = result.staticHostBlocked
                 ? `✓ Synced ${Object.keys(liveSheetAiMap).length} processed row(s) from ${getDedicatedAiSheetName()} in Google Sheets. To scan new Drive PDFs with Gemini AI, run Auto-Scan in the Live Portal.`
-                : `⚠️ Batch Auto-Scan stopped (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}): ${errText}`;
+                : `⚠️ Batch Auto-Scan stopped (${completed} scan(s) saved to ${getDedicatedAiSheetName()}): ${errText}`;
             }
             renderBillPaymentTable();
             break;
@@ -8042,10 +8478,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (stoppedByFreeLimit || stoppedByErrorMsg) {
           setTimeout(() => banner.classList.add("hidden"), 10000);
         } else if (!stopBatchScanStatic && getDynamicUnscannedInStatic().length === 0) {
-          banner.innerText = `✓ Batch Auto-Scan complete: ${completed} new bill(s) scanned & written to ${getDedicatedAiSheetName()} (all previously processed bills were skipped)!`;
+          banner.innerText = `✓ Batch Auto-Scan complete: ${completed} bill(s) scanned & written to ${getDedicatedAiSheetName()} (all previously completely-read bills were skipped)!`;
           setTimeout(() => banner.classList.add("hidden"), 7000);
         } else if (stopBatchScanStatic) {
-          banner.innerText = `Batch scan paused (${completed} new scan(s) saved to ${getDedicatedAiSheetName()}). Click again anytime to resume remaining unprocessed bills.`;
+          banner.innerText = `Batch scan paused (${completed} scan(s) saved to ${getDedicatedAiSheetName()}). Click again anytime to resume remaining unprocessed bills.`;
           setTimeout(() => banner.classList.add("hidden"), 5500);
         }
       }
@@ -8102,6 +8538,17 @@ function ensureOneTimePaymentHeaders(sheet) {
         "  }",
         "}",
         "",
+        "function authorizeDriveAndSheets() {",
+        "  var aiSs = getAiSpreadsheet();",
+        "  var aiSheet = aiSs.getSheetByName(AI_EXTRACTION_SHEET_NAME) || aiSs.insertSheet(AI_EXTRACTION_SHEET_NAME);",
+        "  ensureAiExtractionHeaders(aiSheet);",
+        "  var utilSs = getUtilitySpreadsheet();",
+        "  var otpSheet = utilSs.getSheetByName('One Time Bill Payments') || utilSs.insertSheet('One Time Bill Payments');",
+        "  var folder = DriveApp.getFolderById('1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5');",
+        "  Logger.log('Authorized Sheets & Drive Folder: ' + folder.getName() + ' | One-Time Tab: ' + otpSheet.getName());",
+        "  return aiSheet.getName();",
+        "}",
+        "",
         "function doGet(e) {",
         "  var ss = getUserSpreadsheet();",
         "  var userSheet = ss.getSheetByName('UserData') || ss.getSheets()[0];",
@@ -8111,7 +8558,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         "  ensureAiExtractionHeaders(aiSheet);",
         "  return ContentService.createTextOutput(JSON.stringify({",
         "    status: 'success',",
-        "    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits & Dedicated AI_SOA_Extractions — Zero Drive Quota)',",
+        "    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions & One-Time Bill Payment)',",
+        "    oneTimePaymentEnabled: true,",
         "    userRows: userSheet ? userSheet.getLastRow() : 0,",
         "    announcementRows: annSheet ? annSheet.getLastRow() : 0,",
         "    aiExtractionRows: aiSheet ? aiSheet.getLastRow() : 0",
@@ -8302,6 +8750,72 @@ function ensureOneTimePaymentHeaders(sheet) {
         "      return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);",
         "    }",
         "",
+        "    // 8. One-Time Bill Payment (Tab: 'One Time Bill Payments' in 1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA + Personal Drive Folder 1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5)",
+        "    var ONE_TIME_SHEET_NAME = 'One Time Bill Payments';",
+        "    var DEFAULT_OTP_FOLDER_ID = '1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5';",
+        "    var ONE_TIME_HEADERS = ['Request ID','User ID','Requestor','Viber Number','Account No','Site','Biller','Approved Request Letter','Current Billing / SOA','Management Approved RLF','One-Time Acknowledgement','Status','RFP Number','RFP Date','Amount','Date Paid','Date Submitted'];",
+        "    function ensureOtpSheet() {",
+        "      var uSs = getUtilitySpreadsheet();",
+        "      var otpS = uSs.getSheetByName(ONE_TIME_SHEET_NAME) || uSs.insertSheet(ONE_TIME_SHEET_NAME);",
+        "      if (otpS.getLastRow() === 0) { otpS.appendRow(ONE_TIME_HEADERS); otpS.getRange(1,1,1,ONE_TIME_HEADERS.length).setFontWeight('bold'); otpS.setFrozenRows(1); }",
+        "      return otpS;",
+        "    }",
+        "    function saveOtpBase64ToFolder(b64, fName, mime, folderId) {",
+        "      if (!b64) return '';",
+        "      try {",
+        "        var clean = String(b64).indexOf(',') !== -1 ? String(b64).split(',')[1] : String(b64);",
+        "        var blob = Utilities.newBlob(Utilities.base64Decode(clean), mime || 'application/pdf', fName || 'OneTime_Doc.pdf');",
+        "        var folder = DriveApp.getFolderById(folderId || DEFAULT_OTP_FOLDER_ID);",
+        "        var file = folder.createFile(blob);",
+        "        try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (sErr) {}",
+        "        return 'https://drive.google.com/file/d/' + file.getId() + '/view';",
+        "      } catch (fErr) { return ''; }",
+        "    }",
+        "    if (data.action === 'init_onetime_sheet') {",
+        "      var otpInitSheet = ensureOtpSheet();",
+        "      return ContentService.createTextOutput(JSON.stringify({ status: 'success', sheetName: ONE_TIME_SHEET_NAME, rows: otpInitSheet.getLastRow() })).setMimeType(ContentService.MimeType.JSON);",
+        "    }",
+        "    if (data.action === 'submitOneTimePayment') {",
+        "      var otpSheet = ensureOtpSheet();",
+        "      var otpReqId = String(data.requestId || ('OTP-' + Utilities.formatDate(new Date(), 'GMT+8', 'yyyyMMdd') + '-' + Math.floor(1000 + Math.random() * 9000))).trim();",
+        "      var otpFolderId = String(data.targetFolderId || DEFAULT_OTP_FOLDER_ID).trim();",
+        "      var otpFolderUrl = 'https://drive.google.com/drive/folders/' + otpFolderId;",
+        "      var lObj = data.letterFile || {}, sObj = data.soaFile || {}, rObj = data.rlfFile || {};",
+        "      var lUrl = saveOtpBase64ToFolder(lObj.base64 || data.letterFileBase64, lObj.name || data.requestLetterFileName, lObj.type || data.letterMimeType, otpFolderId) || data.driveLetterFolderUrl || otpFolderUrl;",
+        "      var sUrl = saveOtpBase64ToFolder(sObj.base64 || data.soaFileBase64, sObj.name || data.soaFileName, sObj.type || data.soaMimeType, otpFolderId) || data.driveSoaFolderUrl || otpFolderUrl;",
+        "      var rUrl = saveOtpBase64ToFolder(rObj.base64 || data.rlfFileBase64, rObj.name || data.rlfFileName, rObj.type || data.rlfMimeType, otpFolderId) || data.driveRlfFolderUrl || otpFolderUrl;",
+        "      var colH = lUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK(\"' + lUrl + '\", \"' + lUrl + '\")') : String(data.requestLetterFileName || lUrl);",
+        "      var colI = sUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK(\"' + sUrl + '\", \"' + sUrl + '\")') : String(data.soaFileName || sUrl);",
+        "      var colJ = rUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK(\"' + rUrl + '\", \"' + rUrl + '\")') : String(data.rlfFileName || rUrl);",
+        "      var otpRow = [otpReqId, String(data.userId || ''), String(data.email || ''), String(data.viberNumber || ''), String(data.accountNumber || ''), String(data.site || ''), String(data.biller || ''), colH, colI, colJ, String(data.acknowledgementText || 'YES - ONE-TIME PAYMENT ONLY (NO SUCCEEDING PAYMENTS)'), String(data.status || 'PENDING').toUpperCase(), String(data.rfpNumber || ''), String(data.rfpDate || ''), String(data.amount || ''), String(data.datePaid || ''), String(data.submittedAt || new Date().toLocaleString())];",
+        "      var existingOtpVals = otpSheet.getDataRange().getValues();",
+        "      var foundOtpRow = -1;",
+        "      for (var oIdx = 1; oIdx < existingOtpVals.length; oIdx++) { if (String(existingOtpVals[oIdx][0] || '').trim() === otpReqId) { foundOtpRow = oIdx + 1; break; } }",
+        "      if (foundOtpRow > 0) { otpSheet.getRange(foundOtpRow, 1, 1, otpRow.length).setValues([otpRow]); } else { otpSheet.appendRow(otpRow); foundOtpRow = otpSheet.getLastRow(); }",
+        "      return ContentService.createTextOutput(JSON.stringify({ status: 'success', requestId: otpReqId, row: foundOtpRow, letterUrl: lUrl, soaUrl: sUrl, rlfUrl: rUrl })).setMimeType(ContentService.MimeType.JSON);",
+        "    }",
+        "    if ((data.action === 'updateOneTimePaymentDetails' || data.action === 'updateStatus') && data.requestId) {",
+        "      var otpUpdSheet = ensureOtpSheet();",
+        "      var otpUpdVals = otpUpdSheet.getDataRange().getValues();",
+        "      for (var uRowIdx = 1; uRowIdx < otpUpdVals.length; uRowIdx++) {",
+        "        if (String(otpUpdVals[uRowIdx][0] || '').trim() === String(data.requestId).trim()) {",
+        "          var rowN = uRowIdx + 1;",
+        "          if (data.email !== undefined) otpUpdSheet.getRange(rowN, 3).setValue(data.email);",
+        "          if (data.viberNumber !== undefined) otpUpdSheet.getRange(rowN, 4).setValue(data.viberNumber);",
+        "          if (data.accountNumber !== undefined) otpUpdSheet.getRange(rowN, 5).setValue(data.accountNumber);",
+        "          if (data.site !== undefined) otpUpdSheet.getRange(rowN, 6).setValue(data.site);",
+        "          if (data.biller !== undefined) otpUpdSheet.getRange(rowN, 7).setValue(data.biller);",
+        "          if (data.status !== undefined) otpUpdSheet.getRange(rowN, 12).setValue(String(data.status).toUpperCase());",
+        "          if (data.rfpNumber !== undefined) otpUpdSheet.getRange(rowN, 13).setValue(data.rfpNumber);",
+        "          if (data.rfpDate !== undefined) otpUpdSheet.getRange(rowN, 14).setValue(data.rfpDate);",
+        "          if (data.amount !== undefined) otpUpdSheet.getRange(rowN, 15).setValue(data.amount);",
+        "          if (data.datePaid !== undefined) otpUpdSheet.getRange(rowN, 16).setValue(data.datePaid);",
+        "          break;",
+        "        }",
+        "      }",
+        "      return ContentService.createTextOutput(JSON.stringify({ status: 'success', requestId: data.requestId })).setMimeType(ContentService.MimeType.JSON);",
+        "    }",
+        "",
         "    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);",
         "  } catch (err) {",
         "    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);",
@@ -8312,16 +8826,64 @@ function ensureOneTimePaymentHeaders(sheet) {
       ].join("\n");
     }
 
+    function copyTextToClipboardSafe(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(() => {
+          const ta = document.createElement("textarea");
+          ta.value = text;
+          ta.style.position = "fixed";
+          ta.style.left = "-9999px";
+          document.body.appendChild(ta);
+          ta.focus();
+          ta.select();
+          try { document.execCommand("copy"); } catch (e) {}
+          document.body.removeChild(ta);
+        });
+      }
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.style.position = "fixed";
+      ta.style.left = "-9999px";
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function toggleUnifiedCodeGsPreview() {
+      const drawer = document.getElementById("unifiedCodeGsPreviewDrawer");
+      const ta = document.getElementById("unifiedCodeGsPreviewTextarea");
+      if (!drawer) return;
+      const idVal = document.getElementById("cfgDedicatedAiSpreadsheetId")?.value || getDedicatedAiSpreadsheetId();
+      const tabVal = document.getElementById("cfgDedicatedAiSheetTabName")?.value || getDedicatedAiSheetName();
+      if (ta) ta.value = buildDedicatedAiAppsScriptCode(idVal, tabVal);
+      drawer.classList.toggle("hidden");
+      if (!drawer.classList.contains("hidden")) {
+        drawer.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      }
+    }
+
     function copyDedicatedAiGsCode() {
       const idVal = document.getElementById("cfgDedicatedAiSpreadsheetId")?.value || getDedicatedAiSpreadsheetId();
       const tabVal = document.getElementById("cfgDedicatedAiSheetTabName")?.value || getDedicatedAiSheetName();
       const code = buildDedicatedAiAppsScriptCode(idVal, tabVal);
-      navigator.clipboard.writeText(code).then(() => {
-        const btn = document.getElementById("copyDedicatedAiGsBtn");
-        if (btn) {
-          const old = btn.innerText;
-          btn.innerText = "✓ Copied Dedicated AI Code.gs!";
-          setTimeout(() => { btn.innerText = old; }, 3200);
+      const ta = document.getElementById("unifiedCodeGsPreviewTextarea");
+      if (ta) ta.value = code;
+      copyTextToClipboardSafe(code).then(() => {
+        for (const btnId of ["copyDedicatedAiGsBtn", "copyUnifiedGsBtnMod2"]) {
+          const btn = document.getElementById(btnId);
+          if (btn) {
+            const old = btn.innerText;
+            btn.innerText = "✓ Copied Unified Code.gs!";
+            setTimeout(() => { btn.innerText = old; }, 3200);
+          }
+        }
+        const msg = document.getElementById("otpAdminNoticeText");
+        if (msg) {
+          msg.innerText = "✓ Copied Unified Code.gs (includes AI_SOA_Extractions + UserData + Announcements + One-Time Bill Payment & Drive Folder 1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5)!";
+          msg.classList.remove("hidden");
         }
       });
     }
@@ -8704,10 +9266,11 @@ function ensureOneTimePaymentHeaders(sheet) {
       let amountBeforeDue = "NOT ON BILL";
 
       // 1. Billing Period / Cycle From & To
-      const mPeriodRange1 = combined.match(/(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})\s*(?:to|-|–)\s*(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})/i);
-      const mPeriodRange2 = combined.match(/(\d{1,2}\s+[A-Za-z]{3,9})\s*(?:to|-|–)\s*(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})/i);
-      const mPeriodFromTo = combined.match(/From\s*[:|]?\s*(\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})[\s\S]{0,120}?To\s*[:|]?\s*(\d{1,2}\/\d{1,2}\/\d{2,4}|\d{1,2}\s+[A-Za-z]{3,9}\s+\d{2,4})/i);
-      const mPeriodSlashRange = combined.match(/(?:Billing\s*Period|Period\s*Covered|Covered\s*Period)[\s:|]*(\d{1,2}\/\d{1,2}\/\d{2,4}|[A-Za-z]{3,9}\s+\d{1,2},?\s+\d{2,4})\s*(?:to|-|–|\|)\s*(\d{1,2}\/\d{1,2}\/\d{2,4}|[A-Za-z]{3,9}\s+\d{1,2},?\s+\d{2,4})/i);
+      const mPeriodRange1 = combined.match(/(\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{2,4})\s*(?:to|-|–)\s*(\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{2,4})/i);
+      const mPeriodRange2 = combined.match(/(\d{1,2}\s+[A-Za-z]{3,9}\.?)\s*(?:to|-|–)\s*(\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{2,4})/i);
+      const mPeriodFromTo = combined.match(/From\s*[:|]?\s*(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4})[\s\S]{0,120}?To\s*[:|]?\s*(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4})/i);
+      const mPeriodSlashRange = combined.match(/(?:Billing\s*Period|Period\s*Covered|Covered\s*Period|Reading\s*Period)[\s:|]*(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4})\s*(?:to|-|–|\|)\s*(\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4})/i);
+      const mAnySlashRange = combined.match(/(\d{1,2}\/\d{1,2}\/\d{2,4})\s*(?:to|-|–)\s*(\d{1,2}\/\d{1,2}\/\d{2,4})/i);
       if (mPeriodRange1) {
         cycleFrom = mPeriodRange1[1].trim();
         cycleTo = mPeriodRange1[2].trim();
@@ -8721,13 +9284,22 @@ function ensureOneTimePaymentHeaders(sheet) {
       } else if (mPeriodSlashRange) {
         cycleFrom = mPeriodSlashRange[1].trim();
         cycleTo = mPeriodSlashRange[2].trim();
+      } else if (mAnySlashRange) {
+        cycleFrom = mAnySlashRange[1].trim();
+        cycleTo = mAnySlashRange[2].trim();
       }
 
       // 2. Due Date
-      const mDue1 = combined.match(/Due\s*Date[\s:|]*(\d{1,2}\s+[A-Za-z]{3,9}\s+\d{4}|\d{1,2}\/\d{1,2}\/\d{2,4}|[A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{4}-\d{2}-\d{2})/i);
+      const mDue1 = combined.match(/(?:Payment\s*)?Due\s*Date[\s:|]*(\d{1,2}[\s-]+[A-Za-z]{3,9}\.?[\s,-]+\d{2,4}|\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4}|\d{4}-\d{2}-\d{2})/i);
+      const mDuePayBefore = combined.match(/(?:Pay\s*On\s*or\s*Before|Last\s*Day\s*of\s*Payment)[\s:|]*(\d{1,2}[\s-]+[A-Za-z]{3,9}\.?[\s,-]+\d{2,4}|\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}|[A-Za-z]{3,9}\.?\s+\d{1,2},?\s+\d{2,4}|\d{4}-\d{2}-\d{2})/i);
+      const mDueMeralco = combined.match(/Customer\s*Account\s*Number\s*\(CAN\)[\s\S]{0,80}?Due\s*Date[\s\S]{0,60}?(\d{1,2}\s+[A-Za-z]{3,9}\.?\s+\d{4})/i);
       const mDueTei = combined.match(/Date:\s*(\d{1,2}\/\d{1,2}\/\d{4})\s*\|\s*(\d{1,2}\/\d{1,2}\/\d{4})[\s\S]{0,100}?Due\s*Date/i);
       if (mDue1) {
         dueDate = mDue1[1].trim();
+      } else if (mDueMeralco) {
+        dueDate = mDueMeralco[1].trim();
+      } else if (mDuePayBefore) {
+        dueDate = mDuePayBefore[1].trim();
       } else if (mDueTei) {
         dueDate = mDueTei[2].trim();
       } else if (/within\s+nine\s*\(9\)\s*days|Due\s*Date\s*:\s*\|\s*Received\s*By/i.test(combined)) {
@@ -8741,10 +9313,11 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
 
       // 4. Consumption (kWh or cu.m)
-      const mConsMeralco = combined.match(/Actual\s*Consumption[\s:|]*([\d,]+(?:\.\d+)?)\s*(kWh|cu\.?\s*m|m3)/i);
+      const mConsMeralco = combined.match(/Actual\s*Consumption[\s:|=]*([\d,]+(?:\.\d+)?)\s*(kWh|cu\.?\s*m|m3)/i);
       const mConsTei = combined.match(/kWh\s*Used\s*\|\s*Period\s*Covered\s*\|\s*Mult\.\s*\|\s*\S+\s*\|\s*[\d,]+\s*\|\s*[\d,]+\s*\|\s*([\d,]+(?:\.\d+)?)/i);
       const mConsTarelco = combined.match(/Energy\s*KWH[\s:|]*[\d,.]+[\s:|]+[\d,.]+[\s:|]+([\d,.]+)/i);
-      const mConsGeneric = combined.match(/(?:Consumption|kWh\s*Used|Water\s*Consumption|Cubic\s*Meters?|Cu\.?\s*M\.?\s*Used)[\s:|]*([\d,]+(?:\.\d+)?)\s*(kWh|cu\.?\s*m\.?|CUM|m3)?/i);
+      const mConsGeneric = combined.match(/(?:Actual\s*Consumption|Consumption|kWh\s*Used|Water\s*Consumption|Cubic\s*Meters?|Cu\.?\s*M\.?\s*Used|Total\s*kWh|Volume\s*Used)[\s:|=]*([\d,]+(?:\.\d+)?)\s*(kWh|cu\.?\s*m\.?|CUM|m3)?/i);
+      const mConsUnitDirect = combined.match(/\b([\d,]{1,6}(?:\.\d{1,2})?)\s*(kWh|cu\.?\s*m\.?|CUM)\b/i);
       if (mConsMeralco) {
         consumption = `${mConsMeralco[1]} ${mConsMeralco[2]}`;
       } else if (mConsTei) {
@@ -8755,10 +9328,12 @@ function ensureOneTimePaymentHeaders(sheet) {
       } else if (mConsGeneric) {
         const unit = mConsGeneric[2] || (/water/i.test(detectedFormat) || /water/i.test(hints.billTypeHint || "") ? "cu.m" : "kWh");
         consumption = `${mConsGeneric[1]} ${unit}`;
+      } else if (mConsUnitDirect) {
+        consumption = `${mConsUnitDirect[1]} ${mConsUnitDirect[2]}`;
       }
 
       // 5. Arrears / Remaining Balance from previous bill / Past Due Amount
-      const mArrMeralco = combined.match(/Remaining\s*Balance\s*from\s*previous\s*bill[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
+      const mArrMeralco = combined.match(/Remaining\s*Balance\s*from\s*previous\s*bill[\s\S]{0,120}?([\d,]+\.\d{2})/i);
       const mArrTei = combined.match(/Balance\s*from\s*Prev(?:ious)?\s*Trans(?:actions?)?[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       const mArrTarelco = combined.match(/Past\s*Due\s*Amount[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       const mArrGeneric = combined.match(/(?:Arrears|Previous\s*Balance|Unpaid\s*Balance|Previous\s*Unpaid|Balance\s*Forwarded)[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
@@ -8771,7 +9346,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const mCurMeralco = combined.match(/Charges\s*for\s*this\s*billing\s*period[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       const mCurTei = combined.match(/TOTAL\s*CURRENT\s*BILL\s*AMOUNT[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       const mCurTarelco = combined.match(/CURRENT\s*(?:\|\s*)?MONTH\s*(?:\|\s*)?(?:BILL|DUE)[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
-      const mCurGeneric = combined.match(/(?:Current\s*Charges|Current\s*Billing|Current\s*Amount|Current\s*Bill)[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
+      const mCurGeneric = combined.match(/(?:Current\s*Charges|Current\s*Billing|Current\s*Amount|Current\s*Bill|Basic\s*Charge)[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       if (mCurMeralco) currentAmount = fmtPeso(mCurMeralco[1]);
       else if (mCurTei) currentAmount = fmtPeso(mCurTei[1]);
       else if (mCurTarelco) currentAmount = fmtPeso(mCurTarelco[1]);
@@ -8780,10 +9355,10 @@ function ensureOneTimePaymentHeaders(sheet) {
       // 7. Total Amount Due
       const isTei = /TARLAC ELECTRIC INC/i.test(combined);
       const mTotTei = combined.match(/([\d,]+\.\d{2})\s*\|\s*Total\s*Amount\s*Due/i);
-      const mTotMeralco = combined.match(/Total\s*Amount\s*Due[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
-      const mTotPleasePay = combined.match(/Please\s*Pay[\s:|₱\uFFFDPhp]*([\d,]+\.)[\s|]*(\d{2})/i);
-      const mTotTarelco = combined.match(/TOTAL\s*(?:\|\s*)?BALANCE[\s:|=₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
-      const mTotGeneric = combined.match(/(?:Total\s*Amount\s*Due|Amount\s*Due|Total\s*Payable)[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
+      const mTotMeralco = combined.match(/Total\s*Amount\s*Due[\s:|=₱\uFFFDPhpP]*([\d,]+\.\d{2})/i);
+      const mTotPleasePay = combined.match(/Please\s*Pay[\s:|₱\uFFFDPhpP]*([\d,]+\.)[\s|]*(\d{2})/i);
+      const mTotTarelco = combined.match(/TOTAL\s*(?:\|\s*)?BALANCE[\s:|=₱\uFFFDPhpP]*([\d,]+\.\d{2})/i);
+      const mTotGeneric = combined.match(/(?:Total\s*Amount\s*Due|Amount\s*Due|Total\s*Payable|Total\s*Current\s*Amount)[\s:|=₱\uFFFDPhpP]*([\d,]+\.\d{2})/i);
       if (isTei && mTotTei) totalAmount = fmtPeso(mTotTei[1]);
       else if (mTotMeralco) totalAmount = fmtPeso(mTotMeralco[1]);
       else if (mTotTei) totalAmount = fmtPeso(mTotTei[1]);
@@ -8795,9 +9370,30 @@ function ensureOneTimePaymentHeaders(sheet) {
       const mBeforeDue = combined.match(/Amount\s*(?:Due\s*)?Before\s*Due(?:\s*Date)?[\s:|₱\uFFFDPhp]*([\d,]+\.\d{2})/i);
       if (mBeforeDue) amountBeforeDue = fmtPeso(mBeforeDue[1]);
 
-      const coreFields = [cycleFrom, cycleTo, dueDate, consumption, arrears, currentAmount, totalAmount];
-      const readableCount = coreFields.filter(v => v !== "UNREADABLE").length;
-      const legibilityStatus = readableCount >= 5 ? "CLEAR" : readableCount >= 2 ? "PARTIALLY_READABLE" : "UNREADABLE";
+      // Strict Zero-Assumption Rule:
+      // - Never assume Current Charges = Total Amount Due unless Current Charges was explicitly matched in text.
+      // - Only mark Arrears as "NOT ON BILL" if Total Amount, Due Date, and Current Charges were all clearly read AND no arrears keyword exists in the document text.
+      const hasArrearsKeywordInText = /Remaining\s*Balance\s*from\s*previous\s*bill|Balance\s*from\s*Prev(?:ious)?\s*Trans|Past\s*Due\s*Amount|Arrears|Previous\s*Balance|Unpaid\s*Balance|Previous\s*Unpaid|Balance\s*Forwarded/i.test(combined);
+      if (
+        totalAmount !== "UNREADABLE" &&
+        dueDate !== "UNREADABLE" &&
+        currentAmount !== "UNREADABLE" &&
+        arrears === "UNREADABLE" &&
+        !hasArrearsKeywordInText
+      ) {
+        arrears = "NOT ON BILL";
+      }
+
+      const concreteFields = [cycleFrom, cycleTo, dueDate, consumption, currentAmount, totalAmount];
+      const concreteReadCount = concreteFields.filter(v => v !== "UNREADABLE" && v !== "NOT ON BILL").length;
+      const allCheckedFields = [cycleFrom, cycleTo, dueDate, consumption, arrears, currentAmount, totalAmount];
+      const hasAnyUnreadable = allCheckedFields.some(v => String(v || "").toUpperCase().includes("UNREADABLE"));
+      const legibilityStatus =
+        totalAmount !== "UNREADABLE" && dueDate !== "UNREADABLE" && !hasAnyUnreadable
+          ? "CLEAR"
+          : concreteReadCount >= 1
+          ? "PARTIALLY_READABLE"
+          : "UNREADABLE";
 
       return {
         cycleFrom,
@@ -8812,8 +9408,85 @@ function ensureOneTimePaymentHeaders(sheet) {
         amountBeforeDue,
         detectedFormat,
         legibilityStatus,
-        readabilityStatus: legibilityStatus === "CLEAR" ? "READABLE" : legibilityStatus
+        readabilityStatus: legibilityStatus === "CLEAR" ? "READABLE" : legibilityStatus,
+        concreteReadCount
       };
+    }
+
+    function rotateCanvasByDegrees(srcCanvas, deg) {
+      const normDeg = ((Number(deg) || 0) % 360 + 360) % 360;
+      if (normDeg === 0 || !srcCanvas) return srcCanvas;
+      const w = srcCanvas.width;
+      const h = srcCanvas.height;
+      const swap = normDeg === 90 || normDeg === 270;
+      const out = document.createElement("canvas");
+      out.width = swap ? h : w;
+      out.height = swap ? w : h;
+      const ctx = out.getContext("2d");
+      ctx.translate(out.width / 2, out.height / 2);
+      ctx.rotate((normDeg * Math.PI) / 180);
+      ctx.drawImage(srcCanvas, -w / 2, -h / 2);
+      return out;
+    }
+
+    async function imageBytesToCanvas(u8, mime) {
+      const blob = new Blob([u8], { type: mime && mime.startsWith("image/") ? mime : "image/png" });
+      const url = URL.createObjectURL(blob);
+      try {
+        return await new Promise((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => {
+            const c = document.createElement("canvas");
+            c.width = img.naturalWidth || img.width || 1600;
+            c.height = img.naturalHeight || img.height || 2200;
+            c.getContext("2d").drawImage(img, 0, 0);
+            resolve(c);
+          };
+          img.onerror = () => reject(new Error("Could not decode image attachment into canvas."));
+          img.src = url;
+        });
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    }
+
+    /**
+     * Runs Tesseract OCR on a page canvas, honoring `preferredRotationDeg` first (from Inspector preview rotation),
+     * and if fewer than 3 billing fields are readable, automatically tests 90°, 270°, and 180° orientations
+     * so wrongly oriented / sideways / upside-down attachments are read accurately.
+     */
+    async function runOcrWithAutoOrientation(baseCanvas, preferredRotationDeg, hints) {
+      if (!window.Tesseract || !baseCanvas) return { text: "", tokens: [] };
+      const pref = ((Number(preferredRotationDeg) || 0) % 360 + 360) % 360;
+      const isLandscape = baseCanvas.width > baseCanvas.height * 1.12;
+      const candidateAngles = pref !== 0
+        ? [pref, 0, 90, 270, 180].filter((v, i, a) => a.indexOf(v) === i)
+        : isLandscape
+        ? [0, 90, 270, 180]
+        : [0, 90, 270, 180];
+
+      let bestText = "";
+      let bestTokens = [];
+      let bestScore = -1;
+
+      for (const angle of candidateAngles) {
+        const testCanvas = rotateCanvasByDegrees(baseCanvas, angle);
+        const ocrRes = await window.Tesseract.recognize(testCanvas, "eng");
+        const ocrTxt = String(ocrRes?.data?.text || "").trim();
+        const ocrTokens = ocrTxt ? ocrTxt.split(/\s+|\n+/).map(s => s.trim()).filter(Boolean) : [];
+        const testParsed = parsePhilippineUtilityBillText(ocrTxt, ocrTokens, hints);
+        const score = Number(testParsed.concreteReadCount || 0);
+        if (score > bestScore) {
+          bestScore = score;
+          bestText = ocrTxt;
+          bestTokens = ocrTokens;
+        }
+        // If this orientation clearly read >= 3 billing fields (or both Total Amount & Due Date), stop immediately
+        if (testParsed.legibilityStatus === "CLEAR" || score >= 3) {
+          break;
+        }
+      }
+      return { text: bestText, tokens: bestTokens };
     }
 
     async function loadDriveRenderedImageCanvas(driveFileId) {
@@ -8842,6 +9515,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       let u8 = null;
       let fallbackCanvas = null;
       let mime = String(payload.mimeType || "application/pdf").toLowerCase();
+      const userRotationDeg = ((Number(payload.rotationDeg) || 0) % 360 + 360) % 360;
+
       if (payload.fileBase64) {
         const b64 = payload.fileBase64.includes(",") ? payload.fileBase64.split(",")[1] : payload.fileBase64;
         const bin = atob(b64);
@@ -8850,7 +9525,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       } else if (payload.driveFileId) {
         const fid = encodeURIComponent(payload.driveFileId);
         const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
-        // Tier 0 (Live Portal / Preview): Fetch raw multi-page PDF via local server proxy
+        // Tier 0 (Live Portal / Preview): Fetch raw multi-page PDF or image via local server proxy
         if (!isStaticHost) {
           try {
             const proxyRes = await fetch(`/api/drive-file-proxy/${fid}`);
@@ -8909,7 +9584,11 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
 
       const magic5 = u8 ? String.fromCharCode(...u8.slice(0, 5)) : "";
-      const isPdf = Boolean(u8 && (magic5 === "%PDF-" || (mime.includes("pdf") && !mime.startsWith("image/"))));
+      const isJpegMagic = Boolean(u8 && u8.length > 3 && u8[0] === 0xff && u8[1] === 0xd8 && u8[2] === 0xff);
+      const isPngMagic = Boolean(u8 && u8.length > 4 && u8[0] === 0x89 && u8[1] === 0x50 && u8[2] === 0x4e && u8[3] === 0x47);
+      if (isJpegMagic) mime = "image/jpeg";
+      else if (isPngMagic) mime = "image/png";
+      const isPdf = Boolean(u8 && (magic5 === "%PDF-" || (mime.includes("pdf") && !isJpegMagic && !isPngMagic && !mime.startsWith("image/"))));
       let allTokens = [];
       let allLinesText = [];
       let pageCount = 1;
@@ -8922,35 +9601,45 @@ function ensureOneTimePaymentHeaders(sheet) {
           const page = await doc.getPage(p);
           const tc = await page.getTextContent();
           const pageTokens = (tc.items || []).map(it => String(it.str || "").trim()).filter(Boolean);
-          if (pageTokens.length >= 15) {
+          const textLayerJoined = pageTokens.join(" | ");
+          const textLayerTest = pageTokens.length >= 15
+            ? parsePhilippineUtilityBillText(textLayerJoined, pageTokens, payload)
+            : { concreteReadCount: 0 };
+
+          // Use PDF text layer if it yielded real billing fields and no manual rotation override was requested;
+          // otherwise (e.g., hybrid scanned PDF with small watermark text layer or rotated scan) run canvas Vision OCR with auto-orientation!
+          if (pageTokens.length >= 15 && Number(textLayerTest.concreteReadCount || 0) >= 2 && userRotationDeg === 0) {
             allTokens.push(...pageTokens);
-            allLinesText.push(pageTokens.join(" | "));
+            allLinesText.push(textLayerJoined);
           } else if (window.Tesseract) {
             usedOcr = true;
+            if (pageTokens.length > 0) {
+              allTokens.push(...pageTokens);
+              allLinesText.push(textLayerJoined);
+            }
             const vp = page.getViewport({ scale: 2.0 });
             const canvas = document.createElement("canvas");
             canvas.width = vp.width;
             canvas.height = vp.height;
             const ctx = canvas.getContext("2d");
             await page.render({ canvasContext: ctx, viewport: vp }).promise;
-            const ocrRes = await window.Tesseract.recognize(canvas, "eng");
-            const ocrTxt = String(ocrRes?.data?.text || "").trim();
-            if (ocrTxt) {
-              allLinesText.push(ocrTxt);
-              allTokens.push(...ocrTxt.split(/\s+|\n+/).map(s => s.trim()).filter(Boolean));
+            const ocrOut = await runOcrWithAutoOrientation(canvas, userRotationDeg, payload);
+            if (ocrOut.text) {
+              allLinesText.push(ocrOut.text);
+              allTokens.push(...ocrOut.tokens);
             }
+          } else if (pageTokens.length > 0) {
+            allTokens.push(...pageTokens);
+            allLinesText.push(textLayerJoined);
           }
         }
       } else if (window.Tesseract) {
         usedOcr = true;
-        const ocrSource = fallbackCanvas
-          ? fallbackCanvas
-          : new Blob([u8], { type: mime.startsWith("image/") ? mime : "image/png" });
-        const ocrRes = await window.Tesseract.recognize(ocrSource, "eng");
-        const ocrTxt = String(ocrRes?.data?.text || "").trim();
-        if (ocrTxt) {
-          allLinesText.push(ocrTxt);
-          allTokens.push(...ocrTxt.split(/\s+|\n+/).map(s => s.trim()).filter(Boolean));
+        const baseCanvas = fallbackCanvas || (await imageBytesToCanvas(u8, mime));
+        const ocrOut = await runOcrWithAutoOrientation(baseCanvas, userRotationDeg, payload);
+        if (ocrOut.text) {
+          allLinesText.push(ocrOut.text);
+          allTokens.push(...ocrOut.tokens);
         }
       }
 
@@ -8961,8 +9650,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         pagesAnalyzed: pageCount,
         pageCountDetected: pageCount,
         extractedAt: new Date().toLocaleTimeString(),
-        modelUsed: usedOcr ? "PDF.js + Browser Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
-        modelTier: usedOcr ? "PDF.js + Browser Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
+        modelUsed: usedOcr ? "PDF.js + Multi-Orientation Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
+        modelTier: usedOcr ? "PDF.js + Multi-Orientation Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
         notes: parsed.legibilityStatus === "UNREADABLE" ? "Some fields could not be clearly read from this scanned attachment." : "",
         sheetSynced: false
       };
@@ -8995,15 +9684,29 @@ function ensureOneTimePaymentHeaders(sheet) {
           error: q.reason || "Free AI quota limit reached. Extraction stopped automatically so zero charges are incurred."
         };
       }
+      const userRot = ((Number(payload.rotationDeg) || 0) % 360 + 360) % 360;
       const enrichedPayload = {
         ...payload,
+        rotationDeg: userRot,
         aiWebhookUrl: payload.aiWebhookUrl || getDedicatedAiScriptUrl(),
         aiSpreadsheetId: payload.aiSpreadsheetId || getDedicatedAiSpreadsheetId(),
         aiSheetTabName: payload.aiSheetTabName || getDedicatedAiSheetName()
       };
+
+      // If the user rotated the preview in the Inspector (90°, 180°, or 270°) and clicked Scan,
+      // render the rotated upright preview image onto a canvas so the AI reads the exact preview orientation!
+      if (userRot !== 0 && enrichedPayload.driveFileId && !enrichedPayload.fileBase64) {
+        try {
+          const rawCanvas = await loadDriveRenderedImageCanvas(enrichedPayload.driveFileId);
+          const rotatedCanvas = rotateCanvasByDegrees(rawCanvas, userRot);
+          enrichedPayload.fileBase64 = rotatedCanvas.toDataURL("image/jpeg", 0.92);
+          enrichedPayload.mimeType = "image/jpeg";
+        } catch (rotErr) {}
+      }
+
       const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
 
-      // On Static GitHub Pages (or local file://), run the Direct Browser Multi-Page PDF.js + Tesseract.js Engine
+      // On Static GitHub Pages (or local file://), run the Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Engine
       // and write directly to AI_SOA_Extractions via Google Apps Script without cross-origin errors
       if (isStaticHost) {
         try {
@@ -9039,7 +9742,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           return data;
         }
         // Non-429 server/cloud error (e.g. temporary 503 high demand or static host 404):
-        // Automatically fall back to the Direct Browser Multi-Page PDF.js + Tesseract.js Reader
+        // Automatically fall back to the Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Reader
         try {
           const browserRes = await extractUtilityStatementInBrowser(enrichedPayload);
           return browserRes;
@@ -9051,7 +9754,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
         }
       } catch (err) {
-        // Fallback to Direct Browser Multi-Page PDF.js + Tesseract.js Engine if static host on custom domain (e.g., Netlify/Vercel static)
+        // Fallback to Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Engine if static host on custom domain
         try {
           const browserRes = await extractUtilityStatementInBrowser(enrichedPayload);
           return browserRes;
@@ -9148,6 +9851,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const result = await callFreeAiExtractEndpoint({
           requestId: reqId,
           driveFileId: fid,
+          rotationDeg: inspectorRotation || 0,
           mimeType: (item.fileName || "").toLowerCase().endsWith(".png")
             ? "image/png"
             : (item.fileName || "").toLowerCase().endsWith(".jpg") || (item.fileName || "").toLowerCase().endsWith(".jpeg")
@@ -9178,22 +9882,29 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
           return;
         }
-        if (result.extracted?.sheetSynced) {
-          const syncedObj = { ...result.extracted, sheetSynced: true };
+        const prevAi = getExtractedSoaMap()[reqId] || item.extractedBillData || null;
+        if (prevAi && !isBillCompletelyReadInStatic(prevAi)) {
+          markPartialRetryUsedInStatic(reqId);
+        }
+        const mergedExtracted = prevAi
+          ? mergeRetryExtractionWithoutAssumptionsInStatic(prevAi, result.extracted)
+          : result.extracted;
+        if (result.extracted?.sheetSynced && (!prevAi || JSON.stringify(mergedExtracted) === JSON.stringify(result.extracted))) {
+          const syncedObj = { ...mergedExtracted, sheetSynced: true };
           saveExtractedSoaForRequest(reqId, syncedObj);
           const target = paymentRequests.find(r => r.requestId === reqId);
           if (target) target.extractedBillData = syncedObj;
           renderBillPaymentTable();
         } else {
-          await writeExtractedSoaToGSheet(reqId, result.extracted);
+          await writeExtractedSoaToGSheet(reqId, mergedExtracted);
         }
-        const synced = getExtractedSoaMap()[reqId] || { ...result.extracted, sheetSynced: true };
+        const synced = getExtractedSoaMap()[reqId] || { ...mergedExtracted, sheetSynced: true };
         if (resBox) {
           resBox.innerHTML = renderExtractedSoaGridHtml(synced, "inspector", reqId);
         }
       } finally {
         isExtractingFreeAi = false;
-        if (btn) btn.innerText = "✨ Scan & Write to AI Sheet (Free)";
+        if (btn) btn.innerText = inspectorRotation ? `✨ Scan (${inspectorRotation}°)` : "✨ Scan";
         refreshFreeAiQuotaBars();
       }
     }
@@ -9961,10 +10672,14 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (payBox) payBox.style.transform = transformCss;
       const enrBox = document.getElementById("enrollInspectorTransformBox");
       if (enrBox) enrBox.style.transform = transformCss;
+      const otpBox = document.getElementById("otpInspectorTransformBox");
+      if (otpBox) otpBox.style.transform = transformCss;
       const payLbl = document.getElementById("payInspectorZoomLabel");
       if (payLbl) payLbl.innerText = `${Math.round(inspectorZoom * 100)}%`;
       const enrLbl = document.getElementById("enrollInspectorZoomLabel");
       if (enrLbl) enrLbl.innerText = `${Math.round(inspectorZoom * 100)}%`;
+      const otpLbl = document.getElementById("otpInspectorZoomLabel");
+      if (otpLbl) otpLbl.innerText = `${Math.round(inspectorZoom * 100)}%`;
     }
 
     function adjustInspectorZoom(delta) {
@@ -9975,6 +10690,10 @@ function ensureOneTimePaymentHeaders(sheet) {
     function rotateInspectorView() {
       inspectorRotation = (inspectorRotation + 90) % 360;
       applyInspectorTransform();
+      const inspBtn = document.getElementById("inspectorFreeAiExtractBtn");
+      if (inspBtn && !isExtractingFreeAi) {
+        inspBtn.innerText = inspectorRotation ? `✨ Scan (${inspectorRotation}°)` : "✨ Scan";
+      }
     }
 
     function resetInspectorView() {
@@ -9983,6 +10702,10 @@ function ensureOneTimePaymentHeaders(sheet) {
       inspectorPanX = 0;
       inspectorPanY = 0;
       applyInspectorTransform();
+      const inspBtn = document.getElementById("inspectorFreeAiExtractBtn");
+      if (inspBtn && !isExtractingFreeAi) {
+        inspBtn.innerText = "✨ Scan";
+      }
     }
 
     function handleInspectorWheel(e) {
@@ -10009,6 +10732,8 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     let inspectorDriveRenderMode = "iframe"; // Default to Multi-Page PDF (All Pages) so 2-page PDFs show Page 1 + Page 2+
     let activeInspectPaymentItem = null;
+    let activeInspectOtpItem = null;
+    let activeOtpAttachMode = "rlf";
 
     function updateInspectorRenderModeButtons() {
       const payIframeBtn = document.getElementById("payRenderModeBtnIframe");
@@ -10031,6 +10756,16 @@ function ensureOneTimePaymentHeaders(sheet) {
           ? "px-2 py-1 rounded-md text-[10px] font-bold bg-emerald-600 text-white cursor-pointer"
           : "px-2 py-1 rounded-md text-[10px] font-bold text-slate-400 hover:text-white cursor-pointer";
       }
+      const otpIframeBtn = document.getElementById("otpRenderModeBtnIframe");
+      const otpImgBtn = document.getElementById("otpRenderModeBtnImage");
+      if (otpIframeBtn && otpImgBtn) {
+        otpIframeBtn.className = inspectorDriveRenderMode === "iframe"
+          ? "px-2 py-1 rounded-md text-[10px] font-bold bg-amber-600 text-white cursor-pointer"
+          : "px-2 py-1 rounded-md text-[10px] font-bold text-slate-400 hover:text-white cursor-pointer";
+        otpImgBtn.className = inspectorDriveRenderMode === "image"
+          ? "px-2 py-1 rounded-md text-[10px] font-bold bg-amber-600 text-white cursor-pointer"
+          : "px-2 py-1 rounded-md text-[10px] font-bold text-slate-400 hover:text-white cursor-pointer";
+      }
     }
 
     function setInspectorDriveRenderMode(mode) {
@@ -10043,14 +10778,17 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (activeInspectEnrollItem) {
         renderEnrollInspectorRightPane();
       }
+      if (activeInspectOtpItem) {
+        renderOtpInspectorRightPane();
+      }
     }
 
     function buildVoucherPreviewCardHtml(title, subtitle, fileName, fileUrl, metaRows, accentColor, canOpenExternal = false) {
       const fid = extractDriveFileIdFromUrl(fileUrl);
       const thumbUrl = fid ? `https://drive.google.com/thumbnail?id=${fid}&sz=w1600` : "";
       const previewIframeUrl = fid ? `https://drive.google.com/file/d/${fid}/preview` : "";
-      const borderCls = accentColor === "emerald" ? "border-emerald-500/40" : "border-blue-500/40";
-      const badgeCls = accentColor === "emerald" ? "bg-emerald-600 text-white" : "bg-blue-600 text-white";
+      const borderCls = accentColor === "emerald" ? "border-emerald-500/40" : accentColor === "amber" ? "border-amber-500/40" : "border-blue-500/40";
+      const badgeCls = accentColor === "emerald" ? "bg-emerald-600 text-white" : accentColor === "amber" ? "bg-amber-600 text-white" : "bg-blue-600 text-white";
       const useMultiPageIframe = Boolean(fid && inspectorDriveRenderMode === "iframe");
 
       return `
@@ -10370,12 +11108,17 @@ function ensureOneTimePaymentHeaders(sheet) {
       const inspAiBox = document.getElementById("inspectorFreeAiResultBox");
       refreshFreeAiQuotaBars();
       if (inspAiBox && (canTriggerAi || canViewAi)) {
-        if (savedSoa) {
+        const isSavedCompletelyRead = isBillCompletelyReadInStatic(savedSoa);
+        if (savedSoa && isSavedCompletelyRead) {
           inspAiBox.innerHTML = renderExtractedSoaGridHtml(savedSoa, "inspector", item.requestId);
         } else {
-          inspAiBox.innerHTML = canTriggerAi
-            ? `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">Click <span class="font-bold text-emerald-600 dark:text-emerald-400">Scan &amp; Save by Request ID (Free)</span> to extract Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due and upsert into Dedicated Sheet (${escapeHtml(getDedicatedAiSheetName())}) keyed by Request ID (Col A).</div>`
-            : `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">No AI read results synced for this Request ID yet.</div>`;
+          if (savedSoa) {
+            inspAiBox.innerHTML = renderExtractedSoaGridHtml(savedSoa, "inspector", item.requestId);
+          } else {
+            inspAiBox.innerHTML = canTriggerAi
+              ? `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">Click <span class="font-bold text-emerald-600 dark:text-emerald-400">✨ Scan</span> to extract Cycle, Due Date, Grace Period (explicit only), Consumption, Arrears, Current, Total &amp; Amount Before Due and upsert into Dedicated Sheet (${escapeHtml(getDedicatedAiSheetName())}) keyed by Request ID (Col A).</div>`
+              : `<div class="text-[10px] text-slate-500 dark:text-royal-300/70">No AI read results synced for this Request ID yet.</div>`;
+          }
           syncDedicatedAiExtractionsInStatic().then(() => {
             const openId = document.getElementById("editPayReqId")?.value;
             if (openId !== item.requestId) return;
@@ -10383,12 +11126,15 @@ function ensureOneTimePaymentHeaders(sheet) {
             if (newlySynced && inspAiBox) {
               inspAiBox.innerHTML = renderExtractedSoaGridHtml(newlySynced, "inspector", item.requestId);
               renderBillPaymentTable();
-            } else if (canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
+            }
+            const shouldAutoScan = !newlySynced || (!isBillCompletelyReadInStatic(newlySynced) && !hasUsedPartialRetryInStatic(item.requestId));
+            if (shouldAutoScan && canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
               handleFreeAiExtractInInspector();
             }
           }).catch(() => {
             const openId = document.getElementById("editPayReqId")?.value;
-            if (openId === item.requestId && !getExtractedSoaMap()[item.requestId] && canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
+            const shouldAutoScan = !savedSoa || (!isBillCompletelyReadInStatic(savedSoa) && !hasUsedPartialRetryInStatic(item.requestId));
+            if (openId === item.requestId && shouldAutoScan && canTriggerAi && getFreeAiAutoRunEnabled() && getLocalFreeAiQuotaStatus().canRun && extractDriveFileIdFromUrl(item.fileUrl || "")) {
               handleFreeAiExtractInInspector();
             }
           });
@@ -14367,6 +15113,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     // ============================================================================
     // === [ISOLATED EXPERIMENTAL MODULE: ONE-TIME BILL PAYMENT JS LOGIC] ===
     // ============================================================================
+    const BILL_SUBMISSION_SHEET_ID = BILL_PAYMENT_SPREADSHEET_ID;
     const ONE_TIME_SHEET_NAME = "One Time Bill Payments";
     const PERSONAL_ONETIME_DRIVE_FOLDER_ID = "1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5";
     const PERSONAL_ONETIME_DRIVE_FOLDER_URL = `https://drive.google.com/drive/folders/${PERSONAL_ONETIME_DRIVE_FOLDER_ID}`;
@@ -14383,7 +15130,89 @@ function ensureOneTimePaymentHeaders(sheet) {
       "Management Approved RLF", "One-Time Acknowledgement", "Status",
       "RFP Number", "RFP Date", "Amount", "Date Paid", "Date Submitted"
     ];
+    const ALLOWED_ONETIME_EXTENSIONS = ["pdf", "jpg", "jpeg", "png"];
+    const ALLOWED_ONETIME_MIMES = ["application/pdf", "image/jpeg", "image/jpg", "image/png"];
     let oneTimeRequests = JSON.parse(localStorage.getItem(ONE_TIME_CACHE_KEY) || "[]");
+
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        if (!file) return resolve("");
+        const reader = new FileReader();
+        reader.onload = () => {
+          const res = String(reader.result || "");
+          resolve(res.includes(",") ? res.split(",")[1] : res);
+        };
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+      });
+    }
+
+    function validateOneTimeUploadFileJs(file) {
+      if (!file || !file.name) return { valid: false, error: "No file selected." };
+      const ext = (file.name.split(".").pop() || "").trim().toLowerCase();
+      const mime = (file.type || "").trim().toLowerCase();
+      const extOk = ALLOWED_ONETIME_EXTENSIONS.includes(ext);
+      const mimeOk = !mime || mime === "application/octet-stream" || ALLOWED_ONETIME_MIMES.includes(mime);
+      if (!extOk || !mimeOk) {
+        return {
+          valid: false,
+          error: `Invalid file "${file.name}". Only JPEG (.jpg/.jpeg), PNG (.png), and PDF (.pdf) files are allowed for One-Time Bill Payment.`
+        };
+      }
+      return { valid: true };
+    }
+
+    function showOtpErrorBanner(msg) {
+      const errEl = document.getElementById("otpErrorBanner");
+      if (!errEl) return;
+      if (msg) {
+        errEl.innerText = msg;
+        errEl.classList.remove("hidden");
+      } else {
+        errEl.innerText = "";
+        errEl.classList.add("hidden");
+      }
+    }
+
+    function validateOtpFileInput(inputEl) {
+      const file = inputEl?.files?.[0];
+      if (!file) return true;
+      const check = validateOneTimeUploadFileJs(file);
+      if (!check.valid) {
+        inputEl.value = "";
+        showOtpErrorBanner(check.error);
+        return false;
+      }
+      showOtpErrorBanner("");
+      return true;
+    }
+
+    function filterAdminActionsSection(sectionId) {
+      const sections = [
+        { key: "regular-bills", elId: "adminSection-regular-bills" },
+        { key: "one-time-payment", elId: "adminOtpFolderConfigBox" },
+        { key: "free-ai", elId: "adminSection-free-ai" },
+        { key: "users-accounts", elId: "adminSection-users-accounts" }
+      ];
+      sections.forEach(s => {
+        const el = document.getElementById(s.elId);
+        if (el) {
+          if (sectionId === "all" || sectionId === s.key) {
+            el.classList.remove("hidden");
+          } else {
+            el.classList.add("hidden");
+          }
+        }
+      });
+      ["all", "regular-bills", "one-time-payment", "free-ai", "users-accounts"].forEach(k => {
+        const btn = document.getElementById("adminFilterBtn-" + k);
+        if (btn) {
+          btn.className = (k === sectionId)
+            ? "px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-slate-900 dark:bg-white text-white dark:text-slate-900 border-slate-900 dark:border-white"
+            : "px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer border bg-white dark:bg-[#1e1e1e] text-slate-700 dark:text-slate-200 border-slate-300 dark:border-slate-700";
+        }
+      });
+    }
 
     // Automated Status rule (4c):
     // 1. CANCEL and REJECTED are top priority if set to them.
@@ -14399,11 +15228,16 @@ function ensureOneTimePaymentHeaders(sheet) {
       return "PENDING";
     }
 
-    // Strictly returns ONLY the dedicated Isolated One-Time Webhook URL.
-    // NEVER falls back to getEnrollmentWebhookUrl() so Bill Sub & Enrollment Sub are 100% unaffected.
+    // Returns the active One-Time Webhook URL, falling back automatically to the user's deployed Apps Script URL
+    // so GitHub Pages and static deployments never fail with an empty webhook URL.
     function getActiveOneTimeWebhookUrl() {
       const isolated = (localStorage.getItem(ONE_TIME_ISOLATED_WEBHOOK_KEY) || "").trim();
-      return isolated && isolated.startsWith("http") ? isolated : "";
+      if (isolated && isolated.startsWith("http")) return isolated;
+      const dedicatedAi = (localStorage.getItem("apec_dedicated_ai_script_url_v1") || "").trim();
+      if (dedicatedAi && dedicatedAi.startsWith("http")) return dedicatedAi;
+      const userScript = (localStorage.getItem("apechomes_user_script_url_v1") || "").trim();
+      if (userScript && userScript.startsWith("http")) return userScript;
+      return DEFAULT_USER_SCRIPT_URL;
     }
 
     function getOneTimeUploadModeSetting() {
@@ -14418,7 +15252,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       const cleanBiller = String(params.biller || "BILLER").replace(/[^a-zA-Z0-9]/g, "").toUpperCase().slice(0, 16) || "BILLER";
       const getExt = (fname) => {
         if (!fname || !fname.includes(".")) return "pdf";
-        return (fname.split(".").pop() || "pdf").trim().toLowerCase().replace(/[^a-z0-9]/g, "") || "pdf";
+        const ext = (fname.split(".").pop() || "pdf").trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+        return ALLOWED_ONETIME_EXTENSIONS.includes(ext) ? ext : "pdf";
       };
       const basePrefix = `${reqId}_${cleanSite}_${cleanAcc}_${cleanBiller}`;
       return {
@@ -14470,7 +15305,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const ownerInput = document.getElementById("otpDriveOwnerEmailInput");
       if (ownerInput) ownerInput.value = localStorage.getItem(ONE_TIME_DRIVE_OWNER_KEY) || DEFAULT_ONETIME_DRIVE_OWNER_EMAIL;
       const webhookInput = document.getElementById("otpIsolatedWebhookUrlInput");
-      if (webhookInput) webhookInput.value = localStorage.getItem(ONE_TIME_ISOLATED_WEBHOOK_KEY) || "";
+      if (webhookInput) webhookInput.value = localStorage.getItem(ONE_TIME_ISOLATED_WEBHOOK_KEY) || DEFAULT_USER_SCRIPT_URL;
       const modeSelect = document.getElementById("otpUploadModeSelect");
       const currentMode = getOneTimeUploadModeSetting();
       if (modeSelect) modeSelect.value = currentMode;
@@ -14484,12 +15319,13 @@ function ensureOneTimePaymentHeaders(sheet) {
         localStorage.setItem(ONE_TIME_ISOLATED_WEBHOOK_KEY, val);
       } else {
         localStorage.removeItem(ONE_TIME_ISOLATED_WEBHOOK_KEY);
+        if (webhookInput) webhookInput.value = DEFAULT_USER_SCRIPT_URL;
       }
       const msg = document.getElementById("otpAdminNoticeText");
       if (msg) {
         msg.innerText = val
-          ? "Saved Isolated One-Time Webhook URL! One-Time Payment requests & uploads will use your separate Web App (your existing Bill Sub & Enrollment Sub script is 100% untouched)."
-          : "Cleared Isolated One-Time Webhook URL (using Sheet-First / Direct Personal Drive mode).";
+          ? "Saved One-Time Webhook URL! One-Time Payment requests & uploads will use your configured Web App."
+          : "Using default Personal Drive Owner Apps Script Webhook URL.";
         msg.classList.remove("hidden");
       }
     }
@@ -14507,7 +15343,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     async function copyIsolatedOneTimeAppsScript() {
       const msg = document.getElementById("otpAdminNoticeText");
       try {
-        const res = await fetch("./OneTimePayment_Isolated_AppsScript.js?v=3.1.0");
+        const res = await fetch("./OneTimePayment_Isolated_AppsScript.js?v=3.3.8");
         if (res.ok) {
           const code = injectAssignedConfigIntoScriptText(await res.text());
           await navigator.clipboard.writeText(code);
@@ -14524,7 +15360,7 @@ function ensureOneTimePaymentHeaders(sheet) {
     async function copyMasterAllUploadsAppsScript() {
       const msg = document.getElementById("otpAdminNoticeText");
       try {
-        const res = await fetch("./GoogleAppsScript_Code.js?v=3.1.0");
+        const res = await fetch("./GoogleAppsScript_Code.js?v=3.3.8");
         if (res.ok) {
           const code = injectAssignedConfigIntoScriptText(await res.text());
           await navigator.clipboard.writeText(code);
@@ -14552,7 +15388,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         const linkEl = document.getElementById(id);
         if (linkEl) linkEl.href = normalizedUrl;
       });
-      const isolated = (localStorage.getItem(ONE_TIME_ISOLATED_WEBHOOK_KEY) || "").trim();
+      const isolated = getActiveOneTimeWebhookUrl();
       if (isolated && isolated.startsWith("http")) {
         fetch(isolated, {
           method: "POST",
@@ -14568,47 +15404,62 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
     }
 
+    const ONE_TIME_EDITS_KEY = "apechomes_onetime_edits_v1";
+    let oneTimeEditsOverrides = {};
+    try {
+      const savedOtpEdits = localStorage.getItem(ONE_TIME_EDITS_KEY);
+      if (savedOtpEdits) {
+        const parsedOtpEdits = JSON.parse(savedOtpEdits);
+        if (parsedOtpEdits && typeof parsedOtpEdits === "object") oneTimeEditsOverrides = parsedOtpEdits;
+      }
+    } catch (e) {}
+
+    let pendingOtpStatusConfirmValue = null;
+    let isOtpPaymentUnlocked = false;
+    let isOtpDetailsUnlocked = false;
+
     async function verifyOneTimeSheetTabExistsInGSheet() {
       try {
-        const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_SUBMISSION_SHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ONE_TIME_SHEET_NAME)}&t=${Date.now()}`;
+        const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ONE_TIME_SHEET_NAME)}&t=${Date.now()}`;
         const resp = await fetch(gvizUrl, { cache: "no-store" });
-        if (!resp.ok) return { exists: false, rows: [] };
+        if (!resp.ok) return { exists: false, rows: [], dataRowCount: 0 };
         const csvText = await resp.text();
-        if (!csvText || csvText.trim().startsWith("<!DOCTYPE")) return { exists: false, rows: [] };
+        if (!csvText || csvText.trim().startsWith("<!DOCTYPE")) return { exists: false, rows: [], dataRowCount: 0 };
         const rows = parseCSV(csvText);
-        if (!rows || rows.length === 0) return { exists: false, rows: [] };
+        if (!rows || rows.length === 0) return { exists: false, rows: [], dataRowCount: 0 };
         const hdr = rows[0].map(h => String(h || "").toLowerCase());
         // Guard against GViz fallback to 'Billers' tab ('account no', 'site', 'biller')
         if (hdr[0] === "account no" && hdr[1] === "site" && hdr[2] === "biller") {
-          return { exists: false, rows: [] };
+          return { exists: false, rows: [], dataRowCount: 0 };
         }
-        const hasOtpHeaders = hdr.some(h => h.includes("rlf") || h.includes("one-time") || h.includes("acknowledgement") || h.includes("rfp"));
-        const hasOtpRow = rows.slice(1).some(r => r && String(r[0] || "").trim().startsWith("OTP-"));
+        const hasOtpHeaders = hdr.some(h => h.includes("rlf") || h.includes("one-time") || h.includes("acknowledgement") || h.includes("rfp") || h.includes("request id"));
+        const otpRows = rows.filter(r => r && String(r[0] || "").trim().toUpperCase().startsWith("OTP-"));
+        const hasOtpRow = otpRows.length > 0;
         const exists = hasOtpHeaders || hasOtpRow;
         const liveBadge = document.getElementById("otpSheetLiveBadge");
         if (liveBadge) {
-          liveBadge.innerText = exists ? `✓ Live in GSheet (${Math.max(0, rows.length - 1)} rows)` : "○ Tab Ready to Create";
+          liveBadge.innerText = exists ? `✓ Live in GSheet (${otpRows.length} rows)` : "○ Tab Ready to Verify";
           liveBadge.className = exists
             ? "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
             : "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30";
         }
-        return { exists, rows };
+        return { exists, rows, dataRowCount: otpRows.length };
       } catch (e) {
-        return { exists: false, rows: [] };
+        return { exists: false, rows: [], dataRowCount: 0 };
       }
     }
 
     async function ensureOneTimeSheetViaGoogleRestApi(token) {
       if (!token) return false;
       try {
-        const metaRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${BILL_SUBMISSION_SHEET_ID}`, {
+        const metaRes = await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${BILL_PAYMENT_SPREADSHEET_ID}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         if (!metaRes.ok) return false;
         const meta = await metaRes.json();
         const exists = (meta.sheets || []).some(s => s?.properties?.title === ONE_TIME_SHEET_NAME);
         if (!exists) {
-          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${BILL_SUBMISSION_SHEET_ID}:batchUpdate`, {
+          await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${BILL_PAYMENT_SPREADSHEET_ID}:batchUpdate`, {
             method: "POST",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -14621,7 +15472,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           });
         }
         const writeRes = await fetch(
-          `https://sheets.googleapis.com/v4/spreadsheets/${BILL_SUBMISSION_SHEET_ID}/values/${encodeURIComponent(`'${ONE_TIME_SHEET_NAME}'!A1:Q1`)}?valueInputOption=USER_ENTERED`,
+          `https://sheets.googleapis.com/v4/spreadsheets/${BILL_PAYMENT_SPREADSHEET_ID}/values/${encodeURIComponent(`'${ONE_TIME_SHEET_NAME}'!A1:Q1`)}?valueInputOption=USER_ENTERED`,
           {
             method: "PUT",
             headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
@@ -14638,7 +15489,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const webhookUrl = getActiveOneTimeWebhookUrl();
       const msg = document.getElementById("otpAdminNoticeText");
       if (msg) {
-        msg.innerText = "Verifying / Creating '" + ONE_TIME_SHEET_NAME + "' tab (17 columns A–Q)...";
+        msg.innerText = "Verifying '" + ONE_TIME_SHEET_NAME + "' tab (17 columns A–Q) in Google Sheets...";
         msg.classList.remove("hidden");
       }
 
@@ -14651,22 +15502,6 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
       }
 
-      try {
-        const apiResp = await fetch("/api/onetime-payment/init-sheet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ webhookUrl })
-        });
-        if (apiResp.ok) {
-          const apiData = await apiResp.json();
-          if (apiData && apiData.verifiedInGviz) {
-            if (msg) msg.innerText = apiData.message || ("Verified '" + ONE_TIME_SHEET_NAME + "' tab & 17 columns.");
-            syncLiveOneTimePaymentsFromGSheet(true);
-            return;
-          }
-        }
-      } catch (e) {}
-
       if (webhookUrl) {
         try {
           await fetch(webhookUrl, {
@@ -14678,17 +15513,16 @@ function ensureOneTimePaymentHeaders(sheet) {
         } catch (e) {}
       }
 
-      await new Promise(r => setTimeout(r, 1500));
       const check = await verifyOneTimeSheetTabExistsInGSheet();
       if (check.exists) {
         if (msg) {
-          msg.innerText = "Verified! '" + ONE_TIME_SHEET_NAME + "' tab and all 17 columns (A–Q) are active in Google Sheets.";
+          msg.innerText = `Verified! '${ONE_TIME_SHEET_NAME}' tab and all 17 columns (A–Q) are live in Google Sheets (${check.dataRowCount} row(s)).`;
           msg.classList.remove("hidden");
         }
         syncLiveOneTimePaymentsFromGSheet(true);
       } else {
         if (msg) {
-          msg.innerText = "Click 'Connect GSheet' in the top bar (or deploy the Isolated One-Time .gs Script) and click 'Create / Verify GSheet Tab' again to create the 17-column sheet.";
+          msg.innerText = "Click 'Connect GSheet' in the top bar (or deploy the Isolated One-Time .gs Script) and click 'Init / Verify Sheet' again to create the 17-column sheet.";
           msg.classList.remove("hidden");
         }
       }
@@ -14714,7 +15548,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         });
         const msg = document.getElementById("otpAdminNoticeText");
         if (msg) {
-          msg.innerText = "Triggered Drive upload auto-link for '" + ONE_TIME_SHEET_NAME + "'.";
+          msg.innerText = "Triggered Drive upload auto-link for '" + ONE_TIME_SHEET_NAME + "' (Folder: " + targetFolderId + ").";
           msg.classList.remove("hidden");
         }
         setTimeout(() => syncLiveOneTimePaymentsFromGSheet(true), 1800);
@@ -14724,23 +15558,23 @@ function ensureOneTimePaymentHeaders(sheet) {
     async function syncLiveOneTimePaymentsFromGSheet(force) {
       try {
         const check = await verifyOneTimeSheetTabExistsInGSheet();
-        if (!check.exists || check.rows.length <= 1) {
+        if (!check.exists || check.rows.length === 0) {
           updateOneTimeNavBadge();
           if (currentTab === "one-time-status") renderOneTimeStatusTable();
           return;
         }
         const rows = check.rows;
         const parsed = [];
-        for (let i = 1; i < rows.length; i++) {
+        for (let i = 0; i < rows.length; i++) {
           const c = rows[i];
           if (!c || c.length < 5) continue;
           const reqId = String(c[0] || "").trim();
-          if (!reqId || !reqId.startsWith("OTP-")) continue;
+          if (!reqId || !reqId.toUpperCase().startsWith("OTP-")) continue;
           const rfpNumber = String(c[12] || "").trim();
           const rfpDate = String(c[13] || "").trim();
           const amount = String(c[14] || "").trim();
           const datePaid = String(c[15] || "").trim();
-          parsed.push({
+          const baseItem = {
             requestId: reqId,
             userId: String(c[1] || "").trim(),
             email: String(c[2] || "").trim(),
@@ -14758,10 +15592,20 @@ function ensureOneTimePaymentHeaders(sheet) {
             amount,
             datePaid,
             submittedAt: String(c[16] || "").trim()
-          });
+          };
+          const ov = oneTimeEditsOverrides[reqId];
+          const merged = ov ? { ...baseItem, ...ov } : baseItem;
+          // Always preserve real Google Drive file links from the live sheet
+          if (String(baseItem.requestLetterFileName || "").startsWith("http")) merged.requestLetterFileName = baseItem.requestLetterFileName;
+          if (String(baseItem.soaFileName || "").startsWith("http")) merged.soaFileName = baseItem.soaFileName;
+          if (String(baseItem.rlfFileName || "").startsWith("http")) merged.rlfFileName = baseItem.rlfFileName;
+          merged.status = computeAutomatedOneTimeStatus(merged.status, merged.rfpNumber, merged.datePaid);
+          parsed.push(merged);
         }
-        // Authoritative sync from Google Sheet ('One Time Bill Payments')
-        oneTimeRequests = parsed;
+        // Merge live Google Sheet rows with any newly submitted local records not yet visible in GViz cache
+        const sheetIds = new Set(parsed.map(r => r.requestId));
+        const unsyncedLocal = (oneTimeRequests || []).filter(r => r && r.requestId && !sheetIds.has(r.requestId));
+        oneTimeRequests = [...unsyncedLocal, ...parsed];
         localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
         updateOneTimeNavBadge();
         if (currentTab === "one-time-status") renderOneTimeStatusTable();
@@ -14770,9 +15614,16 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     async function handleOneTimePaymentSubmit(e) {
       e.preventDefault();
-      if (!currentUser) return;
+      showOtpErrorBanner("");
+      if (!currentUser) {
+        showOtpErrorBanner("Session expired. Please sign in again.");
+        return;
+      }
       const ack = document.getElementById("otpAckCheckbox")?.checked;
-      if (!ack) return;
+      if (!ack) {
+        showOtpErrorBanner("You must explicitly acknowledge that this is a ONE-TIME PAYMENT ONLY.");
+        return;
+      }
       const email = currentUser.fullName || `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() || currentUser.username || "";
       const viber = document.getElementById("otpReqViber")?.value.trim() || "";
       const accountNumber = document.getElementById("otpReqAccountNo")?.value.trim() || "";
@@ -14783,164 +15634,264 @@ function ensureOneTimePaymentHeaders(sheet) {
       const soaFile = document.getElementById("otpFileSoa")?.files?.[0];
       const rlfFile = document.getElementById("otpFileRlf")?.files?.[0];
       const uploadMode = getOneTimeUploadModeSetting();
-      if (uploadMode === "required" && (!letterFile || !soaFile || !rlfFile)) return;
+
+      if (!viber || !accountNumber || !site || !biller) {
+        showOtpErrorBanner("Please complete all required fields (Viber Number, Account Number, Site, and Utility Biller).");
+        return;
+      }
+      if (uploadMode === "required" && (!letterFile || !soaFile || !rlfFile)) {
+        showOtpErrorBanner("Please upload all 3 required documents: (1) Approved Request Letter, (2) Current Billing / SOA, and (3) Management Approved RLF.");
+        return;
+      }
+      for (const f of [letterFile, soaFile, rlfFile]) {
+        if (f) {
+          const check = validateOneTimeUploadFileJs(f);
+          if (!check.valid) {
+            showOtpErrorBanner(check.error);
+            return;
+          }
+        }
+      }
 
       const btn = document.getElementById("otpSubmitBtn");
-      if (btn) { btn.disabled = true; btn.innerText = "Submitting One-Time Payment..."; }
+      if (btn) { btn.disabled = true; btn.innerText = "Uploading 3 Files & Syncing to Google Sheet..."; }
 
-      const now = new Date();
-      const requestId = `OTP-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
-      const submittedAt = now.toLocaleString();
-      const rawFolder = localStorage.getItem(ONE_TIME_DRIVE_FOLDER_KEY) || PERSONAL_ONETIME_DRIVE_FOLDER_URL;
-      const folderMatch = rawFolder.match(/[-\w]{25,}/);
-      const targetFolderId = folderMatch ? folderMatch[0] : PERSONAL_ONETIME_DRIVE_FOLDER_ID;
-      const driveOwnerEmail = (localStorage.getItem(ONE_TIME_DRIVE_OWNER_KEY) || DEFAULT_ONETIME_DRIVE_OWNER_EMAIL).trim();
-      const acknowledgementText = "YES - ONE-TIME PAYMENT ONLY (NO SUCCEEDING PAYMENTS)";
+      try {
+        const now = new Date();
+        const requestId = `OTP-${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-${Math.floor(1000 + Math.random() * 9000)}`;
+        const submittedAt = now.toLocaleString();
+        const rawFolder = localStorage.getItem(ONE_TIME_DRIVE_FOLDER_KEY) || PERSONAL_ONETIME_DRIVE_FOLDER_URL;
+        const folderMatch = rawFolder.match(/[-\w]{25,}/);
+        const targetFolderId = folderMatch ? folderMatch[0] : PERSONAL_ONETIME_DRIVE_FOLDER_ID;
+        const driveOwnerEmail = (localStorage.getItem(ONE_TIME_DRIVE_OWNER_KEY) || DEFAULT_ONETIME_DRIVE_OWNER_EMAIL).trim();
+        const acknowledgementText = "YES - ONE-TIME PAYMENT ONLY (NO SUCCEEDING PAYMENTS)";
 
-      const uniqueNames = buildOneTimeUniqueUploadNames({
-        requestId,
-        site,
-        accountNumber,
-        biller,
-        letterOriginalName: letterFile?.name,
-        soaOriginalName: soaFile?.name,
-        rlfOriginalName: rlfFile?.name
-      });
+        const uniqueNames = buildOneTimeUniqueUploadNames({
+          requestId,
+          site,
+          accountNumber,
+          biller,
+          letterOriginalName: letterFile?.name,
+          soaOriginalName: soaFile?.name,
+          rlfOriginalName: rlfFile?.name
+        });
 
-      const [letterB64, soaB64, rlfB64] = await Promise.all([
-        letterFile ? fileToBase64(letterFile) : Promise.resolve(""),
-        soaFile ? fileToBase64(soaFile) : Promise.resolve(""),
-        rlfFile ? fileToBase64(rlfFile) : Promise.resolve("")
-      ]);
+        const [letterB64, soaB64, rlfB64] = await Promise.all([
+          letterFile ? fileToBase64(letterFile) : Promise.resolve(""),
+          soaFile ? fileToBase64(soaFile) : Promise.resolve(""),
+          rlfFile ? fileToBase64(rlfFile) : Promise.resolve("")
+        ]);
 
-      const newRec = {
-        requestId,
-        userId: currentUser.userId,
-        email,
-        viberNumber: viber,
-        accountNumber,
-        site,
-        biller,
-        requestLetterFileName: uniqueNames.requestLetterFileName,
-        soaFileName: uniqueNames.soaFileName,
-        rlfFileName: uniqueNames.rlfFileName,
-        oneTimeAcknowledged: true,
-        acknowledgementText,
-        status: "PENDING",
-        rfpNumber: "",
-        rfpDate: "",
-        amount,
-        datePaid: "",
-        submittedAt
-      };
-      oneTimeRequests.unshift(newRec);
-      localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
-      updateOneTimeNavBadge();
+        const newRec = {
+          requestId,
+          userId: currentUser.userId,
+          email,
+          viberNumber: viber,
+          accountNumber,
+          site,
+          biller,
+          requestLetterFileName: uniqueNames.requestLetterFileName,
+          soaFileName: uniqueNames.soaFileName,
+          rlfFileName: uniqueNames.rlfFileName,
+          oneTimeAcknowledged: true,
+          acknowledgementText,
+          status: "PENDING",
+          rfpNumber: "",
+          rfpDate: "",
+          amount,
+          datePaid: "",
+          submittedAt
+        };
+        oneTimeRequests = [newRec, ...oneTimeRequests.filter(r => r && r.requestId !== requestId)];
+        localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
+        updateOneTimeNavBadge();
 
-      if (typeof googleAccessToken !== "undefined" && googleAccessToken) {
-        try {
-          const uploadToPersonalDrive = async (b64, fname, mtype) => {
-            if (!b64) return null;
-            const cleanB64 = b64.includes(",") ? b64.split(",")[1] : b64;
-            const boundary = "-------PersonalDriveUpload" + Date.now();
-            const metadata = { name: fname, parents: [targetFolderId || PERSONAL_ONETIME_DRIVE_FOLDER_ID] };
-            const body =
-              `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n` +
-              `--${boundary}\r\nContent-Type: ${mtype || "application/pdf"}\r\nContent-Transfer-Encoding: base64\r\n\r\n${cleanB64}\r\n--${boundary}--`;
-            const upRes = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink", {
+        let uploadedViaOauth = false;
+        if (typeof googleAccessToken !== "undefined" && googleAccessToken) {
+          try {
+            const uploadToPersonalDrive = async (b64, fname, mtype) => {
+              if (!b64) return null;
+              const cleanB64 = b64.includes(",") ? b64.split(",")[1] : b64;
+              const boundary = "-------PersonalDriveUpload" + Date.now();
+              const metadata = { name: fname, parents: [targetFolderId || PERSONAL_ONETIME_DRIVE_FOLDER_ID] };
+              const body =
+                `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${JSON.stringify(metadata)}\r\n` +
+                `--${boundary}\r\nContent-Type: ${mtype || "application/pdf"}\r\nContent-Transfer-Encoding: base64\r\n\r\n${cleanB64}\r\n--${boundary}--`;
+              const upRes = await fetch("https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id,webViewLink", {
+                method: "POST",
+                headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": `multipart/related; boundary=${boundary}` },
+                body
+              });
+              if (!upRes.ok) return null;
+              const upJson = await upRes.json();
+              if (!upJson || !upJson.id) return null;
+              fetch(`https://www.googleapis.com/drive/v3/files/${upJson.id}/permissions?sendNotificationEmail=false`, {
+                method: "POST",
+                headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": "application/json" },
+                body: JSON.stringify({ role: "reader", type: "anyone" })
+              }).catch(() => {});
+              return `https://drive.google.com/file/d/${upJson.id}/view`;
+            };
+
+            const [letterDriveUrl, soaDriveUrl, rlfDriveUrl] = await Promise.all([
+              letterB64 ? uploadToPersonalDrive(letterB64, uniqueNames.requestLetterFileName, letterFile?.type) : Promise.resolve(null),
+              soaB64 ? uploadToPersonalDrive(soaB64, uniqueNames.soaFileName, soaFile?.type) : Promise.resolve(null),
+              rlfB64 ? uploadToPersonalDrive(rlfB64, uniqueNames.rlfFileName, rlfFile?.type) : Promise.resolve(null)
+            ]);
+
+            if (letterDriveUrl) newRec.requestLetterFileName = letterDriveUrl;
+            if (soaDriveUrl) newRec.soaFileName = soaDriveUrl;
+            if (rlfDriveUrl) newRec.rlfFileName = rlfDriveUrl;
+            localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
+
+            const apRes = await fetch(
+              `https://sheets.googleapis.com/v4/spreadsheets/${BILL_PAYMENT_SPREADSHEET_ID}/values/${encodeURIComponent(`'${ONE_TIME_SHEET_NAME}'!A:Q`)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
+              {
+                method: "POST",
+                headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  values: [[
+                    newRec.requestId,
+                    newRec.userId,
+                    newRec.email,
+                    newRec.viberNumber,
+                    newRec.accountNumber,
+                    newRec.site,
+                    newRec.biller,
+                    letterDriveUrl ? `=HYPERLINK("${letterDriveUrl}", "${letterDriveUrl}")` : uniqueNames.requestLetterFileName,
+                    soaDriveUrl ? `=HYPERLINK("${soaDriveUrl}", "${soaDriveUrl}")` : uniqueNames.soaFileName,
+                    rlfDriveUrl ? `=HYPERLINK("${rlfDriveUrl}", "${rlfDriveUrl}")` : uniqueNames.rlfFileName,
+                    acknowledgementText,
+                    "PENDING",
+                    "",
+                    "",
+                    newRec.amount,
+                    "",
+                    newRec.submittedAt
+                  ]]
+                })
+              }
+            );
+            if (apRes.ok) uploadedViaOauth = true;
+          } catch (e) {}
+        }
+
+        const webhookPayload = {
+          action: "submitOneTimePayment",
+          ...newRec,
+          sheetName: ONE_TIME_SHEET_NAME,
+          spreadsheetId: BILL_PAYMENT_SPREADSHEET_ID,
+          targetFolderId,
+          driveOwnerEmail,
+          targetDriveFolderUrl: rawFolder,
+          acknowledgementText,
+          oneTimeAcknowledgementText: acknowledgementText,
+          letterFile: letterB64 ? { name: uniqueNames.requestLetterFileName, type: letterFile.type || "application/pdf", mimeType: letterFile.type || "application/pdf", base64: letterB64 } : undefined,
+          soaFile: soaB64 ? { name: uniqueNames.soaFileName, type: soaFile.type || "application/pdf", mimeType: soaFile.type || "application/pdf", base64: soaB64 } : undefined,
+          rlfFile: rlfB64 ? { name: uniqueNames.rlfFileName, type: rlfFile.type || "application/pdf", mimeType: rlfFile.type || "application/pdf", base64: rlfB64 } : undefined
+        };
+
+        let webhookSynced = uploadedViaOauth;
+        let serverHandledWebhookTry = false;
+        const primaryWebhookUrl = getActiveOneTimeWebhookUrl() || DEFAULT_USER_SCRIPT_URL;
+
+        // 1. If running on Express backend (AI Studio Preview / Node server), try /api/onetime-payment/submit once with 45s timeout
+        if (!webhookSynced && !window.location.hostname.endsWith("github.io")) {
+          try {
+            const ctrl = new AbortController();
+            const tId = setTimeout(() => ctrl.abort(), 45000);
+            const srvRes = await fetch("/api/onetime-payment/submit", {
               method: "POST",
-              headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": `multipart/related; boundary=${boundary}` },
-              body
-            });
-            if (!upRes.ok) return null;
-            const upJson = await upRes.json();
-            if (!upJson || !upJson.id) return null;
-            fetch(`https://www.googleapis.com/drive/v3/files/${upJson.id}/permissions?sendNotificationEmail=false`, {
-              method: "POST",
-              headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": "application/json" },
-              body: JSON.stringify({ role: "reader", type: "anyone" })
-            }).catch(() => {});
-            return `https://drive.google.com/file/d/${upJson.id}/view`;
-          };
-
-          const [letterDriveUrl, soaDriveUrl, rlfDriveUrl] = await Promise.all([
-            letterB64 ? uploadToPersonalDrive(letterB64, uniqueNames.requestLetterFileName, letterFile?.type) : Promise.resolve(null),
-            soaB64 ? uploadToPersonalDrive(soaB64, uniqueNames.soaFileName, soaFile?.type) : Promise.resolve(null),
-            rlfB64 ? uploadToPersonalDrive(rlfB64, uniqueNames.rlfFileName, rlfFile?.type) : Promise.resolve(null)
-          ]);
-
-          if (letterDriveUrl) newRec.requestLetterFileName = letterDriveUrl;
-          if (soaDriveUrl) newRec.soaFileName = soaDriveUrl;
-          if (rlfDriveUrl) newRec.rlfFileName = rlfDriveUrl;
-          localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
-
-          await ensureOneTimeSheetViaGoogleRestApi(googleAccessToken);
-          await fetch(
-            `https://sheets.googleapis.com/v4/spreadsheets/${BILL_SUBMISSION_SHEET_ID}/values/${encodeURIComponent(`'${ONE_TIME_SHEET_NAME}'!A:Q`)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`,
-            {
-              method: "POST",
-              headers: { Authorization: `Bearer ${googleAccessToken}`, "Content-Type": "application/json" },
+              signal: ctrl.signal,
+              headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
-                values: [[
-                  newRec.requestId,
-                  newRec.userId,
-                  newRec.email,
-                  newRec.viberNumber,
-                  newRec.accountNumber,
-                  newRec.site,
-                  newRec.biller,
-                  letterDriveUrl ? `=HYPERLINK("${letterDriveUrl}", "${letterDriveUrl}")` : uniqueNames.requestLetterFileName,
-                  soaDriveUrl ? `=HYPERLINK("${soaDriveUrl}", "${soaDriveUrl}")` : uniqueNames.soaFileName,
-                  rlfDriveUrl ? `=HYPERLINK("${rlfDriveUrl}", "${rlfDriveUrl}")` : uniqueNames.rlfFileName,
-                  acknowledgementText,
-                  "PENDING",
-                  "",
-                  "",
-                  newRec.amount,
-                  "",
-                  newRec.submittedAt
-                ]]
+                ...webhookPayload,
+                webhookUrl: primaryWebhookUrl
               })
+            });
+            clearTimeout(tId);
+            if (srvRes.ok) {
+              serverHandledWebhookTry = true;
+              const srvJson = await srvRes.json().catch(() => null);
+              const wJson = srvJson?.webhookResult;
+              if (wJson && wJson.status === "success" && (wJson.requestId || wJson.row)) {
+                webhookSynced = true;
+                if (wJson.letterUrl) newRec.requestLetterFileName = wJson.letterUrl;
+                if (wJson.soaUrl) newRec.soaFileName = wJson.soaUrl;
+                if (wJson.rlfUrl) newRec.rlfFileName = wJson.rlfUrl;
+                localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
+              }
             }
+          } catch (srvErr) {}
+        }
+
+        // 2. Direct client POST to single active Apps Script webhook with 45s timeout (used on GitHub Pages / Netlify static hosting)
+        if (!webhookSynced && !serverHandledWebhookTry && primaryWebhookUrl) {
+          try {
+            const ctrl = new AbortController();
+            const tId = setTimeout(() => ctrl.abort(), 45000);
+            const wRes = await fetch(primaryWebhookUrl, {
+              method: "POST",
+              redirect: "follow",
+              signal: ctrl.signal,
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(webhookPayload)
+            });
+            clearTimeout(tId);
+            if (wRes.ok) {
+              const wJson = await wRes.json().catch(() => null);
+              if (wJson && wJson.status === "success" && (wJson.requestId || wJson.row)) {
+                webhookSynced = true;
+                if (wJson.letterUrl) newRec.requestLetterFileName = wJson.letterUrl;
+                if (wJson.soaUrl) newRec.soaFileName = wJson.soaUrl;
+                if (wJson.rlfUrl) newRec.rlfFileName = wJson.rlfUrl;
+                localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
+              }
+            }
+          } catch (err) {}
+        }
+
+        // 3. Authoritative GViz verification: even if cross-origin redirect reading was blocked or timed out,
+        // pull live rows from "One Time Bill Payments" and check if requestId is now live in Google Sheets!
+        await syncLiveOneTimePaymentsFromGSheet(true);
+        const syncedItem = oneTimeRequests.find(r => r && r.requestId === requestId);
+        if (
+          syncedItem &&
+          (String(syncedItem.requestLetterFileName || "").startsWith("http") ||
+           String(syncedItem.soaFileName || "").startsWith("http") ||
+           String(syncedItem.rlfFileName || "").startsWith("http"))
+        ) {
+          webhookSynced = true;
+        } else if (!webhookSynced) {
+          const checkNow = await verifyOneTimeSheetTabExistsInGSheet();
+          if (checkNow.exists && (checkNow.rows || []).some(r => r && String(r[0] || "").trim() === requestId)) {
+            webhookSynced = true;
+          }
+        }
+
+        const banner = document.getElementById("otpSuccessBanner");
+        const bannerTxt = document.getElementById("otpSuccessBannerText");
+        if (banner && bannerTxt) {
+          bannerTxt.innerText = webhookSynced
+            ? `Synced to Google Sheet & Drive! Reference ID: ${requestId} • Requestor: ${email} • Account: ${accountNumber} (${biller} - ${site})`
+            : `Recorded in Portal (${requestId}) • Verifying Google Sheet "One Time Bill Payments" sync...`;
+          banner.classList.remove("hidden");
+        }
+        if (!webhookSynced) {
+          showOtpErrorBanner(
+            `Action Needed to Write to Google Sheet & Drive: Request ${requestId} is saved in the portal table, but your deployed Google Apps Script did not confirm write access yet. Go to Admin Actions -> 2. One-Time Bill Payment, click "Copy Isolated One-Time .gs" (or "Copy Unified Code.gs"), paste it into script.google.com, select "authorizeDriveAndSheets" at the top and click Run (▶) -> Review Permissions -> Allow, then click Deploy -> Manage deployments -> Edit -> Version: New version -> Deploy.`
           );
-        } catch (e) {}
+        } else {
+          showOtpErrorBanner("");
+        }
+        document.getElementById("oneTimePaymentForm")?.reset();
+        populateOneTimeFormDefaults();
+        renderOneTimeStatusTable();
+      } catch (submitErr) {
+        showOtpErrorBanner(submitErr?.message || "Failed to submit One-Time Payment request.");
+      } finally {
+        if (btn) { btn.disabled = false; btn.innerText = "Submit One-Time Bill Payment Request"; }
       }
-
-      const webhookUrl = getActiveOneTimeWebhookUrl();
-      if (webhookUrl) {
-        try {
-          await fetch(webhookUrl, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            body: JSON.stringify({
-              ...newRec,
-              sheetName: ONE_TIME_SHEET_NAME,
-              targetFolderId,
-              driveOwnerEmail,
-              targetDriveFolderUrl: rawFolder,
-              acknowledgementText,
-              oneTimeAcknowledgementText: acknowledgementText,
-              letterFileBase64: letterB64 || undefined,
-              soaFileBase64: soaB64 || undefined,
-              rlfFileBase64: rlfB64 || undefined,
-              letterFile: letterB64 ? { name: uniqueNames.requestLetterFileName, type: letterFile.type || "application/pdf", mimeType: letterFile.type || "application/pdf", base64: letterB64, data: letterB64 } : undefined,
-              soaFile: soaB64 ? { name: uniqueNames.soaFileName, type: soaFile.type || "application/pdf", mimeType: soaFile.type || "application/pdf", base64: soaB64, data: soaB64 } : undefined,
-              rlfFile: rlfB64 ? { name: uniqueNames.rlfFileName, type: rlfFile.type || "application/pdf", mimeType: rlfFile.type || "application/pdf", base64: rlfB64, data: rlfB64 } : undefined
-            })
-          });
-        } catch (err) {}
-      }
-
-      if (btn) { btn.disabled = false; btn.innerText = "Submit One-Time Bill Payment Request"; }
-      const banner = document.getElementById("otpSuccessBanner");
-      const bannerTxt = document.getElementById("otpSuccessBannerText");
-      if (banner && bannerTxt) {
-        bannerTxt.innerText = `Reference ID: ${requestId} • Requestor: ${email} • Account: ${accountNumber} (${biller} - ${site})`;
-        banner.classList.remove("hidden");
-      }
-      document.getElementById("oneTimePaymentForm")?.reset();
-      populateOneTimeFormDefaults();
     }
 
     async function handleOneTimeInlineUpdate(requestId, field, value) {
@@ -14952,6 +15903,12 @@ function ensureOneTimePaymentHeaders(sheet) {
         oneTimeRequests[idx].rfpNumber,
         oneTimeRequests[idx].datePaid
       );
+      oneTimeEditsOverrides[requestId] = {
+        ...(oneTimeEditsOverrides[requestId] || {}),
+        [field]: value,
+        status: oneTimeRequests[idx].status
+      };
+      localStorage.setItem(ONE_TIME_EDITS_KEY, JSON.stringify(oneTimeEditsOverrides));
       localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
       updateOneTimeNavBadge();
       renderOneTimeStatusTable();
@@ -15002,6 +15959,15 @@ function ensureOneTimePaymentHeaders(sheet) {
         oneTimeRequests[idx].rfpNumber,
         oneTimeRequests[idx].datePaid
       );
+      oneTimeEditsOverrides[requestId] = {
+        ...(oneTimeEditsOverrides[requestId] || {}),
+        rfpNumber: oneTimeRequests[idx].rfpNumber,
+        rfpDate: oneTimeRequests[idx].rfpDate,
+        amount: oneTimeRequests[idx].amount,
+        datePaid: oneTimeRequests[idx].datePaid,
+        status: oneTimeRequests[idx].status
+      };
+      localStorage.setItem(ONE_TIME_EDITS_KEY, JSON.stringify(oneTimeEditsOverrides));
       localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
       updateOneTimeNavBadge();
 
@@ -15048,6 +16014,415 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
     }
 
+    function updateOtpEditLockUI(canAddPayment, canEditDetails) {
+      ["editOtpRfpNumber", "editOtpRfpDate", "editOtpAmount", "editOtpDatePaid"].forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !(canAddPayment && isOtpPaymentUnlocked);
+      });
+      ["editOtpAccountNo", "editOtpSite", "editOtpBiller", "editOtpViber", "editOtpEmail"].forEach(fid => {
+        const el = document.getElementById(fid);
+        if (el) el.disabled = !(canEditDetails && isOtpDetailsUnlocked);
+      });
+
+      const payBtn = document.getElementById("editOtpPaymentUnlockBtn");
+      if (payBtn) {
+        payBtn.classList.toggle("hidden", !canAddPayment);
+        payBtn.innerText = isOtpPaymentUnlocked ? "Lock Payment Fields" : "Add / Edit Payment Details";
+        payBtn.className = isOtpPaymentUnlocked
+          ? "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer"
+          : "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-amber-600 hover:bg-amber-700 text-white shadow-xs cursor-pointer";
+      }
+
+      const detBtn = document.getElementById("editOtpDetailsUnlockBtn");
+      if (detBtn) {
+        detBtn.classList.toggle("hidden", !canEditDetails);
+        detBtn.innerText = isOtpDetailsUnlocked ? "Cancel Edit" : "Edit Details";
+        detBtn.className = isOtpDetailsUnlocked
+          ? "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200 hover:bg-slate-300 cursor-pointer"
+          : "px-2.5 py-1 rounded-lg text-[10px] font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs cursor-pointer";
+      }
+
+      const dot = document.getElementById("editOtpUnlockStatusDot");
+      if (dot) {
+        dot.className = `w-2 h-2 rounded-full ${(isOtpPaymentUnlocked || isOtpDetailsUnlocked) ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`;
+      }
+
+      const saveBtn = document.getElementById("editOtpSaveBtn");
+      if (saveBtn) {
+        saveBtn.classList.toggle("hidden", !((canAddPayment && isOtpPaymentUnlocked) || (canEditDetails && isOtpDetailsUnlocked)));
+      }
+    }
+
+    function toggleOtpPaymentUnlock() {
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canAddPayment = (isAdminOrSub || hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditDetails = (isAdminOrSub || hasUserPermission(currentUser, "OTP_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      if (!canAddPayment) return;
+      isOtpPaymentUnlocked = !isOtpPaymentUnlocked;
+      updateOtpEditLockUI(canAddPayment, canEditDetails);
+    }
+
+    function toggleOtpDetailsUnlock() {
+      const reqId = document.getElementById("editOtpReqId")?.value;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canAddPayment = (isAdminOrSub || hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditDetails = (isAdminOrSub || hasUserPermission(currentUser, "OTP_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      if (!canEditDetails) return;
+      isOtpDetailsUnlocked = !isOtpDetailsUnlocked;
+      if (!isOtpDetailsUnlocked && reqId) {
+        const base = oneTimeRequests.find(r => r.requestId === reqId);
+        const item = base ? (oneTimeEditsOverrides[reqId] ? { ...base, ...oneTimeEditsOverrides[reqId] } : base) : null;
+        if (item) {
+          document.getElementById("editOtpAccountNo").value = item.accountNumber || "";
+          document.getElementById("editOtpSite").value = item.site || "";
+          document.getElementById("editOtpBiller").value = item.biller || "";
+          document.getElementById("editOtpViber").value = item.viberNumber || "";
+          document.getElementById("editOtpEmail").value = item.email || "";
+        }
+        document.getElementById("editOtpConfirmBanner")?.classList.add("hidden");
+        document.getElementById("editOtpActionRow")?.classList.remove("hidden");
+      }
+      updateOtpEditLockUI(canAddPayment, canEditDetails);
+    }
+
+    function setOtpAttachmentMode(mode) {
+      activeOtpAttachMode = mode || "rlf";
+      resetInspectorView();
+      const mapBtn = {
+        letter: "otpModeBtnLetter",
+        soa: "otpModeBtnSoa",
+        rlf: "otpModeBtnRlf",
+        compare: "otpModeBtnCompare"
+      };
+      ["letter", "soa", "rlf", "compare"].forEach(m => {
+        const btn = document.getElementById(mapBtn[m]);
+        if (btn) {
+          btn.className = m === activeOtpAttachMode
+            ? "px-2.5 py-1 rounded-lg text-[11px] font-bold bg-amber-600 text-white cursor-pointer"
+            : "px-2.5 py-1 rounded-lg text-[11px] font-bold text-slate-400 hover:text-white cursor-pointer";
+        }
+      });
+      renderOtpInspectorRightPane();
+    }
+
+    function renderOtpInspectorRightPane() {
+      const item = activeInspectOtpItem;
+      if (!item) return;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canOpenOtpLink = isAdminOrSub || hasUserPermission(currentUser, "OTP_ATTACH_LINK");
+      const savedFolder = localStorage.getItem(ONE_TIME_DRIVE_FOLDER_KEY) || PERSONAL_ONETIME_DRIVE_FOLDER_URL;
+      const fallbackFolderUrl = savedFolder.startsWith("http") ? savedFolder : PERSONAL_ONETIME_DRIVE_FOLDER_URL;
+
+      const letterRaw = String(item.requestLetterFileName || "").trim();
+      const soaRaw = String(item.soaFileName || "").trim();
+      const rlfRaw = String(item.rlfFileName || "").trim();
+
+      const letterUrl = letterRaw.startsWith("http") ? letterRaw : fallbackFolderUrl;
+      const soaUrl = soaRaw.startsWith("http") ? soaRaw : fallbackFolderUrl;
+      const rlfUrl = rlfRaw.startsWith("http") ? rlfRaw : fallbackFolderUrl;
+
+      const uniqueFallback = buildOneTimeUniqueUploadNames({
+        requestId: item.requestId,
+        site: item.site,
+        accountNumber: item.accountNumber,
+        biller: item.biller
+      });
+      const letterLabel = letterRaw.startsWith("http") ? uniqueFallback.requestLetterFileName : (letterRaw || uniqueFallback.requestLetterFileName);
+      const soaLabel = soaRaw.startsWith("http") ? uniqueFallback.soaFileName : (soaRaw || uniqueFallback.soaFileName);
+      const rlfLabel = rlfRaw.startsWith("http") ? uniqueFallback.rlfFileName : (rlfRaw || uniqueFallback.rlfFileName);
+
+      const quickFolderLink = document.getElementById("editOtpDriveFolderQuickLink");
+      if (quickFolderLink) quickFolderLink.href = fallbackFolderUrl;
+
+      const quickFilesBox = document.getElementById("editOtpQuickFileButtons");
+      if (quickFilesBox) {
+        const makeQuickCard = (tabKey, title, urlVal, colorCls) => {
+          const isDirectFile = String(urlVal || "").includes("/file/d/") || String(urlVal || "").includes("id=");
+          return `
+            <div class="p-2 rounded-lg bg-white dark:bg-royal-900 border border-slate-200 dark:border-royal-800 flex flex-col justify-between gap-1">
+              <button type="button" onclick="setOtpAttachmentMode('${tabKey}')" class="text-left text-[10px] font-bold ${colorCls} hover:underline cursor-pointer truncate">
+                👁 ${escapeHtml(title)}
+              </button>
+              ${canOpenOtpLink ? `
+                <a href="${escapeHtml(urlVal)}" target="_blank" rel="noopener noreferrer" class="text-[9px] font-mono text-slate-500 dark:text-slate-400 hover:text-amber-500 hover:underline truncate">
+                  ${isDirectFile ? "Open File in Tab ↗" : "Open Drive Folder ↗"}
+                </a>
+              ` : `<span class="text-[9px] text-slate-400">Preview Only</span>`}
+            </div>
+          `;
+        };
+        quickFilesBox.innerHTML =
+          makeQuickCard("letter", "1. Request Letter", letterUrl, "text-blue-600 dark:text-blue-400") +
+          makeQuickCard("soa", "2. Billing / SOA", soaUrl, "text-emerald-600 dark:text-emerald-400") +
+          makeQuickCard("rlf", "3. Approved RLF", rlfUrl, "text-amber-600 dark:text-amber-400");
+      }
+
+      const linkBar = document.getElementById("otpInspectorLinkBar");
+      if (linkBar) {
+        const activeUrl = activeOtpAttachMode === "letter" ? letterUrl : activeOtpAttachMode === "soa" ? soaUrl : rlfUrl;
+        const activeTitle = activeOtpAttachMode === "letter"
+          ? `Attachment 1 of 3: ${escapeHtml(letterLabel)}`
+          : activeOtpAttachMode === "soa"
+          ? `Attachment 2 of 3: ${escapeHtml(soaLabel)}`
+          : activeOtpAttachMode === "rlf"
+          ? `Attachment 3 of 3: ${escapeHtml(rlfLabel)}`
+          : `3-Document Comparison: Request Letter • Billing/SOA • Management Approved RLF`;
+
+        const actionLinksHtml = canOpenOtpLink ? (
+          activeOtpAttachMode === "compare"
+            ? `<div class="flex items-center space-x-1.5">
+                <a href="${escapeHtml(letterUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold">1. Letter ↗</a>
+                <a href="${escapeHtml(soaUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] font-bold">2. SOA ↗</a>
+                <a href="${escapeHtml(rlfUrl)}" target="_blank" rel="noopener noreferrer" class="px-2 py-0.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold">3. RLF ↗</a>
+              </div>`
+            : `<a href="${escapeHtml(activeUrl)}" target="_blank" rel="noopener noreferrer" class="px-2.5 py-0.5 rounded-lg bg-amber-600 hover:bg-amber-500 text-white text-[10px] font-bold">Open File in New Tab ↗</a>`
+        ) : `<span class="px-2.5 py-0.5 rounded-lg bg-slate-800 text-amber-400 border border-amber-500/30 text-[10px] font-bold uppercase">🔒 View-Only (No New Tab)</span>`;
+
+        linkBar.innerHTML = `
+          <div class="truncate font-mono text-[11px] text-slate-300">${activeTitle}</div>
+          <div class="flex items-center space-x-2 shrink-0">${actionLinksHtml}</div>
+        `;
+      }
+
+      const stAuto = computeAutomatedOneTimeStatus(item.status, item.rfpNumber, item.datePaid);
+      const metaCommon = [
+        ["Account No", item.accountNumber],
+        ["Site / Biller", `${item.site} • ${item.biller}`],
+        ["Requestor", item.email],
+        ["RFP / Amount", `${item.rfpNumber || "—"} • ${item.amount || "—"}`],
+        ["Date Paid", item.datePaid || "—"],
+        ["Status", stAuto]
+      ];
+
+      updateInspectorRenderModeButtons();
+      const letterCard = buildVoucherPreviewCardHtml("1. Approved Request Letter", item.requestId, letterLabel, letterUrl, metaCommon, "blue", canOpenOtpLink);
+      const soaCard = buildVoucherPreviewCardHtml("2. Current Billing / SOA", item.requestId, soaLabel, soaUrl, metaCommon, "emerald", canOpenOtpLink);
+      const rlfCard = buildVoucherPreviewCardHtml("3. Management Approved RLF", item.requestId, rlfLabel, rlfUrl, metaCommon, "amber", canOpenOtpLink);
+
+      const stageBox = document.getElementById("otpInspectorTransformBox");
+      if (stageBox) {
+        if (activeOtpAttachMode === "letter") {
+          stageBox.innerHTML = letterCard;
+        } else if (activeOtpAttachMode === "soa") {
+          stageBox.innerHTML = soaCard;
+        } else if (activeOtpAttachMode === "rlf") {
+          stageBox.innerHTML = rlfCard;
+        } else {
+          stageBox.innerHTML = `<div class="grid grid-cols-1 xl:grid-cols-3 gap-4 items-start">${letterCard}${soaCard}${rlfCard}</div>`;
+        }
+      }
+    }
+
+    function openEditOneTimeDetailsModal(reqId, initialMode = "rlf") {
+      const base = oneTimeRequests.find(r => r && r.requestId === reqId);
+      if (!base) return;
+      const item = oneTimeEditsOverrides[reqId] ? { ...base, ...oneTimeEditsOverrides[reqId] } : { ...base };
+      if (String(base.requestLetterFileName || "").startsWith("http")) item.requestLetterFileName = base.requestLetterFileName;
+      if (String(base.soaFileName || "").startsWith("http")) item.soaFileName = base.soaFileName;
+      if (String(base.rlfFileName || "").startsWith("http")) item.rlfFileName = base.rlfFileName;
+
+      activeInspectOtpItem = item;
+      activeOtpAttachMode = initialMode || "rlf";
+      resetInspectorView();
+      pendingOtpStatusConfirmValue = null;
+      isOtpPaymentUnlocked = false;
+      isOtpDetailsUnlocked = false;
+
+      document.getElementById("editOtpStatusConfirmBar")?.classList.add("hidden");
+      document.getElementById("editOtpConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editOtpActionRow")?.classList.remove("hidden");
+      document.getElementById("editOtpSuccessToast")?.classList.add("hidden");
+
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canAddPayment = (isAdminOrSub || hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditDetails = (isAdminOrSub || hasUserPermission(currentUser, "OTP_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canUpdateStatus = (isAdminOrSub || hasUserPermission(currentUser, "OTP_UPDATE_STATUS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+
+      document.getElementById("editOtpReqId").value = item.requestId;
+      document.getElementById("editOtpDetailsSubtitle").innerText = item.requestId;
+      const metaSub = document.getElementById("editOtpSubmittedMeta");
+      if (metaSub) metaSub.innerText = `Submitted ${item.submittedAt || ""} • Account ${item.accountNumber || ""} (${item.site || ""} • ${item.biller || ""})`;
+
+      const modeBadge = document.getElementById("editOtpAccessModeBadge");
+      if (modeBadge) {
+        modeBadge.innerText = (canAddPayment || canEditDetails) ? "Edit Access" : "View-Only Details";
+        modeBadge.className = `px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${(canAddPayment || canEditDetails) ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20" : "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/20"}`;
+      }
+
+      document.getElementById("editOtpRfpNumber").value = item.rfpNumber || "";
+      document.getElementById("editOtpRfpDate").value = item.rfpDate || "";
+      document.getElementById("editOtpAmount").value = item.amount || "";
+      document.getElementById("editOtpDatePaid").value = item.datePaid || "";
+
+      document.getElementById("editOtpAccountNo").value = item.accountNumber || "";
+      document.getElementById("editOtpSite").value = item.site || "";
+      document.getElementById("editOtpBiller").value = item.biller || "";
+      document.getElementById("editOtpViber").value = item.viberNumber || "";
+      document.getElementById("editOtpEmail").value = item.email || "";
+
+      updateOtpEditLockUI(canAddPayment, canEditDetails);
+
+      const curStatus = computeAutomatedOneTimeStatus(item.status, item.rfpNumber, item.datePaid);
+      const statusBox = document.getElementById("editOtpStatusContainer");
+      if (statusBox) {
+        statusBox.innerHTML = canUpdateStatus ? `
+          <select id="editOtpModalStatusSelect" onchange="stageOtpStatusChangeInModal('${escapeHtml(item.requestId)}', this.value)" class="text-xs font-bold uppercase rounded-xl px-2.5 py-1.5 bg-white dark:bg-royal-900 border border-slate-300 dark:border-royal-700 text-slate-800 dark:text-white cursor-pointer">
+            ${ONE_TIME_STATUS_LIST.map(st => `<option value="${st}" ${curStatus.toUpperCase() === st.toUpperCase() ? "selected" : ""}>${st}</option>`).join("")}
+          </select>
+        ` : `<span class="inline-block px-2.5 py-1 rounded text-xs font-bold uppercase ${getStatusBadgeStyle(curStatus)}">${escapeHtml(curStatus)}</span>`;
+      }
+
+      setOtpAttachmentMode(activeOtpAttachMode);
+      document.getElementById("editOneTimeDetailsModal")?.classList.remove("hidden");
+      lucide.createIcons();
+    }
+
+    function closeEditOneTimeDetailsModal() {
+      pendingOtpStatusConfirmValue = null;
+      isOtpPaymentUnlocked = false;
+      isOtpDetailsUnlocked = false;
+      document.getElementById("editOtpConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editOtpActionRow")?.classList.remove("hidden");
+      document.getElementById("editOneTimeDetailsModal")?.classList.add("hidden");
+    }
+
+    function stageOtpStatusChangeInModal(reqId, newStatus) {
+      const base = oneTimeRequests.find(r => r.requestId === reqId);
+      const curStatus = computeAutomatedOneTimeStatus(
+        oneTimeEditsOverrides[reqId]?.status || base?.status || "PENDING",
+        oneTimeEditsOverrides[reqId]?.rfpNumber ?? base?.rfpNumber,
+        oneTimeEditsOverrides[reqId]?.datePaid ?? base?.datePaid
+      );
+      if (String(newStatus).toUpperCase() === String(curStatus).toUpperCase()) {
+        cancelPendingOtpStatusChange();
+        return;
+      }
+      pendingOtpStatusConfirmValue = newStatus;
+      const lbl = document.getElementById("editOtpPendingStatusLabel");
+      if (lbl) lbl.innerText = newStatus;
+      document.getElementById("editOtpStatusConfirmBar")?.classList.remove("hidden");
+    }
+
+    function cancelPendingOtpStatusChange() {
+      pendingOtpStatusConfirmValue = null;
+      document.getElementById("editOtpStatusConfirmBar")?.classList.add("hidden");
+      const reqId = document.getElementById("editOtpReqId")?.value;
+      const base = oneTimeRequests.find(r => r.requestId === reqId);
+      const curStatus = computeAutomatedOneTimeStatus(
+        oneTimeEditsOverrides[reqId]?.status || base?.status || "PENDING",
+        oneTimeEditsOverrides[reqId]?.rfpNumber ?? base?.rfpNumber,
+        oneTimeEditsOverrides[reqId]?.datePaid ?? base?.datePaid
+      );
+      const sel = document.getElementById("editOtpModalStatusSelect");
+      if (sel) sel.value = curStatus;
+    }
+
+    function confirmPendingOtpStatusChange() {
+      const reqId = document.getElementById("editOtpReqId")?.value;
+      if (!reqId || !pendingOtpStatusConfirmValue) return;
+      const nextSt = pendingOtpStatusConfirmValue;
+      pendingOtpStatusConfirmValue = null;
+      document.getElementById("editOtpStatusConfirmBar")?.classList.add("hidden");
+      handleOneTimeInlineUpdate(reqId, "status", nextSt);
+      if (activeInspectOtpItem && activeInspectOtpItem.requestId === reqId) {
+        activeInspectOtpItem.status = nextSt;
+        renderOtpInspectorRightPane();
+      }
+      showEditOtpToast(`One-Time Payment status committed: ${nextSt}`);
+    }
+
+    function showEditOtpToast(msg) {
+      const toast = document.getElementById("editOtpSuccessToast");
+      const txt = document.getElementById("editOtpSuccessToastText");
+      if (txt) txt.innerText = msg;
+      if (toast) {
+        toast.classList.remove("hidden");
+        setTimeout(() => toast.classList.add("hidden"), 2800);
+      }
+    }
+
+    function cancelEditOtpDetailsCommit() {
+      document.getElementById("editOtpConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editOtpActionRow")?.classList.remove("hidden");
+    }
+
+    function handleSaveOneTimeDetailsEdit(e) {
+      e.preventDefault();
+      if (!isOtpPaymentUnlocked && !isOtpDetailsUnlocked) return;
+      const reqId = document.getElementById("editOtpReqId")?.value;
+      if (!reqId) return;
+      document.getElementById("editOtpActionRow")?.classList.add("hidden");
+      document.getElementById("editOtpConfirmBanner")?.classList.remove("hidden");
+    }
+
+    function commitOneTimeDetailsEdit() {
+      const reqId = document.getElementById("editOtpReqId")?.value;
+      if (!reqId) return;
+      const rfpNumber = document.getElementById("editOtpRfpNumber").value.trim();
+      const rfpDate = document.getElementById("editOtpRfpDate").value.trim();
+      const amount = document.getElementById("editOtpAmount").value.trim();
+      const datePaid = document.getElementById("editOtpDatePaid").value.trim();
+      const accountNumber = document.getElementById("editOtpAccountNo").value.trim();
+      const site = document.getElementById("editOtpSite").value.trim();
+      const biller = document.getElementById("editOtpBiller").value.trim();
+      const viberNumber = document.getElementById("editOtpViber").value.trim();
+      const email = document.getElementById("editOtpEmail").value.trim();
+      const statusSel = document.getElementById("editOtpModalStatusSelect");
+      const baseSt = statusSel ? statusSel.value : (activeInspectOtpItem?.status || "PENDING");
+      const status = computeAutomatedOneTimeStatus(baseSt, rfpNumber, datePaid);
+      if (statusSel) statusSel.value = status;
+
+      const updates = {
+        rfpNumber,
+        rfpDate,
+        amount,
+        datePaid,
+        accountNumber,
+        site,
+        biller,
+        viberNumber,
+        email,
+        status
+      };
+
+      oneTimeEditsOverrides[reqId] = { ...(oneTimeEditsOverrides[reqId] || {}), ...updates };
+      localStorage.setItem(ONE_TIME_EDITS_KEY, JSON.stringify(oneTimeEditsOverrides));
+      oneTimeRequests = oneTimeRequests.map(r => r.requestId === reqId ? { ...r, ...updates } : r);
+      localStorage.setItem(ONE_TIME_CACHE_KEY, JSON.stringify(oneTimeRequests));
+      if (activeInspectOtpItem && activeInspectOtpItem.requestId === reqId) {
+        activeInspectOtpItem = { ...activeInspectOtpItem, ...updates };
+      }
+
+      const webhookUrl = getActiveOneTimeWebhookUrl() || DEFAULT_USER_SCRIPT_URL;
+      if (webhookUrl) {
+        fetch(webhookUrl, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify({
+            action: "updateOneTimePaymentDetails",
+            sheetName: ONE_TIME_SHEET_NAME,
+            requestId: reqId,
+            ...updates
+          })
+        }).catch(() => {});
+      }
+
+      isOtpPaymentUnlocked = false;
+      isOtpDetailsUnlocked = false;
+      const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
+      const canAddPayment = (isAdminOrSub || hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      const canEditDetails = (isAdminOrSub || hasUserPermission(currentUser, "OTP_EDIT_DETAILS")) && normalizeLifecycleStatus(currentUser?.status) !== "SUSPENDED";
+      updateOtpEditLockUI(canAddPayment, canEditDetails);
+
+      document.getElementById("editOtpConfirmBanner")?.classList.add("hidden");
+      document.getElementById("editOtpActionRow")?.classList.remove("hidden");
+      showEditOtpToast("One-Time Payment details updated in place & synced to Google Sheets!");
+      updateOneTimeNavBadge();
+      renderOtpInspectorRightPane();
+      renderOneTimeStatusTable();
+    }
+
     function renderOneTimeStatusTable() {
       const tbody = document.getElementById("oneTimeStatusTableBody");
       if (!tbody) return;
@@ -15081,31 +16456,57 @@ function ensureOneTimePaymentHeaders(sheet) {
       tbody.innerHTML = visible.map(rec => {
         const cleanAcc = String(rec.accountNumber || "").split("_")[0].trim() || rec.accountNumber;
         const stUpper = computeAutomatedOneTimeStatus(rec.status, rec.rfpNumber, rec.datePaid);
-        const renderFileLink = (label, val, colorCls) => {
+        const renderFileLink = (label, tabMode, val, colorCls) => {
           const isHttp = String(val || "").startsWith("http");
-          if (canOpenAttachLink && isHttp) {
-            return `<a href="${escapeHtml(val)}" target="_blank" rel="noopener noreferrer" class="block ${colorCls} hover:underline truncate max-w-[160px]" title="View File in New Tab">${label} &nearr;</a>`;
-          }
-          return `<div class="${colorCls} truncate max-w-[160px]" title="${escapeHtml(val)}">${label}</div>`;
+          return `
+            <div class="flex items-center justify-between gap-1.5">
+              <button
+                type="button"
+                onclick="openEditOneTimeDetailsModal('${escapeHtml(rec.requestId)}', '${tabMode}')"
+                class="text-left ${colorCls} hover:underline font-semibold truncate max-w-[145px] cursor-pointer"
+                title="Click to open in Split-Screen Preview Window (${escapeHtml(label)})"
+              >
+                👁 ${escapeHtml(label)}
+              </button>
+              ${(canOpenAttachLink && isHttp)
+                ? `<a href="${escapeHtml(val)}" target="_blank" rel="noopener noreferrer" class="px-1.5 py-0.2 rounded bg-slate-100 dark:bg-slate-800 ${colorCls} hover:underline text-[9px] font-bold shrink-0" title="Open Google Drive File in New Tab">&nearr;</a>`
+                : ""}
+            </div>
+          `;
         };
         return `
           <tr class="hover:bg-slate-50/80 dark:hover:bg-[#191919] transition-colors">
             <td class="p-3.5 font-mono font-bold text-slate-700 dark:text-slate-200 whitespace-nowrap">
-              <div>${escapeHtml(rec.requestId)}</div>
-              <div class="text-[10px] font-normal text-slate-400">${escapeHtml(rec.submittedAt)}</div>
+              <button
+                type="button"
+                onclick="openEditOneTimeDetailsModal('${escapeHtml(rec.requestId)}', 'rlf')"
+                class="inline-flex items-center space-x-1.5 text-left text-amber-600 dark:text-amber-400 hover:underline cursor-pointer group"
+                title="Click to open One-Time Payment Inspector &amp; 3-Attachment Preview"
+              >
+                <span>${escapeHtml(rec.requestId)}</span>
+                <span class="text-[10px] px-1.5 py-0.2 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20">Inspect</span>
+              </button>
+              <div class="text-[10px] font-normal text-slate-400 mt-0.5">${escapeHtml(rec.submittedAt)}</div>
             </td>
             <td class="p-3.5">
-              <div class="font-mono font-bold text-slate-900 dark:text-white whitespace-nowrap" title="${escapeHtml(rec.accountNumber)}">${escapeHtml(cleanAcc)}</div>
+              <button
+                type="button"
+                onclick="openEditOneTimeDetailsModal('${escapeHtml(rec.requestId)}', 'soa')"
+                class="font-mono font-bold text-slate-900 dark:text-white hover:text-amber-600 dark:hover:text-amber-400 hover:underline whitespace-nowrap cursor-pointer text-left"
+                title="Click to inspect &amp; edit account details (${escapeHtml(rec.accountNumber)})"
+              >
+                ${escapeHtml(cleanAcc)}
+              </button>
               <div class="text-[11px] text-slate-500">${escapeHtml(rec.site)} &bull; <strong>${escapeHtml(rec.biller)}</strong></div>
             </td>
             <td class="p-3.5">
               <div class="font-semibold text-slate-800 dark:text-neutral-200">${escapeHtml(rec.email)}</div>
               <div class="text-[11px] font-mono text-blue-600">${escapeHtml(rec.viberNumber)}</div>
             </td>
-            <td class="p-3.5 text-[10px] font-mono space-y-0.5">
-              ${renderFileLink("1. Request Letter", rec.requestLetterFileName, "text-blue-600 dark:text-blue-400")}
-              ${renderFileLink("2. Billing / SOA", rec.soaFileName, "text-emerald-600 dark:text-emerald-400")}
-              ${renderFileLink("3. Approved RLF", rec.rlfFileName, "text-slate-600 dark:text-slate-300")}
+            <td class="p-3.5 text-[10px] font-mono space-y-1">
+              ${renderFileLink("1. Request Letter", "letter", rec.requestLetterFileName, "text-blue-600 dark:text-blue-400")}
+              ${renderFileLink("2. Billing / SOA", "soa", rec.soaFileName, "text-emerald-600 dark:text-emerald-400")}
+              ${renderFileLink("3. Approved RLF", "rlf", rec.rlfFileName, "text-amber-600 dark:text-amber-400")}
             </td>
             <td class="p-3.5 whitespace-nowrap">
               <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${rec.acknowledgedOneTime !== false ? 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-500/30' : 'bg-red-500/15 text-red-700 dark:text-red-300 border-red-500/30'}">${rec.acknowledgedOneTime !== false ? 'Yes' : 'No'}</span>
@@ -15125,10 +16526,18 @@ function ensureOneTimePaymentHeaders(sheet) {
                 ${ONE_TIME_STATUS_LIST.map(st => `<option value="${st}" ${st === stUpper ? "selected" : ""}>${st}</option>`).join("")}
               </select>
             </td>
-            <td class="p-3.5 text-right whitespace-nowrap">
+            <td class="p-3.5 text-right whitespace-nowrap space-x-1.5">
+              <button
+                type="button"
+                onclick="openEditOneTimeDetailsModal('${escapeHtml(rec.requestId)}', 'rlf')"
+                class="px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 text-[11px] font-bold cursor-pointer"
+                title="Open Split-Screen Preview Window &amp; Edit Details"
+              >
+                ${(canEditDetails || canAddPayment) ? "Preview / Edit" : "Preview"}
+              </button>
               ${(canAddPayment || canUpdateStatus)
                 ? `<button type="button" onclick="saveOneTimeRowPaymentDetails('${escapeHtml(rec.requestId)}', this)" class="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold shadow-xs cursor-pointer">Save</button>`
-                : `<span class="text-[10px] font-mono text-slate-400">${escapeHtml(stUpper)}</span>`}
+                : ""}
             </td>
           </tr>
         `;

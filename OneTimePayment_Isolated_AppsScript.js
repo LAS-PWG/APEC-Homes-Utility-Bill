@@ -31,6 +31,21 @@ var ONE_TIME_SHEET_NAME = 'One Time Bill Payments';
 var DEFAULT_ONETIME_DRIVE_FOLDER_ID = '1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5';
 var DESIGNATED_DRIVE_OWNER_EMAIL = 'lasarmiento.apec@gmail.com';
 
+/**
+ * STEP 1 (ONE-TIME AUTHORIZATION):
+ * Select "authorizeDriveAndSheets" in the top toolbar of script.google.com and click "Run" (▶) once.
+ * Click "Review Permissions" -> choose your Google account -> "Advanced" -> "Go to ... (unsafe)" -> "Allow".
+ * This grants your Web App permission to create files in Drive folder 1u7lR6OCbzoYfmLXe4TGeQ2LyGJiLHDa5
+ * and write rows to "One Time Bill Payments" in spreadsheet 1WI4CA4hy1s3oyCZLvgDVA1SeJSj9gN2BfLLeRpUmZDA.
+ */
+function authorizeDriveAndSheets() {
+  var ss = SpreadsheetApp.openById(UTILITY_SPREADSHEET_ID);
+  var sheet = ss.getSheetByName(ONE_TIME_SHEET_NAME) || ss.insertSheet(ONE_TIME_SHEET_NAME);
+  ensureOneTimePaymentHeaders(sheet);
+  var folder = DriveApp.getFolderById(DEFAULT_ONETIME_DRIVE_FOLDER_ID);
+  Logger.log('SUCCESS! Authorized Spreadsheet: ' + ss.getName() + ' | Tab: ' + sheet.getName() + ' | Drive Folder: ' + folder.getName());
+}
+
 function getUtilitySpreadsheet() {
   try {
     return SpreadsheetApp.openById(UTILITY_SPREADSHEET_ID);
