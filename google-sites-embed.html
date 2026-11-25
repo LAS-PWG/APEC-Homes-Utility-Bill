@@ -2682,139 +2682,24 @@ Submit and track your monthly utility payments directly through your account.</p
                     </div>
 
                     <!-- Strictly Free AI Bill Statement Extractor Card (Gated by PS_TRIGGER_AI / PS_VIEW_AI_RESULTS) -->
-                    <div id="rbpFreeAiExtractorCard" class="p-3.5 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2.5">
+                    <div id="rbpFreeAiExtractorCard" class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2">
                       <div class="flex flex-wrap items-center justify-between gap-2">
-                        <div>
-                          <div class="flex flex-wrap items-center gap-1.5">
-                            <span class="text-xs font-bold text-slate-800 dark:text-white">Free AI Statement Extractor</span>
-                            <span class="px-2 py-0.5 rounded text-[9px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                              ₱0.00 Free Tier • Auto-Stop at Limit
-                            </span>
-                            <span id="rbpDedicatedAiSheetBadge" class="px-2 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20" title="File upload stays on Drive Owner script; AI fields upsert into Dedicated AI_SOA_Extractions Sheet referenced by Request ID">
-                              Dedicated Sheet (AI_SOA_Extractions) Keyed by Request ID • Drive Owner Untouched
-                            </span>
-                          </div>
-                          <p class="text-[10px] text-slate-500 dark:text-royal-300/75 mt-0.5">
-                            Reads all pages (1-page or 2-page PDFs/images). Extracts <span class="font-bold">Grace Period</span> ONLY if explicitly labeled "Grace Period" (Due Date to Disconnection is NOT Grace Period). Upserts into your dedicated <span class="font-mono font-bold">AI_SOA_Extractions</span> sheet referenced by <span class="font-mono font-bold">Request ID</span> (Col A) and auto-joins on live sync.
-                          </p>
-                        </div>
+                        <span class="text-[11px] font-bold text-slate-700 dark:text-royal-200">Statement Reader</span>
                         <div id="rbpFreeAiTriggerControls" class="flex flex-wrap items-center gap-2">
-                          <button
-                            type="button"
-                            onclick="toggleDedicatedAiSheetSetupPanel()"
-                            class="inline-flex items-center space-x-1 px-2.5 py-1 rounded-lg bg-white/90 dark:bg-royal-900/80 border border-blue-500/30 text-[10px] font-bold text-blue-600 dark:text-blue-400 hover:bg-blue-50 cursor-pointer"
-                          >
-                            <span id="rbpDedicatedAiSetupBtnText">⚙️ Dedicated AI Sheet &amp; GS Setup</span>
-                          </button>
-                          <label class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Automatically run Free AI Reader when a file is attached and upsert extracted fields into Dedicated AI_SOA_Extractions Sheet keyed by Request ID">
+                          <label class="inline-flex items-center space-x-1.5 px-2.5 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Automatically run Statement Reader when a file is attached">
                             <input type="checkbox" id="rbpFreeAiAutoRunToggle" checked onchange="setFreeAiAutoRunEnabled(this.checked)" class="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
-                            <span>Auto-Run &amp; Write to Sheet</span>
+                            <span>Auto</span>
                           </label>
                           <button
                             type="button"
                             id="rbpFreeAiExtractBtn"
                             onclick="handleFreeAiExtractInForm()"
-                            class="inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer"
+                            class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-all cursor-pointer"
                           >
-                            <span id="rbpFreeAiExtractBtnText">✨ Re-Scan Statement (Free)</span>
+                            <span id="rbpFreeAiExtractBtnText">✨ Re-Scan</span>
                           </button>
                         </div>
                       </div>
-
-                      <!-- Collapsible Dedicated AI Sheet & Standalone Code.gs Setup Panel -->
-                      <div id="rbpDedicatedAiSetupPanel" class="hidden p-3 rounded-xl bg-white dark:bg-royal-950/90 border border-blue-500/30 space-y-2.5 text-xs">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                          <div>
-                            <div class="text-[11px] font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
-                              Dedicated AI Sheet &amp; Standalone Code.gs (Keyed by Request ID)
-                            </div>
-                            <p class="text-[10px] text-slate-500 dark:text-royal-300/75 mt-0.5">
-                              100% independent of the Drive Owner's <code class="font-mono">Request Bill Payments</code> sheet &amp; upload script. Every AI scan upserts a row with <code class="font-mono">Request ID</code> (<code class="font-mono">REQ-YYYYMMDD-XXXX</code>) in Column A and joins automatically on live sync.
-                            </p>
-                          </div>
-                          <div class="flex flex-wrap items-center gap-1.5">
-                            <button
-                              type="button"
-                              id="copyDedicatedAiGsBtn"
-                              onclick="copyDedicatedAiGsCode()"
-                              class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer"
-                            >
-                              1. Copy Dedicated AI Code.gs
-                            </button>
-                            <button
-                              type="button"
-                              id="initDedicatedAiSheetBtn"
-                              onclick="initializeDedicatedAiSheetInGSheet(true)"
-                              class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold cursor-pointer"
-                            >
-                              2. Initialize Sheet Tab &amp; Headers Now
-                            </button>
-                            <button
-                              type="button"
-                              id="copyDedicatedAiXlookupBtn"
-                              onclick="copyDedicatedAiXlookupFormula()"
-                              class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-royal-900 hover:bg-slate-200 text-slate-700 dark:text-royal-200 border border-slate-300 dark:border-royal-700 text-[10px] font-bold cursor-pointer"
-                            >
-                              Copy Sheet =XLOOKUP Formula
-                            </button>
-                          </div>
-                        </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                          <div>
-                            <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
-                              Dedicated Google Sheet ID or URL
-                            </label>
-                            <input
-                              type="text"
-                              id="cfgDedicatedAiSpreadsheetId"
-                              placeholder="1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY"
-                              class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
-                            />
-                            <span class="text-[9px] text-slate-400 block mt-0.5">Defaults to your owned UserData spreadsheet (or paste any new Sheet URL).</span>
-                          </div>
-                          <div>
-                            <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
-                              Dedicated Sheet Tab Name
-                            </label>
-                            <input
-                              type="text"
-                              id="cfgDedicatedAiSheetTabName"
-                              placeholder="AI_SOA_Extractions"
-                              class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
-                            />
-                            <span class="text-[9px] text-slate-400 block mt-0.5">Auto-created with Cols A–Q (Request ID in Col A).</span>
-                          </div>
-                          <div>
-                            <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
-                              Dedicated AI Apps Script /exec URL
-                            </label>
-                            <input
-                              type="text"
-                              id="cfgDedicatedAiScriptUrl"
-                              placeholder="Leave blank to use UserData Script URL"
-                              class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
-                            />
-                            <span class="text-[9px] text-slate-400 block mt-0.5">Paste your deployed Web App /exec URL here.</span>
-                          </div>
-                        </div>
-
-                        <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-royal-800">
-                          <span class="text-[9px] text-slate-500 dark:text-royal-300/70">
-                            Cols A–Q: <code class="font-mono">A: Request ID</code> • <code class="font-mono">B: Account No</code> • <code class="font-mono">C: Site</code> • <code class="font-mono">D: Biller</code> • <code class="font-mono">E–M: 9 AI Fields</code> • <code class="font-mono">N–Q: Audit Meta</code>
-                          </span>
-                          <button
-                            type="button"
-                            id="saveDedicatedAiConfigBtn"
-                            onclick="saveDedicatedAiSheetSettings()"
-                            class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold cursor-pointer"
-                          >
-                            Save Dedicated AI Sheet Config
-                          </button>
-                        </div>
-                      </div>
-
-                      <div id="rbpFreeAiQuotaBar" class="text-[10px] font-mono text-slate-500 dark:text-royal-300/70"></div>
                       <div id="rbpFreeAiResultBox" class="hidden"></div>
                     </div>
                   </div>
@@ -3520,6 +3405,153 @@ Submit and track your monthly utility payments directly through your account.</p
                   <i data-lucide="settings" class="w-3.5 h-3.5"></i>
                   <span>Configure Google Sheets Webhooks</span>
                 </button>
+              </div>
+            </div>
+
+            <!-- Section 3: Free AI Statement Extractor & Dedicated AI_SOA_Extractions Sheet Setup (Moved to Admin Mod) -->
+            <div class="p-5 rounded-2xl bg-emerald-500/5 dark:bg-emerald-950/20 border border-emerald-500/30 space-y-3">
+              <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="space-y-1.5">
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span class="text-sm font-bold text-slate-900 dark:text-white">Free AI Statement Extractor</span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                      ₱0.00 FREE TIER
+                    </span>
+                    <span id="inspectorAdminFreeAiLimitBadge" class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Live Free AI Quota Status (Strictly ₱0.00 Free Tier)">
+                      🟢 AI Limit: 12/12 RPM • 200/200 Day
+                    </span>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <span id="rbpDedicatedAiSheetBadge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20" title="File upload stays on Drive Owner script; AI fields upsert into Dedicated AI_SOA_Extractions Sheet referenced by Request ID (Col A)">
+                      Upserts to AI_SOA_Extractions by Request ID (Col A)
+                    </span>
+                  </div>
+                  <p class="text-xs text-slate-600 dark:text-royal-300/80">
+                    Cycle, Due Date, Grace Period (explicit only — never Due-to-Discon), Consumption, Arrears, Current, Total &amp; Amount Before Due
+                  </p>
+                  <div class="flex flex-wrap items-center gap-1.5 pt-0.5 text-[10px]">
+                    <span class="px-2 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
+                      Meralco / Water / Utility Statement Formats
+                    </span>
+                    <span class="px-2 py-0.5 rounded font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">
+                      Multi-Page PDF &amp; Image Scanned
+                    </span>
+                    <span class="px-2 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                      ✓ Synced to AI_SOA_Extractions (Col A: Request ID)
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <button
+                    type="button"
+                    onclick="handleAdminRecheckFreeAiQuota()"
+                    class="px-3 py-1.5 rounded-xl bg-white dark:bg-royal-900 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 text-xs font-bold hover:bg-emerald-50 cursor-pointer"
+                  >
+                    Refresh / Reset Quota Cooldown
+                  </button>
+                  <button
+                    type="button"
+                    onclick="toggleDedicatedAiSheetSetupPanel()"
+                    class="px-3 py-1.5 rounded-xl bg-white dark:bg-royal-900 border border-blue-500/30 text-blue-600 dark:text-blue-400 text-xs font-bold hover:bg-blue-50 cursor-pointer"
+                  >
+                    <span id="rbpDedicatedAiSetupBtnText">⚙️ Hide Dedicated AI Sheet &amp; GS</span>
+                  </button>
+                </div>
+              </div>
+
+              <div id="rbpFreeAiQuotaBar" class="text-[11px] font-mono text-slate-500 dark:text-royal-300/70"></div>
+
+              <!-- Dedicated AI Sheet & Standalone Code.gs Setup Panel -->
+              <div id="rbpDedicatedAiSetupPanel" class="p-3.5 rounded-xl bg-white dark:bg-royal-950/90 border border-blue-500/30 space-y-2.5 text-xs">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <div class="text-[11px] font-extrabold text-blue-700 dark:text-blue-300 uppercase tracking-wider">
+                      Dedicated AI Sheet &amp; Standalone Code.gs (Keyed by Request ID)
+                    </div>
+                    <p class="text-[10px] text-slate-500 dark:text-royal-300/75 mt-0.5">
+                      100% independent of the Drive Owner's <code class="font-mono">Request Bill Payments</code> sheet &amp; upload script. Every AI scan upserts a row with <code class="font-mono">Request ID</code> (<code class="font-mono">REQ-YYYYMMDD-XXXX</code>) in Column A and joins automatically on live sync.
+                    </p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-1.5">
+                    <button
+                      type="button"
+                      id="copyDedicatedAiGsBtn"
+                      onclick="copyDedicatedAiGsCode()"
+                      class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer"
+                    >
+                      1. Copy Dedicated AI Code.gs
+                    </button>
+                    <button
+                      type="button"
+                      id="initDedicatedAiSheetBtn"
+                      onclick="initializeDedicatedAiSheetInGSheet(true)"
+                      class="px-2.5 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold cursor-pointer"
+                    >
+                      2. Initialize Sheet Tab &amp; Headers Now
+                    </button>
+                    <button
+                      type="button"
+                      id="copyDedicatedAiXlookupBtn"
+                      onclick="copyDedicatedAiXlookupFormula()"
+                      class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-royal-900 hover:bg-slate-200 text-slate-700 dark:text-royal-200 border border-slate-300 dark:border-royal-700 text-[10px] font-bold cursor-pointer"
+                    >
+                      Copy Sheet =XLOOKUP Formula
+                    </button>
+                  </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>
+                    <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
+                      Dedicated Google Sheet ID or URL
+                    </label>
+                    <input
+                      type="text"
+                      id="cfgDedicatedAiSpreadsheetId"
+                      placeholder="1YvMBpPb3s1BVri5WvSSnbbjb0i3zIRk026eJVfciBKY"
+                      class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
+                    />
+                    <span class="text-[9px] text-slate-400 block mt-0.5">Defaults to your owned UserData spreadsheet (or paste any new Sheet URL).</span>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
+                      Dedicated Sheet Tab Name
+                    </label>
+                    <input
+                      type="text"
+                      id="cfgDedicatedAiSheetTabName"
+                      placeholder="AI_SOA_Extractions"
+                      class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
+                    />
+                    <span class="text-[9px] text-slate-400 block mt-0.5">Auto-created with Cols A–Q (Request ID in Col A).</span>
+                  </div>
+                  <div>
+                    <label class="text-[9px] font-bold uppercase text-slate-500 dark:text-royal-300 block mb-0.5">
+                      Dedicated AI Apps Script /exec URL
+                    </label>
+                    <input
+                      type="text"
+                      id="cfgDedicatedAiScriptUrl"
+                      placeholder="Leave blank to use UserData Script URL"
+                      class="w-full px-2 py-1 rounded-lg bg-slate-50 dark:bg-royal-900 border border-slate-200 dark:border-royal-700 text-[11px] font-mono text-slate-800 dark:text-white"
+                    />
+                    <span class="text-[9px] text-slate-400 block mt-0.5">Paste your deployed Web App /exec URL here.</span>
+                  </div>
+                </div>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1 border-t border-slate-100 dark:border-royal-800">
+                  <span class="text-[9px] text-slate-500 dark:text-royal-300/70">
+                    Cols A–Q: <code class="font-mono">A: Request ID</code> • <code class="font-mono">B: Account No</code> • <code class="font-mono">C: Site</code> • <code class="font-mono">D: Biller</code> • <code class="font-mono">E–M: 9 AI Fields</code> • <code class="font-mono">N–Q: Audit Meta</code>
+                  </span>
+                  <button
+                    type="button"
+                    id="saveDedicatedAiConfigBtn"
+                    onclick="saveDedicatedAiSheetSettings()"
+                    class="px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-bold cursor-pointer"
+                  >
+                    Save Dedicated AI Sheet Config
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -4400,23 +4432,7 @@ Submit and track your monthly utility payments directly through your account.</p
             <!-- Strictly Free AI Bill Statement Extractor in Payment Request Inspector (Gated by PS_TRIGGER_AI / PS_VIEW_AI_RESULTS) -->
             <div id="inspectorFreeAiExtractorCard" class="p-3 rounded-xl border border-emerald-500/30 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-2">
               <div class="flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <div class="flex flex-wrap items-center gap-1.5">
-                    <span class="text-[11px] font-bold text-slate-800 dark:text-white">Free AI Statement Extractor</span>
-                    <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold uppercase bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                      ₱0.00 Free Tier
-                    </span>
-                    <span id="inspectorAdminFreeAiLimitBadge" class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Live Free AI Quota Status (Strictly ₱0.00 Free Tier)">
-                      🟢 AI Limit: 12/12 RPM • 200/200 Day
-                    </span>
-                    <span id="inspectorDedicatedAiSheetBadge" class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/20" title="File upload stays on Drive Owner script; AI fields upsert into Dedicated AI_SOA_Extractions Sheet referenced by Request ID (Col A)">
-                      Upserts to AI_SOA_Extractions by Request ID (Col A)
-                    </span>
-                  </div>
-                  <p class="text-[10px] text-slate-500 dark:text-royal-300/70">
-                    Cycle, Due Date, Grace Period (explicit only — never Due-to-Discon), Consumption, Arrears, Current, Total &amp; Amount Before Due
-                  </p>
-                </div>
+                <span class="text-[11px] font-bold text-slate-700 dark:text-royal-200">Statement Reader</span>
                 <div id="inspectorFreeAiTriggerControls" class="flex items-center gap-1.5">
                   <label class="inline-flex items-center space-x-1 px-2 py-1 rounded-lg bg-white/80 dark:bg-royal-900/70 border border-emerald-500/30 text-[10px] font-bold text-slate-700 dark:text-royal-200 cursor-pointer select-none" title="Auto-run Free AI scan and upsert into Dedicated AI_SOA_Extractions sheet keyed by Request ID (Col A)">
                     <input type="checkbox" id="inspectorFreeAiAutoRunToggle" checked onchange="setFreeAiAutoRunEnabled(this.checked)" class="rounded text-emerald-600 focus:ring-emerald-500 cursor-pointer" />
@@ -4428,7 +4444,7 @@ Submit and track your monthly utility payments directly through your account.</p
                     onclick="handleFreeAiExtractInInspector()"
                     class="px-2.5 py-1 rounded-lg text-[10px] font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm cursor-pointer"
                   >
-                    ✨ Scan &amp; Save by Request ID (Free)
+                    ✨ Scan
                   </button>
                 </div>
               </div>
@@ -6608,6 +6624,9 @@ function ensureOneTimePaymentHeaders(sheet) {
       } else if (tabId === "one-time-status") {
         renderOneTimeStatusTable();
         syncLiveOneTimePaymentsFromGSheet(false);
+      } else if (tabId === "admin-actions") {
+        syncDedicatedAiSetupInputs();
+        refreshFreeAiQuotaBars();
       }
 
       updateAccessUI();
@@ -8585,27 +8604,13 @@ function ensureOneTimePaymentHeaders(sheet) {
       const applyBtnHtml = hasValidIso && contextMode === "form"
         ? `<button type="button" onclick="applyExtractedDueDateToForm('${escapeHtml(data.dueDateIso)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Apply Due Date (${escapeHtml(data.dueDateIso)})</button>`
         : "";
-      const sheetSyncBadgeHtml = data.sheetSynced
-        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30" title="Upserted into AI_SOA_Extractions keyed by Request ID (Col A)">✓ Synced to AI_SOA_Extractions (Col A: Request ID)</span>`
-        : contextMode === "form"
-        ? `<span class="px-1.5 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">Will Auto-Upsert to AI_SOA_Extractions on Submit</span>`
-        : (reqId && canTriggerAi)
-        ? `<button type="button" onclick="manualWriteExtractedSoaInInspector('${escapeHtml(reqId)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Write to AI Sheet (By Request ID)</button>`
-        : "";
       return `
         <div class="space-y-2 pt-1">
           <div class="flex flex-wrap items-center justify-between gap-1.5 text-[10px]">
             <div class="flex flex-wrap items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded font-bold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20">
-                ${escapeHtml(data.detectedFormat || "Utility Statement")}
-              </span>
-              <span class="px-1.5 py-0.5 rounded font-bold bg-slate-200 dark:bg-royal-800 text-slate-700 dark:text-royal-200">
-                ${Number(data.pageCountDetected || 1)} Page(s) Scanned
-              </span>
               <span class="px-1.5 py-0.5 rounded font-bold ${data.legibilityStatus === "CLEAR" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/15 text-amber-700 dark:text-amber-300"}">
                 Legibility: ${escapeHtml(data.legibilityStatus || "CHECKED")}
               </span>
-              ${sheetSyncBadgeHtml}
             </div>
             ${applyBtnHtml}
           </div>
@@ -8616,9 +8621,6 @@ function ensureOneTimePaymentHeaders(sheet) {
                 <div class="text-[11px] font-mono font-bold truncate mt-0.5" title="${escapeHtml(val || "UNREADABLE")}">${escapeHtml(val || "UNREADABLE")}</div>
               </div>
             `).join("")}
-          </div>
-          <div class="text-[9px] text-slate-500 dark:text-royal-300/70">
-            Strict Rule: <span class="font-bold">Grace Period</span> only shows if explicitly printed as "Grace Period" on the bill (Disconnection Date / Due-to-Discon is never treated as Grace Period).
           </div>
           ${data.notes ? `<div class="text-[10px] text-slate-500 dark:text-royal-300/75 italic">Note: ${escapeHtml(data.notes)}</div>` : ""}
         </div>
@@ -9656,11 +9658,29 @@ function ensureOneTimePaymentHeaders(sheet) {
         return;
       }
 
-      // Build Payment Status Flags Map (Duplicate, Late Submission <7 weekdays, Overdue on/beyond due date)
+      // Build Payment Status Flags Map (Duplicate, Late Submission <7 weekdays, Overdue on/beyond due date, AI Due Date verification & Arrears tagging)
+      const MONTH_INDEX_MAP = {
+        jan: 0, january: 0,
+        feb: 1, february: 1,
+        mar: 2, march: 2,
+        apr: 3, april: 3,
+        may: 4,
+        jun: 5, june: 5,
+        jul: 6, july: 6,
+        aug: 7, august: 7,
+        sep: 8, sept: 8, september: 8,
+        oct: 9, october: 9,
+        nov: 10, november: 10,
+        dec: 11, december: 11
+      };
       const parseLocalCalDay = (raw) => {
         if (!raw) return null;
         const s = String(raw).trim();
         if (!s) return null;
+        const upper = s.toUpperCase();
+        if (upper.includes("UNREADABLE") || upper.includes("NOT ON BILL") || upper === "N/A" || upper === "NONE") {
+          return null;
+        }
         const gvizMatch = s.match(/Date\((\d+),(\d+),(\d+)/);
         if (gvizMatch) {
           return new Date(parseInt(gvizMatch[1], 10), parseInt(gvizMatch[2], 10), parseInt(gvizMatch[3], 10), 0, 0, 0, 0);
@@ -9678,9 +9698,47 @@ function ensureOneTimePaymentHeaders(sheet) {
           const dy = p1 > 12 ? p1 : p2;
           return new Date(yr, mo, dy, 0, 0, 0, 0);
         }
+        // e.g. "30 Nov 2026" or "30-Nov-2026"
+        const dmyAlpha = s.match(/^(\d{1,2})[\s,-]+([A-Za-z]+)[\s,.-]+(\d{4})/);
+        if (dmyAlpha) {
+          const dy = parseInt(dmyAlpha[1], 10);
+          const mo = MONTH_INDEX_MAP[dmyAlpha[2].toLowerCase()];
+          const yr = parseInt(dmyAlpha[3], 10);
+          if (mo !== undefined && dy >= 1 && dy <= 31) {
+            return new Date(yr, mo, dy, 0, 0, 0, 0);
+          }
+        }
+        // e.g. "Nov 30, 2026" or "November 30 2026"
+        const mdyAlpha = s.match(/^([A-Za-z]+)[\s.-]+(\d{1,2})[\s,.-]+(\d{4})/);
+        if (mdyAlpha) {
+          const mo = MONTH_INDEX_MAP[mdyAlpha[1].toLowerCase()];
+          const dy = parseInt(mdyAlpha[2], 10);
+          const yr = parseInt(mdyAlpha[3], 10);
+          if (mo !== undefined && dy >= 1 && dy <= 31) {
+            return new Date(yr, mo, dy, 0, 0, 0, 0);
+          }
+        }
         const d = new Date(s);
         if (isNaN(d.getTime())) return null;
         return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0);
+      };
+      const formatCalDayIso = (d) => {
+        const yr = d.getFullYear();
+        const mo = String(d.getMonth() + 1).padStart(2, "0");
+        const dy = String(d.getDate()).padStart(2, "0");
+        return `${yr}-${mo}-${dy}`;
+      };
+      const hasPositiveArrears = (rawArrears) => {
+        if (!rawArrears) return false;
+        const s = String(rawArrears).trim();
+        if (!s) return false;
+        const u = s.toUpperCase();
+        if (u.includes("NOT ON BILL") || u.includes("UNREADABLE") || u === "NONE" || u === "N/A" || u === "-") return false;
+        if (s.includes("-") || (s.startsWith("(") && s.endsWith(")"))) return false;
+        const cleaned = s.replace(/[^0-9.]/g, "");
+        if (!cleaned) return false;
+        const val = parseFloat(cleaned);
+        return !isNaN(val) && val > 0;
       };
       const countWeekdaysBetween = (subDate, dueDate) => {
         if (subDate.getTime() >= dueDate.getTime()) return 0;
@@ -9693,6 +9751,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
         return count;
       };
+      const savedAiMap = getExtractedSoaMap();
       const allMergedRequests = paymentRequests.map(r => paymentEditsOverrides[r.requestId] ? { ...r, ...paymentEditsOverrides[r.requestId] } : r);
       const getDupKey = (r) => {
         const acc = normalizeRawAccountKey(r.accountNumber || "");
@@ -9722,7 +9781,19 @@ function ensureOneTimePaymentHeaders(sheet) {
         const dupCount = dupKey ? (isCancRej ? (totalKeyCounts[dupKey] || 0) : (activeKeyCounts[dupKey] || 0)) : 0;
         const isDuplicate = dupCount >= 2 || curStatus === "DUPLICATE";
         const subD = parseLocalCalDay(item.submittedAt);
-        const dueD = parseLocalCalDay(item.dueDate);
+        const inputDueD = parseLocalCalDay(item.dueDate);
+        const rawRowAi = item.extractedBillData || savedAiMap[item.requestId] || null;
+        const aiDueD = parseLocalCalDay(rawRowAi?.dueDateIso) || parseLocalCalDay(rawRowAi?.dueDate);
+        let aiDueMismatchText = "";
+        if (aiDueD) {
+          if (!inputDueD || inputDueD.getTime() !== aiDueD.getTime()) {
+            aiDueMismatchText = formatCalDayIso(aiDueD);
+          }
+        }
+        // Recompute late/overdue submission using AI-read due date whenever AI read a valid due date
+        const dueD = aiDueD || inputDueD;
+        const effectiveDueLabel = aiDueMismatchText || item.dueDate;
+        const hasArrears = hasPositiveArrears(rawRowAi?.arrears);
         let timingFlag = null;
         let weekdaysBeforeDue = null;
         let daysDelayed = null;
@@ -9746,14 +9817,15 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
         }
         let flagsHtml = "";
-        if (isDuplicate || timingFlag) {
+        if (isDuplicate || timingFlag || hasArrears) {
           const overdueLabel = weekdaysPastDue && weekdaysPastDue > 0
             ? `Overdue · ${daysDelayed}d late (+${weekdaysPastDue}d past)`
             : `Overdue · 7d late (0d left)`;
-          const overdueTitle = `Overdue: Submitted ${weekdaysPastDue && weekdaysPastDue > 0 ? weekdaysPastDue + " working day(s) past" : "on"} Due Date (${escapeHtml(item.dueDate)}) — 0d lead time left (${daysDelayed} working days delayed since 7 working days are needed to process payment)`;
+          const overdueTitle = `Overdue: Submitted ${weekdaysPastDue && weekdaysPastDue > 0 ? weekdaysPastDue + " working day(s) past" : "on"} Due Date (${escapeHtml(effectiveDueLabel)}) — 0d lead time left (${daysDelayed} working days delayed since 7 working days are needed to process payment)`;
           const lateLabel = `Late ${daysDelayed}d (${weekdaysBeforeDue}d left)`;
-          const lateTitle = `Late by ${daysDelayed} working day(s): ${weekdaysBeforeDue} working day(s) lead time left till Due Date (${escapeHtml(item.dueDate)}) — 7 working days needed to process payment`;
+          const lateTitle = `Late by ${daysDelayed} working day(s): ${weekdaysBeforeDue} working day(s) lead time left till Due Date (${escapeHtml(effectiveDueLabel)}) — 7 working days needed to process payment`;
           flagsHtml = `<div class="mt-0.5 flex flex-wrap items-center gap-1 leading-none">` +
+            (hasArrears ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30" title="Statement has arrears read by AI: ${escapeHtml(rawRowAi?.arrears || "")}"><span>w/ arrears</span></span>` : "") +
             (isDuplicate ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border border-fuchsia-500/30" title="Duplicate entry detected for this Account & Billing Month (Reviewer will manually tag duplicate as REJECTED)"><i data-lucide="layers" class="w-2.5 h-2.5"></i><span>Duplicate</span></span>` : "") +
             (timingFlag === "overdue" ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30" title="${overdueTitle}"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i><span>${overdueLabel}</span></span>` : "") +
             (timingFlag === "late" ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30" title="${lateTitle}"><i data-lucide="clock" class="w-2.5 h-2.5"></i><span>${lateLabel}</span></span>` : "") +
@@ -9780,7 +9852,8 @@ function ensureOneTimePaymentHeaders(sheet) {
               <div class="text-[11px] text-slate-500 dark:text-neutral-400 mt-0.5"><span class="font-medium text-slate-700 dark:text-neutral-300">${escapeHtml(item.site)}</span> &bull; <span>${escapeHtml(item.biller)}</span></div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap font-mono text-[11px] text-slate-600 dark:text-neutral-300">
-              ${escapeHtml(item.dueDate)}
+              <div>${escapeHtml(item.dueDate)}</div>
+              ${aiDueMismatchText ? `<div class="text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400 leading-tight mt-0.5" title="Actual Due Date read by AI from statement (${escapeHtml(aiDueMismatchText)}) differs from input due date (${escapeHtml(item.dueDate)})">${escapeHtml(aiDueMismatchText)}</div>` : ""}
             </td>
             <td class="py-3 px-4 whitespace-nowrap font-mono text-xs font-semibold text-slate-700 dark:text-neutral-200">
               ${escapeHtml(item.viberNumber)}
@@ -9833,8 +9906,7 @@ function ensureOneTimePaymentHeaders(sheet) {
                 </span>
               `}
               ${(() => {
-                const savedMap = getExtractedSoaMap();
-                const rowAi = canViewPayAiResults ? (item.extractedBillData || savedMap[item.requestId] || null) : null;
+                const rowAi = canViewPayAiResults ? rawRowAi : null;
                 if (!(item.lutStatusSynced && canViewPayLutSynced) && !rowAi && !item.rfp && !item.cv && !item.payDate) {
                   return '';
                 }

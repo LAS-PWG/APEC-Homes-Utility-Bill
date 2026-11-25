@@ -6,6 +6,21 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.3.6] - 2026-11-24 — Admin Actions AI Metadata Relocation (Retaining Only Legibility in Form/Inspector), AI-Read Due Date Mismatch Display + Late Submission Recomputation, "w/ arrears" Badge Below Inspect, & Single Free-Tier Model Fix
+--------------------------------------------------------------------------------
+1. Moved Technical Free AI Statement Extractor Headers & Setup to Admin Actions (Retaining Only Legibility in Inspector & Form):
+   - Moved `Free AI Statement Extractor`, `₱0.00 FREE TIER`, `🟢 AI Limit: 12/12 RPM • 200/200 Day`, `Upserts to AI_SOA_Extractions by Request ID (Col A)`, `Cycle, Due Date, Grace Period...`, `Detected Format`, `Page(s) Scanned`, `✓ Synced to AI_SOA_Extractions`, and the `Dedicated AI Sheet & Standalone Code.gs` setup drawer into `Admin -> Admin Actions`.
+   - Inside the Request Bill Payment Form and Payment Request Inspector statement reader cards, only `Legibility: ...` (alongside the `Auto` / `Scan` trigger controls and the 9 extracted fields) is shown.
+2. AI-Read Due Date Verification & Automatic Late / Overdue Submission Recomputation:
+   - Compares the AI-read statement due date (`dueDateIso` / `dueDate`, supporting ISO, slash dates, and alpha month dates like `30 Nov 2026`) against the user's input due date (`req.dueDate`).
+   - If the AI read a valid due date that differs from the input due date, displays the actual AI-read due date (`YYYY-MM-DD`) in small font (`text-[10px]`) directly below the input due date in the `View Request Bill Payment Status` table. If it matches the input due date (or no valid due date was read), nothing extra is shown.
+   - Recomputes the Late Submission (`< 7 working days before due date`) and Overdue (`on/beyond due date`) tags using the AI-read due date whenever a valid AI-read due date is present.
+3. "w/ arrears" Tag Directly Below Inspect Button:
+   - In the `View Request Bill Payment Status` table, directly below the `REQ-... [Inspect / Edit]` button, renders a compact `w/ arrears` badge whenever the AI read positive arrears (`arrears > 0`) on the statement; otherwise renders nothing.
+4. Fixed `models/gemini-2.5-flash-lite is no longer available to new users` (HTTP 404) & `isCurrentUserAdminOrSubAdmin` ReferenceError:
+   - Uses only the verified Free Tier model `gemini-4-hydrogen` in `/server.ts` with automatic browser PDF.js + Vision OCR fallback on non-quota errors, and synced all 15 static package files and 5 `.zip` archives.
+
+--------------------------------------------------------------------------------
 [v3.3.5] - 2026-11-22 — Admin AI Limit Indicator, Space-Saving `✨` Star Badge in View Table, CORS-Safe Drive Attachment Reader on GitHub Pages (`Failed to fetch` Fix), & Full 15-File Package Sync
 --------------------------------------------------------------------------------
 1. Fixed `Batch Auto-Scan stopped: Failed to fetch` on Static GitHub Pages (`github.io`):
