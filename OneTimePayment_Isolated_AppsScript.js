@@ -108,13 +108,22 @@ function doGet(e) {
 
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
+    scriptVersion: 'v3.5.0-otp-strict',
     isolatedModule: 'ONETIME_PAYMENT',
+    oneTimePaymentEnabled: true,
+    oneTimeSequentialUploadEnabled: true,
     sheetName: ONE_TIME_SHEET_NAME,
     assignedFolderId: getAssignedOneTimeFolderId(''),
     designatedDriveOwner: getDesignatedDriveOwnerEmail(''),
-    message: 'Isolated One-Time Bill Payment Webhook (v2.0 Production) is ACTIVE! Tab "One Time Bill Payments" and all 17 columns (A-Q) are ready.',
+    message: 'Isolated One-Time Bill Payment Webhook (v3.5 Production — Strict Verification) is ACTIVE! Tab "One Time Bill Payments" and all 17 columns (A-Q) are ready.',
     oneTimeRows: oneTimeSheet.getLastRow()
   })).setMimeType(ContentService.MimeType.JSON);
+}
+
+function isDirectDriveFileUrl(u) {
+  if (!u) return false;
+  var s = String(u).trim();
+  return /^https?:\/\/drive\.google\.com\/(file\/d\/[a-zA-Z0-9_-]+|open\?id=[a-zA-Z0-9_-]+)/i.test(s);
 }
 
 function doPost(e) {
@@ -122,6 +131,12 @@ function doPost(e) {
   lock.tryLock(30000);
 
   try {
+    if (!e || !e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'error',
+        message: 'Empty POST body received by One-Time Payment Apps Script.'
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
     var raw = e.postData.contents;
     var data = JSON.parse(raw);
     var ss = getUtilitySpreadsheet();
@@ -142,9 +157,11 @@ function doPost(e) {
     if (data.action === 'init_onetime_sheet' || data.action === 'init_sheet' || data.action === 'checkHeaders') {
       var oneTimeSheet = ss.getSheetByName(ONE_TIME_SHEET_NAME) || ss.insertSheet(ONE_TIME_SHEET_NAME);
       ensureOneTimePaymentHeaders(oneTimeSheet);
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         sheetName: ONE_TIME_SHEET_NAME,
+        rows: oneTimeSheet.getLastRow(),
         message: 'Tab "One Time Bill Payments" and all 17 columns (A-Q) verified in Bill Sub WebApp Requests.'
       })).setMimeType(ContentService.MimeType.JSON);
     }
@@ -163,9 +180,11 @@ function doPost(e) {
           break;
         }
       }
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({
-        status: 'success',
-        updatedRow: updatedRow
+        status: updatedRow > 0 ? 'success' : 'error',
+        updatedRow: updatedRow,
+        message: updatedRow > 0 ? 'Status updated.' : 'Request ID not found: ' + reqIdStr
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -184,13 +203,13 @@ function doPost(e) {
           if (data.accountNumber !== undefined) otpSheet.getRange(rowNum, 5).setValue(data.accountNumber);
           if (data.site !== undefined) otpSheet.getRange(rowNum, 6).setValue(data.site);
           if (data.biller !== undefined) otpSheet.getRange(rowNum, 7).setValue(data.biller);
-          if (data.driveLetterFolderUrl && String(data.driveLetterFolderUrl).indexOf('http') === 0) {
+          if (isDirectDriveFileUrl(data.driveLetterFolderUrl)) {
             otpSheet.getRange(rowNum, 8).setValue('=HYPERLINK("' + data.driveLetterFolderUrl + '", "' + data.driveLetterFolderUrl + '")');
           }
-          if (data.driveSoaFolderUrl && String(data.driveSoaFolderUrl).indexOf('http') === 0) {
+          if (isDirectDriveFileUrl(data.driveSoaFolderUrl)) {
             otpSheet.getRange(rowNum, 9).setValue('=HYPERLINK("' + data.driveSoaFolderUrl + '", "' + data.driveSoaFolderUrl + '")');
           }
-          if (data.driveRlfFolderUrl && String(data.driveRlfFolderUrl).indexOf('http') === 0) {
+          if (isDirectDriveFileUrl(data.driveRlfFolderUrl)) {
             otpSheet.getRange(rowNum, 10).setValue('=HYPERLINK("' + data.driveRlfFolderUrl + '", "' + data.driveRlfFolderUrl + '")');
           }
           if (data.rfpNumber !== undefined) otpSheet.getRange(rowNum, 13).setValue(data.rfpNumber);
@@ -212,9 +231,11 @@ function doPost(e) {
           break;
         }
       }
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({
-        status: updatedOtpRow > 0 ? 'success' : 'not_found',
-        updatedRow: updatedOtpRow
+        status: updatedOtpRow > 0 ? 'success' : 'error',
+        updatedRow: updatedOtpRow,
+        message: updatedOtpRow > 0 ? 'Details updated.' : 'Request ID not found: ' + targetOtpId
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
@@ -228,25 +249,12 @@ function doPost(e) {
       var linkedCount = 0;
 
       var fileEntries = [];
-      try {
-        var mainFolder = DriveApp.getFolderById(folderId);
-        var fIter = mainFolder.getFiles();
-        while (fIter.hasNext()) {
-          var f = fIter.next();
-          fileEntries.push({ name: f.getName(), url: 'https://drive.google.com/file/d/' + f.getId() + '/view' });
-        }
-      } catch (eFolder) {}
-
-      try {
-        var fbIter = DriveApp.getFoldersByName('APEC One Time Bill Payments');
-        if (fbIter.hasNext()) {
-          var fbFiles = fbIter.next().getFiles();
-          while (fbFiles.hasNext()) {
-            var f2 = fbFiles.next();
-            fileEntries.push({ name: f2.getName(), url: 'https://drive.google.com/file/d/' + f2.getId() + '/view' });
-          }
-        }
-      } catch (eFb) {}
+      var mainFolder = DriveApp.getFolderById(folderId);
+      var fIter = mainFolder.getFiles();
+      while (fIter.hasNext()) {
+        var f = fIter.next();
+        fileEntries.push({ name: f.getName(), url: 'https://drive.google.com/file/d/' + f.getId() + '/view' });
+      }
 
       for (var rIdx = 1; rIdx < lVals.length; rIdx++) {
         var rowId = String(lVals[rIdx][0] || '').trim();
@@ -273,6 +281,7 @@ function doPost(e) {
         }
         if (rowUpdated) linkedCount++;
       }
+      SpreadsheetApp.flush();
 
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
@@ -282,131 +291,198 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 5. SUBMISSION: One-Time Bill Payment (OTP-...)
-    if (data.requestId && String(data.requestId).indexOf('OTP-') === 0) {
+    // 5a. ACTION: Upload a Single One-Time Attachment Sequentially (Prevents 3-File Payload/Timeout Failures)
+    if (data.action === 'uploadOneTimeFile') {
+      var upFolderId = getAssignedOneTimeFolderId(data.targetFolderId);
+      var fObj = data.file || {};
+      var b64 = fObj.base64 || data.fileBase64 || data.base64 || '';
+      var fName = fObj.name || data.fileName || ('OTP_' + new Date().getTime() + '.pdf');
+      var fMime = fObj.type || fObj.mimeType || data.mimeType || 'application/pdf';
+      var cachedUpFolder = resolveAndShareTargetFolderOnce(upFolderId);
+      var uploaded = saveOtpBase64ToFolder(b64, fName, fMime, cachedUpFolder, upFolderId);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        requestId: String(data.requestId || ''),
+        docType: String(data.docType || ''),
+        fileId: uploaded.fileId,
+        fileName: fName,
+        fileUrl: uploaded.fileUrl,
+        folderId: upFolderId
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 5b. ACTION: Finalize / Submit One-Time Bill Payment Row ("submitOneTimePayment")
+    if (data.action === 'submitOneTimePayment' || (!data.action && data.requestId && String(data.requestId).indexOf('OTP-') === 0)) {
       var otpSubSheet = ss.getSheetByName(ONE_TIME_SHEET_NAME) || ss.insertSheet(ONE_TIME_SHEET_NAME);
       ensureOneTimePaymentHeaders(otpSubSheet);
 
-      // Idempotency guard: prevent duplicate rows if the same requestId is received twice
-      var otpExisting = otpSubSheet.getDataRange().getValues();
-      for (var otIdx = 1; otIdx < otpExisting.length; otIdx++) {
-        if (String(otpExisting[otIdx][0] || '').trim() === String(data.requestId).trim()) {
-          return ContentService.createTextOutput(JSON.stringify({
-            status: 'success',
-            deduplicated: true,
-            requestId: data.requestId
-          })).setMimeType(ContentService.MimeType.JSON);
-        }
-      }
-
+      var otpReqId = String(data.requestId || ('OTP-' + Utilities.formatDate(new Date(), 'GMT+8', 'yyyyMMdd') + '-' + Math.floor(1000 + Math.random() * 9000))).trim();
       var OTP_FOLDER_ID = getAssignedOneTimeFolderId(data.targetFolderId);
       var uniqueNames = buildStandardOneTimeFileNames(data);
 
-      var otpLetterB64 = (data.letterFile && (data.letterFile.base64 || data.letterFile.data)) || data.letterFileBase64 || '';
-      var otpLetterType = (data.letterFile && (data.letterFile.type || data.letterFile.mimeType)) || 'application/pdf';
-      var otpLetterUrl = uploadToDriveSafely(OTP_FOLDER_ID, 'APEC One Time Bill Payments', otpLetterB64, otpLetterType, uniqueNames.letterName);
+      // Accept pre-uploaded direct Drive file URLs OR upload inline base64 strictly (throwing exact Drive errors)
+      var lObj = data.letterFile || {};
+      var sObj = data.soaFile || {};
+      var rObj = data.rlfFile || {};
+      var otpLetterB64 = lObj.base64 || lObj.data || data.letterFileBase64 || '';
+      var otpSoaB64 = sObj.base64 || sObj.data || data.soaFileBase64 || '';
+      var otpRlfB64 = rObj.base64 || rObj.data || data.rlfFileBase64 || '';
 
-      var otpSoaB64 = (data.soaFile && (data.soaFile.base64 || data.soaFile.data)) || data.soaFileBase64 || '';
-      var otpSoaType = (data.soaFile && (data.soaFile.type || data.soaFile.mimeType)) || 'application/pdf';
-      var otpSoaUrl = uploadToDriveSafely(OTP_FOLDER_ID, 'APEC One Time Bill Payments', otpSoaB64, otpSoaType, uniqueNames.soaName);
+      var cachedOtpFolder = (otpLetterB64 || otpSoaB64 || otpRlfB64) ? resolveAndShareTargetFolderOnce(OTP_FOLDER_ID) : null;
 
-      var otpRlfB64 = (data.rlfFile && (data.rlfFile.base64 || data.rlfFile.data)) || data.rlfFileBase64 || '';
-      var otpRlfType = (data.rlfFile && (data.rlfFile.type || data.rlfFile.mimeType)) || 'application/pdf';
-      var otpRlfUrl = uploadToDriveSafely(OTP_FOLDER_ID, 'APEC One Time Bill Payments', otpRlfB64, otpRlfType, uniqueNames.rlfName);
+      var otpLetterUrl = isDirectDriveFileUrl(data.letterUrl)
+        ? String(data.letterUrl).trim()
+        : (isDirectDriveFileUrl(data.driveLetterFolderUrl)
+            ? String(data.driveLetterFolderUrl).trim()
+            : (otpLetterB64 ? saveOtpBase64ToFolder(otpLetterB64, lObj.name || uniqueNames.letterName, lObj.type || lObj.mimeType || data.letterMimeType, cachedOtpFolder, OTP_FOLDER_ID).fileUrl : ''));
 
-      var otpLetterCell = otpLetterUrl
+      var otpSoaUrl = isDirectDriveFileUrl(data.soaUrl)
+        ? String(data.soaUrl).trim()
+        : (isDirectDriveFileUrl(data.driveSoaFolderUrl)
+            ? String(data.driveSoaFolderUrl).trim()
+            : (otpSoaB64 ? saveOtpBase64ToFolder(otpSoaB64, sObj.name || uniqueNames.soaName, sObj.type || sObj.mimeType || data.soaMimeType, cachedOtpFolder, OTP_FOLDER_ID).fileUrl : ''));
+
+      var otpRlfUrl = isDirectDriveFileUrl(data.rlfUrl)
+        ? String(data.rlfUrl).trim()
+        : (isDirectDriveFileUrl(data.driveRlfFolderUrl)
+            ? String(data.driveRlfFolderUrl).trim()
+            : (otpRlfB64 ? saveOtpBase64ToFolder(otpRlfB64, rObj.name || uniqueNames.rlfName, rObj.type || rObj.mimeType || data.rlfMimeType, cachedOtpFolder, OTP_FOLDER_ID).fileUrl : ''));
+
+      var otpLetterCell = isDirectDriveFileUrl(otpLetterUrl)
         ? ('=HYPERLINK("' + otpLetterUrl + '", "' + otpLetterUrl + '")')
         : uniqueNames.letterName;
-      var otpSoaCell = otpSoaUrl
+      var otpSoaCell = isDirectDriveFileUrl(otpSoaUrl)
         ? ('=HYPERLINK("' + otpSoaUrl + '", "' + otpSoaUrl + '")')
         : uniqueNames.soaName;
-      var otpRlfCell = otpRlfUrl
+      var otpRlfCell = isDirectDriveFileUrl(otpRlfUrl)
         ? ('=HYPERLINK("' + otpRlfUrl + '", "' + otpRlfUrl + '")')
         : uniqueNames.rlfName;
 
-      otpSubSheet.appendRow([
-        data.requestId,
-        data.userId || '',
-        data.email || '',
-        data.viberNumber || '',
-        data.accountNumber || '',
-        data.site || '',
-        data.biller || '',
+      var otpRow = [
+        otpReqId,
+        String(data.userId || ''),
+        String(data.email || ''),
+        String(data.viberNumber || ''),
+        String(data.accountNumber || ''),
+        String(data.site || ''),
+        String(data.biller || ''),
         otpLetterCell,
         otpSoaCell,
         otpRlfCell,
-        data.acknowledgementText || data.oneTimeAcknowledgementText || 'YES - ONE-TIME PAYMENT ONLY (NO SUCCEEDING PAYMENTS)',
+        String(data.acknowledgementText || data.oneTimeAcknowledgementText || 'YES - ONE-TIME PAYMENT ONLY (NO SUCCEEDING PAYMENTS)'),
         String(data.status || 'PENDING').trim().toUpperCase(),
-        data.rfpNumber || '',
-        data.rfpDate || '',
-        data.amount || '',
-        data.datePaid || '',
-        data.submittedAt || new Date().toLocaleString()
-      ]);
+        String(data.rfpNumber || ''),
+        String(data.rfpDate || ''),
+        String(data.amount || ''),
+        String(data.datePaid || ''),
+        String(data.submittedAt || new Date().toLocaleString())
+      ];
+
+      // Upsert by Request ID (prevent duplicate rows)
+      var otpExisting = otpSubSheet.getDataRange().getValues();
+      var writtenRow = -1;
+      for (var otIdx = 1; otIdx < otpExisting.length; otIdx++) {
+        if (String(otpExisting[otIdx][0] || '').trim() === otpReqId) {
+          writtenRow = otIdx + 1;
+          break;
+        }
+      }
+      if (writtenRow > 0) {
+        otpSubSheet.getRange(writtenRow, 1, 1, otpRow.length).setValues([otpRow]);
+      } else {
+        otpSubSheet.appendRow(otpRow);
+        writtenRow = otpSubSheet.getLastRow();
+      }
+      SpreadsheetApp.flush();
 
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
-        requestId: data.requestId,
+        requestId: otpReqId,
+        row: writtenRow,
+        sheetName: ONE_TIME_SHEET_NAME,
         letterUrl: otpLetterUrl,
         soaUrl: otpSoaUrl,
         rlfUrl: otpRlfUrl,
+        uploads: {
+          letter: { uploaded: isDirectDriveFileUrl(otpLetterUrl), url: otpLetterUrl },
+          soa: { uploaded: isDirectDriveFileUrl(otpSoaUrl), url: otpSoaUrl },
+          rlf: { uploaded: isDirectDriveFileUrl(otpRlfUrl), url: otpRlfUrl }
+        },
         preparedUniqueNames: uniqueNames
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'Unknown action: ' + String(data.action || '(none)')
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: err && err.message ? err.message : String(err)
+    })).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
   }
 }
 
-function uploadToDriveSafely(targetFolderId, fallbackFolderName, rawBase64, mimeType, fileName) {
-  if (!rawBase64) return '';
+function resolveAndShareTargetFolderOnce(targetFolderId) {
+  var resolvedId = String(targetFolderId || DEFAULT_ONETIME_DRIVE_FOLDER_ID).trim();
+  if (!resolvedId) {
+    throw new Error('Missing Google Drive targetFolderId for One-Time Payment upload.');
+  }
+  var folder;
   try {
-    var b64 = String(rawBase64);
-    if (b64.indexOf(',') > -1) {
-      b64 = b64.substring(b64.indexOf(',') + 1);
+    folder = DriveApp.getFolderById(resolvedId);
+  } catch (e) {
+    throw new Error('Cannot access Google Drive folder "' + resolvedId + '": ' + (e && e.message ? e.message : String(e)) + '. Run authorizeDriveAndSheets() in script.google.com and confirm this Google account has edit permission on the folder.');
+  }
+  try {
+    var propKey = 'FOLDER_SHARED_' + folder.getId();
+    if (PropertiesService.getScriptProperties().getProperty(propKey) !== '1') {
+      folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      PropertiesService.getScriptProperties().setProperty(propKey, '1');
     }
-    b64 = b64.replace(/\s+/g, '');
-    if (!b64) return '';
+  } catch (eShare) {
+    Logger.log('Folder sharing notice (non-fatal): ' + eShare.toString());
+  }
+  return folder;
+}
 
-    var bytes = Utilities.base64Decode(b64);
-    var mime = mimeType || 'application/pdf';
-    var blob = Utilities.newBlob(bytes, mime, fileName);
-    var file = null;
-
-    if (targetFolderId) {
-      try {
-        var folder = DriveApp.getFolderById(targetFolderId);
-        if (folder) file = folder.createFile(blob);
-      } catch (errFolder) {}
-    }
-
-    if (!file) {
-      try {
-        var iter = DriveApp.getFoldersByName(fallbackFolderName);
-        var f2 = iter.hasNext() ? iter.next() : DriveApp.createFolder(fallbackFolderName);
-        file = f2.createFile(blob);
-      } catch (errNamed) {}
-    }
-
-    if (!file) {
-      try {
-        file = DriveApp.createFile(blob);
-      } catch (errRoot) {}
-    }
-
-    if (file) {
-      try {
-        // Sets link viewing silently without sending any "File shared with you" email notification
-        file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      } catch (errShare) {}
-      return 'https://drive.google.com/file/d/' + file.getId() + '/view';
-    }
-  } catch (errMain) {}
-  return '';
+function saveOtpBase64ToFolder(rawBase64, fileName, mimeType, preResolvedFolder, targetFolderId) {
+  var safeName = String(fileName || 'OneTime_Doc.pdf').trim();
+  if (!rawBase64) {
+    throw new Error('Empty file payload received for "' + safeName + '".');
+  }
+  var b64 = String(rawBase64);
+  var commaIdx = b64.indexOf(',');
+  if (commaIdx > -1) {
+    b64 = b64.substring(commaIdx + 1);
+  }
+  b64 = b64.replace(/\s+/g, '');
+  if (!b64) {
+    throw new Error('Base64 content is empty after stripping data URI prefix for "' + safeName + '".');
+  }
+  var bytes;
+  try {
+    bytes = Utilities.base64Decode(b64);
+  } catch (decErr) {
+    throw new Error('Base64 decode failed for "' + safeName + '": ' + (decErr && decErr.message ? decErr.message : String(decErr)));
+  }
+  var mime = mimeType || 'application/pdf';
+  var blob = Utilities.newBlob(bytes, mime, safeName);
+  var folder = preResolvedFolder || resolveAndShareTargetFolderOnce(targetFolderId);
+  var file;
+  try {
+    file = folder.createFile(blob);
+  } catch (createErr) {
+    throw new Error('Drive createFile failed for "' + safeName + '" in folder "' + folder.getId() + '": ' + (createErr && createErr.message ? createErr.message : String(createErr)));
+  }
+  var fileId = file.getId();
+  return {
+    fileId: fileId,
+    fileUrl: 'https://drive.google.com/file/d/' + fileId + '/view'
+  };
 }
 
 function ensureOneTimePaymentHeaders(sheet) {

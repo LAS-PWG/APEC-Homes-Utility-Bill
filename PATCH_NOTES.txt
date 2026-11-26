@@ -6,6 +6,49 @@ Note: This file is bundled in all deployment packages (GitHub Pages, Netlify,
 Hosting-Ready, Google Sites Embed, and Full Source) and updated on every release.
 
 --------------------------------------------------------------------------------
+[v3.5.0] - 2026-11-26 — Strict Verified One-Time Bill Payment Upload & Sheet Write Flow, Lossless Existing Row Sync, & Live v3.5.0-otp-strict Webhook Default
+--------------------------------------------------------------------------------
+1. Updated Default Unified Apps Script Webhook to Live v3.5.0-otp-strict Deployment:
+   - Set `https://script.google.com/macros/s/AKfycbz5_MP__xtRj0-KezT2Hyg4XgRfuZodxYKKwoFH5kPc3Sax5GYn37D-hktQ5gR_tiwEcw/exec` as the built-in default across the React app, Express backend, standalone HTML deployments, and all 5 ZIP packages, with automatic `localStorage` migration from the legacy pre-OTP deployment.
+2. Strict End-to-End One-Time Bill Payment Verification (Zero False-Positive Success):
+   - Removed `mode: 'no-cors'` and silent `{ status: 'ok' }` fallback; uses CORS-safe `Content-Type: text/plain;charset=utf-8` + `redirect: 'follow'` JSON responses.
+   - Uploads the 3 attachments (`1. Request Letter`, `2. Billing / SOA`, `3. Approved RLF`) sequentially via `uploadOneTimeFile` (sending both `fileBase64` and `base64` keys for full compatibility), validates direct Google Drive `/file/d/...` URLs (throwing real Drive errors instead of falling back to the folder link), and only marks submission successful after verifying a real Sheet row (`row >= 2`) in `"One Time Bill Payments"`.
+3. Lossless Reading of Existing & Manual Google Sheet Rows:
+   - Upgraded `/api/onetime-payment/list` to read Google Sheets direct CSV export (`export?format=csv&gid=...`) with OAuth Sheets API v4 and preflight-free GViz fallbacks, eliminating GViz mixed-type cell erasure (e.g., alphanumeric Account Numbers alongside numeric rows).
+   - Accepts manual entries added directly in Google Sheets (even without an `OTP-` prefix or date/attachment values) and auto-syncs whenever opening the **One-Time Status** tab.
+4. Preview-to-Packages Parity & Release Cleanup:
+   - Synchronized all 29 static HTML mirrors, 9 Apps Script mirrors, 4 `PATCH_NOTES.txt` copies, 3 `README.md` copies, and rebuilt all 5 `.zip` packages (excluding runtime cache `.json` files from the full source archive).
+
+--------------------------------------------------------------------------------
+[v3.3.8] - 2026-11-25 — One-Time Bill Payment GitHub Pages Submission & Sheet Verification Fix, Strict JPEG/PNG/PDF Upload Filter, & 4-Module Admin Tab Reorganization
+--------------------------------------------------------------------------------
+1. Fixed One-Time Bill Payment Submission & "Checking Sheet..." Freeze on GitHub Pages:
+   - Resolved `BILL_SUBMISSION_SHEET_ID` and `fileToBase64` reference errors in the standalone single-file deployment (`/public/single-index.html`, `/docs/index.html`, `/github-pages/index.html`) that caused `"Checking Sheet..."` and `"Submitting One-Time Payment..."` to hang.
+   - Added automatic default webhook fallback to the personal deployed Google Apps Script (`https://script.google.com/macros/s/AKfycbzjAB8Ikzqz9HBYYtzQbsjf8q73bcvMjCOosJhSAe4DNxzefJJQotduZFU7Kk5Qnenz/exec`), explicit `action: "submitOneTimePayment"` payload routing, and direct Google Drive REST API v3 + Google Sheets API v4 backup sync when an OAuth token is connected.
+   - Preserves unsynced local One-Time Payment submissions during live GViz spreadsheet syncs and includes One-Time Bill Payment handlers (`init_onetime_sheet`, `submitOneTimePayment`, `updateOneTimePaymentDetails`, `updateStatus`) inside both `OneTimePayment_Isolated_AppsScript.js` and `Dedicated_AI_AppsScript.js`.
+2. Strict JPEG, PNG, and PDF Upload Enforcement on One-Time Bill Payment:
+   - Restricted all three One-Time Bill Payment attachment slots (`Approved Request Letter`, `Current Billing / SOA`, `Management Approved RLF`) strictly to `.jpg`, `.jpeg`, `.png`, and `.pdf` (`image/jpeg`, `image/png`, `application/pdf`) via both HTML `accept` attributes and runtime file validation (`validateOneTimeUploadFile`).
+3. Reorganized Admin Actions & System Setup Tab into 4 Filtered Modules:
+   - Added a top **Filter Admin Setup by Module** selector bar (`All Admin Sections (4)`, `1. Regular Bill & Enrollment`, `2. One-Time Bill Payment`, `3. Free AI Statement Reader`, `4. Users & Biller Accounts`) and numbered `MODULE 1`–`MODULE 4` cards with clear **"What this is for:"** descriptions.
+4. Full 15-File Static Package & 5-Archive Synchronization:
+   - Synchronized `/public/single-index.html`, `/public/index.html`, `/public/404.html`, `/public/github-pages-index.html`, `/public/netlify-index.html`, `/public/hosting-ready-index.html`, `/public/google-sites-embed.html`, `/public/netlify-github-package/`, `/docs/`, `/github-pages/`, and rebuilt all 5 `.zip` deployment packages.
+
+--------------------------------------------------------------------------------
+[v3.3.7] - 2026-11-24 — Preview-Rotation Canvas AI Reading, Multi-Orientation (90°/180°/270°) Auto-Correction, Strict Zero-Assumption Extraction, & 1-Time Partial Retry in Batch Scan
+--------------------------------------------------------------------------------
+1. Reads From Both the Source File AND the User-Rotated Inspector Preview Canvas:
+   - When the user rotates an attachment in the Payment Request Inspector preview (`↻ 90°`, `180°`, or `270°`) and clicks `Re-Scan (90°)` / `✨ Scan (90°)`, the portal renders the rotated upright preview onto an HTML5 canvas and sends that exact rotated image to the AI / Browser Statement Reader.
+   - When rotation is `0°` (default or during Batch Auto-Scan), it reads directly from the full-resolution source file (all pages of multi-page PDFs and full-res images) and automatically detects and corrects sideways/upside-down attachments (`90°`, `180°`, `270°`).
+2. Strict Zero-Assumption Policy & Accurate `CLEAR` vs. `PARTIALLY_READABLE` Calibration:
+   - Never assumes, calculates, or fabricates missing billing fields (never assumes Current Charges equals Total Amount Due unless printed, and never calculates Arrears).
+   - Binary Magic-Byte MIME Detection (`%PDF`, JPEG `\xFF\xD8\xFF`, PNG `\x89PNG`, WebP `RIFF...WEBP`) ensures clear JPEG/PNG photos served with `Content-Type: application/octet-stream` are never rejected or sent with a mismatched `application/pdf` MIME type.
+   - Hybrid / CamScanner PDFs with a small watermark text layer automatically trigger high-resolution canvas rendering + multi-orientation Vision OCR (`0° -> 90° -> 270° -> 180°`) whenever the text layer yields fewer than 2 concrete billing fields.
+   - Marks a statement `Legibility: CLEAR` (`READABLE`) only when `Total Amount Due` and `Due Date` are concretely read and no core printed field is `"UNREADABLE"`.
+3. Batch Auto-Scan Complete-Read Skip & 1-Time Partial Retry Policy (`Max 1 Retry` • Strictly `₱0.00` Free Tier):
+   - If a bill was previously read completely (`Legibility: CLEAR` / `READABLE` with no unreadable fields), Batch Auto-Scan skips it immediately (`0` quota used).
+   - If a bill has partial unreadable fields (`PARTIALLY_READABLE` or `UNREADABLE`), Batch Auto-Scan retries it at most **1 time** (`apec_ai_partial_retry_once_v1`), merges any newly read fields with previously read fields without assumptions, and upserts the updated row into `AI_SOA_Extractions`.
+
+--------------------------------------------------------------------------------
 [v3.3.6] - 2026-11-24 — Admin Actions AI Metadata Relocation (Retaining Only Legibility in Form/Inspector), AI-Read Due Date Mismatch Display + Late Submission Recomputation, "w/ arrears" Badge Below Inspect, & Single Free-Tier Model Fix
 --------------------------------------------------------------------------------
 1. Moved Technical Free AI Statement Extractor Headers & Setup to Admin Actions (Retaining Only Legibility in Inspector & Form):

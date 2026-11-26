@@ -91,8 +91,10 @@ function doGet(e) {
   ensureAiExtractionHeaders(aiSheet);
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
+    scriptVersion: 'v3.5.0-otp-strict',
     spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions & One-Time Bill Payment)',
     oneTimePaymentEnabled: true,
+    oneTimeSequentialUploadEnabled: true,
     userRows: userSheet ? userSheet.getLastRow() : 0,
     announcementRows: annSheet ? annSheet.getLastRow() : 0,
     aiExtractionRows: aiSheet ? aiSheet.getLastRow() : 0
@@ -342,6 +344,9 @@ function doPost(e) {
       'Approved Request Letter', 'Current Billing / SOA', 'Management Approved RLF',
       'One-Time Acknowledgement', 'Status', 'RFP Number', 'RFP Date', 'Amount', 'Date Paid', 'Date Submitted'
     ];
+    function isDirectDriveFileUrl(u) {
+      return Boolean(u && /^https?:\/\/drive\.google\.com\/(file\/d\/[a-zA-Z0-9_-]+|open\?id=[a-zA-Z0-9_-]+)/i.test(String(u).trim()));
+    }
     function ensureOtpSheet() {
       var uSs = getUtilitySpreadsheet();
       var otpS = uSs.getSheetByName(ONE_TIME_SHEET_NAME) || uSs.insertSheet(ONE_TIME_SHEET_NAME);
@@ -352,22 +357,63 @@ function doPost(e) {
       }
       return otpS;
     }
-    function saveOtpBase64ToFolder(b64, fName, mime, folderId) {
-      if (!b64) return '';
+    function resolveOtpDriveFolderOnce(folderId) {
+      var targetId = String(folderId || DEFAULT_OTP_FOLDER_ID).trim();
+      var folder;
       try {
-        var clean = String(b64).indexOf(',') !== -1 ? String(b64).split(',')[1] : String(b64);
-        var blob = Utilities.newBlob(Utilities.base64Decode(clean), mime || 'application/pdf', fName || 'OneTime_Doc.pdf');
-        var folder = DriveApp.getFolderById(folderId || DEFAULT_OTP_FOLDER_ID);
-        var file = folder.createFile(blob);
-        try { file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW); } catch (sErr) {}
-        return 'https://drive.google.com/file/d/' + file.getId() + '/view';
-      } catch (fErr) {
-        return '';
+        folder = DriveApp.getFolderById(targetId);
+      } catch (e) {
+        throw new Error('Cannot access Google Drive folder "' + targetId + '": ' + (e && e.message ? e.message : String(e)) + '. Run authorizeDriveAndSheets() in script.google.com and deploy a New Version.');
       }
+      try {
+        var propKey = 'FOLDER_SHARED_' + targetId;
+        if (PropertiesService.getScriptProperties().getProperty(propKey) !== '1') {
+          folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+          PropertiesService.getScriptProperties().setProperty(propKey, '1');
+        }
+      } catch (sErr) {}
+      return folder;
+    }
+    function saveOtpBase64ToFolder(b64, fName, mime, preResolvedFolder, folderId) {
+      var safeName = String(fName || 'OneTime_Doc.pdf').trim();
+      if (!b64) {
+        throw new Error('Empty file payload received for "' + safeName + '".');
+      }
+      var rawStr = String(b64);
+      var commaIdx = rawStr.indexOf(',');
+      var clean = (commaIdx !== -1 ? rawStr.substring(commaIdx + 1) : rawStr).replace(/\s+/g, '');
+      if (!clean) {
+        throw new Error('Base64 content is empty for "' + safeName + '".');
+      }
+      var bytes;
+      try {
+        bytes = Utilities.base64Decode(clean);
+      } catch (decErr) {
+        throw new Error('Base64 decode failed for "' + safeName + '": ' + (decErr && decErr.message ? decErr.message : String(decErr)));
+      }
+      var blob = Utilities.newBlob(bytes, mime || 'application/pdf', safeName);
+      var folder = preResolvedFolder || resolveOtpDriveFolderOnce(folderId);
+      var file;
+      try {
+        file = folder.createFile(blob);
+      } catch (createErr) {
+        throw new Error('Drive createFile failed for "' + safeName + '" in folder "' + folder.getId() + '": ' + (createErr && createErr.message ? createErr.message : String(createErr)));
+      }
+      return {
+        fileId: file.getId(),
+        fileUrl: 'https://drive.google.com/file/d/' + file.getId() + '/view'
+      };
+    }
+
+    if (data.action === 'setOneTimeDriveFolder') {
+      var savedFId = String(data.targetFolderId || DEFAULT_OTP_FOLDER_ID).trim();
+      try { PropertiesService.getScriptProperties().setProperty('ONETIME_DRIVE_FOLDER_ID', savedFId); } catch (pErr) {}
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', targetFolderId: savedFId })).setMimeType(ContentService.MimeType.JSON);
     }
 
     if (data.action === 'init_onetime_sheet') {
       var otpInitSheet = ensureOtpSheet();
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         sheetName: ONE_TIME_SHEET_NAME,
@@ -375,22 +421,57 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
+    if (data.action === 'uploadOneTimeFile') {
+      var upFolderId = String(data.targetFolderId || DEFAULT_OTP_FOLDER_ID).trim();
+      var fObj = data.file || {};
+      var b64 = fObj.base64 || data.fileBase64 || data.base64 || '';
+      var fName = fObj.name || data.fileName || ('OTP_' + new Date().getTime() + '.pdf');
+      var fMime = fObj.type || fObj.mimeType || data.mimeType || 'application/pdf';
+      var cachedUpFolder = resolveOtpDriveFolderOnce(upFolderId);
+      var uploaded = saveOtpBase64ToFolder(b64, fName, fMime, cachedUpFolder, upFolderId);
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        requestId: String(data.requestId || ''),
+        docType: String(data.docType || ''),
+        fileId: uploaded.fileId,
+        fileName: fName,
+        fileUrl: uploaded.fileUrl,
+        folderId: upFolderId
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
     if (data.action === 'submitOneTimePayment') {
       var otpSheet = ensureOtpSheet();
       var otpReqId = String(data.requestId || ('OTP-' + Utilities.formatDate(new Date(), 'GMT+8', 'yyyyMMdd') + '-' + Math.floor(1000 + Math.random() * 9000))).trim();
       var otpFolderId = String(data.targetFolderId || DEFAULT_OTP_FOLDER_ID).trim();
-      var otpFolderUrl = 'https://drive.google.com/drive/folders/' + otpFolderId;
 
       var lObj = data.letterFile || {};
       var sObj = data.soaFile || {};
       var rObj = data.rlfFile || {};
-      var lUrl = saveOtpBase64ToFolder(lObj.base64 || data.letterFileBase64, lObj.name || data.requestLetterFileName, lObj.type || data.letterMimeType, otpFolderId) || data.driveLetterFolderUrl || otpFolderUrl;
-      var sUrl = saveOtpBase64ToFolder(sObj.base64 || data.soaFileBase64, sObj.name || data.soaFileName, sObj.type || data.soaMimeType, otpFolderId) || data.driveSoaFolderUrl || otpFolderUrl;
-      var rUrl = saveOtpBase64ToFolder(rObj.base64 || data.rlfFileBase64, rObj.name || data.rlfFileName, rObj.type || data.rlfMimeType, otpFolderId) || data.driveRlfFolderUrl || otpFolderUrl;
+      var lB64 = lObj.base64 || data.letterFileBase64 || '';
+      var sB64 = sObj.base64 || data.soaFileBase64 || '';
+      var rB64 = rObj.base64 || data.rlfFileBase64 || '';
+      var cachedFolder = (lB64 || sB64 || rB64) ? resolveOtpDriveFolderOnce(otpFolderId) : null;
 
-      var colH = lUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK("' + lUrl + '", "' + lUrl + '")') : String(data.requestLetterFileName || lUrl);
-      var colI = sUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK("' + sUrl + '", "' + sUrl + '")') : String(data.soaFileName || sUrl);
-      var colJ = rUrl.indexOf('/file/d/') !== -1 ? ('=HYPERLINK("' + rUrl + '", "' + rUrl + '")') : String(data.rlfFileName || rUrl);
+      var lUrl = isDirectDriveFileUrl(data.letterUrl)
+        ? String(data.letterUrl).trim()
+        : (isDirectDriveFileUrl(data.driveLetterFolderUrl)
+            ? String(data.driveLetterFolderUrl).trim()
+            : (lB64 ? saveOtpBase64ToFolder(lB64, lObj.name || data.requestLetterFileName, lObj.type || data.letterMimeType, cachedFolder, otpFolderId).fileUrl : ''));
+      var sUrl = isDirectDriveFileUrl(data.soaUrl)
+        ? String(data.soaUrl).trim()
+        : (isDirectDriveFileUrl(data.driveSoaFolderUrl)
+            ? String(data.driveSoaFolderUrl).trim()
+            : (sB64 ? saveOtpBase64ToFolder(sB64, sObj.name || data.soaFileName, sObj.type || data.soaMimeType, cachedFolder, otpFolderId).fileUrl : ''));
+      var rUrl = isDirectDriveFileUrl(data.rlfUrl)
+        ? String(data.rlfUrl).trim()
+        : (isDirectDriveFileUrl(data.driveRlfFolderUrl)
+            ? String(data.driveRlfFolderUrl).trim()
+            : (rB64 ? saveOtpBase64ToFolder(rB64, rObj.name || data.rlfFileName, rObj.type || data.rlfMimeType, cachedFolder, otpFolderId).fileUrl : ''));
+
+      var colH = isDirectDriveFileUrl(lUrl) ? ('=HYPERLINK("' + lUrl + '", "' + lUrl + '")') : String(data.requestLetterFileName || '');
+      var colI = isDirectDriveFileUrl(sUrl) ? ('=HYPERLINK("' + sUrl + '", "' + sUrl + '")') : String(data.soaFileName || '');
+      var colJ = isDirectDriveFileUrl(rUrl) ? ('=HYPERLINK("' + rUrl + '", "' + rUrl + '")') : String(data.rlfFileName || '');
 
       var otpRow = [
         otpReqId,
@@ -426,19 +507,27 @@ function doPost(e) {
         otpSheet.appendRow(otpRow);
         foundOtpRow = otpSheet.getLastRow();
       }
+      SpreadsheetApp.flush();
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: otpReqId,
         row: foundOtpRow,
+        sheetName: ONE_TIME_SHEET_NAME,
         letterUrl: lUrl,
         soaUrl: sUrl,
-        rlfUrl: rUrl
+        rlfUrl: rUrl,
+        uploads: {
+          letter: { uploaded: isDirectDriveFileUrl(lUrl), url: lUrl },
+          soa: { uploaded: isDirectDriveFileUrl(sUrl), url: sUrl },
+          rlf: { uploaded: isDirectDriveFileUrl(rUrl), url: rUrl }
+        }
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
     if ((data.action === 'updateOneTimePaymentDetails' || data.action === 'updateStatus') && data.requestId) {
       var otpUpdSheet = ensureOtpSheet();
       var otpUpdVals = otpUpdSheet.getDataRange().getValues();
+      var updatedRowN = -1;
       for (var uRowIdx = 1; uRowIdx < otpUpdVals.length; uRowIdx++) {
         if (String(otpUpdVals[uRowIdx][0] || '').trim() === String(data.requestId).trim()) {
           var rowN = uRowIdx + 1;
@@ -452,15 +541,69 @@ function doPost(e) {
           if (data.rfpDate !== undefined) otpUpdSheet.getRange(rowN, 14).setValue(data.rfpDate);
           if (data.amount !== undefined) otpUpdSheet.getRange(rowN, 15).setValue(data.amount);
           if (data.datePaid !== undefined) otpUpdSheet.getRange(rowN, 16).setValue(data.datePaid);
+          updatedRowN = rowN;
           break;
         }
       }
-      return ContentService.createTextOutput(JSON.stringify({ status: 'success', requestId: data.requestId })).setMimeType(ContentService.MimeType.JSON);
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({
+        status: updatedRowN > 0 ? 'success' : 'error',
+        requestId: data.requestId,
+        row: updatedRowN,
+        message: updatedRowN > 0 ? 'Updated.' : 'Request ID not found: ' + data.requestId
+      })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    return ContentService.createTextOutput(JSON.stringify({ status: 'ok' })).setMimeType(ContentService.MimeType.JSON);
+    if (data.action === 'linkOneTimeUploads') {
+      var linkSheet = ensureOtpSheet();
+      var lVals = linkSheet.getDataRange().getValues();
+      var linkFolderId = String(data.targetFolderId || DEFAULT_OTP_FOLDER_ID).trim();
+      var filterReqId = data.requestId ? String(data.requestId).trim() : '';
+      var linkedCount = 0;
+      var folderObj = resolveOtpDriveFolderOnce(linkFolderId);
+      var fIter = folderObj.getFiles();
+      var fileEntries = [];
+      while (fIter.hasNext()) {
+        var f = fIter.next();
+        fileEntries.push({ name: f.getName(), url: 'https://drive.google.com/file/d/' + f.getId() + '/view' });
+      }
+      for (var rIdx = 1; rIdx < lVals.length; rIdx++) {
+        var rowId = String(lVals[rIdx][0] || '').trim();
+        if (!rowId || (filterReqId && rowId !== filterReqId)) continue;
+        var rowAcc = String(lVals[rIdx][4] || '').replace(/[^a-zA-Z0-9]/g, '').toLowerCase();
+        var rowUpdated = false;
+        for (var k = 0; k < fileEntries.length; k++) {
+          var fname = fileEntries[k].name;
+          var fnameLower = fname.toLowerCase();
+          var furl = fileEntries[k].url;
+          if (fname.indexOf(rowId) > -1 || (rowAcc && fnameLower.indexOf(rowAcc) > -1)) {
+            if (fnameLower.indexOf('requestletter') > -1 || fnameLower.indexOf('letter') > -1) {
+              linkSheet.getRange(rIdx + 1, 8).setValue('=HYPERLINK("' + furl + '", "' + furl + '")');
+              rowUpdated = true;
+            } else if (fnameLower.indexOf('soa') > -1 || fnameLower.indexOf('billing') > -1) {
+              linkSheet.getRange(rIdx + 1, 9).setValue('=HYPERLINK("' + furl + '", "' + furl + '")');
+              rowUpdated = true;
+            } else if (fnameLower.indexOf('rlf') > -1 || fnameLower.indexOf('mgmt') > -1) {
+              linkSheet.getRange(rIdx + 1, 10).setValue('=HYPERLINK("' + furl + '", "' + furl + '")');
+              rowUpdated = true;
+            }
+          }
+        }
+        if (rowUpdated) linkedCount++;
+      }
+      SpreadsheetApp.flush();
+      return ContentService.createTextOutput(JSON.stringify({ status: 'success', linkedCount: linkedCount, targetFolderId: linkFolderId })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: 'Unknown action: ' + String(data.action || '(none)')
+    })).setMimeType(ContentService.MimeType.JSON);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: err.toString() })).setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      status: 'error',
+      message: err && err.message ? err.message : String(err)
+    })).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
   }
