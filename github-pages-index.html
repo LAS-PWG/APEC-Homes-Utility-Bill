@@ -13849,6 +13849,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       // Requirement 5: Reset all submission alert boxes so next user never sees residual prompts
       document.getElementById("enrollSuccessAlert")?.classList.add("hidden");
       document.getElementById("billPaymentSuccessAlert")?.classList.add("hidden");
+      document.getElementById("otpSuccessBanner")?.classList.add("hidden");
+      document.getElementById("otpErrorBanner")?.classList.add("hidden");
 
       const avatar = document.getElementById("headerAvatar");
       if (avatar) avatar.innerText = (user.firstName ? user.firstName[0] : user.username[0] || "U").toUpperCase();
@@ -13873,6 +13875,9 @@ function ensureOneTimePaymentHeaders(sheet) {
       }
 
       updateAccessUI();
+      if (typeof syncLiveOneTimePaymentsFromGSheet === "function") {
+        syncLiveOneTimePaymentsFromGSheet(false);
+      }
       switchTab("overview");
     }
 
@@ -13892,6 +13897,8 @@ function ensureOneTimePaymentHeaders(sheet) {
       // Requirement 5: Clear submission alerts on logout
       document.getElementById("enrollSuccessAlert")?.classList.add("hidden");
       document.getElementById("billPaymentSuccessAlert")?.classList.add("hidden");
+      document.getElementById("otpSuccessBanner")?.classList.add("hidden");
+      document.getElementById("otpErrorBanner")?.classList.add("hidden");
     }
 
     // Google Apps Script / Webhook Settings Modal Handlers
@@ -15424,18 +15431,95 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     // Returns the active One-Time Webhook URL, falling back automatically to the user's deployed Apps Script URL
-    // so GitHub Pages and static deployments never fail with an empty webhook URL.
+    // so GitHub Pages and static deployments never fail with an empty or legacy webhook URL.
+    const ONE_TIME_SHEET_GID = "237264899";
+
+    function isLegacyUnsupportedOtpWebhookUrl(u) {
+      const s = String(u || "").trim();
+      if (!s) return false;
+      return (
+        s.includes(LEGACY_OUTDATED_USER_SCRIPT_ID) ||
+        s.includes("AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG") ||
+        s.includes("YOUR_")
+      );
+    }
+
+    function isLikelyStaticHostForOtp() {
+      try {
+        if (!window.location || !String(window.location.protocol || "").startsWith("http")) return true;
+        const h = String(window.location.hostname || "").toLowerCase();
+        return (
+          h.endsWith("github.io") ||
+          h.endsWith("netlify.app") ||
+          h.endsWith("pages.dev") ||
+          h.endsWith("vercel.app") ||
+          h.endsWith("googleusercontent.com") ||
+          h.endsWith("sites.google.com")
+        );
+      } catch (e) {
+        return true;
+      }
+    }
+
+    // RFC-4180 CSV parser used by lossless Google Sheets export?format=csv and GViz CSV fallback
+    function parseCsvRows(csvText) {
+      const rows = [];
+      let currentRow = [];
+      let currentField = "";
+      let inQuotes = false;
+      const text = String(csvText || "").replace(/^\uFEFF/, "");
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (inQuotes) {
+          if (ch === '"') {
+            if (text[i + 1] === '"') {
+              currentField += '"';
+              i++;
+            } else {
+              inQuotes = false;
+            }
+          } else {
+            currentField += ch;
+          }
+        } else if (ch === '"') {
+          inQuotes = true;
+        } else if (ch === ",") {
+          currentRow.push(currentField);
+          currentField = "";
+        } else if (ch === "\r") {
+          if (text[i + 1] === "\n") i++;
+          currentRow.push(currentField);
+          rows.push(currentRow);
+          currentRow = [];
+          currentField = "";
+        } else if (ch === "\n") {
+          currentRow.push(currentField);
+          rows.push(currentRow);
+          currentRow = [];
+          currentField = "";
+        } else {
+          currentField += ch;
+        }
+      }
+      if (currentField.length > 0 || currentRow.length > 0) {
+        currentRow.push(currentField);
+        rows.push(currentRow);
+      }
+      return rows;
+    }
+    const parseCSV = parseCsvRows;
+
     function getActiveOneTimeWebhookUrl() {
       const isolated = (localStorage.getItem(ONE_TIME_ISOLATED_WEBHOOK_KEY) || "").trim();
-      if (isolated && isolated.includes(LEGACY_OUTDATED_USER_SCRIPT_ID)) {
+      if (isolated && isLegacyUnsupportedOtpWebhookUrl(isolated)) {
         localStorage.setItem(ONE_TIME_ISOLATED_WEBHOOK_KEY, DEFAULT_USER_SCRIPT_URL);
         return DEFAULT_USER_SCRIPT_URL;
       }
       if (isolated && isolated.startsWith("http")) return isolated;
+      const userScript = (localStorage.getItem("apechomes_user_script_url") || USER_SCRIPT_URL || "").trim();
+      if (userScript && userScript.startsWith("http") && !isLegacyUnsupportedOtpWebhookUrl(userScript)) return userScript;
       const dedicatedAi = (localStorage.getItem("apec_dedicated_ai_script_url_v1") || "").trim();
-      if (dedicatedAi && dedicatedAi.startsWith("http") && !dedicatedAi.includes(LEGACY_OUTDATED_USER_SCRIPT_ID)) return dedicatedAi;
-      const userScript = (localStorage.getItem("apechomes_user_script_url_v1") || "").trim();
-      if (userScript && userScript.startsWith("http") && !userScript.includes(LEGACY_OUTDATED_USER_SCRIPT_ID)) return userScript;
+      if (dedicatedAi && dedicatedAi.startsWith("http") && !isLegacyUnsupportedOtpWebhookUrl(dedicatedAi)) return dedicatedAi;
       return DEFAULT_USER_SCRIPT_URL;
     }
 
@@ -15478,14 +15562,23 @@ function ensureOneTimePaymentHeaders(sheet) {
     }
 
     function updateOneTimeNavBadge() {
-      const badge = document.getElementById("navOneTimeCountBadge");
-      if (!badge) return;
       const isAdminOrSub = currentUser && (currentUser.accessLevel === "Administrator" || currentUser.accessLevel === "Sub-Administrator");
-      const list = isAdminOrSub
+      const canViewAllOtp = Boolean(
+        isAdminOrSub ||
+        (currentUser && (
+          hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS") ||
+          hasUserPermission(currentUser, "OTP_EDIT_DETAILS") ||
+          hasUserPermission(currentUser, "OTP_UPDATE_STATUS")
+        ))
+      );
+      const list = canViewAllOtp
         ? oneTimeRequests
-        : oneTimeRequests.filter(r => r.userId && currentUser && r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
+        : oneTimeRequests.filter(r => !r.userId || !currentUser || r.userId.trim().toLowerCase() === currentUser.userId.trim().toLowerCase());
       const pendingCount = list.filter(r => computeAutomatedOneTimeStatus(r.status, r.rfpNumber, r.datePaid) === "PENDING").length;
-      badge.innerText = pendingCount;
+      const badge = document.getElementById("navOneTimeCountBadge");
+      if (badge) badge.innerText = pendingCount;
+      const overviewBadge = document.getElementById("overviewPendingOneTimeBadge");
+      if (overviewBadge) overviewBadge.innerText = `${pendingCount} Pending`;
     }
 
     function populateOneTimeFormDefaults() {
@@ -15618,18 +15711,14 @@ function ensureOneTimePaymentHeaders(sheet) {
     let isOtpDetailsUnlocked = false;
 
     async function verifyOneTimeSheetTabExistsInGSheet() {
-      try {
-        const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ONE_TIME_SHEET_NAME)}&t=${Date.now()}`;
-        const resp = await fetch(gvizUrl);
-        if (!resp.ok) return { exists: false, rows: [], dataRowCount: 0 };
-        const csvText = await resp.text();
-        if (!csvText || csvText.trim().startsWith("<!DOCTYPE")) return { exists: false, rows: [], dataRowCount: 0 };
-        const rows = parseCSV(csvText);
-        if (!rows || rows.length === 0) return { exists: false, rows: [], dataRowCount: 0 };
-        const hdr = rows[0].map(h => String(h || "").toLowerCase());
+      const parseAndValidateCsv = (csvText) => {
+        if (!csvText || /^\s*<!doctype|^\s*<html/i.test(csvText)) return null;
+        const rows = parseCsvRows(csvText);
+        if (!rows || rows.length === 0) return null;
+        const hdr = rows[0].map(h => String(h || "").trim().toLowerCase());
         // Guard against GViz fallback to 'Billers' tab ('account no', 'site', 'biller')
         if (hdr[0] === "account no" && hdr[1] === "site" && hdr[2] === "biller") {
-          return { exists: false, rows: [], dataRowCount: 0 };
+          return null;
         }
         const hasOtpHeaders = hdr.some(h => h.includes("rlf") || h.includes("one-time") || h.includes("acknowledgement") || h.includes("rfp") || h.includes("request id"));
         const otpRows = rows.slice(1).filter(r => {
@@ -15638,19 +15727,49 @@ function ensureOneTimePaymentHeaders(sheet) {
           if (id === "request id" || id === "request_id") return false;
           return Boolean(id || String(r[4] || "").trim() || String(r[5] || "").trim() || String(r[6] || "").trim());
         });
-        const hasOtpRow = otpRows.length > 0;
-        const exists = hasOtpHeaders || hasOtpRow;
+        const exists = hasOtpHeaders || otpRows.length > 0;
+        if (!exists) return null;
+        return { exists: true, rows, dataRowCount: otpRows.length };
+      };
+
+      const updateBadge = (exists, count) => {
         const liveBadge = document.getElementById("otpSheetLiveBadge");
         if (liveBadge) {
-          liveBadge.innerText = exists ? `✓ Live in GSheet (${otpRows.length} rows)` : "○ Tab Ready to Verify";
+          liveBadge.innerText = exists ? `✓ Live in GSheet (${count} rows)` : "○ Tab Ready to Verify";
           liveBadge.className = exists
             ? "px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30"
             : "px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30";
         }
-        return { exists, rows, dataRowCount: otpRows.length };
-      } catch (e) {
-        return { exists: false, rows: [], dataRowCount: 0 };
-      }
+      };
+
+      // 1. Primary lossless CSV export by exact tab GID (preserves mixed-type alphanumeric Account Nos + manual rows)
+      try {
+        const exportUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/export?format=csv&gid=${ONE_TIME_SHEET_GID}&t=${Date.now()}`;
+        const expResp = await fetch(exportUrl);
+        if (expResp.ok) {
+          const parsedExp = parseAndValidateCsv(await expResp.text());
+          if (parsedExp) {
+            updateBadge(true, parsedExp.dataRowCount);
+            return parsedExp;
+          }
+        }
+      } catch (e) {}
+
+      // 2. Fallback: GViz CSV by exact sheet name
+      try {
+        const gvizUrl = `https://docs.google.com/spreadsheets/d/${BILL_PAYMENT_SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(ONE_TIME_SHEET_NAME)}&t=${Date.now()}`;
+        const resp = await fetch(gvizUrl);
+        if (resp.ok) {
+          const parsedGviz = parseAndValidateCsv(await resp.text());
+          if (parsedGviz) {
+            updateBadge(true, parsedGviz.dataRowCount);
+            return parsedGviz;
+          }
+        }
+      } catch (e) {}
+
+      updateBadge(false, 0);
+      return { exists: false, rows: [], dataRowCount: 0 };
     }
 
     async function ensureOneTimeSheetViaGoogleRestApi(token) {
@@ -15789,7 +15908,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         };
 
         // 1. Primary on Node/AI Studio Preview: lossless CSV export via Express backend
-        if (!window.location.hostname.endsWith("github.io") && !window.location.hostname.endsWith("netlify.app")) {
+        if (!isLikelyStaticHostForOtp()) {
           try {
             const apiRes = await fetch(`/api/onetime-payment/list?t=${Date.now()}`);
             const ct = apiRes.headers.get("content-type") || "";
@@ -15930,9 +16049,10 @@ function ensureOneTimePaymentHeaders(sheet) {
       };
       if (!isImage || file.size <= 160 * 1024) {
         const fullB64 = await fileToBase64(file);
+        const inferredMime = rawType || (nameLower.endsWith(".pdf") ? "application/pdf" : nameLower.endsWith(".png") ? "image/png" : "image/jpeg");
         return {
           base64: stripDataUrl(fullB64),
-          mimeType: rawType || (nameLower.endsWith(".pdf") ? "application/pdf" : "image/jpeg")
+          mimeType: inferredMime
         };
       }
       return new Promise((resolve) => {
@@ -16174,7 +16294,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         }
 
         const primaryWebhookUrl = getActiveOneTimeWebhookUrl() || DEFAULT_USER_SCRIPT_URL;
-        let expressApiAvailable = !window.location.hostname.endsWith("github.io") && !window.location.hostname.endsWith("netlify.app");
+        let expressApiAvailable = !isLikelyStaticHostForOtp();
 
         const uploadSingleOtpFile = async (slotLabel, docType, fileName, b64, mimeType) => {
           if (stepTxt) stepTxt.innerText = `Uploading ${slotLabel} to Google Drive...`;
@@ -16231,7 +16351,7 @@ function ensureOneTimePaymentHeaders(sheet) {
               });
               clearTimeout(tId);
               const ctype = srvUp.headers.get("content-type") || "";
-              if (srvUp.status === 404 || !ctype.includes("application/json")) {
+              if ([403, 404, 405, 501, 502, 503].includes(srvUp.status) || !ctype.includes("application/json")) {
                 expressApiAvailable = false;
               } else {
                 const srvJson = await srvUp.json().catch(() => null);
@@ -16333,7 +16453,7 @@ function ensureOneTimePaymentHeaders(sheet) {
             });
             clearTimeout(tId);
             const ctype = srvRes.headers.get("content-type") || "";
-            if (srvRes.status === 404 || !ctype.includes("application/json")) {
+            if ([403, 404, 405, 501, 502, 503].includes(srvRes.status) || !ctype.includes("application/json")) {
               expressApiAvailable = false;
             } else {
               const srvJson = await srvRes.json().catch(() => null);
@@ -17031,10 +17151,14 @@ function ensureOneTimePaymentHeaders(sheet) {
         if (!canViewCancelRejected && (stAuto === "CANCEL" || stAuto === "REJECTED")) return false;
         if (statusF !== "All" && stAuto !== statusF.toUpperCase()) return false;
         if (searchQ) {
-          const hay = `${r.requestId} ${r.accountNumber} ${r.site} ${r.biller} ${r.email} ${r.rfpNumber}`.toLowerCase();
+          const hay = `${r.requestId} ${r.accountNumber} ${r.site} ${r.biller} ${r.email} ${r.rfpNumber} ${r.amount}`.toLowerCase();
           if (!hay.includes(searchQ)) return false;
         }
         return true;
+      }).sort((a, b) => {
+        const tb = Date.parse(b.submittedAt || "");
+        const ta = Date.parse(a.submittedAt || "");
+        return (Number.isFinite(tb) ? tb : 0) - (Number.isFinite(ta) ? ta : 0);
       });
 
       if (visible.length === 0) {
@@ -18439,7 +18563,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const canViewAllPay = !currentUser || isAdm || hasUserPermission(currentUser, "PS_VIEW_ALL");
       const canViewAllEnr = !currentUser || isAdm || hasUserPermission(currentUser, "ES_VIEW_ALL");
       const canOtp = !currentUser || isAdm || hasUserPermission(currentUser, "EXP_ONETIME_PAYMENT");
-      const canViewAllOtp = !currentUser || isAdm || hasUserPermission(currentUser, "OTP_VIEW_ALL");
+      const canViewAllOtp = !currentUser || isAdm || hasUserPermission(currentUser, "OTP_ADD_PAYMENT_DETAILS") || hasUserPermission(currentUser, "OTP_EDIT_DETAILS") || hasUserPermission(currentUser, "OTP_UPDATE_STATUS");
       const targetUid = currentUser ? String(currentUser.userId || "").trim().toLowerCase() : "";
 
       if (payPendEl) {
@@ -18461,10 +18585,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         enrPendEl.innerText = `${eCount} Pending`;
       }
       if (otpPendEl) {
-        const oCount = (typeof oneTimePaymentRequests !== "undefined" ? oneTimePaymentRequests : []).filter(r => {
-          const st = String(r.status || "PENDING").trim().toUpperCase();
+        const oCount = (typeof oneTimeRequests !== "undefined" ? oneTimeRequests : []).filter(r => {
+          const st = computeAutomatedOneTimeStatus(r.status, r.rfpNumber, r.datePaid);
           if (st !== "PENDING") return false;
-          if (!canViewAllOtp && currentUser && String(r.userId || "").trim().toLowerCase() !== targetUid) return false;
+          if (!canViewAllOtp && currentUser && r.userId && String(r.userId || "").trim().toLowerCase() !== targetUid) return false;
           return true;
         }).length;
         otpPendEl.innerText = `${oCount} Pending`;
