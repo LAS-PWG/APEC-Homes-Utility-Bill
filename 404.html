@@ -8080,6 +8080,24 @@ function ensureOneTimePaymentHeaders(sheet) {
     const FREE_AI_AUTO_RUN_KEY = "apechomes_free_ai_autorun_v1";
     const FREE_AI_REMOTE_API_BASE = "https://ais-pre-oj5ubzlgwwunrcginn2w5t-389576643565.asia-northeast1.run.app";
 
+    function isLikelyStaticHostForAi() {
+      try {
+        if (typeof window === "undefined" || !window.location) return true;
+        if (window.location.protocol === "file:") return true;
+        const h = String(window.location.hostname || "").toLowerCase();
+        return (
+          h.endsWith("github.io") ||
+          h.endsWith("netlify.app") ||
+          h.endsWith("pages.dev") ||
+          h.endsWith("vercel.app") ||
+          h.endsWith("googleusercontent.com") ||
+          h.endsWith("sites.google.com")
+        );
+      } catch (e) {
+        return true;
+      }
+    }
+
     let currentRbpFileDataUrl = "";
     let currentRbpFileMimeType = "application/pdf";
     let currentRbpFilePageCount = null;
@@ -8314,12 +8332,24 @@ function ensureOneTimePaymentHeaders(sheet) {
                 const currentAmt = cellVal(ac, 10);
                 const totalAmt = cellVal(ac, 11);
                 const amtBeforeDue = cellVal(ac, 12);
-                const extractedAccPrimary = cellVal(ac, 17);
+                let extractedAccPrimary = cellVal(ac, 17);
                 const extractedRefsRaw = cellVal(ac, 18);
-                const extractedRefs = extractedRefsRaw ? extractedRefsRaw.split(/[,;|]+/).map(s => s.trim()).filter(Boolean) : [];
+                let extractedRefs = extractedRefsRaw ? extractedRefsRaw.split(/[,;|]+/).map(s => s.trim()).filter(Boolean) : [];
                 const rawMatchStatus = cellVal(ac, 19).toUpperCase();
                 const rawWrongTag = cellVal(ac, 20).toUpperCase();
                 const matchExplanation = cellVal(ac, 21);
+                if (!extractedAccPrimary && matchExplanation) {
+                  const mHit = matchExplanation.match(/extracted reference "([^"]+)"/i);
+                  if (mHit && mHit[1]) extractedAccPrimary = mHit[1].trim();
+                }
+                if (extractedRefs.length === 0 && matchExplanation) {
+                  const mList = matchExplanation.match(/extracted reference\(s\)\s*\[([^\]]+)\]/i);
+                  if (mList && mList[1]) {
+                    extractedRefs = mList[1].split(/[,;|]+/).map(s => s.trim()).filter(Boolean);
+                  } else if (extractedAccPrimary) {
+                    extractedRefs = [extractedAccPrimary];
+                  }
+                }
                 const validMatchStatus = ["MATCHED", "WRONG_ATTACHMENT", "UNREADABLE_ACCOUNT", "NO_EXPECTED_ACCOUNT"].includes(rawMatchStatus)
                   ? rawMatchStatus
                   : (rawWrongTag === "WRONG ATTACHMENT" ? "WRONG_ATTACHMENT" : "");
@@ -8575,6 +8605,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           driveFileId: fid,
           fileName: item.fileName || "",
           accountNumber: item.accountNumber || "",
+          expectedAccountNumber: item.accountNumber || "",
           site: item.site || "",
           biller: item.biller || "",
           mimeType: (item.fileName || "").toLowerCase().endsWith(".png")
@@ -8584,7 +8615,7 @@ function ensureOneTimePaymentHeaders(sheet) {
             : "application/pdf",
           billerHint: item.biller || "",
           billTypeHint: item.billType || "",
-          autoWriteToSheet: true
+          autoWriteToSheet: !isLikelyStaticHostForAi()
         });
         if (result.limitReached || /429|RESOURCE_EXHAUSTED|quota|rate.?limit/i.test(String(result.error || ""))) {
           stoppedByFreeLimit = true;
@@ -8889,7 +8920,23 @@ function ensureOneTimePaymentHeaders(sheet) {
         "        aiSheet.appendRow(aiRowValues);",
         "        foundAiRow = aiSheet.getLastRow();",
         "      }",
+        "      try {",
+        "        aiSheet.getRange(foundAiRow, 18, 1, 2).setNumberFormat('@');",
+        "        aiSheet.getRange(foundAiRow, 18).setValue(String(aiRowValues[17] || ''));",
+        "        aiSheet.getRange(foundAiRow, 19).setValue(String(aiRowValues[18] || ''));",
+        "      } catch (fmtErr) {}",
         "      return ContentService.createTextOutput(JSON.stringify({ status: 'success', requestId: targetReqId, sheetName: aiTabName, row: foundAiRow })).setMimeType(ContentService.MimeType.JSON);",
+        "    }",
+        "",
+        "    // 5c. Fetch Google Drive attachment bytes as Base64 for static-host multi-page PDF/image AI reading",
+        "    if (data.action === 'fetchDriveFileBase64' && data.fileId) {",
+        "      var driveFile = DriveApp.getFileById(String(data.fileId).trim());",
+        "      var driveBlob = driveFile.getBlob();",
+        "      var driveBytes = driveBlob.getBytes();",
+        "      if (driveBytes.length > 12 * 1024 * 1024) {",
+        "        return ContentService.createTextOutput(JSON.stringify({ status: 'error', message: 'File exceeds 12MB static relay limit.' })).setMimeType(ContentService.MimeType.JSON);",
+        "      }",
+        "      return ContentService.createTextOutput(JSON.stringify({ status: 'success', fileId: driveFile.getId(), fileName: driveFile.getName(), mimeType: driveBlob.getContentType() || 'application/pdf', base64: Utilities.base64Encode(driveBytes) })).setMimeType(ContentService.MimeType.JSON);",
         "    }",
         "",
         "    // 6. Edit Billing Details in \"Bill Sub WebApp Requests\" -> Request Bill Payments (Text Cells Only)",
@@ -9229,16 +9276,26 @@ function ensureOneTimePaymentHeaders(sheet) {
       let webhookDispatched = false;
       if (targetAiWebhook && !targetAiWebhook.includes("YOUR_USER_SCRIPT_URL_HERE")) {
         webhookDispatched = true;
-        fetch(targetAiWebhook, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(sheetPayload)
-        }).catch(() => {});
+        try {
+          await fetch(targetAiWebhook, {
+            method: "POST",
+            redirect: "follow",
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(sheetPayload)
+          });
+        } catch (corsErr) {
+          try {
+            await fetch(targetAiWebhook, {
+              method: "POST",
+              mode: "no-cors",
+              headers: { "Content-Type": "text/plain;charset=utf-8" },
+              body: JSON.stringify(sheetPayload)
+            });
+          } catch (e2) {}
+        }
       }
 
-      const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
-      if (!isStaticHost) {
+      if (!isLikelyStaticHostForAi()) {
         try {
           await fetch("/api/bill-payment/save-ai-extraction", {
             method: "POST",
@@ -9707,6 +9764,169 @@ function ensureOneTimePaymentHeaders(sheet) {
           ? "PARTIALLY_READABLE"
           : "UNREADABLE";
 
+      // 9. Account Number / Meralco SIN / Meralco CAN / Multi-Reference Extraction & Verification
+      const normAlphaNumRef = (s) =>
+        String(s || "")
+          .split("_")[0]
+          .replace(/^ACC[-_:\s]*/i, "")
+          .replace(/[^A-Z0-9]/gi, "")
+          .toUpperCase();
+
+      const rawAccountRefs = [];
+      let meralcoSin = "NOT ON BILL";
+      let meralcoCan = "NOT ON BILL";
+      let primaryAccountNumber = "NOT ON BILL";
+
+      const pushAccountRef = (val) => {
+        const cleaned = String(val || "").replace(/^[:|.\s#-]+|[:|.\s#-]+$/g, "").trim();
+        if (!cleaned) return;
+        const norm = normAlphaNumRef(cleaned);
+        if (norm.length < 4 || norm.length > 24) return;
+        if (!/\d{3,}/.test(norm)) return;
+        // Skip common date/amount false positives (e.g., 2026-11-27 or 12/09/2026 or 1,234.56)
+        if (/^\d{1,2}[\/-]\d{1,2}[\/-]\d{2,4}$/.test(cleaned) || /^\d{4}-\d{2}-\d{2}$/.test(cleaned)) return;
+        if (/^\d{1,3}(,\d{3})+\.\d{2}$/.test(cleaned) || /^\d+\.\d{2}$/.test(cleaned)) return;
+        rawAccountRefs.push(cleaned);
+      };
+
+      // Meralco Service ID Number (SIN - typically 12 digits)
+      const sinPatterns = [
+        /Service\s*ID\s*(?:Number|No\.?)?\s*(?:\(SIN\))?[\s:|#-]*([0-9][0-9\s-]{8,16}[0-9])/gi,
+        /\bSIN\b[\s:|#-]*([0-9][0-9\s-]{8,16}[0-9])/gi
+      ];
+      for (const rx of sinPatterns) {
+        let m;
+        while ((m = rx.exec(combined)) !== null) {
+          const v = m[1].replace(/\s+/g, "").trim();
+          if (meralcoSin === "NOT ON BILL" && v.replace(/\D/g, "").length >= 10) meralcoSin = v;
+          pushAccountRef(v);
+        }
+      }
+
+      // Meralco Customer Account Number (CAN - typically 10 digits)
+      const canPatterns = [
+        /Customer\s*Account\s*(?:Number|No\.?)?\s*(?:\(CAN\))?[\s:|#-]*([0-9][0-9\s-]{7,16}[0-9])/gi,
+        /\bCAN\b[\s:|#-]*([0-9][0-9\s-]{7,16}[0-9])/gi
+      ];
+      for (const rx of canPatterns) {
+        let m;
+        while ((m = rx.exec(combined)) !== null) {
+          const v = m[1].replace(/\s+/g, "").trim();
+          if (meralcoCan === "NOT ON BILL" && v.replace(/\D/g, "").length >= 8) meralcoCan = v;
+          pushAccountRef(v);
+        }
+      }
+
+      // General Utility Account Number / Contract Account / Consumer No / Reference No
+      const accLabelPatterns = [
+        /(?:Account\s*(?:Number|No\.?|#)|Acct\.?\s*(?:Number|No\.?|#)|Contract\s*Account\s*(?:No\.?|Number)?|Consumer\s*(?:No\.?|ID|Account)|Service\s*Account\s*(?:No\.?|Number)?|Water\s*Account\s*(?:No\.?)?|Customer\s*(?:ID|No\.?)|Bill(?:ing)?\s*Account\s*(?:No\.?)?)[\s:|#-]*([A-Z0-9][A-Z0-9-]{3,22})/gi
+      ];
+      for (const rx of accLabelPatterns) {
+        let m;
+        while ((m = rx.exec(combined)) !== null) {
+          const v = m[1].trim();
+          if (primaryAccountNumber === "NOT ON BILL") primaryAccountNumber = v;
+          pushAccountRef(v);
+        }
+      }
+
+      // Standalone 10-12 digit Meralco SIN/CAN patterns (e.g., 475725290101 or 4757-2529-0101)
+      const standalone10to12 = combined.match(/\b\d{10,12}\b/g) || [];
+      for (const numStr of standalone10to12) {
+        if (!/^0+$/.test(numStr) && !/^20\d{6,}$/.test(numStr)) {
+          if (numStr.length === 12 && meralcoSin === "NOT ON BILL" && /MERALCO|MANILA\s*ELECTRIC/i.test(combined + " " + (hints.billerHint || hints.biller || ""))) {
+            meralcoSin = numStr;
+          }
+          pushAccountRef(numStr);
+        }
+      }
+
+      // Alphanumeric hyphenated water/electric account IDs (e.g., B661-482-119, 012-345-6789)
+      const hyphenatedIds = combined.match(/\b[A-Z0-9]{1,5}-[0-9]{2,6}-[A-Z0-9]{2,6}\b/g) || [];
+      for (const hid of hyphenatedIds) {
+        pushAccountRef(hid);
+      }
+
+      // Direct check for the expected account number anywhere in OCR/PDF text (handles OCR spacing/noise around short 5-7 digit water/co-op IDs like 27059 or 2019798)
+      const attachedAccountNumber = String(hints.expectedAccountNumber || hints.accountNumber || "").trim();
+      const expectedBase = attachedAccountNumber.split("_")[0].trim();
+      const expectedNorm = normAlphaNumRef(expectedBase);
+      if (expectedNorm.length >= 4) {
+        const flexiblePattern = expectedNorm.split("").join("[\\s\\-]*");
+        try {
+          const directExpRx = new RegExp(`(?<![A-Z0-9])${flexiblePattern}(?![A-Z0-9])`, "i");
+          const directHit = combined.match(directExpRx);
+          if (directHit && directHit[0]) {
+            const matchedText = directHit[0].replace(/\s+/g, "").trim();
+            pushAccountRef(matchedText);
+            if (primaryAccountNumber === "NOT ON BILL") primaryAccountNumber = matchedText;
+          }
+        } catch (rxErr) {}
+      }
+
+      // Deduplicate extracted references
+      const seenRefNorms = new Set();
+      const extractedAccountReferences = [];
+      for (const r of [meralcoSin, meralcoCan, primaryAccountNumber, ...rawAccountRefs]) {
+        if (!r || r === "NOT ON BILL" || r === "UNREADABLE") continue;
+        const n = normAlphaNumRef(r);
+        if (n.length < 4) continue;
+        if (!seenRefNorms.has(n)) {
+          seenRefNorms.add(n);
+          extractedAccountReferences.push(r);
+        }
+      }
+      if (primaryAccountNumber === "NOT ON BILL") {
+        if (meralcoSin !== "NOT ON BILL") primaryAccountNumber = meralcoSin;
+        else if (meralcoCan !== "NOT ON BILL") primaryAccountNumber = meralcoCan;
+        else if (extractedAccountReferences.length > 0) primaryAccountNumber = extractedAccountReferences[0];
+      }
+
+      const expectedDigits = expectedNorm.replace(/\D/g, "");
+      const expectedDigitsNoZero = expectedDigits.replace(/^0+(?=\d)/, "");
+      const doesAccountRefMatch = (candidate) => {
+        if (!expectedNorm) return false;
+        const candNorm = normAlphaNumRef(candidate);
+        if (!candNorm) return false;
+        if (candNorm === expectedNorm) return true;
+        const candNoZero = candNorm.replace(/^0+(?=\d)/, "");
+        const expNoZero = expectedNorm.replace(/^0+(?=\d)/, "");
+        if (candNoZero.length >= 5 && candNoZero === expNoZero) return true;
+        const candDigits = candNorm.replace(/\D/g, "");
+        if (expectedDigits.length >= 6 && candDigits.length >= 6) {
+          if (candDigits === expectedDigits) return true;
+          const candDigitsNoZero = candDigits.replace(/^0+(?=\d)/, "");
+          if (candDigitsNoZero.length >= 6 && candDigitsNoZero === expectedDigitsNoZero) return true;
+        }
+        return false;
+      };
+
+      let accountMatchStatus = "NO_EXPECTED_ACCOUNT";
+      let matchedAccountRef = "";
+      let wrongAttachmentTag = false;
+      let matchExplanation = "";
+      if (!expectedNorm) {
+        accountMatchStatus = extractedAccountReferences.length > 0 ? "NO_EXPECTED_ACCOUNT" : "UNREADABLE_ACCOUNT";
+        matchExplanation = extractedAccountReferences.length > 0
+          ? `Extracted ${extractedAccountReferences.length} account reference(s): ${extractedAccountReferences.join(", ")}.`
+          : "No Account Number or Meralco SIN could be read from this attachment.";
+      } else if (extractedAccountReferences.length === 0) {
+        accountMatchStatus = "UNREADABLE_ACCOUNT";
+        matchExplanation = `Could not read any Account Number or Meralco SIN on the attachment to compare against ${expectedBase}.`;
+      } else {
+        const hit = extractedAccountReferences.find(ref => doesAccountRefMatch(ref));
+        if (hit) {
+          accountMatchStatus = "MATCHED";
+          matchedAccountRef = hit;
+          wrongAttachmentTag = false;
+          matchExplanation = `Matched attached account ${expectedBase} against extracted reference "${hit}" (${extractedAccountReferences.length} total ref(s) scanned).`;
+        } else {
+          accountMatchStatus = "WRONG_ATTACHMENT";
+          wrongAttachmentTag = true;
+          matchExplanation = `WRONG ATTACHMENT: Attached to ${expectedBase}, but none of the ${extractedAccountReferences.length} extracted reference(s) [${extractedAccountReferences.join(", ")}] matched.`;
+        }
+      }
+
       return {
         cycleFrom,
         cycleTo,
@@ -9718,6 +9938,14 @@ function ensureOneTimePaymentHeaders(sheet) {
         currentAmount,
         totalAmount,
         amountBeforeDue,
+        primaryAccountNumber,
+        meralcoSin,
+        meralcoCan,
+        extractedAccountReferences,
+        accountMatchStatus,
+        matchedAccountRef,
+        wrongAttachmentTag,
+        matchExplanation,
         detectedFormat,
         legibilityStatus,
         readabilityStatus: legibilityStatus === "CLEAR" ? "READABLE" : legibilityStatus,
@@ -9836,7 +10064,7 @@ function ensureOneTimePaymentHeaders(sheet) {
         for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
       } else if (payload.driveFileId) {
         const fid = encodeURIComponent(payload.driveFileId);
-        const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
+        const isStaticHost = isLikelyStaticHostForAi();
         // Tier 0 (Live Portal / Preview): Fetch raw multi-page PDF or image via local server proxy
         if (!isStaticHost) {
           try {
@@ -9852,6 +10080,33 @@ function ensureOneTimePaymentHeaders(sheet) {
               }
             }
           } catch (e0) {}
+        }
+
+        // Tier 0.5 (Static Host Multi-Page PDF Relay via Unified Apps Script if enabled)
+        if (!u8) {
+          try {
+            const scriptUrl = payload.aiWebhookUrl || getDedicatedAiScriptUrl();
+            if (scriptUrl && scriptUrl.startsWith("https://script.google.com/")) {
+              const relayRes = await fetch(scriptUrl, {
+                method: "POST",
+                redirect: "follow",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "fetchDriveFileBase64", fileId: payload.driveFileId })
+              });
+              if (relayRes.ok) {
+                const relayJson = await relayRes.json().catch(() => null);
+                if (relayJson && relayJson.status === "success" && relayJson.base64) {
+                  const bin = atob(String(relayJson.base64).replace(/\s+/g, ""));
+                  const arr = new Uint8Array(bin.length);
+                  for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+                  if (arr.length > 100) {
+                    if (relayJson.mimeType) mime = String(relayJson.mimeType).toLowerCase();
+                    u8 = arr;
+                  }
+                }
+              }
+            }
+          } catch (eRelay) {}
         }
 
         // Tier 1: Direct anonymous fetch from drive.usercontent.google.com (credentials: omit avoids Google cookie CORP block)
@@ -9905,10 +10160,12 @@ function ensureOneTimePaymentHeaders(sheet) {
       let allLinesText = [];
       let pageCount = 1;
       let usedOcr = false;
+      let wasPdfConverted = false;
+      let tempPngPagesGenerated = 0;
 
       if (isPdf && window.pdfjsLib) {
         const doc = await window.pdfjsLib.getDocument({ data: u8, verbosity: 0 }).promise;
-        pageCount = doc.numPages || 1;
+        pageCount = Math.min(doc.numPages || 1, 6);
         for (let p = 1; p <= pageCount; p++) {
           const page = await doc.getPage(p);
           const tc = await page.getTextContent();
@@ -9919,26 +10176,34 @@ function ensureOneTimePaymentHeaders(sheet) {
             : { concreteReadCount: 0 };
 
           // Use PDF text layer if it yielded real billing fields and no manual rotation override was requested;
-          // otherwise (e.g., hybrid scanned PDF with small watermark text layer or rotated scan) run canvas Vision OCR with auto-orientation!
+          // otherwise render PDF page to a temporary in-memory PNG canvas, run OCR, and immediately release canvas memory (original PDF untouched)
           if (pageTokens.length >= 15 && Number(textLayerTest.concreteReadCount || 0) >= 2 && userRotationDeg === 0) {
             allTokens.push(...pageTokens);
             allLinesText.push(textLayerJoined);
           } else if (window.Tesseract) {
             usedOcr = true;
+            wasPdfConverted = true;
+            tempPngPagesGenerated++;
             if (pageTokens.length > 0) {
               allTokens.push(...pageTokens);
               allLinesText.push(textLayerJoined);
             }
             const vp = page.getViewport({ scale: 2.0 });
             const canvas = document.createElement("canvas");
-            canvas.width = vp.width;
-            canvas.height = vp.height;
-            const ctx = canvas.getContext("2d");
-            await page.render({ canvasContext: ctx, viewport: vp }).promise;
-            const ocrOut = await runOcrWithAutoOrientation(canvas, userRotationDeg, payload);
-            if (ocrOut.text) {
-              allLinesText.push(ocrOut.text);
-              allTokens.push(...ocrOut.tokens);
+            try {
+              canvas.width = vp.width;
+              canvas.height = vp.height;
+              const ctx = canvas.getContext("2d");
+              await page.render({ canvasContext: ctx, viewport: vp }).promise;
+              const ocrOut = await runOcrWithAutoOrientation(canvas, userRotationDeg, payload);
+              if (ocrOut.text) {
+                allLinesText.push(ocrOut.text);
+                allTokens.push(...ocrOut.tokens);
+              }
+            } finally {
+              // Immediately purge temporary rendered PDF->PNG canvas buffer
+              canvas.width = 0;
+              canvas.height = 0;
             }
           } else if (pageTokens.length > 0) {
             allTokens.push(...pageTokens);
@@ -9948,10 +10213,17 @@ function ensureOneTimePaymentHeaders(sheet) {
       } else if (window.Tesseract) {
         usedOcr = true;
         const baseCanvas = fallbackCanvas || (await imageBytesToCanvas(u8, mime));
-        const ocrOut = await runOcrWithAutoOrientation(baseCanvas, userRotationDeg, payload);
-        if (ocrOut.text) {
-          allLinesText.push(ocrOut.text);
-          allTokens.push(...ocrOut.tokens);
+        try {
+          const ocrOut = await runOcrWithAutoOrientation(baseCanvas, userRotationDeg, payload);
+          if (ocrOut.text) {
+            allLinesText.push(ocrOut.text);
+            allTokens.push(...ocrOut.tokens);
+          }
+        } finally {
+          if (baseCanvas) {
+            baseCanvas.width = 0;
+            baseCanvas.height = 0;
+          }
         }
       }
 
@@ -9961,16 +10233,24 @@ function ensureOneTimePaymentHeaders(sheet) {
         ...parsed,
         pagesAnalyzed: pageCount,
         pageCountDetected: pageCount,
+        wasPdfConverted,
+        tempPngPagesGenerated,
+        tempPngCleanedUp: true,
+        originalPdfUntouched: true,
         extractedAt: new Date().toLocaleTimeString(),
-        modelUsed: usedOcr ? "PDF.js + Multi-Orientation Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
-        modelTier: usedOcr ? "PDF.js + Multi-Orientation Vision OCR • ₱0.00 Free Tier" : "PDF.js Multi-Page Reader • ₱0.00 Free Tier",
+        modelUsed: usedOcr
+          ? `PDF→PNG + Multi-Orientation Vision OCR • ₱0.00 Free Tier`
+          : `PDF.js Multi-Page Reader • ₱0.00 Free Tier`,
+        modelTier: usedOcr
+          ? `PDF→PNG + Multi-Orientation Vision OCR • ₱0.00 Free Tier`
+          : `PDF.js Multi-Page Reader • ₱0.00 Free Tier`,
         notes: parsed.legibilityStatus === "UNREADABLE" ? "Some fields could not be clearly read from this scanned attachment." : "",
         sheetSynced: false
       };
 
       if (payload.requestId && payload.autoWriteToSheet !== false) {
         await writeExtractedSoaToGSheet(payload.requestId, extractedData, {
-          accountNumber: payload.accountNumber,
+          accountNumber: payload.accountNumber || payload.expectedAccountNumber,
           site: payload.site,
           biller: payload.biller || payload.billerHint
         });
@@ -10016,9 +10296,10 @@ function ensureOneTimePaymentHeaders(sheet) {
         } catch (rotErr) {}
       }
 
-      const isStaticHost = typeof window !== "undefined" && (window.location.hostname.endsWith("github.io") || window.location.protocol === "file:");
+      const isStaticHost = isLikelyStaticHostForAi();
 
-      // On Static GitHub Pages (or local file://), run the Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Engine
+      // On Static Hosts (GitHub Pages, Netlify, Google Sites, Cloudflare Pages, Vercel, or local file://),
+      // run the Direct Browser Multi-Page PDF.js + PDF->PNG + Multi-Orientation Tesseract.js + Account/SIN Match Engine
       // and write directly to AI_SOA_Extractions via Google Apps Script without cross-origin errors
       if (isStaticHost) {
         try {
@@ -10053,25 +10334,21 @@ function ensureOneTimePaymentHeaders(sheet) {
           recordLocalFreeAiUsage();
           return data;
         }
-        // Non-429 server/cloud error (e.g. temporary 503 high demand or static host 404):
+        // Non-429 server/cloud error (e.g. temporary 503 high demand or static host 404/SPA HTML):
         // Automatically fall back to the Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Reader
         try {
           const browserRes = await extractUtilityStatementInBrowser(enrichedPayload);
           return browserRes;
-        } catch {
-          if (data && data.error) {
-            lastError = data.error;
-          } else {
-            lastError = `Free AI service returned HTTP ${res.status}.`;
-          }
+        } catch (fbErr) {
+          lastError = fbErr?.message || (data && data.error) || `Free AI service returned HTTP ${res.status}.`;
         }
       } catch (err) {
         // Fallback to Direct Browser Multi-Page PDF.js + Multi-Orientation Tesseract.js Engine if static host on custom domain
         try {
           const browserRes = await extractUtilityStatementInBrowser(enrichedPayload);
           return browserRes;
-        } catch {
-          lastError = err?.message || "Network error connecting to Free AI extractor.";
+        } catch (fbErr2) {
+          lastError = fbErr2?.message || err?.message || "Network error connecting to Free AI extractor.";
         }
       }
       return { ok: false, error: lastError };
@@ -10093,15 +10370,17 @@ function ensureOneTimePaymentHeaders(sheet) {
       if (btnText) btnText.innerText = isAutoTriggered ? "⏳ Auto-Scanning All Pages (Free AI)..." : "⏳ Scanning All Pages (Free AI)...";
       if (resBox) {
         resBox.classList.remove("hidden");
-        resBox.innerHTML = `<div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Free AI Reader scanning all pages of attached statement...</div>`;
+        resBox.innerHTML = `<div class="p-2.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Free AI Reader scanning all pages of attached statement &amp; verifying Account / SIN...</div>`;
       }
       refreshFreeAiQuotaBars();
 
       try {
+        const selectedAccVal = (document.getElementById("billReqAccountDisplay")?.value || "").trim();
         const result = await callFreeAiExtractEndpoint({
           fileBase64: currentRbpFileDataUrl,
           mimeType: currentRbpFileMimeType,
-          accountNumber: document.getElementById("billReqSelectedAccVal")?.value || "",
+          accountNumber: selectedAccVal,
+          expectedAccountNumber: selectedAccVal,
           site: document.getElementById("billReqSelectedSiteVal")?.value || "",
           biller: document.getElementById("billReqSelectedBillerVal")?.value || "",
           billerHint: document.getElementById("billReqSelectedBillerVal")?.value || "",
@@ -10158,7 +10437,7 @@ function ensureOneTimePaymentHeaders(sheet) {
       const btn = document.getElementById("inspectorFreeAiExtractBtn");
       if (btn) btn.innerText = "⏳ Scanning & Writing...";
       if (resBox) {
-        resBox.innerHTML = `<div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Scanning all PDF pages &amp; writing to AI_SOA_Extractions (keyed by Request ID)...</div>`;
+        resBox.innerHTML = `<div class="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-700 dark:text-emerald-300 text-[11px] font-semibold">⏳ Scanning statement, verifying Account/SIN &amp; writing to AI_SOA_Extractions (Cols A–V)...</div>`;
       }
       refreshFreeAiQuotaBars();
 
@@ -10175,9 +10454,10 @@ function ensureOneTimePaymentHeaders(sheet) {
           billerHint: item.biller || "",
           billTypeHint: item.billType || "",
           accountNumber: item.accountNumber || "",
+          expectedAccountNumber: item.accountNumber || "",
           site: item.site || "",
           biller: item.biller || "",
-          autoWriteToSheet: true,
+          autoWriteToSheet: !isLikelyStaticHostForAi(),
           aiWebhookUrl: getDedicatedAiScriptUrl(),
           aiSpreadsheetId: getDedicatedAiSpreadsheetId(),
           aiSheetTabName: getDedicatedAiSheetName()

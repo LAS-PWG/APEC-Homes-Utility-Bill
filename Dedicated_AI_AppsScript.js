@@ -315,11 +315,36 @@ function doPost(e) {
         aiSheet.appendRow(aiRowValues);
         foundAiRow = aiSheet.getLastRow();
       }
+      try {
+        aiSheet.getRange(foundAiRow, 18, 1, 2).setNumberFormat('@');
+        aiSheet.getRange(foundAiRow, 18).setValue(String(aiRowValues[17] || ''));
+        aiSheet.getRange(foundAiRow, 19).setValue(String(aiRowValues[18] || ''));
+      } catch (fmtErr) {}
       return ContentService.createTextOutput(JSON.stringify({
         status: 'success',
         requestId: targetReqId,
         sheetName: aiTabName,
         row: foundAiRow
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    // 5c. Fetch Google Drive attachment bytes as Base64 for static-host multi-page PDF/image AI reading
+    if (data.action === 'fetchDriveFileBase64' && data.fileId) {
+      var driveFile = DriveApp.getFileById(String(data.fileId).trim());
+      var driveBlob = driveFile.getBlob();
+      var driveBytes = driveBlob.getBytes();
+      if (driveBytes.length > 12 * 1024 * 1024) {
+        return ContentService.createTextOutput(JSON.stringify({
+          status: 'error',
+          message: 'File exceeds 12MB static relay limit.'
+        })).setMimeType(ContentService.MimeType.JSON);
+      }
+      return ContentService.createTextOutput(JSON.stringify({
+        status: 'success',
+        fileId: driveFile.getId(),
+        fileName: driveFile.getName(),
+        mimeType: driveBlob.getContentType() || 'application/pdf',
+        base64: Utilities.base64Encode(driveBytes)
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
