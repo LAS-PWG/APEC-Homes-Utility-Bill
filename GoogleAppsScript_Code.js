@@ -98,7 +98,8 @@ function doGet(e) {
 
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
-    message: 'APEC Homes Master Automation Webhook (v5.2 - Ready for Drive Owner) is ACTIVE! All 3 Uploads (Bill Req, Enrollment, One-Time Payment) & Sheets ready.',
+    scriptVersion: 'v3.6.0-ai-sin-match',
+    message: 'APEC Homes Master Automation Webhook (v3.6.0-ai-sin-match - Ready for Drive Owner) is ACTIVE! All 3 Uploads (Bill Req, Enrollment, One-Time Payment), AI SIN Match & Sheets ready.',
     enrollmentRows: enrollSheet.getLastRow(),
     paymentRows: paySheet.getLastRow(),
     oneTimeRows: oneTimeSheet.getLastRow(),
@@ -659,7 +660,7 @@ function doPost(e) {
       })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 9a. Initialize Dedicated AI Sheet Tab ("AI_SOA_Extractions") & Row 1 Headers (Cols A–Q)
+    // 9a. Initialize Dedicated AI Sheet Tab ("AI_SOA_Extractions") & Row 1 Headers (Cols A–V)
     if (data.action === 'initAiExtractionSheet') {
       var initAiSs = getUserSpreadsheet(data.spreadsheetId);
       var initTabName = String(data.targetSheetName || 'AI_SOA_Extractions').trim();

@@ -234,7 +234,7 @@ function doPost(e) {
       return ContentService.createTextOutput(JSON.stringify({ status: 'success' })).setMimeType(ContentService.MimeType.JSON);
     }
 
-    // 5a. Initialize Dedicated AI Sheet Tab & Row 1 Headers (Cols A–Q) on Demand
+    // 5a. Initialize Dedicated AI Sheet Tab & Row 1 Headers (Cols A–V) on Demand
     if (data.action === 'initAiExtractionSheet') {
       var initAiSs = getAiSpreadsheet(data.spreadsheetId);
       var initTabName = String(data.targetSheetName || AI_EXTRACTION_SHEET_NAME).trim();

@@ -108,14 +108,14 @@ function doGet(e) {
 
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
-    scriptVersion: 'v3.5.0-otp-strict',
+    scriptVersion: 'v3.6.0-ai-sin-match',
     isolatedModule: 'ONETIME_PAYMENT',
     oneTimePaymentEnabled: true,
     oneTimeSequentialUploadEnabled: true,
     sheetName: ONE_TIME_SHEET_NAME,
     assignedFolderId: getAssignedOneTimeFolderId(''),
     designatedDriveOwner: getDesignatedDriveOwnerEmail(''),
-    message: 'Isolated One-Time Bill Payment Webhook (v3.5 Production — Strict Verification) is ACTIVE! Tab "One Time Bill Payments" and all 17 columns (A-Q) are ready.',
+    message: 'Isolated One-Time Bill Payment Webhook (v3.6.0 Production — Strict Verification) is ACTIVE! Tab "One Time Bill Payments" and all 17 columns (A-Q) are ready.',
     oneTimeRows: oneTimeSheet.getLastRow()
   })).setMimeType(ContentService.MimeType.JSON);
 }
