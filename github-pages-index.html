@@ -5978,8 +5978,8 @@ function ensureOneTimePaymentHeaders(sheet) {
     // Deployed Webhook URLs for Utility Submissions and UserData/Announcements:
     const DEFAULT_ENROLLMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG-IjcRa3yHDugVan9zOy75ED87I6SEqJozeDaKMw/exec";
     const DEFAULT_PAYMENT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxgVe2Z7kt_QtrtKtYMpTf3ZFZmzxG-IjcRa3yHDugVan9zOy75ED87I6SEqJozeDaKMw/exec";
-    const LEGACY_OUTDATED_USER_SCRIPT_ID = "AKfycbzjAB8Ikzqz9HBYYtzQbsjf8q73bcvMjCOosJhSAe4DNxzefJJQotduZFU7Kk5Qnenz";
-    const DEFAULT_USER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz5_MP__xtRj0-KezT2Hyg4XgRfuZodxYKKwoFH5kPc3Sax5GYn37D-hktQ5gR_tiwEcw/exec";
+    const LEGACY_OUTDATED_USER_SCRIPT_ID = "AKfycbz5_MP__xtRj0-KezT2Hyg4XgRfuZodxYKKwoFH5kPc3Sax5GYn37D-hktQ5gR_tiwEcw";
+    const DEFAULT_USER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzjAB8Ikzqz9HBYYtzQbsjf8q73bcvMjCOosJhSAe4DNxzefJJQotduZFU7Kk5Qnenz/exec";
 
     let storedEnr = localStorage.getItem("apechomes_enrollment_script_url");
     if (!storedEnr || storedEnr.includes("YOUR_ENROLLMENT_SCRIPT_URL_HERE") || storedEnr.includes("APEC_ENROLLMENT_WEBHOOK_URL") || storedEnr.includes("AKfycbz_")) {
@@ -8161,7 +8161,12 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     function getDedicatedAiCustomScriptUrlOnly() {
       try {
-        return String(localStorage.getItem(AI_EXTRACTION_WEBHOOK_URL_KEY) || "").trim();
+        const val = String(localStorage.getItem(AI_EXTRACTION_WEBHOOK_URL_KEY) || "").trim();
+        if (val && val.includes(LEGACY_OUTDATED_USER_SCRIPT_ID)) {
+          localStorage.removeItem(AI_EXTRACTION_WEBHOOK_URL_KEY);
+          return "";
+        }
+        return val;
       } catch (e) {
         return "";
       }
