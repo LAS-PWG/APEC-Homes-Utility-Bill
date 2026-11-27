@@ -679,6 +679,14 @@ function doPost(e) {
       var aiSheet = aiSs.getSheetByName(aiTabName) || aiSs.insertSheet(aiTabName);
       ensureAiExtractionHeaders(aiSheet);
       var targetReqId = String(data.requestId).trim();
+      var extractedAccPrimary = String(data.extractedAccountNumber || data.primaryAccountNumber || data.meralcoSin || '').trim();
+      var allRefsStr = Array.isArray(data.extractedAccountReferences)
+        ? data.extractedAccountReferences.join(', ')
+        : String(data.extractedAccountReferences || '').trim();
+      var accMatchStatus = String(data.accountMatchStatus || '').trim().toUpperCase();
+      var isWrongAtt = data.wrongAttachmentTag === true || accMatchStatus === 'WRONG_ATTACHMENT';
+      var wrongTagStr = isWrongAtt ? 'WRONG ATTACHMENT' : (accMatchStatus === 'MATCHED' ? 'OK' : '');
+      var matchExplStr = String(data.matchExplanation || '').trim();
       var aiRowValues = [
         targetReqId,
         String(data.accountNumber || ''),
@@ -696,7 +704,12 @@ function doPost(e) {
         String(data.detectedFormat || 'Utility Statement'),
         String(data.readabilityStatus || data.legibilityStatus || 'READABLE'),
         String(data.pagesAnalyzed || data.pageCountDetected || 1),
-        String(data.extractedAt || data.scannedAt || new Date().toISOString())
+        String(data.extractedAt || data.scannedAt || new Date().toISOString()),
+        extractedAccPrimary,
+        allRefsStr,
+        accMatchStatus,
+        wrongTagStr,
+        matchExplStr
       ];
       var aiVals = aiSheet.getDataRange().getValues();
       var foundAiRow = -1;
@@ -707,9 +720,17 @@ function doPost(e) {
         }
       }
       if (foundAiRow > 0) {
-        if (!aiRowValues[1] && aiVals[foundAiRow - 1][1]) aiRowValues[1] = String(aiVals[foundAiRow - 1][1]);
-        if (!aiRowValues[2] && aiVals[foundAiRow - 1][2]) aiRowValues[2] = String(aiVals[foundAiRow - 1][2]);
-        if (!aiRowValues[3] && aiVals[foundAiRow - 1][3]) aiRowValues[3] = String(aiVals[foundAiRow - 1][3]);
+        var prevRow = aiVals[foundAiRow - 1] || [];
+        if (!aiRowValues[1] && prevRow[1]) aiRowValues[1] = String(prevRow[1]);
+        if (!aiRowValues[2] && prevRow[2]) aiRowValues[2] = String(prevRow[2]);
+        if (!aiRowValues[3] && prevRow[3]) aiRowValues[3] = String(prevRow[3]);
+        if (!accMatchStatus && prevRow.length >= 22) {
+          if (!aiRowValues[17] && prevRow[17]) aiRowValues[17] = String(prevRow[17]);
+          if (!aiRowValues[18] && prevRow[18]) aiRowValues[18] = String(prevRow[18]);
+          if (!aiRowValues[19] && prevRow[19]) aiRowValues[19] = String(prevRow[19]);
+          if (!aiRowValues[20] && prevRow[20]) aiRowValues[20] = String(prevRow[20]);
+          if (!aiRowValues[21] && prevRow[21]) aiRowValues[21] = String(prevRow[21]);
+        }
         aiSheet.getRange(foundAiRow, 1, 1, aiRowValues.length).setValues([aiRowValues]);
       } else {
         aiSheet.appendRow(aiRowValues);
@@ -780,7 +801,8 @@ function ensureAiExtractionHeaders(sheet) {
     'Request ID', 'Account Number', 'Site', 'Biller',
     'Cycle From', 'Cycle To', 'AI Due Date', 'Grace Period',
     'Consumption', 'Arrears', 'Current Amount', 'Total Amount', 'Amount Before Due',
-    'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At'
+    'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At',
+    'Extracted Account / SIN', 'All Extracted Refs', 'Account Match Status', 'Wrong Attachment Tag', 'Match Explanation'
   ];
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
@@ -793,6 +815,8 @@ function ensureAiExtractionHeaders(sheet) {
     sheet.insertRowBefore(1);
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold').setBackground('#d1fae5');
     sheet.setFrozenRows(1);
+  } else if (!String(sheet.getRange(1, 18).getValue() || '').trim()) {
+    sheet.getRange(1, 18, 1, 5).setValues([headers.slice(17)]).setFontWeight('bold').setBackground('#d1fae5');
   }
 }
 

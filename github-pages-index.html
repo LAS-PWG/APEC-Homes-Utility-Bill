@@ -5553,13 +5553,22 @@ function doPost(e) {
         'Request ID', 'Account Number', 'Site', 'Biller',
         'Cycle From', 'Cycle To', 'AI Due Date', 'Grace Period',
         'Consumption', 'Arrears', 'Current Amount', 'Total Amount', 'Amount Before Due',
-        'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At'
+        'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At',
+        'Extracted Account / SIN', 'All Extracted Refs', 'Account Match Status', 'Wrong Attachment Tag', 'Match Explanation'
       ];
       if (aiSheet.getLastRow() === 0) {
         aiSheet.getRange(1, 1, 1, aiHeaders.length).setValues([aiHeaders]).setFontWeight('bold');
         aiSheet.setFrozenRows(1);
+      } else if (!String(aiSheet.getRange(1, 18).getValue() || '').trim()) {
+        aiSheet.getRange(1, 18, 1, 5).setValues([aiHeaders.slice(17)]).setFontWeight('bold');
       }
       var targetReqId = String(data.requestId).trim();
+      var extractedAccPrimary = String(data.extractedAccountNumber || data.primaryAccountNumber || data.meralcoSin || '').trim();
+      var allRefsStr = Array.isArray(data.extractedAccountReferences) ? data.extractedAccountReferences.join(', ') : String(data.extractedAccountReferences || '').trim();
+      var accMatchStatus = String(data.accountMatchStatus || '').trim().toUpperCase();
+      var isWrongAtt = data.wrongAttachmentTag === true || accMatchStatus === 'WRONG_ATTACHMENT';
+      var wrongTagStr = isWrongAtt ? 'WRONG ATTACHMENT' : (accMatchStatus === 'MATCHED' ? 'OK' : '');
+      var matchExplStr = String(data.matchExplanation || '').trim();
       var aiRowValues = [
         targetReqId,
         String(data.accountNumber || ''),
@@ -5577,7 +5586,12 @@ function doPost(e) {
         String(data.detectedFormat || 'Utility Statement'),
         String(data.readabilityStatus || data.legibilityStatus || 'READABLE'),
         String(data.pagesAnalyzed || data.pageCountDetected || 1),
-        String(data.extractedAt || new Date().toISOString())
+        String(data.extractedAt || new Date().toISOString()),
+        extractedAccPrimary,
+        allRefsStr,
+        accMatchStatus,
+        wrongTagStr,
+        matchExplStr
       ];
       var aiVals = aiSheet.getDataRange().getValues();
       var foundAiRow = -1;
@@ -8291,7 +8305,17 @@ function ensureOneTimePaymentHeaders(sheet) {
                 const currentAmt = cellVal(ac, 10);
                 const totalAmt = cellVal(ac, 11);
                 const amtBeforeDue = cellVal(ac, 12);
-                if (cycleFrom || cycleTo || aiDueDate || gracePeriod || consumption || arrears || currentAmt || totalAmt || amtBeforeDue) {
+                const extractedAccPrimary = cellVal(ac, 17);
+                const extractedRefsRaw = cellVal(ac, 18);
+                const extractedRefs = extractedRefsRaw ? extractedRefsRaw.split(/[,;|]+/).map(s => s.trim()).filter(Boolean) : [];
+                const rawMatchStatus = cellVal(ac, 19).toUpperCase();
+                const rawWrongTag = cellVal(ac, 20).toUpperCase();
+                const matchExplanation = cellVal(ac, 21);
+                const validMatchStatus = ["MATCHED", "WRONG_ATTACHMENT", "UNREADABLE_ACCOUNT", "NO_EXPECTED_ACCOUNT"].includes(rawMatchStatus)
+                  ? rawMatchStatus
+                  : (rawWrongTag === "WRONG ATTACHMENT" ? "WRONG_ATTACHMENT" : "");
+                const wrongAttachmentTag = rawWrongTag === "WRONG ATTACHMENT" || validMatchStatus === "WRONG_ATTACHMENT";
+                if (cycleFrom || cycleTo || aiDueDate || gracePeriod || consumption || arrears || currentAmt || totalAmt || amtBeforeDue || extractedAccPrimary || wrongAttachmentTag) {
                   const extObj = {
                     cycleFrom: cycleFrom || "UNREADABLE",
                     cycleTo: cycleTo || "UNREADABLE",
@@ -8308,7 +8332,12 @@ function ensureOneTimePaymentHeaders(sheet) {
                     pageCountDetected: Number(cellVal(ac, 15)) || 1,
                     extractedAt: cellVal(ac, 16) || new Date().toISOString(),
                     modelUsed: `Dedicated Sheet (${aiSheetTabName})`,
-                    sheetSynced: true
+                    sheetSynced: true,
+                    ...(extractedAccPrimary ? { primaryAccountNumber: extractedAccPrimary } : {}),
+                    ...(extractedRefs.length > 0 ? { extractedAccountReferences: extractedRefs } : {}),
+                    ...(validMatchStatus ? { accountMatchStatus: validMatchStatus } : {}),
+                    ...(wrongAttachmentTag ? { wrongAttachmentTag: true } : {}),
+                    ...(matchExplanation ? { matchExplanation } : {})
                   };
                   map[aReqId] = extObj;
                   saveExtractedSoaForRequest(aReqId, extObj);
@@ -8410,6 +8439,14 @@ function ensureOneTimePaymentHeaders(sheet) {
           : "UNREADABLE";
       const legibilityStatus = readabilityStatus === "READABLE" ? "CLEAR" : readabilityStatus;
 
+      const mergedRefs = Array.isArray(newScan.extractedAccountReferences) && newScan.extractedAccountReferences.length > 0
+        ? newScan.extractedAccountReferences
+        : prevScan.extractedAccountReferences;
+      const mergedMatchStatus = newScan.accountMatchStatus || prevScan.accountMatchStatus;
+      const mergedWrongTag = newScan.accountMatchStatus !== undefined
+        ? Boolean(newScan.wrongAttachmentTag || newScan.accountMatchStatus === "WRONG_ATTACHMENT")
+        : Boolean(prevScan.wrongAttachmentTag || prevScan.accountMatchStatus === "WRONG_ATTACHMENT");
+
       return {
         ...prevScan,
         ...newScan,
@@ -8425,7 +8462,15 @@ function ensureOneTimePaymentHeaders(sheet) {
         amountBeforeDue,
         readabilityStatus,
         legibilityStatus,
-        notes: readabilityStatus === "READABLE" ? "" : (newScan.notes || prevScan.notes || "")
+        notes: readabilityStatus === "READABLE" ? "" : (newScan.notes || prevScan.notes || ""),
+        primaryAccountNumber: newScan.primaryAccountNumber || prevScan.primaryAccountNumber,
+        meralcoSin: newScan.meralcoSin || prevScan.meralcoSin,
+        meralcoCan: newScan.meralcoCan || prevScan.meralcoCan,
+        extractedAccountReferences: mergedRefs,
+        accountMatchStatus: mergedMatchStatus,
+        matchedAccountRef: newScan.matchedAccountRef || prevScan.matchedAccountRef,
+        wrongAttachmentTag: mergedWrongTag,
+        matchExplanation: newScan.matchExplanation || prevScan.matchExplanation
       };
     }
 
@@ -8631,7 +8676,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         "    'Request ID', 'Account Number', 'Site', 'Biller',",
         "    'Cycle From', 'Cycle To', 'AI Due Date', 'Grace Period',",
         "    'Consumption', 'Arrears', 'Current Amount', 'Total Amount', 'Amount Before Due',",
-        "    'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At'",
+        "    'Detected Format', 'Legibility', 'Pages Scanned', 'Scanned At',",
+        "    'Extracted Account / SIN', 'All Extracted Refs', 'Account Match Status', 'Wrong Attachment Tag', 'Match Explanation'",
         "  ];",
         "  if (sheet.getLastRow() === 0) {",
         "    sheet.appendRow(headers);",
@@ -8644,6 +8690,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         "    sheet.insertRowBefore(1);",
         "    sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold').setBackground('#d1fae5');",
         "    sheet.setFrozenRows(1);",
+        "  } else if (!String(sheet.getRange(1, 18).getValue() || '').trim()) {",
+        "    sheet.getRange(1, 18, 1, 5).setValues([headers.slice(17)]).setFontWeight('bold').setBackground('#d1fae5');",
         "  }",
         "}",
         "",
@@ -8667,8 +8715,8 @@ function ensureOneTimePaymentHeaders(sheet) {
         "  ensureAiExtractionHeaders(aiSheet);",
         "  return ContentService.createTextOutput(JSON.stringify({",
         "    status: 'success',",
-        "    scriptVersion: 'v3.5.0-otp-strict',",
-        "    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions & One-Time Bill Payment)',",
+        "    scriptVersion: 'v3.6.0-ai-sin-match',",
+        "    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions w/ SIN Match & One-Time Bill Payment)',",
         "    oneTimePaymentEnabled: true,",
         "    oneTimeSequentialUploadEnabled: true,",
         "    userRows: userSheet ? userSheet.getLastRow() : 0,",
@@ -8780,6 +8828,12 @@ function ensureOneTimePaymentHeaders(sheet) {
         "      var aiSheet = aiSs.getSheetByName(aiTabName) || aiSs.insertSheet(aiTabName);",
         "      ensureAiExtractionHeaders(aiSheet);",
         "      var targetReqId = String(data.requestId).trim();",
+        "      var extractedAccPrimary = String(data.extractedAccountNumber || data.primaryAccountNumber || data.meralcoSin || '').trim();",
+        "      var allRefsStr = Array.isArray(data.extractedAccountReferences) ? data.extractedAccountReferences.join(', ') : String(data.extractedAccountReferences || '').trim();",
+        "      var accMatchStatus = String(data.accountMatchStatus || '').trim().toUpperCase();",
+        "      var isWrongAtt = data.wrongAttachmentTag === true || accMatchStatus === 'WRONG_ATTACHMENT';",
+        "      var wrongTagStr = isWrongAtt ? 'WRONG ATTACHMENT' : (accMatchStatus === 'MATCHED' ? 'OK' : '');",
+        "      var matchExplStr = String(data.matchExplanation || '').trim();",
         "      var aiRowValues = [",
         "        targetReqId,",
         "        String(data.accountNumber || ''),",
@@ -8797,7 +8851,12 @@ function ensureOneTimePaymentHeaders(sheet) {
         "        String(data.detectedFormat || 'Utility Statement'),",
         "        String(data.readabilityStatus || data.legibilityStatus || 'READABLE'),",
         "        String(data.pagesAnalyzed || data.pageCountDetected || 1),",
-        "        String(data.extractedAt || data.scannedAt || new Date().toISOString())",
+        "        String(data.extractedAt || data.scannedAt || new Date().toISOString()),",
+        "        extractedAccPrimary,",
+        "        allRefsStr,",
+        "        accMatchStatus,",
+        "        wrongTagStr,",
+        "        matchExplStr",
         "      ];",
         "      var aiVals = aiSheet.getDataRange().getValues();",
         "      var foundAiRow = -1;",
@@ -8805,9 +8864,17 @@ function ensureOneTimePaymentHeaders(sheet) {
         "        if (String(aiVals[aIdx][0] || '').trim() === targetReqId) { foundAiRow = aIdx + 1; break; }",
         "      }",
         "      if (foundAiRow > 0) {",
-        "        if (!aiRowValues[1] && aiVals[foundAiRow - 1][1]) aiRowValues[1] = String(aiVals[foundAiRow - 1][1]);",
-        "        if (!aiRowValues[2] && aiVals[foundAiRow - 1][2]) aiRowValues[2] = String(aiVals[foundAiRow - 1][2]);",
-        "        if (!aiRowValues[3] && aiVals[foundAiRow - 1][3]) aiRowValues[3] = String(aiVals[foundAiRow - 1][3]);",
+        "        var prevRow = aiVals[foundAiRow - 1] || [];",
+        "        if (!aiRowValues[1] && prevRow[1]) aiRowValues[1] = String(prevRow[1]);",
+        "        if (!aiRowValues[2] && prevRow[2]) aiRowValues[2] = String(prevRow[2]);",
+        "        if (!aiRowValues[3] && prevRow[3]) aiRowValues[3] = String(prevRow[3]);",
+        "        if (!accMatchStatus && prevRow.length >= 22) {",
+        "          if (!aiRowValues[17] && prevRow[17]) aiRowValues[17] = String(prevRow[17]);",
+        "          if (!aiRowValues[18] && prevRow[18]) aiRowValues[18] = String(prevRow[18]);",
+        "          if (!aiRowValues[19] && prevRow[19]) aiRowValues[19] = String(prevRow[19]);",
+        "          if (!aiRowValues[20] && prevRow[20]) aiRowValues[20] = String(prevRow[20]);",
+        "          if (!aiRowValues[21] && prevRow[21]) aiRowValues[21] = String(prevRow[21]);",
+        "        }",
         "        aiSheet.getRange(foundAiRow, 1, 1, aiRowValues.length).setValues([aiRowValues]);",
         "      } else {",
         "        aiSheet.appendRow(aiRowValues);",
@@ -9085,7 +9152,7 @@ function ensureOneTimePaymentHeaders(sheet) {
 
     function copyDedicatedAiXlookupFormula() {
       const tabVal = (document.getElementById("cfgDedicatedAiSheetTabName")?.value || getDedicatedAiSheetName()).trim() || "AI_SOA_Extractions";
-      const formula = `=IFERROR(XLOOKUP($A2, '${tabVal}'!$A:$A, '${tabVal}'!E:Q, ""), "")`;
+      const formula = `=IFERROR(XLOOKUP($A2, '${tabVal}'!$A:$A, '${tabVal}'!E:V, ""), "")`;
       navigator.clipboard.writeText(formula).then(() => {
         const btn = document.getElementById("copyDedicatedAiXlookupBtn");
         if (btn) {
@@ -9140,7 +9207,14 @@ function ensureOneTimePaymentHeaders(sheet) {
         detectedFormat: data.detectedFormat || "Utility Statement",
         readabilityStatus: data.readabilityStatus || data.legibilityStatus || "READABLE",
         pagesAnalyzed: data.pagesAnalyzed || data.pageCountDetected || 1,
-        extractedAt: data.extractedAt || new Date().toISOString()
+        extractedAt: data.extractedAt || new Date().toISOString(),
+        extractedAccountNumber: data.primaryAccountNumber || data.meralcoSin || "",
+        meralcoSin: data.meralcoSin || "",
+        meralcoCan: data.meralcoCan || "",
+        extractedAccountReferences: Array.isArray(data.extractedAccountReferences) ? data.extractedAccountReferences : [],
+        accountMatchStatus: data.accountMatchStatus || "",
+        wrongAttachmentTag: Boolean(data.wrongAttachmentTag || String(data.accountMatchStatus || "").toUpperCase() === "WRONG_ATTACHMENT"),
+        matchExplanation: data.matchExplanation || ""
       };
 
       let webhookDispatched = false;
@@ -9361,16 +9435,50 @@ function ensureOneTimePaymentHeaders(sheet) {
       const applyBtnHtml = hasValidIso && contextMode === "form"
         ? `<button type="button" onclick="applyExtractedDueDateToForm('${escapeHtml(data.dueDateIso)}')" class="px-2 py-0.5 rounded bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold cursor-pointer">Apply Due Date (${escapeHtml(data.dueDateIso)})</button>`
         : "";
+      const matchStatus = String(data.accountMatchStatus || "").toUpperCase();
+      const isWrongAtt = Boolean(data.wrongAttachmentTag || matchStatus === "WRONG_ATTACHMENT");
+      const refsArr = Array.isArray(data.extractedAccountReferences) ? data.extractedAccountReferences : [];
+      let accountMatchBannerHtml = "";
+      if (matchStatus || isWrongAtt || data.primaryAccountNumber || refsArr.length > 0) {
+        const bannerCls = matchStatus === "MATCHED"
+          ? "bg-emerald-500/10 border-emerald-500/40 text-emerald-800 dark:text-emerald-200"
+          : isWrongAtt
+          ? "bg-red-500/15 border-red-500/50 text-red-800 dark:text-red-200"
+          : "bg-amber-500/10 border-amber-500/40 text-amber-800 dark:text-amber-200";
+        const bannerTitle = matchStatus === "MATCHED"
+          ? `✓ Account / SIN Matched (${escapeHtml(data.matchedAccountRef || data.primaryAccountNumber || "")})`
+          : isWrongAtt
+          ? "⚠ Wrong Attachment — Account / Meralco SIN Mismatch"
+          : matchStatus === "NO_EXPECTED_ACCOUNT"
+          ? "ℹ Select an Account Number to verify attachment match"
+          : "? Account / SIN Unreadable on Statement";
+        const refsChips = refsArr.length > 0
+          ? `<div class="flex flex-wrap items-center gap-1 pt-0.5"><span class="text-[8px] font-bold uppercase opacity-75">Refs:</span>` +
+            refsArr.map(r => `<span class="px-1.5 py-0.5 rounded font-mono text-[9px] font-bold bg-white/70 dark:bg-black/30 border border-current/20">${escapeHtml(r)}</span>`).join("") +
+            `</div>`
+          : "";
+        accountMatchBannerHtml = `
+          <div class="p-2 rounded-lg border text-[10px] space-y-0.5 ${bannerCls}">
+            <div class="flex flex-wrap items-center justify-between gap-1 font-extrabold">
+              <span>${bannerTitle}</span>
+              ${isWrongAtt ? `<span class="px-1.5 py-0.5 rounded bg-red-600 text-white text-[9px] uppercase">Wrong Attachment</span>` : ""}
+            </div>
+            ${data.matchExplanation ? `<div class="opacity-90">${escapeHtml(data.matchExplanation)}</div>` : ""}
+            ${refsChips}
+          </div>
+        `;
+      }
       return `
         <div class="space-y-2 pt-1">
           <div class="flex flex-wrap items-center justify-between gap-1.5 text-[10px]">
             <div class="flex flex-wrap items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded font-bold ${data.legibilityStatus === "CLEAR" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/15 text-amber-700 dark:text-amber-300"}">
-                Legibility: ${escapeHtml(data.legibilityStatus || "CHECKED")}
+              <span class="px-1.5 py-0.5 rounded font-bold ${data.legibilityStatus === "CLEAR" || data.readabilityStatus === "READABLE" ? "bg-emerald-500/15 text-emerald-700 dark:text-emerald-300" : "bg-amber-500/15 text-amber-700 dark:text-amber-300"}">
+                Legibility: ${escapeHtml(data.legibilityStatus || data.readabilityStatus || "CHECKED")}
               </span>
             </div>
             ${applyBtnHtml}
           </div>
+          ${accountMatchBannerHtml}
           <div class="grid grid-cols-2 sm:grid-cols-3 gap-1.5">
             ${fields.map(([label, val]) => `
               <div class="p-2 rounded-lg border ${badgeColor(val)}">
@@ -9984,6 +10092,9 @@ function ensureOneTimePaymentHeaders(sheet) {
         const result = await callFreeAiExtractEndpoint({
           fileBase64: currentRbpFileDataUrl,
           mimeType: currentRbpFileMimeType,
+          accountNumber: document.getElementById("billReqSelectedAccVal")?.value || "",
+          site: document.getElementById("billReqSelectedSiteVal")?.value || "",
+          biller: document.getElementById("billReqSelectedBillerVal")?.value || "",
           billerHint: document.getElementById("billReqSelectedBillerVal")?.value || "",
           billTypeHint: document.getElementById("billReqType")?.value || ""
         });
@@ -10700,6 +10811,13 @@ function ensureOneTimePaymentHeaders(sheet) {
         const dueD = aiDueD || inputDueD;
         const effectiveDueLabel = aiDueMismatchText || item.dueDate;
         const hasArrears = hasPositiveArrears(rawRowAi?.arrears);
+        const hasWrongAttachment = Boolean(
+          rawRowAi?.wrongAttachmentTag || String(rawRowAi?.accountMatchStatus || "").toUpperCase() === "WRONG_ATTACHMENT"
+        );
+        const wrongAttachmentTitle = escapeHtml(
+          rawRowAi?.matchExplanation ||
+          `Wrong Attachment: Extracted Account Number / Meralco SIN does not match attached account ${item.accountNumber || ""}`
+        );
         let timingFlag = null;
         let weekdaysBeforeDue = null;
         let daysDelayed = null;
@@ -10723,7 +10841,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           }
         }
         let flagsHtml = "";
-        if (isDuplicate || timingFlag || hasArrears) {
+        if (isDuplicate || timingFlag || hasArrears || hasWrongAttachment) {
           const overdueLabel = weekdaysPastDue && weekdaysPastDue > 0
             ? `Overdue · ${daysDelayed}d late (+${weekdaysPastDue}d past)`
             : `Overdue · 7d late (0d left)`;
@@ -10731,6 +10849,7 @@ function ensureOneTimePaymentHeaders(sheet) {
           const lateLabel = `Late ${daysDelayed}d (${weekdaysBeforeDue}d left)`;
           const lateTitle = `Late by ${daysDelayed} working day(s): ${weekdaysBeforeDue} working day(s) lead time left till Due Date (${escapeHtml(effectiveDueLabel)}) — 7 working days needed to process payment`;
           flagsHtml = `<div class="mt-0.5 flex flex-wrap items-center gap-1 leading-none">` +
+            (hasWrongAttachment ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-red-600/15 text-red-700 dark:text-red-300 border border-red-500/40" title="${wrongAttachmentTitle}"><i data-lucide="alert-triangle" class="w-2.5 h-2.5"></i><span>Wrong Attachment</span></span>` : "") +
             (hasArrears ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30" title="Statement has arrears read by AI: ${escapeHtml(rawRowAi?.arrears || "")}"><span>w/ arrears</span></span>` : "") +
             (isDuplicate ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-fuchsia-500/15 text-fuchsia-700 dark:text-fuchsia-300 border border-fuchsia-500/30" title="Duplicate entry detected for this Account & Billing Month (Reviewer will manually tag duplicate as REJECTED)"><i data-lucide="layers" class="w-2.5 h-2.5"></i><span>Duplicate</span></span>` : "") +
             (timingFlag === "overdue" ? `<span class="inline-flex items-center gap-0.5 px-1 py-[1px] rounded text-[9px] font-bold leading-none bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30" title="${overdueTitle}"><i data-lucide="alert-circle" class="w-2.5 h-2.5"></i><span>${overdueLabel}</span></span>` : "") +

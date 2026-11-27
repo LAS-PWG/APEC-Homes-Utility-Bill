@@ -34,23 +34,28 @@ function getAiSpreadsheet(customId) {
 
 function ensureAiExtractionHeaders(sheet) {
   var headers = [
-    'Request ID',         // Col A (1) - Foreign Key referencing Request Bill Payments
-    'Account Number',     // Col B (2)
-    'Site',               // Col C (3)
-    'Biller',             // Col D (4)
-    'Cycle From',         // Col E (5)
-    'Cycle To',           // Col F (6)
-    'AI Due Date',        // Col G (7)
-    'Grace Period',       // Col H (8) - Explicit "Grace Period" ONLY (never Due-to-Discon)
-    'Consumption',        // Col I (9)
-    'Arrears',            // Col J (10)
-    'Current Amount',     // Col K (11)
-    'Total Amount',       // Col L (12)
-    'Amount Before Due',  // Col M (13)
-    'Detected Format',    // Col N (14)
-    'Legibility',         // Col O (15)
-    'Pages Scanned',      // Col P (16)
-    'Scanned At'          // Col Q (17)
+    'Request ID',              // Col A (1) - Foreign Key referencing Request Bill Payments
+    'Account Number',          // Col B (2)
+    'Site',                    // Col C (3)
+    'Biller',                  // Col D (4)
+    'Cycle From',              // Col E (5)
+    'Cycle To',                // Col F (6)
+    'AI Due Date',             // Col G (7)
+    'Grace Period',            // Col H (8) - Explicit "Grace Period" ONLY (never Due-to-Discon)
+    'Consumption',             // Col I (9)
+    'Arrears',                 // Col J (10)
+    'Current Amount',          // Col K (11)
+    'Total Amount',            // Col L (12)
+    'Amount Before Due',       // Col M (13)
+    'Detected Format',         // Col N (14)
+    'Legibility',              // Col O (15)
+    'Pages Scanned',           // Col P (16)
+    'Scanned At',              // Col Q (17)
+    'Extracted Account / SIN', // Col R (18)
+    'All Extracted Refs',      // Col S (19)
+    'Account Match Status',    // Col T (20)
+    'Wrong Attachment Tag',    // Col U (21)
+    'Match Explanation'        // Col V (22)
   ];
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(headers);
@@ -63,6 +68,11 @@ function ensureAiExtractionHeaders(sheet) {
     sheet.insertRowBefore(1);
     sheet.getRange(1, 1, 1, headers.length).setValues([headers]).setFontWeight('bold').setBackground('#d1fae5');
     sheet.setFrozenRows(1);
+  } else {
+    var col18Header = String(sheet.getRange(1, 18).getValue() || '').trim();
+    if (!col18Header) {
+      sheet.getRange(1, 18, 1, 5).setValues([headers.slice(17)]).setFontWeight('bold').setBackground('#d1fae5');
+    }
   }
 }
 
@@ -91,8 +101,8 @@ function doGet(e) {
   ensureAiExtractionHeaders(aiSheet);
   return ContentService.createTextOutput(JSON.stringify({
     status: 'success',
-    scriptVersion: 'v3.5.0-otp-strict',
-    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions & One-Time Bill Payment)',
+    scriptVersion: 'v3.6.0-ai-sin-match',
+    spreadsheet: 'Bill Sub WebApp (UserData, Announcements, Cell Edits, Dedicated AI_SOA_Extractions w/ SIN Match & One-Time Bill Payment)',
     oneTimePaymentEnabled: true,
     oneTimeSequentialUploadEnabled: true,
     userRows: userSheet ? userSheet.getLastRow() : 0,
@@ -245,6 +255,15 @@ function doPost(e) {
       ensureAiExtractionHeaders(aiSheet);
 
       var targetReqId = String(data.requestId).trim();
+      var extractedAccPrimary = String(data.extractedAccountNumber || data.primaryAccountNumber || data.meralcoSin || '').trim();
+      var allRefsStr = Array.isArray(data.extractedAccountReferences)
+        ? data.extractedAccountReferences.join(', ')
+        : String(data.extractedAccountReferences || '').trim();
+      var accMatchStatus = String(data.accountMatchStatus || '').trim().toUpperCase();
+      var isWrongAtt = data.wrongAttachmentTag === true || accMatchStatus === 'WRONG_ATTACHMENT';
+      var wrongTagStr = isWrongAtt ? 'WRONG ATTACHMENT' : (accMatchStatus === 'MATCHED' ? 'OK' : '');
+      var matchExplStr = String(data.matchExplanation || '').trim();
+
       var aiRowValues = [
         targetReqId,
         String(data.accountNumber || ''),
@@ -262,7 +281,12 @@ function doPost(e) {
         String(data.detectedFormat || 'Utility Statement'),
         String(data.readabilityStatus || data.legibilityStatus || 'READABLE'),
         String(data.pagesAnalyzed || data.pageCountDetected || 1),
-        String(data.extractedAt || data.scannedAt || new Date().toISOString())
+        String(data.extractedAt || data.scannedAt || new Date().toISOString()),
+        extractedAccPrimary,
+        allRefsStr,
+        accMatchStatus,
+        wrongTagStr,
+        matchExplStr
       ];
 
       // Upsert by Request ID (Column A): update existing row if found, otherwise append new row
@@ -275,9 +299,17 @@ function doPost(e) {
         }
       }
       if (foundAiRow > 0) {
-        if (!aiRowValues[1] && aiVals[foundAiRow - 1][1]) aiRowValues[1] = String(aiVals[foundAiRow - 1][1]);
-        if (!aiRowValues[2] && aiVals[foundAiRow - 1][2]) aiRowValues[2] = String(aiVals[foundAiRow - 1][2]);
-        if (!aiRowValues[3] && aiVals[foundAiRow - 1][3]) aiRowValues[3] = String(aiVals[foundAiRow - 1][3]);
+        var prevRow = aiVals[foundAiRow - 1] || [];
+        if (!aiRowValues[1] && prevRow[1]) aiRowValues[1] = String(prevRow[1]);
+        if (!aiRowValues[2] && prevRow[2]) aiRowValues[2] = String(prevRow[2]);
+        if (!aiRowValues[3] && prevRow[3]) aiRowValues[3] = String(prevRow[3]);
+        if (!accMatchStatus && prevRow.length >= 22) {
+          if (!aiRowValues[17] && prevRow[17]) aiRowValues[17] = String(prevRow[17]);
+          if (!aiRowValues[18] && prevRow[18]) aiRowValues[18] = String(prevRow[18]);
+          if (!aiRowValues[19] && prevRow[19]) aiRowValues[19] = String(prevRow[19]);
+          if (!aiRowValues[20] && prevRow[20]) aiRowValues[20] = String(prevRow[20]);
+          if (!aiRowValues[21] && prevRow[21]) aiRowValues[21] = String(prevRow[21]);
+        }
         aiSheet.getRange(foundAiRow, 1, 1, aiRowValues.length).setValues([aiRowValues]);
       } else {
         aiSheet.appendRow(aiRowValues);
